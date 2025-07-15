@@ -1,5 +1,5 @@
 <template>
-  <div class="min-h-screen bg-[#F0F9FF] flex items-center justify-center p-4">
+  <div class ="min-h-screen bg-[#F0F9FF] flex items-center justify-center p-4">
     <div class="w-full max-w-md bg-white p-6 rounded-lg shadow-md">
       <!-- Logo & Name -->
       <div class="flex flex-col items-center mb-6">
