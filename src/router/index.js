@@ -16,7 +16,11 @@ const routes = [
     { path: '/booking', component: BookingPage },
     {path: '/homeboard', component: HomeBoard},
     {path: '/homelogged', component: HomeLogged},
-   
+   {
+  path: '/profile',
+  name: 'UserProfile',
+  component: () => import('@/components/UserDashboard.vue')
+}
 ];
 
 const router = createRouter({

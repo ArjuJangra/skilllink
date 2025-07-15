@@ -69,6 +69,7 @@
 <script setup>
 import { ref, onMounted } from 'vue';
 import { useRoute } from 'vue-router';
+import axios from 'axios';
 
 const route = useRoute();
 
@@ -81,12 +82,42 @@ onMounted(() => {
   selectedService.value = route.query.service || '';
 });
 
-const submitBooking = () => {
+const submitBooking = async () => {
   if (!name.value || !contact.value || !address.value) {
     alert('Please fill in all fields.');
     return;
   }
 
-  alert(`Booking confirmed for ${selectedService.value}!`);
+  const token = localStorage.getItem('token');
+
+  try {
+    const response = await axios.post(
+      'http://localhost:5000/api/bookings',
+      {
+        service: selectedService.value,
+        name: name.value,
+        contact: contact.value,
+        address: address.value,
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    alert(response.data.message || 'Booking confirmed!');
+    
+    // Clear form
+    name.value = '';
+    contact.value = '';
+    address.value = '';
+
+  } catch (err) {
+    const errorMsg =
+      err.response?.data?.message || 'Booking failed. Please try again.';
+    alert(errorMsg);
+    console.error('Booking error:', err);
+  }
 };
 </script>

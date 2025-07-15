@@ -25,11 +25,14 @@
           </router-link>
 
           <!-- User Profile DP -->
-          <img
+           <router-link to="/profile"> 
+            <img
             src="@/assets/user.png"
             alt="User DP"
             class="w-10 h-10 rounded-full object-cover border-2 border-[#0073b1] cursor-pointer"
           />
+        </router-link>
+          
         </div>
       </div>
     </header>
@@ -49,13 +52,15 @@
       <div class="max-w-[1300px] mx-auto px-6">
         <h3 class="text-2xl font-bold text-gray-800 mb-6 text-center">Services We Provide</h3>
         <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6">
-          <div
-            v-for="service in services"
-            :key="service"
-            class="bg-[#0073b1] text-white p-4 rounded-lg shadow text-center font-semibold transform hover:scale-105 hover:shadow-lg transition duration-300 cursor-pointer"
-          >
-            {{ service }}
-          </div>
+          <router-link
+  v-for="service in services"
+  :key="service"
+  :to="`/booking?service=${encodeURIComponent(service)}`"
+  class="bg-[#0073b1] text-white p-4 rounded-lg shadow text-center font-semibold transform hover:scale-105 hover:shadow-lg transition duration-300 cursor-pointer"
+>
+  {{ service }}
+</router-link>
+
         </div>
       </div>
     </section>
