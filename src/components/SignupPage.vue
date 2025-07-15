@@ -107,6 +107,7 @@
 </template>
 
 <script>
+import axios from 'axios';
 export default {
   name: 'SignupPage',
   data() {
@@ -169,9 +170,21 @@ export default {
         this.form.services.push(service);
       }
     },
-    handleSubmit() {
-      console.log('User signed up (no backend):', this.form);
-      this.$router.push('/homelogged');
+    // handleSubmit() {
+    //   console.log('User signed up (no backend):', this.form);
+    //   this.$router.push('/homelogged');
+    // },
+    async handleSubmit() {
+      try {
+        const response = await axios.pos('http://localhost:5000/api/auth/signup',this.form);
+        alert('✅ Signup successful!');
+        console.log(response.data);
+        this.$router.push('/homelogged');
+      
+      } catch (err) {
+        console.error(err.response?.data || err.message);
+        alert('❌ Signup failed: ' + (err.response?.data?.error || 'Server error'));
+      }
     }
   }
 };
