@@ -3,45 +3,29 @@
     <div class="max-w-4xl mx-auto bg-white rounded-2xl shadow-lg p-6">
       <!-- Profile Section -->
       <div class="flex items-center space-x-4 border-b pb-4 mb-4">
-        <img
-          src="@/assets/user.png"
-          alt="User Profile"
-          class="w-20 h-20 rounded-full border-2 border-[#00A8E8]"
-        />
+        <img src="@/assets/user.png" alt="User Profile" class="w-20 h-20 rounded-full border-2 border-[#00A8E8]" />
         <div>
-          <h2 class="text-2xl font-bold text-[#007EA7]">Arju Jangra</h2>
-          <p class="text-gray-500">arju@example.com</p>
+          <h2 class="text-2xl font-bold text-[#007EA7]">{{ user.name }}</h2>
+          <p class="text-gray-500">{{ user.email }}</p>
         </div>
       </div>
 
       <!-- Navigation Tabs -->
       <div class="flex flex-wrap gap-2 border-b pb-2 mb-4 text-sm md:text-base">
-        <button
-          class="px-4 py-2 rounded-t-lg font-semibold"
-          :class="activeTab === 'bookings' ? activeClass : inactiveClass"
-          @click="activeTab = 'bookings'"
-        >
+        <button class="px-4 py-2 rounded-t-lg font-semibold"
+          :class="activeTab === 'bookings' ? activeClass : inactiveClass" @click="activeTab = 'bookings'">
           My Bookings
         </button>
-        <button
-          class="px-4 py-2 rounded-t-lg font-semibold"
-          :class="activeTab === 'history' ? activeClass : inactiveClass"
-          @click="activeTab = 'history'"
-        >
+        <button class="px-4 py-2 rounded-t-lg font-semibold"
+          :class="activeTab === 'history' ? activeClass : inactiveClass" @click="activeTab = 'history'">
           Service History
         </button>
-        <button
-          class="px-4 py-2 rounded-t-lg font-semibold"
-          :class="activeTab === 'address' ? activeClass : inactiveClass"
-          @click="activeTab = 'address'"
-        >
+        <button class="px-4 py-2 rounded-t-lg font-semibold"
+          :class="activeTab === 'address' ? activeClass : inactiveClass" @click="activeTab = 'address'">
           My Address
         </button>
-        <button
-          class="px-4 py-2 rounded-t-lg font-semibold"
-          :class="activeTab === 'settings' ? activeClass : inactiveClass"
-          @click="activeTab = 'settings'"
-        >
+        <button class="px-4 py-2 rounded-t-lg font-semibold"
+          :class="activeTab === 'settings' ? activeClass : inactiveClass" @click="activeTab = 'settings'">
           Settings
         </button>
       </div>
@@ -55,11 +39,8 @@
       <div v-else-if="activeTab === 'history'" class="space-y-2">
         <h3 class="text-lg font-semibold text-[#007EA7]">Previous Services</h3>
         <div v-if="history.length" class="space-y-2">
-          <div
-            v-for="(item, index) in history"
-            :key="index"
-            class="border rounded-lg p-3 flex justify-between items-center shadow-sm"
-          >
+          <div v-for="(item, index) in history" :key="index"
+            class="border rounded-lg p-3 flex justify-between items-center shadow-sm">
             <div>
               <h4 class="font-semibold text-[#007EA7]">{{ item.service }}</h4>
               <p class="text-sm text-gray-500">{{ item.date }}</p>
@@ -85,22 +66,54 @@
           <li>Notification Preferences</li>
           <li>Privacy Settings</li>
         </ul>
+
+        <button class="mt-4 px-6 py-2 bg-[#007EA7] text-white rounded-lg shadow hover:bg-blue-500 transition duration-300" @click="logout">
+          Logout
+        </button>
+
       </div>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
+import axios from 'axios';
+import { useRouter } from 'vue-router';
+
+const router = useRouter();
+
+const logout = () => {
+  localStorage.removeItem('token');
+  router.push('/login'); // make sure '/login' route exists
+};
 
 const activeTab = ref('bookings');
 
 const activeClass = 'text-[#007EA7] border-b-2 border-[#00A8E8]';
 const inactiveClass = 'text-gray-500 hover:text-[#00A8E8]';
-
+const user = ref({ name: '', email: '' });
 const history = ref([
   { service: 'Electrician - Fan Repair', date: '2025-07-01', status: 'Completed' },
   { service: 'Plumber - Pipe Leakage', date: '2025-06-25', status: 'Completed' },
   { service: 'Mechanic - Bike Servicing', date: '2025-06-20', status: 'Completed' },
 ]);
+const getUserProfile = async () => {
+  try {
+    const token = localStorage.getItem('token');
+    const res = await axios.get('http://localhost:5000/api/user/profile', {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    console.log('User data response:', res.data); // 👈 add this line
+    user.value = res.data;
+  } catch (err) {
+    console.error('Failed to load user:', err);
+  }
+};
+
+onMounted(() => {
+  getUserProfile();
+});
 </script>

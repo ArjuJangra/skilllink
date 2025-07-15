@@ -177,6 +177,7 @@ export default {
     async handleSubmit() {
   try {
     const response = await axios.post('http://localhost:5000/api/auth/signup', this.form);
+localStorage.setItem('token', response.data.token);
 
     console.log(response.data); // Optional: success message
     alert('Signup successful!');

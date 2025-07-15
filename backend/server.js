@@ -12,6 +12,9 @@ app.use(cors()); // apply cors middleware
 // Routes
 const authRoutes = require('./routes/auth');
 app.use('/api/auth', authRoutes);
+app.use('/api/user', require('./routes/userRoutes'));
+app.use('/api/bookings', require('./routes/bookingRoutes'));
+app.use('/api/address', require('./routes/addressRoutes'));
 
 // MongoDB connection
 mongoose.connect(process.env.MONGO_URI)

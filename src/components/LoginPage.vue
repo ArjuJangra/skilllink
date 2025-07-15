@@ -75,6 +75,8 @@ const handleLogin = async () => {
     auth.user.avatar = require('@/assets/user.png'); 
     auth.user.email = user.email;
     auth.user.role = user.role;
+    
+    localStorage.setItem('token', response.data.token);
 
     localStorage.setItem('user', JSON.stringify(user));
     alert('Login successful!');
