@@ -1,6 +1,5 @@
 <template>
-  <LoginPage />
-  <SignupPage/>
+
   <router-view />
 </template>
 
