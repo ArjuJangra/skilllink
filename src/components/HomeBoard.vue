@@ -22,11 +22,17 @@
           </button>
         </router-link>
         <!-- Existing Login/Signup Buttons -->
-        <router-link to="/login">
-          <button class="px-4 py-2 bg-[#0073b1] text-white font-semibold rounded-lg hover:bg-[#005f91] transition duration-200">
-            Login/Sign Up
-          </button>
-        </router-link>
+       <!-- Conditional Auth Buttons -->
+<div>
+
+  
+  <router-link  to="/login">
+    <button class="px-4 py-2 bg-[#0073b1] text-white font-semibold rounded-lg hover:bg-[#005f91] transition duration-200">
+      Login/Sign Up
+    </button>
+  </router-link>
+</div>
+
         <!-- <router-link to="/signup">
           <button class="px-4 py-2 bg-[#0073b1] text-white font-semibold rounded-lg hover:bg-[#005f91] transition duration-200">
             Sign Up
@@ -181,22 +187,26 @@
   </div>
 </template>
 
-<script>
-export default {
-  name: "HomeBoard",
-  data() {
-    return {
-      services: [
-        "Plumber",
-        "Electrician",
-        "Mechanic",
-        "Carpenter",
-        "AC Repair",
-        "Painter",
-        "Welder",
-        "Makeup Artist",
-      ],
-    };
-  },
-};
+
+<script setup>
+import { ref } from 'vue'
+
+
+const services = ref([
+  "Plumber",
+  "Electrician",
+  "Mechanic",
+  "Carpenter",
+  "AC Repair",
+  "Painter",
+  "Welder",
+  "Makeup Artist",
+])
+
+
+
+
+
+
 </script>
+

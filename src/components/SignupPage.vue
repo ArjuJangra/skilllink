@@ -175,17 +175,22 @@ export default {
     //   this.$router.push('/homelogged');
     // },
     async handleSubmit() {
-      try {
-        const response = await axios.pos('http://localhost:5000/api/auth/signup',this.form);
-        alert('✅ Signup successful!');
-        console.log(response.data);
-        this.$router.push('/homelogged');
-      
-      } catch (err) {
-        console.error(err.response?.data || err.message);
-        alert('❌ Signup failed: ' + (err.response?.data?.error || 'Server error'));
-      }
+  try {
+    const response = await axios.post('http://localhost:5000/api/auth/signup', this.form);
+
+    console.log(response.data); // Optional: success message
+    alert('Signup successful!');
+    this.$router.push('/homelogged'); // or wherever you want to go
+  } catch (error) {
+    console.error(error);
+    if (error.response && error.response.data?.error) {
+      alert(`Error: ${error.response.data.error}`);
+    } else {
+      alert('Something went wrong. Try again.');
     }
+  }
+}
+
   }
 };
 </script>

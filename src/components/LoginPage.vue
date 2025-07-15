@@ -11,7 +11,7 @@
         <div>
           <label class="block text-sm font-semibold text-gray-700">Email</label>
           <input
-            v-model="email"
+            v-model="loginForm.email"
             type="email"
             required
             class="mt-1 w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0073b1]"
@@ -23,7 +23,7 @@
         <div>
           <label class="block text-sm font-semibold text-gray-700">Password</label>
           <input
-            v-model="password"
+            v-model="loginForm.password"
             type="password"
             required
             class="mt-1 w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0073b1]"
@@ -50,24 +50,42 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { reactive } from 'vue'
 import { useRouter } from 'vue-router';
+import axios from 'axios';
 import { auth } from '@/stores/auth';
+import { loginUser } from '@/stores/auth'
 
-const email = ref('');
-const password = ref('');
 const router = useRouter();
-
-const handleLogin = () => {
-  // ✅ Dummy validation — replace with real backend check
-  if (email.value === 'user@example.com' && password.value === '1234') {
+const loginForm = reactive({
+  email: '',
+  password: ''
+})
+const handleLogin = async () => {
+  try {
+    const response = await axios.post('http://localhost:5000/api/auth/login', {
+      email: loginForm.email,
+      password: loginForm.password,
+    });
+     const { token, user } = response.data;
+    // You can now store user info from response
+    loginUser(token, user);
     auth.isLoggedIn = true;
-    auth.user.name = 'Arju';
-    auth.user.avatar = require('@/assets/user.png');
+    auth.user.name = user.name;
+    auth.user.avatar = require('@/assets/user.png'); 
+    auth.user.email = user.email;
+    auth.user.role = user.role;
 
+    localStorage.setItem('user', JSON.stringify(user));
+    alert('Login successful!');
     router.push('/homelogged');
-  } else {
-    alert('Invalid credentials!');
+  } catch (error) {
+    if (error.response?.data?.error) {
+      alert(error.response.data.error); 
+    } else {
+      alert('Login failed. Try again later.');
+    }
   }
 };
 </script>
+
