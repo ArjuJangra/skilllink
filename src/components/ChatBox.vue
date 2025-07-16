@@ -55,87 +55,113 @@
 
 
 <script setup>
-import { ref, onMounted, nextTick } from 'vue'
+import { ref, onMounted, nextTick, watch } from 'vue'
 import { io } from 'socket.io-client'
 import axios from 'axios'
 
-// Props
+// ✅ define props (chatWithId is required)
+const props = defineProps({
+  chatWithId: {
+    type: String,
+    required: true,
+  },
+})
 
-const props = defineProps({ chatWithId: String });
-
-// UI State
+//  reactive state
 const isOpen = ref(false)
+const messages = ref([])
+const newMessage = ref('')
+const chatContainer = ref(null)
+
+const senderId = localStorage.getItem('userId')  // stored user ID
+const receiverId = ref(props.chatWithId)
+
+//  socket connection
+const socket = io('http://localhost:5000')
+
+//  toggle chat UI
 const toggleChat = () => {
   isOpen.value = !isOpen.value
   if (isOpen.value) scrollToBottom()
 }
 
-// Socket.io
-const socket = io('http://localhost:5000')
 
-// Chat State
-const messages = ref([])
-const newMessage = ref('')
-const chatContainer = ref(null)
+watch(
+  () => props.chatWithId,
+  (newVal) => {
+    receiverId.value = newVal
+    loadMessages()
+  }
+)
 
-// Get sender and receiver IDs
-const senderId = localStorage.getItem('userId')
+const loadMessages = async () => {
+  if (!senderId || !receiverId.value) {
+    console.warn('❌ senderId or receiverId missing')
+    return
+  }
 
-
-// Load existing chat messages
-onMounted(async () => {
   try {
-     const receiverId = props.chatWithId;
-  const senderId = localStorage.getItem('userId');
-    const res = await axios.get(`http://localhost:5000/api/messages/${senderId}/${receiverId}`)
+    const res = await axios.get(
+      `http://localhost:5000/api/messages/${senderId}/${receiverId.value}`
+    )
     messages.value = res.data
-    scrollToBottom()
+    if (isOpen.value) scrollToBottom()
   } catch (err) {
-    console.error('Error loading messages:', err)
-  }
-})
-
-// Receive new real-time messages
-socket.on('newMessage', msg => {
-  // Only show if it's part of this conversation
-  if (
-    (msg.senderId === senderId && msg.receiverId === receiverId) ||
-    (msg.senderId === receiverId && msg.receiverId === senderId)
-  ) {
-    messages.value.push(msg)
-    scrollToBottom()
-  }
-})
-
-// Send new message
-async function sendMessage() {
-  if (newMessage.value.trim()) {
-    const msg = {
-      senderId,
-      receiverId,
-      content: newMessage.value
-    }
-
-    try {
-      await axios.post('http://localhost:5000/api/messages', msg)
-      socket.emit('message', msg)
-      messages.value.push(msg)
-      newMessage.value = ''
-      scrollToBottom()
-    } catch (err) {
-      console.error('Send error:', err)
-    }
+    console.error('❌ Error loading messages:', err)
   }
 }
 
-// Scroll to bottom of chat
-function scrollToBottom() {
+
+socket.on('newMessage', (msg) => {
+  const isBetweenCurrentUsers =
+    (msg.senderId === receiverId.value && msg.receiverId === senderId) ||
+    (msg.receiverId === receiverId.value && msg.senderId === senderId)
+
+  if (isBetweenCurrentUsers) {
+    messages.value.push(msg)
+    if (isOpen.value) scrollToBottom()
+  }
+})
+
+const sendMessage = async () => {
+  if (!newMessage.value.trim()) return
+
+  const msg = {
+    senderId,
+    receiverId: receiverId.value,
+    content: newMessage.value,
+  }
+
+  try {
+    await axios.post('http://localhost:5000/api/messages', msg)
+    socket.emit('message', msg)
+    messages.value.push(msg)
+    newMessage.value = ''
+    if (isOpen.value) scrollToBottom()
+  } catch (err) {
+    console.error('❌ Send error:', err)
+  }
+}
+
+
+const scrollToBottom = () => {
   nextTick(() => {
     if (chatContainer.value) {
       chatContainer.value.scrollTop = chatContainer.value.scrollHeight
     }
   })
 }
+
+
+onMounted(() => {
+  if (!senderId) {
+    console.warn('⚠️ senderId not found in localStorage')
+    return
+  }
+  loadMessages()
+})
 </script>
+
+
 
 

@@ -138,7 +138,9 @@
     <ServiceMap />
   </div>
 </section>
-  <ChatBox />
+
+<ChatBox :chatWithId="selectedUserId" />
+
 
     <!-- Contact Section -->
     <section class="bg-blue-50 py-12 text-center">
@@ -163,6 +165,9 @@
 <script setup>
 import ServiceMap from '@/components/ServiceMap.vue';
 import ChatBox from '@/components/ChatBox.vue';
+import { ref } from 'vue'
+
+const selectedUserId = ref('68760ee5f4d2d6250abe321e') 
 const services = [
   'Plumber', 'Electrician', 'Mechanic', 'Carpenter',
   'AC Repair', 'Painter', 'Welder', 'Makeup Artist'

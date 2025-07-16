@@ -33,6 +33,7 @@ router.post('/signup', async (req, res) => {
   }
 });
 
+//Login
 
 router.post('/login', async (req, res) => {
   try {
@@ -44,7 +45,7 @@ router.post('/login', async (req, res) => {
     const user = await User.findOne({ email });
     if (!user) {
       console.log('❌ User not found');
-      return res.status(400).json({ error: 'User not found' });
+      return res.status(401).json({ error: 'User not found' });
     }
 
     // 2. Compare password
@@ -55,6 +56,10 @@ router.post('/login', async (req, res) => {
     }
 
     console.log('✅ Password matched');
+    if (!process.env.JWT_SECRET) {
+      console.error('❌ JWT_SECRET missing in .env');
+      return res.status(500).json({ error: 'Server configuration error' });
+    }
 
    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '1d' });
 

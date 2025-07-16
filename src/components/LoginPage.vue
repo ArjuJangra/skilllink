@@ -62,12 +62,15 @@ const loginForm = reactive({
   email: '',
   password: ''
 })
+
 const handleLogin = async () => {
   try {
-    const response = await axios.post('http://localhost:5000/api/auth/login', {
+    const res = await axios.post('http://localhost:5000/api/auth/login', {
       email: loginForm.email,
       password: loginForm.password,
     });
+      
+    localStorage.setItem('userId', res.user._id);
        const { token, user } = res.data;
     // You can now store user info from response
     loginUser(token, user);
@@ -78,7 +81,6 @@ const handleLogin = async () => {
     auth.user.role = user.role;
     
     localStorage.setItem('token', token);
-    localStorage.setItem('userId', user._id);
     localStorage.setItem('user', JSON.stringify(user));
     alert('Login successful!');
     router.push('/homelogged');
