@@ -55,9 +55,7 @@ import { useRouter } from 'vue-router';
 import axios from 'axios';
 import { auth } from '@/stores/auth';
 import { loginUser } from '@/stores/auth'
-import { useToast } from 'primevue/usetoast'
 
-const toast = useToast()
 const router = useRouter();
 const loginForm = reactive({
   email: '',
@@ -84,22 +82,13 @@ const handleLogin = async () => {
     localStorage.setItem('token', token);
     localStorage.setItem('user', JSON.stringify(user));
 
-    toast.add({
-  severity: 'success',
-  summary: 'Login Successful',
-  detail: `Welcome back, ${user.name}!`,
-  life: 3000
-})
+  
 
     
     router.push('/homelogged');
   } catch (error) {
-    toast.add({
-      severity: 'error',
-      summary: 'Login Failed',
-      detail: error.response?.data?.error || 'Something went wrong',
-      life: 3000
-    })
+      console.error(error);
+  alert('Login failed. Please try again.');
   }
 };
 </script>
