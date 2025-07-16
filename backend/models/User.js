@@ -14,7 +14,7 @@ const userSchema = new mongoose.Schema({
   experience: String,
   address: String
 }, {
-  collection: 'users' // 
+  collection: 'users'  
 }, { timestamps: true });
 
 module.exports = mongoose.model('User', userSchema);

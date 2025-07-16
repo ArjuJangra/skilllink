@@ -78,7 +78,7 @@ res.status(200).json({
 
 
   } catch (err) {
-    console.error('❌ Login error:', err.message); // <-- IMPORTANT
+    console.error('❌ Login error:', err); 
     res.status(500).json({ error: 'Login failed. Try again later' });
   }
 });
