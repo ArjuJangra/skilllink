@@ -106,92 +106,72 @@
   </div>
 </template>
 
-<script>
-import axios from 'axios';
-export default {
-  name: 'SignupPage',
-  data() {
-    return {
-      form: {
-        name: '',
-        role: '',
-        email: '',
-        password: '',
-        services: [],
-        experience: '',
-        address: '',
-      },
-      availableServices: [
-        'Plumber',
-        'Electrician',
-        'Mechanic',
-        'Carpenter',
-        'AC/Appliance Repair',
-        'Painter',
-        'Welder',
-        'House Cleaner',
-        'Sofa/Curtain Cleaner',
-        'Water Tank Cleaner',
-        'Pest Cleaner',
-        'Gardener',
-        'Security Guard',
-        'Driver on Call',
-        'Cook/Chef',
-        'Beautician',
-        'Massage Therapist',
-        'Fitness Trainer',
-        'Babysitter',
-        'Laptop/PC Repair',
-        'CCTV Installation',
-        'Mobile Technician',
-        'Internet Technician',
-        'Courier Pickup/Delivery',
-        'House Shifting/Packers',
-        'Tailor',
-        'Event Decorator',
-        'Pet Grommer',
-        
-      ],
-    };
-  },
-  methods: {
-    resetFields() {
-      this.form.email = '';
-      this.form.password = '';
-      this.form.services = [];
-      this.form.experience = '';
-      this.form.address = '';
-    },
-    toggleService(service) {
-      const exists = this.form.services.includes(service);
-      if (exists) {
-        this.form.services = this.form.services.filter(s => s !== service);
-      } else if (this.form.services.length < 3) {
-        this.form.services.push(service);
-      }
-    },
-    // handleSubmit() {
-    //   console.log('User signed up (no backend):', this.form);
-    //   this.$router.push('/homelogged');
-    // },
-    async handleSubmit() {
-  try {
-    const response = await axios.post('http://localhost:5000/api/auth/signup', this.form);
-localStorage.setItem('token', response.data.token);
+<script setup>
+import { reactive } from 'vue'
+import axios from 'axios'
+import { useToast } from 'primevue/usetoast'
+import { useRouter } from 'vue-router'
 
-    console.log(response.data); // Optional: success message
-    alert('Signup successful!');
-    this.$router.push('/homelogged'); // or wherever you want to go
-  } catch (error) {
-    console.error(error);
-    if (error.response && error.response.data?.error) {
-      alert(`Error: ${error.response.data.error}`);
-    } else {
-      alert('Something went wrong. Try again.');
-    }
+const router = useRouter()
+const toast = useToast()
+
+const form = reactive({
+  name: '',
+  role: '',
+  email: '',
+  password: '',
+  services: [],
+  experience: '',
+  address: ''
+})
+
+const availableServices = [
+  'Plumber', 'Electrician', 'Mechanic', 'Carpenter', 'AC/Appliance Repair',
+  'Painter', 'Welder', 'House Cleaner', 'Sofa/Curtain Cleaner', 'Water Tank Cleaner',
+  'Pest Cleaner', 'Gardener', 'Security Guard', 'Driver on Call', 'Cook/Chef',
+  'Beautician', 'Massage Therapist', 'Fitness Trainer', 'Babysitter', 'Laptop/PC Repair',
+  'CCTV Installation', 'Mobile Technician', 'Internet Technician', 'Courier Pickup/Delivery',
+  'House Shifting/Packers', 'Tailor', 'Event Decorator', 'Pet Grommer'
+]
+
+const toggleService = (service) => {
+  const exists = form.services.includes(service)
+  if (exists) {
+    form.services = form.services.filter(s => s !== service)
+  } else if (form.services.length < 3) {
+    form.services.push(service)
   }
 }
 
+const resetFields = () => {
+  form.email = ''
+  form.password = ''
+  form.services = []
+  form.experience = ''
+  form.address = ''
+}
+
+const handleSubmit = async () => {
+  try {
+    const response = await axios.post('http://localhost:5000/api/auth/signup', form)
+    localStorage.setItem('token', response.data.token)
+
+    toast.add({
+      severity: 'success',
+      summary: 'Signup Successful',
+      detail: `Welcome, ${response.data.user?.name || 'User'}!`,
+      life: 3000
+    })
+
+    router.push('/homelogged')
+  } catch (error) {
+    toast.add({
+      severity: 'error',
+      summary: 'Signup Failed',
+      detail: error.response?.data?.error || 'Something went wrong. Try again.',
+      life: 3000
+    })
   }
-};
+}
 </script>
+
