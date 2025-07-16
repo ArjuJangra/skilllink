@@ -131,6 +131,15 @@
       </div>
     </section>
 
+    <!-- Service Area Map Section -->
+<section class="py-12 bg-blue-50">
+  <div class="max-w-screen-xl mx-auto px-4 md:px-8 text-center">
+    <h2 class="text-2xl font-bold mb-6 text-gray-800">Service Coverage Area</h2>
+    <ServiceMap />
+  </div>
+</section>
+  <ChatBox />
+
     <!-- Contact Section -->
     <section class="bg-blue-50 py-12 text-center">
       <div class="max-w-[1300px] mx-auto px-6">
@@ -152,6 +161,8 @@
 </template>
 
 <script setup>
+import ServiceMap from '@/components/ServiceMap.vue';
+import ChatBox from '@/components/ChatBox.vue';
 const services = [
   'Plumber', 'Electrician', 'Mechanic', 'Carpenter',
   'AC Repair', 'Painter', 'Welder', 'Makeup Artist'

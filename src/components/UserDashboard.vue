@@ -1,5 +1,5 @@
 <template>
-  <div class="min-h-screen bg-gray-50 dark:bg-gray-900 text-gray-800 dark:text-white px-4 py-8">
+  <div class="min-h-screen bg-gray-50 px-4 py-8">
     <div class="max-w-4xl mx-auto bg-white rounded-2xl shadow-lg p-6">
       <!-- Profile Section -->
       <div class="flex items-center space-x-4 border-b pb-4 mb-4">
@@ -88,9 +88,6 @@
         <button class="mt-4 px-6 py-2 bg-[#007EA7] text-white rounded-lg shadow hover:bg-[#005f78] transition duration-300" @click="logout">
           Logout
         </button>
-         <button @click="toggleDarkMode" class="px-3 py-1 rounded border border-gray-400 text-sm">
-  {{ isDark ? '☀️ Light' : '🌙 Dark' }}
-</button>
       </div>
     </div>
   </div>
@@ -102,7 +99,7 @@ import { useRouter } from 'vue-router';
 
 const bookings = ref([]);
 const router = useRouter();
-const isDark = ref(false);
+
 
 const logout = () => {
   localStorage.removeItem('token');
@@ -150,17 +147,11 @@ const fetchBookings = async () => {
   }
 };
 
-const toggleDarkMode = () => {
-  isDark.value = !isDark.value
-  document.documentElement.classList.toggle('dark', isDark.value)
-  localStorage.setItem('theme', isDark.value ? 'dark' : 'light')
-}
+
 
 onMounted(() => {
   getUserProfile();
    fetchBookings();
-   isDark.value = localStorage.getItem('theme') === 'dark'
-  document.documentElement.classList.toggle('dark', isDark.value)
 });
 
 </script>
