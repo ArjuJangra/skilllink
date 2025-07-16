@@ -1,0 +1,80 @@
+<template>
+  <div class="h-screen bg-[#F6F9FC] px-2 py-4 flex justify-center items-center">
+    <div class="w-full max-w-[1120px] h-[95vh] bg-white rounded-xl shadow-xl p-4 md:p-6 flex flex-col justify-between overflow-auto">
+
+      <!-- 🧠 Intro -->
+      <div>
+        <div class="text-center mb-6">
+          <h1 class="text-3xl font-bold text-[#0074B7] mb-1">About SkillLink</h1>
+          <p class="text-gray-600 text-base">
+            Empowering people to find trusted home and repair services with ease.
+          </p>
+        </div>
+
+        <!-- ✨ Feature Highlights -->
+        <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 text-center mb-6">
+          <div class="bg-[#F6F9FC] rounded-lg p-4 shadow-sm">
+            <div class="text-[#0074B7] text-2xl mb-1">🔧</div>
+            <h3 class="text-lg font-semibold mb-1">Reliable Helpers</h3>
+            <p class="text-gray-600 text-sm">Each service provider is verified and reviewed by real users.</p>
+          </div>
+          <div class="bg-[#F6F9FC] rounded-lg p-4 shadow-sm">
+            <div class="text-[#0074B7] text-2xl mb-1">⚡</div>
+            <h3 class="text-lg font-semibold mb-1">Quick Booking</h3>
+            <p class="text-gray-600 text-sm">Book nearby mechanics, electricians or carpenters instantly.</p>
+          </div>
+          <div class="bg-[#F6F9FC] rounded-lg p-4 shadow-sm">
+            <div class="text-[#0074B7] text-2xl mb-1">🔒</div>
+            <h3 class="text-lg font-semibold mb-1">Secure & Trusted</h3>
+            <p class="text-gray-600 text-sm">Your safety is our priority. Every booking is trackable.</p>
+          </div>
+        </div>
+
+        <!-- 💡 Why Choose SkillLink - Cards -->
+        <div class="mb-4">
+          <h2 class="text-2xl md:text-3xl font-bold text-[#0074B7] mb-6 text-center">Why Choose SkillLink?</h2>
+          <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 w-full">
+            <div
+              v-for="(point, index) in reasons"
+              :key="index"
+              class="bg-[#F6F9FC] p-5 rounded-lg shadow h-full flex flex-col justify-between"
+            >
+              <h3 class="text-sm font-semibold text-[#0074B7] mb-2">{{ point.title }}</h3>
+              <p class="text-sm text-gray-600">{{ point.description }}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 🌐 Closing Statement -->
+      <div class="text-center mt-6">
+        <p class="text-gray-700 text-base md:text-lg font-medium leading-relaxed">
+          At <span class="text-[#0074B7] font-semibold">SkillLink</span>, we believe in building community connections.
+          Whether you're looking for quick help or want to offer your skills — you're part of something bigger. 💙
+        </p>
+      </div>
+
+    </div>
+  </div>
+</template>
+
+<script setup>
+const reasons = [
+  {
+    title: 'Verified Professionals',
+    description: 'We verify identity, skills, and reviews before allowing any service provider on our platform.'
+  },
+  {
+    title: 'Easy Scheduling',
+    description: 'Our system lets you schedule, cancel, or reschedule bookings with ease, all from your dashboard.'
+  },
+  {
+    title: 'Customer Support',
+    description: 'Our team is always ready to help via chat or email with any questions or booking issues.'
+  },
+  {
+    title: 'Fair Pricing',
+    description: 'We promote transparent, competitive pricing. No hidden costs, ever.'
+  }
+]
+</script>

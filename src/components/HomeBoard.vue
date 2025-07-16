@@ -1,48 +1,42 @@
 <template>
   <div class="min-h-screen bg-gray-50">
-  <!-- Navbar -->
-    <header class="flex justify-between items-center px-6 py-4 bg-white  max-w-7xl mx-auto">
+    <!-- Navbar -->
+    <header class="flex justify-between items-center px-6 py-4 bg-white max-w-7xl mx-auto">
       <div class="flex items-center gap-2">
         <img src="@/assets/skilllogo.png" alt="SkillLink Logo" class="w-12 h-12 rounded-full" />
         <h1 class="text-2xl font-bold text-[#0073b1]">SkillLink</h1>
       </div>
 
       <div class="flex items-center gap-6">
-         
-        <!-- New Navigation Links -->
-        <router-link to="#about" class="text-[#0073b1] hover:text-[#005f91] text-sm font-medium no-underline">About Us</router-link>
-        <router-link to="#contact" class="text-[#0073b1] hover:text-[#005f91] text-sm font-medium no-underline">Contact</router-link>
-        <router-link to="#help" class="text-[#0073b1] hover:text-[#005f91] text-sm font-medium no-underline">Help</router-link>
-        
-        <!-- Existing Book Service Button -->
-         <!-- Updated Book Service Button with query param -->
+        <!-- Direct Links to Pages -->
+        <router-link to="/about" class="text-[#0073b1] hover:text-[#005f91] text-sm font-medium no-underline">
+          About Us
+        </router-link>
+        <router-link to="/contact" class="text-[#0073b1] hover:text-[#005f91] text-sm font-medium no-underline">
+          Contact
+        </router-link>
+        <router-link :to="{ path: '/help', query: { from: 'homeboard' } }" class="text-[#0073b1] hover:text-[#005f91] text-sm font-medium no-underline">
+  Help
+</router-link>
+
+
+        <!-- Book Service -->
         <router-link :to="{ path: '/home', query: { disableBooking: true } }">
           <button class="px-4 py-2 border border-[#0073b1] text-[#0073b1] font-semibold rounded-lg hover:bg-[#0073b1]/10 transition duration-200">
             Book Service
           </button>
         </router-link>
-        <!-- Existing Login/Signup Buttons -->
-       <!-- Conditional Auth Buttons -->
-<div>
 
-  
-  <router-link  to="/login">
-    <button class="px-4 py-2 bg-[#0073b1] text-white font-semibold rounded-lg hover:bg-[#005f91] transition duration-200">
-      Login/Sign Up
-    </button>
-  </router-link>
-</div>
-
-        <!-- <router-link to="/signup">
+        <!-- Login/Signup -->
+        <router-link to="/login">
           <button class="px-4 py-2 bg-[#0073b1] text-white font-semibold rounded-lg hover:bg-[#005f91] transition duration-200">
-            Sign Up
+            Login/Sign Up
           </button>
-        </router-link> -->
+        </router-link>
       </div>
     </header>
 
-
-
+    
     <!-- Hero Section -->
     <section class="py-10 bg-gradient-to-br from-blue-100 to-white">
       <div class="max-w-screen-xl mx-auto px-4 md:px-8 text-center">
@@ -180,13 +174,15 @@
       </div>
     </section>
 
+
+
+
     <!-- Footer -->
-    <footer class="bg-[#0073b1] text-white py-4 text-center">
+    <footer class="bg-[#0073b1] text-white py-4 text-center mt-10">
       © 2025 SkillLink. All rights reserved.
     </footer>
   </div>
 </template>
-
 
 <script setup>
 import { ref } from 'vue'
@@ -201,12 +197,6 @@ const services = ref([
   "Painter",
   "Welder",
   "Makeup Artist",
-])
-
-
-
-
-
+]);
 
 </script>
-

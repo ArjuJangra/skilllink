@@ -12,9 +12,12 @@
         <!-- Links and Buttons -->
         <div class="flex items-center gap-6 flex-wrap">
           <nav class="hidden sm:flex gap-6 text-gray-700 font-medium items-center">
-            <router-link to="#about" class="text-[#0073b1] hover:text-[#005f91] text-sm font-medium no-underline">About Us</router-link>
-        <router-link to="#contact" class="text-[#0073b1] hover:text-[#005f91] text-sm font-medium no-underline">Contact</router-link>
-        <router-link to="#help" class="text-[#0073b1] hover:text-[#005f91] text-sm font-medium no-underline">Help</router-link>
+            <router-link to="/about" class="text-[#0073b1] hover:text-[#005f91] text-sm font-medium no-underline">About Us</router-link>
+        <router-link to="/contact" class="text-[#0073b1] hover:text-[#005f91] text-sm font-medium no-underline">Contact</router-link>
+       <router-link :to="{ path: '/help', query: { from: 'homelogged' } }" class="text-[#0073b1] hover:text-[#005f91] text-sm font-medium no-underline">
+  Help
+</router-link>
+
           </nav>
 
           <!-- Book Service Button -->
