@@ -109,9 +109,8 @@
 <script setup>
 import { reactive } from 'vue'
 import axios from 'axios'
-
 import { useRouter } from 'vue-router'
-
+import { toast } from 'vue3-toastify'
 const router = useRouter()
 
 
@@ -155,12 +154,16 @@ const handleSubmit = async () => {
   try {
     const response = await axios.post('http://localhost:5000/api/auth/signup', form)
     localStorage.setItem('token', response.data.token)
+     toast.success(`Welcome, ${response.data.user?.name || 'User'}!`, {
+      theme: 'colored'
+    })
 
 
     router.push('/homelogged')
   } catch (error) {
-      console.error(error);
-  alert('Signup failed. Please try again.');
+      toast.error(error.response?.data?.error || 'Signup failed. Try again.', {
+      theme: 'colored'
+    })
   }
 }
 </script>

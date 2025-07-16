@@ -55,8 +55,10 @@ import { useRouter } from 'vue-router';
 import axios from 'axios';
 import { auth } from '@/stores/auth';
 import { loginUser } from '@/stores/auth'
+import { toast } from 'vue3-toastify'
 
 const router = useRouter();
+
 const loginForm = reactive({
   email: '',
   password: ''
@@ -82,13 +84,16 @@ const handleLogin = async () => {
     localStorage.setItem('token', token);
     localStorage.setItem('user', JSON.stringify(user));
 
-  
+    toast.success('Logging you in...', { theme: 'colored' })
 
-    
-    router.push('/homelogged');
+setTimeout(() => {
+  router.push('/homelogged')
+}, 1500)
+
   } catch (error) {
-      console.error(error);
-  alert('Login failed. Please try again.');
+      toast.error(error.response?.data?.error || 'Login failed. Please check credentials.', {
+      theme: 'colored'
+    })
   }
 };
 </script>
