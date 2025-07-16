@@ -10,9 +10,9 @@ const userSchema = new mongoose.Schema({
     enum: ['user', 'provider'],
     default: 'user'
   },
-  services: [String],
-  experience: String,
-  address: String
+  services: { type: [ String ]},
+  experience: {type: Number},
+  address: {type: String }
 }, {
   collection: 'users'  
 }, { timestamps: true });

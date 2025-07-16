@@ -51,7 +51,7 @@
           <label class="block text-gray-700 font-medium mb-1">Password</label>
           <input
             type="password"
-            v-model="password"
+            v-model="form.password"
             class="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#0073b1]"
             placeholder="••••••••"
             required
@@ -109,11 +109,11 @@
 <script setup>
 import { reactive } from 'vue'
 import axios from 'axios'
-import { useToast } from 'primevue/usetoast'
+
 import { useRouter } from 'vue-router'
 
 const router = useRouter()
-const toast = useToast()
+
 
 const form = reactive({
   name: '',
@@ -156,21 +156,11 @@ const handleSubmit = async () => {
     const response = await axios.post('http://localhost:5000/api/auth/signup', form)
     localStorage.setItem('token', response.data.token)
 
-    toast.add({
-      severity: 'success',
-      summary: 'Signup Successful',
-      detail: `Welcome, ${response.data.user?.name || 'User'}!`,
-      life: 3000
-    })
 
     router.push('/homelogged')
   } catch (error) {
-    toast.add({
-      severity: 'error',
-      summary: 'Signup Failed',
-      detail: error.response?.data?.error || 'Something went wrong. Try again.',
-      life: 3000
-    })
+      console.error(error);
+  alert('Signup failed. Please try again.');
   }
 }
 </script>
