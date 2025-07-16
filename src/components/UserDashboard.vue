@@ -68,14 +68,43 @@
         </div>
         <p v-else class="text-gray-500">No service history available.</p>
       </div>
+      <div v-else-if="activeTab === 'address'" class="space-y-4">
+  <h3 class="text-lg font-semibold text-[#007EA7]">Saved Addresses</h3>
 
-      <div v-else-if="activeTab === 'address'" class="space-y-2">
-        <h3 class="text-lg font-semibold text-[#007EA7]">Saved Addresses</h3>
-        <p class="text-gray-600">You have not added any address.</p>
-        <button class="mt-2 px-4 py-2 bg-[#007EA7] text-white rounded hover:bg-[#005f78]">
-          Add New Address
-        </button>
-      </div>
+  <!-- Form to Add Address -->
+  <div v-if="showAddressForm" class="bg-gray-100 p-4 rounded-lg space-y-3">
+    <input v-model="newAddress.pincode" type="text" placeholder="Pincode"
+      class="w-full border rounded p-2 focus:outline-none focus:ring-2 focus:ring-[#00A8E8]" />
+    <input v-model="newAddress.city" type="text" placeholder="City"
+      class="w-full border rounded p-2 focus:outline-none focus:ring-2 focus:ring-[#00A8E8]" />
+    <textarea v-model="newAddress.address" rows="2" placeholder="Full Address"
+      class="w-full border rounded p-2 focus:outline-none focus:ring-2 focus:ring-[#00A8E8]"></textarea>
+
+    <div class="flex gap-3">
+      <button @click="saveAddress"
+        class="px-4 py-2 bg-[#007EA7] text-white rounded hover:bg-[#005f78]">Save</button>
+      <button @click="showAddressForm = false"
+        class="px-4 py-2 border rounded text-[#007EA7] hover:bg-gray-200">Cancel</button>
+    </div>
+  </div>
+
+  <!-- Add Button -->
+  <button v-else @click="showAddressForm = true"
+    class="px-4 py-2 bg-[#007EA7] text-white rounded hover:bg-[#005f78]">
+    Add New Address
+  </button>
+
+  <!-- Saved Addresses -->
+  <div v-if="savedAddresses.length" class="space-y-3">
+    <div v-for="(addr, index) in savedAddresses" :key="index" class="border p-4 rounded bg-white shadow">
+      <p><span class="font-medium text-[#007EA7]">Pincode:</span> {{ addr.pincode }}</p>
+      <p><span class="font-medium text-[#007EA7]">City:</span> {{ addr.city }}</p>
+      <p><span class="font-medium text-[#007EA7]">Address:</span> {{ addr.address }}</p>
+    </div>
+  </div>
+  <p v-else class="text-gray-500">No saved addresses yet.</p>
+</div>
+
 
       <div v-else-if="activeTab === 'settings'" class="space-y-2">
         <h3 class="text-lg font-semibold text-[#007EA7]">Account Settings</h3>
@@ -144,6 +173,24 @@ const fetchBookings = async () => {
     bookings.value = res.data;
   } catch (err) {
     console.error('Failed to load bookings:', err);
+  }
+};
+const showAddressForm = ref(false);
+const savedAddresses = ref([]);
+
+const newAddress = ref({
+  pincode: '',
+  city: '',
+  address: ''
+});
+
+const saveAddress = () => {
+  if (newAddress.value.pincode && newAddress.value.city && newAddress.value.address) {
+    savedAddresses.value.push({ ...newAddress.value });
+    newAddress.value = { pincode: '', city: '', address: '' };
+    showAddressForm.value = false;
+  } else {
+    alert('Please fill in all fields.');
   }
 };
 
