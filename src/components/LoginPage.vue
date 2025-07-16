@@ -70,7 +70,6 @@ const handleLogin = async () => {
       password: loginForm.password,
     });
       
-    localStorage.setItem('userId', res.user._id);
        const { token, user } = res.data;
     // You can now store user info from response
     loginUser(token, user);
@@ -80,6 +79,7 @@ const handleLogin = async () => {
     auth.user.email = user.email;
     auth.user.role = user.role;
     
+    localStorage.setItem('userId', user._id);
     localStorage.setItem('token', token);
     localStorage.setItem('user', JSON.stringify(user));
     alert('Login successful!');
