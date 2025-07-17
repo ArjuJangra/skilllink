@@ -105,21 +105,81 @@
   <p v-else class="text-gray-500">No saved addresses yet.</p>
 </div>
 
-
+<!-- 
       <div v-else-if="activeTab === 'settings'" class="space-y-2">
         <h3 class="text-lg font-semibold text-[#007EA7]">Account Settings</h3>
         <ul class="text-gray-600 list-disc list-inside">
           <li>Change Password</li>
           <li>Notification Preferences</li>
           <li>Privacy Settings</li>
-        </ul>
+        </ul> -->
+        <div v-else-if="activeTab === 'settings'" class="space-y-4">
+  <h3 class="text-lg font-semibold text-[#007EA7]">Account Settings</h3>
 
-        <button class="mt-4 px-6 py-2 bg-[#007EA7] text-white rounded-lg shadow hover:bg-[#005f78] transition duration-300" @click="logout">
-          Logout
-        </button>
-      </div>
+  <!-- Button to Show/Hide Change Password Form -->
+  <button
+    @click="showPasswordForm = !showPasswordForm"
+    class="px-4 py-2 bg-[#007EA7] text-white rounded hover:bg-[#005f78] transition duration-300"
+  >
+    {{ showPasswordForm ? 'Cancel' : 'Change Password' }}
+  </button>
+
+  <!-- Change Password Section -->
+  <div v-if="showPasswordForm" class="bg-gray-100 p-4 rounded-lg space-y-3 mt-2">
+    <h4 class="text-md font-semibold text-gray-700">Change Password</h4>
+    
+    <input
+      v-model="passwordForm.current"
+      type="password"
+      placeholder="Current Password"
+      class="w-full border rounded p-2 focus:outline-none focus:ring-2 focus:ring-[#00A8E8]"
+    />
+    
+    <input
+      v-model="passwordForm.new"
+      type="password"
+      placeholder="New Password"
+      class="w-full border rounded p-2 focus:outline-none focus:ring-2 focus:ring-[#00A8E8]"
+    />
+    
+    <input
+      v-model="passwordForm.confirm"
+      type="password"
+      placeholder="Confirm New Password"
+      class="w-full border rounded p-2 focus:outline-none focus:ring-2 focus:ring-[#00A8E8]"
+    />
+    
+    <div class="flex items-center justify-between">
+      <button
+        @click="changePassword"
+        class="px-4 py-2 bg-[#007EA7] text-white rounded hover:bg-[#005f78]"
+      >
+        Submit
+      </button>
+      <a href="/forgot-password" class="text-sm text-[#007EA7] hover:underline">
+        Forgot Password?
+      </a>
     </div>
   </div>
+
+  <!-- Other Settings -->
+  <ul class="text-gray-600 list-disc list-inside mt-4">
+    <li>Notification Preferences</li>
+    <li>Privacy Settings</li>
+  </ul>
+
+  <button
+    class="mt-4 px-6 py-2 bg-[#007EA7] text-white rounded-lg shadow hover:bg-[#005f78] transition duration-300"
+    @click="logout"
+  >
+    Logout
+  </button>
+</div>
+
+
+      </div>
+    </div>
+  
 </template>
 <script setup>
 import { ref, onMounted } from 'vue';
@@ -193,7 +253,29 @@ const saveAddress = () => {
     alert('Please fill in all fields.');
   }
 };
+const showPasswordForm = ref(false);
 
+const passwordForm = ref({
+  current: '',
+  new: '',
+  confirm: ''
+});
+
+const changePassword = () => {
+  if (!passwordForm.value.current || !passwordForm.value.new || !passwordForm.value.confirm) {
+    alert("Please fill out all password fields.");
+    return;
+  }
+  if (passwordForm.value.new !== passwordForm.value.confirm) {
+    alert("New passwords do not match.");
+    return;
+  }
+
+  // Replace this with actual logic
+  alert("Password changed successfully!");
+  showPasswordForm.value = false;
+  passwordForm.value = { current: '', new: '', confirm: '' };
+};
 
 
 onMounted(() => {

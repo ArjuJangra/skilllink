@@ -9,8 +9,9 @@
       <div class="flex items-center space-x-4">
         <input
           type="text"
+          v-model="searchQuery"
           placeholder="Search for services..."
-          class="px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#00A8E8]"
+          class="px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#00A8E8] w-64"
         />
         <img
           src="@/assets/user.png"
@@ -23,17 +24,20 @@
 
     <!-- Services Section -->
     <section class="px-4 py-6 max-w-7xl mx-auto space-y-10">
-      <div v-for="category in services" :key="category.title">
-        <h2 class="text-xl font-semibold text-gray-800 mb-4">{{ category.title }}</h2>
+      
+      <!-- 🔍 Filtered Results Section -->
+      <div v-if="filteredResults.length">
+        <h2 class="text-xl font-semibold text-gray-800 mb-4">🔍 Search Results</h2>
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           <div
-            v-for="(service, index) in category.items"
-            :key="index"
+            v-for="(service, index) in filteredResults"
+            :key="'filtered-' + index"
             class="bg-white rounded-lg shadow-md p-4 flex items-center justify-between hover:shadow-lg transition"
           >
             <div>
               <h3 class="text-lg font-semibold text-[#007EA7]">{{ service.title }}</h3>
               <p class="text-sm text-gray-600 mt-1">{{ service.desc }}</p>
+              <p class="text-xs text-gray-400 mt-1 italic">From: {{ service.category }}</p>
             </div>
             <button
               @click="goToBooking(service.title)"
@@ -50,18 +54,51 @@
           </div>
         </div>
       </div>
+
+      <!-- 🧾 Original Full List (only when no search) -->
+      <div v-if="!searchQuery">
+        <div v-for="category in services" :key="category.title">
+          <h2 class="text-xl font-semibold text-gray-800 mb-4">{{ category.title }}</h2>
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div
+              v-for="(service, index) in category.items"
+              :key="index"
+              class="bg-white rounded-lg shadow-md p-4 flex items-center justify-between hover:shadow-lg transition"
+            >
+              <div>
+                <h3 class="text-lg font-semibold text-[#007EA7]">{{ service.title }}</h3>
+                <p class="text-sm text-gray-600 mt-1">{{ service.desc }}</p>
+              </div>
+              <button
+                @click="goToBooking(service.title)"
+                :disabled="disableBooking"
+                :class="[
+                  'ml-4 px-4 py-1 rounded transition',
+                  disableBooking
+                    ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                    : 'bg-[#007EA7] text-white hover:bg-[#005f6b]'
+                ]"
+              >
+                Book Now
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
     </section>
   </div>
 </template>
 
 <script setup>
+import { ref ,computed } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 
 const router = useRouter();
 const route = useRoute();
 
 const disableBooking = route.query.disableBooking === 'true';
-
+const searchQuery = ref('');
 const goToDashboard = () => {
   router.push('/dashboard');
 };
@@ -132,4 +169,24 @@ const services = [
     ]
   }
 ];
+// 🔍 Filter logic for search
+const filteredResults = computed(() => {
+  if (!searchQuery.value.trim()) return [];
+
+  const query = searchQuery.value.toLowerCase();
+  const results = [];
+
+  services.forEach((category) => {
+    category.items.forEach((item) => {
+      if (
+        item.title.toLowerCase().includes(query) ||
+        item.desc.toLowerCase().includes(query)
+      ) {
+        results.push({ ...item, category: category.title });
+      }
+    });
+  });
+
+  return results;
+});
 </script>
