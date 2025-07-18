@@ -2,11 +2,13 @@
 const User = require('../models/User');
 const express = require('express');
 const router = express.Router();
-const { signup, login } = require('../controllers/userController');
+const { signup, login, getUserProfile, changePassword } = require('../controllers/userController');
 const authenticateUser = require('../middleware/authMiddleware');
 
 router.post('/signup', signup);
 router.post('/login', login);
+router.get('/profile', authenticateUser, getUserProfile);
+router.post('/change-password', authenticateUser, changePassword);
 
 // Test route
 router.get('/profile', authenticateUser, async (req, res) => {

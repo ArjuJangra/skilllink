@@ -152,9 +152,10 @@
     <div class="flex items-center justify-between">
       <button
         @click="changePassword"
-        class="px-4 py-2 bg-[#007EA7] text-white rounded hover:bg-[#005f78]"
+        :disabled="isChangingPassword "
+        class="px-4 py-2 bg-[#007EA7] text-white rounded hover:bg-[#005f78]  disabled:opacity-50 disabled:cursor-not-allowed"
       >
-        Submit
+          {{ isChangingPassword ? 'Changing...' : 'Submit' }}
       </button>
       <a href="/forgot-password" class="text-sm text-[#007EA7] hover:underline">
         Forgot Password?
@@ -168,12 +169,42 @@
     <li>Privacy Settings</li>
   </ul>
 
-  <button
+  <button 
     class="mt-4 px-6 py-2 bg-[#007EA7] text-white rounded-lg shadow hover:bg-[#005f78] transition duration-300"
-    @click="logout"
+    @click="showLogoutModal = true"
   >
     Logout
   </button>
+  <!-- Logout Confirmation Modal -->
+<transition name="fade-zoom">
+  <div
+    v-if="showLogoutModal"
+    class="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50"
+  >
+    <div
+      class="bg-white p-6 rounded-lg shadow-xl w-80 transform transition-transform duration-300"
+    >
+      <h2 class="text-lg font-semibold text-gray-800 mb-3">Confirm Logout</h2>
+      <p class="text-gray-600 mb-5">Are you sure you want to logout?</p>
+      <div class="flex justify-end space-x-3">
+        <button
+          @click="showLogoutModal = false"
+          class="px-4 py-2 bg-gray-200 text-gray-700 rounded hover:bg-gray-300"
+        >
+          Cancel
+        </button>
+        <button
+          @click="confirmLogout"
+          class="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"
+        >
+          Logout
+        </button>
+      </div>
+    </div>
+  </div>
+</transition>
+
+
 </div>
 
 
@@ -185,20 +216,36 @@
 import { ref, onMounted } from 'vue';
 import axios from 'axios';
 import { useRouter } from 'vue-router';
+import { toast } from 'vue3-toastify';
+import 'vue3-toastify/dist/index.css';
+const showLogoutModal = ref(false);
 
 const bookings = ref([]);
 const router = useRouter();
 
 
 const logout = () => {
-  localStorage.removeItem('token');
-  router.push('/login'); 
+  toast.success("Logged out successfully");
+
+  setTimeout(() => {
+    localStorage.removeItem('token');
+    router.push('/homeboard');
+  }, 1000); 
 };
+
+
+const confirmLogout = () => {
+  logout();
+  showLogoutModal.value = false;
+};
+
+
 
 const activeTab = ref('bookings');
 
 const activeClass = 'text-[#007EA7] border-b-2 border-[#00A8E8]';
 const inactiveClass = 'text-gray-500 hover:text-[#00A8E8]';
+
 const user = ref({ name: '', email: '' });
 const history = ref([
   { service: 'Electrician - Fan Repair', date: '2025-07-01', status: 'Completed' },
@@ -214,7 +261,7 @@ const getUserProfile = async () => {
         Authorization: `Bearer ${token}`,
       },
     });
-    console.log('User data response:', res.data); // 👈 add this line
+    console.log('User data response:', res.data); 
     user.value = res.data;
   } catch (err) {
     console.error('Failed to load user:', err);
@@ -235,6 +282,7 @@ const fetchBookings = async () => {
     console.error('Failed to load bookings:', err);
   }
 };
+
 const showAddressForm = ref(false);
 const savedAddresses = ref([]);
 
@@ -253,28 +301,46 @@ const saveAddress = () => {
     alert('Please fill in all fields.');
   }
 };
-const showPasswordForm = ref(false);
 
+const showPasswordForm = ref(false);
+const isChangingPassword = ref(false);
 const passwordForm = ref({
   current: '',
   new: '',
   confirm: ''
 });
 
-const changePassword = () => {
+const changePassword = async () => {
   if (!passwordForm.value.current || !passwordForm.value.new || !passwordForm.value.confirm) {
-    alert("Please fill out all password fields.");
+    toast.error("Please fill out all password fields.");
     return;
   }
   if (passwordForm.value.new !== passwordForm.value.confirm) {
-    alert("New passwords do not match.");
+    toast.error("New passwords do not match.");
     return;
   }
+   isChangingPassword.value = true;
+   try {
+    const token = localStorage.getItem('token');
+    const res = await axios.post('http://localhost:5000/api/user/change-password', {
+      currentPassword: passwordForm.value.current,
+      newPassword: passwordForm.value.new
+    }, {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    });
 
-  // Replace this with actual logic
-  alert("Password changed successfully!");
-  showPasswordForm.value = false;
-  passwordForm.value = { current: '', new: '', confirm: '' };
+ toast.success(res.data.message || "Password changed successfully!");
+    showPasswordForm.value = false;
+    passwordForm.value = { current: '', new: '', confirm: '' };
+
+  } catch (err) {
+    const msg = err.response?.data?.message || "Failed to change password.";
+    toast.error(msg);
+  }finally {
+    isChangingPassword.value = false;
+  }
 };
 
 
@@ -284,3 +350,26 @@ onMounted(() => {
 });
 
 </script>
+
+<style scoped>
+.fade-zoom-enter-active,
+.fade-zoom-leave-active {
+  transition: all 0.3s ease;
+}
+.fade-zoom-enter-from {
+  opacity: 0;
+  transform: scale(0.95);
+}
+.fade-zoom-enter-to {
+  opacity: 1;
+  transform: scale(1);
+}
+.fade-zoom-leave-from {
+  opacity: 1;
+  transform: scale(1);
+}
+.fade-zoom-leave-to {
+  opacity: 0;
+  transform: scale(0.95);
+}
+</style>
