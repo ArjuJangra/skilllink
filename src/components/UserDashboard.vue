@@ -346,8 +346,14 @@ const changePassword = async () => {
 
 onMounted(() => {
   getUserProfile();
-   fetchBookings();
+  fetchBookings();
+
+  
+  if (window.location.hash === '#bookings') {
+    activeTab.value = 'bookings';
+  }
 });
+
 
 </script>
 

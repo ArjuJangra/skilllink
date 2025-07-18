@@ -72,7 +72,13 @@ const routes = [
     path: '/booking',
     component: BookingPage,
     meta: { requiresAuth: true },
-  }
+  },
+  {
+  path: '/booking-confirm',
+  name: 'BookingConfirm',
+  component: () => import('@/components/BookingConfirm.vue')
+}
+
 ];
 
 const router = createRouter({
