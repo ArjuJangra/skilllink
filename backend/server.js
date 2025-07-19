@@ -8,12 +8,15 @@ const { Server } = require('socket.io');
 dotenv.config();
 
 const app = express();
+const path = require('path');
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 const corsOptions = {
   origin: ['http://localhost:8080', 'http://localhost:5173'],
   methods: ['GET', 'POST'],
   credentials: true,
 };
+
 
 app.use(cors({
   origin: 'http://localhost:8080',

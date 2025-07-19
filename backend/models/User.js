@@ -12,6 +12,10 @@ const userSchema = new mongoose.Schema({
   sms: { type: Boolean, default: false },
   push: { type: Boolean, default: true }
   },
+  profilePic: {
+  type: String,
+  default: ''
+},
   role: {
     type: String,
     enum: ['user', 'provider'],

@@ -4,54 +4,83 @@
     <div class="max-w-4xl mx-auto bg-white rounded-2xl shadow-lg p-6">
 
       <!-- Profile Section -->
-       <div class="max-w-2xl mx-auto bg-[#f1f2f3] hover:bg-[#eeeff0] p-8 rounded-2xl shadow-lg mt-6 transition-all duration-300 border border-gray-200 backdrop-blur-sm">
+      <div
+        class="max-w-2xl mx-auto bg-[#f1f2f3] hover:bg-[#eeeff0] p-8 rounded-2xl shadow-lg mt-6 transition-all duration-300 border border-gray-200 backdrop-blur-sm">
 
-    <!-- Edit Button Top Right -->
-    <div class="flex justify-end">
-      <button @click="showEditProfileForm = !showEditProfileForm"
- class="flex items-center gap-1 text-blue-500 hover:text-blue-700">
-        <!-- Pencil Icon (Working Heroicon) -->
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-            d="M11 4H6a2 2 0 00-2 2v12a2 2 0 002 2h12a2 2 0 002-2v-5M18.5 2.5a2.121 2.121 0 113 3L12 15l-4 1 1-4 9.5-9.5z" />
-        </svg>
-        <span>Edit</span>
-      </button>
-    </div>
+        <!-- Edit Button  -->
+        <div class="flex justify-end">
+          <button @click="showEditProfileForm = !showEditProfileForm"
+            class="flex items-center gap-1 text-blue-500 hover:text-blue-700">
 
-    <!-- Profile Info -->
-    <div class="flex items-center space-x-4 border-b pb-4 mb-4">
-      <img src="@/assets/user.png" alt="User Profile" class="w-20 h-20 rounded-full border-2 border-[#00A8E8]" />
-      <div>
-        <h2 class="text-2xl font-bold text-[#007EA7]">{{ user.name }}</h2>
-        <p class="text-gray-500">{{ user.email }}</p>
-      </div>
-    </div>
-
-    <!-- Edit Profile Form -->
-    <div v-if="showEditProfileForm">
-      <form @submit.prevent="updateUserProfile">
-        <div class="mb-4">
-          <label class="block text-gray-600">Full Name</label>
-          <input v-model="user.name" type="text" class="w-full mt-1 p-2 border rounded-md" />
+            <!-- Pencil Icon (Working Heroicon) -->
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
+              stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M11 4H6a2 2 0 00-2 2v12a2 2 0 002 2h12a2 2 0 002-2v-5M18.5 2.5a2.121 2.121 0 113 3L12 15l-4 1 1-4 9.5-9.5z" />
+            </svg>
+            <span>Edit</span>
+          </button>
         </div>
 
-        <div class="mb-4">
-          <label class="block text-gray-600">Phone</label>
-          <input v-model="user.phone" type="text" class="w-full mt-1 p-2 border rounded-md" />
-        </div>
+        <!-- Profile Info -->
+        <div class="flex items-center space-x-4 border-b pb-4 mb-6">
 
-        <div class="mb-4">
-          <label class="block text-gray-600">Bio</label>
-          <textarea v-model="user.bio" class="w-full mt-1 p-2 border rounded-md"></textarea>
-        </div>
+  <!-- Profile Image with Upload -->
+  <div class="relative group">
 
-        <button type="submit" class="bg-[#00A8E8] hover:bg-[#007EA7] text-white px-4 py-2 rounded-md">
-          Save Changes
-        </button>
-      </form>
-    </div>
+    <img
+      :src="user.profilePic ? `http://localhost:5000/uploads/${user.profilePic}` : require('@/assets/user.png')"
+      alt="Profile"
+      class="w-20 h-20 rounded-full border-2 border-[#00A8E8] object-cover"
+    />
+
+
+    <!-- Upload Icon -->
+    <label
+      class="absolute bottom-0 right-0 bg-[#007EA7] text-white rounded-full p-1 cursor-pointer opacity-0 group-hover:opacity-100 transition-opacity"
+      title="Change Photo"
+    >
+      <input type="file" class="hidden" @change="handleProfileImageChange" accept="image/*" />
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="currentColor" viewBox="0 0 24 24">
+        <path d="M5 20h14v-2H5v2zm7-18C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 
+        18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"/>
+      </svg>
+    </label>
   </div>
+
+  <!-- User Info -->
+  <div>
+    <h2 class="text-2xl font-bold text-[#007EA7]">{{ user.name }}</h2>
+    <p class="text-gray-500">{{ user.email }}</p>
+  </div>
+</div>
+
+
+        <!-- Edit Profile Form -->
+        <div v-if="showEditProfileForm">
+          <form @submit.prevent="updateUserProfile">
+            <div class="mb-4">
+              <label class="block text-gray-600">Full Name</label>
+              <input v-model="user.name" type="text" class="w-full mt-1 p-2 border rounded-md" />
+            </div>
+
+            <div class="mb-4">
+              <label class="block text-gray-600">Phone</label>
+              <input v-model="user.phone" type="text" class="w-full mt-1 p-2 border rounded-md" />
+            </div>
+
+            <div class="mb-4">
+              <label class="block text-gray-600">Bio</label>
+              <textarea v-model="user.bio" class="w-full mt-1 p-2 border rounded-md"></textarea>
+            </div>
+
+            <button type="submit" class="bg-[#00A8E8] hover:bg-[#007EA7] text-white px-4 py-2 rounded-md">
+              Save Changes
+            </button>
+          </form>
+        </div>
+
+      </div>
 
       <!-- Navigation Tabs -->
       <div class="flex flex-wrap gap-2 border-b pb-2 mb-4 text-sm md:text-base mt-6">
@@ -228,6 +257,7 @@
 </template>
 
 
+
 <script setup>
 import { ref, onMounted } from 'vue';
 import axios from 'axios';
@@ -242,13 +272,13 @@ const isLoading = ref(true);
 const showLogoutModal = ref(false);
 const showEditProfileForm = ref(false);
 
-
+const previewImage = ref(null); // for temporary image preview
 const tabs = ['bookings', 'history', 'address', 'settings'];
 const activeTab = ref('bookings');
 const activeClass = 'text-[#007EA7] border-b-2 border-[#00A8E8]';
 const inactiveClass = 'text-gray-500 hover:text-[#00A8E8]';
 
-const user = ref({ name: '', email: '', phone: '', bio: '' });
+const user = ref({ name: '', email: '', phone: '', bio: '', profilePic: '' });
 
 const bookings = ref([]);
 const history = ref([
@@ -264,13 +294,94 @@ const showPasswordForm = ref(false);
 const isChangingPassword = ref(false);
 const passwordForm = ref({ current: '', new: '', confirm: '' });
 
-//  Notification Preferences
-
 const notificationSettings = ref({ email: true, sms: false, push: true });
 const isSavingNotifications = ref(false);
 const showNotificationPreferences = ref(false);
 
+const formatTab = (tab) => tab.charAt(0).toUpperCase() + tab.slice(1).replace('-', ' ');
 
+// ✅ Fetch user profile
+const getUserProfile = async () => {
+  const token = localStorage.getItem('token');
+  try {
+    const res = await axios.get('http://localhost:5000/api/user/profile', {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    user.value = res.data;
+  } catch (err) {
+    toast.error("Failed to load user data");
+  }
+};
+
+// ✅ Upload & preview profile image
+const handleProfileImageChange = async (event) => {
+  const file = event.target.files[0];
+
+  if (!file || !file.type.startsWith('image/')) {
+    toast.error("Please select a valid image file.");
+    return;
+  }
+
+  // Instant preview
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    previewImage.value = e.target.result;
+  };
+  reader.readAsDataURL(file);
+
+  // Upload to backend
+  const formData = new FormData();
+  formData.append('profile', file);
+
+  try {
+    const token = localStorage.getItem('token');
+    const res = await axios.post('http://localhost:5000/api/user/upload-profile-picture', formData, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+
+    user.value.profilePic = res.data.profilePic;
+    toast.success("Profile picture updated!");
+  } catch (error) {
+    console.error(error);
+    toast.error("Failed to upload profile picture.");
+  }
+};
+
+// ✅ Update profile info
+const updateUserProfile = async () => {
+  const token = localStorage.getItem('token');
+  try {
+    const { name, phone, bio } = user.value;
+    const res = await axios.put(
+      'http://localhost:5000/api/user/profile',
+      { name, phone, bio },
+      {
+        headers: { Authorization: `Bearer ${token}` },
+      }
+    );
+    toast.success(res.data.message || "Profile updated successfully!");
+  } catch (error) {
+    toast.error("Failed to update profile.");
+  }
+};
+
+// ✅ Bookings
+const fetchBookings = async () => {
+  const token = localStorage.getItem('token');
+  try {
+    const res = await axios.get('http://localhost:5000/api/bookings', {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    bookings.value = res.data;
+  } catch {
+    toast.error("Failed to load bookings");
+  }
+};
+
+// ✅ Notification Settings
 const fetchNotificationSettings = async () => {
   try {
     const token = localStorage.getItem('token');
@@ -304,53 +415,7 @@ const updateNotificationSettings = async () => {
   }
 };
 
-function formatTab(tab) {
-  return tab.charAt(0).toUpperCase() + tab.slice(1).replace('-', ' ');
-}
-
-const getUserProfile = async () => {
-  const token = localStorage.getItem('token');
-  try {
-    const res = await axios.get('http://localhost:5000/api/user/profile', {
-      headers: { Authorization: `Bearer ${token}` },
-    });
-    user.value = res.data;
-  } catch (err) {
-    toast.error("Failed to load user data");
-  }
-};
-
-// eslint-disable-next-line no-unused-vars
-const updateUserProfile = async () => {
-  const token = localStorage.getItem('token');
-  try {
-    const { name, phone, bio } = user.value;
-    const res = await axios.put(
-      'http://localhost:5000/api/user/profile',
-      { name, phone, bio },
-      {
-        headers: { Authorization: `Bearer ${token}` },
-      }
-    );
-    toast.success(res.data.message || "Profile updated successfully!");
-  } catch (error) {
-    toast.error("Failed to update profile.");
-  }
-};
-
-
-const fetchBookings = async () => {
-  const token = localStorage.getItem('token');
-  try {
-    const res = await axios.get('http://localhost:5000/api/bookings', {
-      headers: { Authorization: `Bearer ${token}` },
-    });
-    bookings.value = res.data;
-  } catch {
-    toast.error("Failed to load bookings");
-  }
-};
-
+// ✅ Address functions
 const saveAddress = () => {
   const { pincode, city, address } = newAddress.value;
   if (pincode && city && address) {
@@ -369,6 +434,7 @@ const deleteAddress = (index) => {
   toast.success("Address deleted.");
 };
 
+// ✅ Password change
 const changePassword = async () => {
   const { current, new: newPass, confirm } = passwordForm.value;
   if (!current || !newPass || !confirm) return toast.error("All fields required");
@@ -394,6 +460,7 @@ const changePassword = async () => {
   }
 };
 
+// ✅ Logout
 const logout = () => {
   toast.success("Logged out");
   setTimeout(() => {
@@ -407,6 +474,7 @@ const confirmLogout = () => {
   showLogoutModal.value = false;
 };
 
+// ✅ Initial data
 onMounted(() => {
   const token = localStorage.getItem('token');
   if (!token) {
@@ -429,7 +497,6 @@ onMounted(() => {
   }
 });
 </script>
-
 
 
 
