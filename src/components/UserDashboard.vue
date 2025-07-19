@@ -1,5 +1,5 @@
 <template>
-  <div class="min-h-screen bg-gray-50 px-4 py-8">
+  <div v-if="isAuthenticated" class="min-h-screen bg-gray-50 px-4 py-8">
     <div class="max-w-4xl mx-auto bg-white rounded-2xl shadow-lg p-6">
       <!-- Profile Section -->
       <div class="flex items-center space-x-4 border-b pb-4 mb-4">
@@ -209,8 +209,11 @@
 
 
       </div>
+
     </div>
-  
+  <div v-else class="text-center mt-10 text-gray-500">
+    Redirecting to login...
+  </div>
 </template>
 <script setup>
 import { ref, onMounted } from 'vue';
@@ -219,10 +222,10 @@ import { useRouter } from 'vue-router';
 import { toast } from 'vue3-toastify';
 import 'vue3-toastify/dist/index.css';
 const showLogoutModal = ref(false);
+const isAuthenticated = ref(false)
 
 const bookings = ref([]);
 const router = useRouter();
-
 
 const logout = () => {
   toast.success("Logged out successfully");
@@ -345,6 +348,13 @@ const changePassword = async () => {
 
 
 onMounted(() => {
+    const token = localStorage.getItem('token');
+  if (!token) {
+    toast.error("Please login to access your dashboard.");
+    router.push('/login'); // or your login route
+    return;
+  }
+    isAuthenticated.value = true;
   getUserProfile();
   fetchBookings();
 
