@@ -308,6 +308,7 @@ const getUserProfile = async () => {
       headers: { Authorization: `Bearer ${token}` },
     });
     user.value = res.data;
+    localStorage.setItem("user", JSON.stringify(res.data)); 
   } catch (err) {
     toast.error("Failed to load user data");
   }
@@ -343,6 +344,11 @@ const handleProfileImageChange = async (event) => {
     });
 
     user.value.profilePic = res.data.profilePic;
+    const existingUser = JSON.parse(localStorage.getItem("user"));
+if (existingUser) {
+  existingUser.profilePic = res.data.profilePic;
+  localStorage.setItem("user", JSON.stringify(existingUser));
+}
     toast.success("Profile picture updated!");
   } catch (error) {
     console.error(error);
