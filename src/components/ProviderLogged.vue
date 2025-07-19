@@ -13,7 +13,7 @@
       </nav>
     </header>
 
-    <!-- Hero / Welcome Section -->
+    <!-- Hero / Welcome Section  data -->
     <section id="home" class="px-6 py-10 text-center bg-white shadow-md mt-4 mx-4 rounded-xl">
       <h2 class="text-3xl font-bold text-[#0073b1] mb-4">Welcome to SkillLink, Provider!</h2>
       <p class="text-gray-600 max-w-2xl mx-auto">
