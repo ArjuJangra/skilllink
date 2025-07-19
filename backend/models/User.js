@@ -5,6 +5,12 @@ const userSchema = new mongoose.Schema({
   email: { type: String, required:true, unique: true },
   password: { type: String, required: true},
 
+   notifications: {
+    system: { type: Boolean, default: true },
+    email: { type: Boolean, default: true },
+  sms: { type: Boolean, default: false },
+  push: { type: Boolean, default: true }
+  },
   role: {
     type: String,
     enum: ['user', 'provider'],

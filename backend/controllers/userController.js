@@ -54,6 +54,37 @@ exports.getUserProfile = async (req, res) => {
   });
 };
 
+// controllers/userController.js
+
+exports.updateNotifications = async (req, res) => {
+  try {
+    const { email, sms, push } = req.body;
+
+    const user = await User.findByIdAndUpdate(
+      req.user.id,
+      {
+        notifications: {
+          email,
+          sms,
+          push
+        }
+      },
+      { new: true }
+    ).select('notifications');
+
+    if (!user) return res.status(404).json({ message: 'User not found' });
+
+    res.json({
+      message: 'Notification settings updated successfully.',
+      notifications: user.notifications
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
+
 // Change Password
 // controllers/userController.js
 exports.changePassword = async (req, res) => {
