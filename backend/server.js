@@ -15,11 +15,11 @@ const corsOptions = {
   credentials: true,
 };
 
-app.use(cors(corsOptions));
-
-
-
-
+app.use(cors({
+  origin: 'http://localhost:8080',
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'], // 
+  allowedHeaders: ['Content-Type', 'Authorization']
+}));
 app.use(express.json());
 
  

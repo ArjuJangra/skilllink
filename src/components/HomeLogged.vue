@@ -94,7 +94,7 @@
           SkillLink is a one-stop platform built to connect people with skilled professionals across various domains.
           Whether it's an urgent home repair, beauty service, or electrical setup — we bring the experts directly to your doorstep.
           <br /><br />
-          ✅ Here's a complete list of services you can access through SkillLink:
+           Here's a complete list of services you can access through SkillLink:
         </p>
 
 

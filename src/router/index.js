@@ -10,12 +10,12 @@ import HomeLogged from '@/components/HomeLogged.vue';
 import AboutPage from '@/components/AboutPage.vue';
 import ContactPage from '@/components/ContactPage.vue';
 import HelpPage from '@/components/HelpPage.vue';
-import ProviderLogged from '@/components/ProviderLogged.vue';
+
 const routes = [
   { path: '/', redirect: '/homeboard' },
   { path: '/login', component: LoginPage },
   { path: '/signup', component: SignupPage },
-  { path: '/home', component: HomePage },
+   { path: '/home', component: HomePage },
   { path: '/dashboard', component: UserDashboard },
   { path: '/booking', component: BookingPage },
   { path: '/homeboard', component: HomeBoard },
@@ -23,18 +23,49 @@ const routes = [
   { path: '/about', component: AboutPage },
   { path: '/contact', component: ContactPage },
   {path: '/help', component: HelpPage},
-  {path: '/provider', component: ProviderLogged},
+  
   {
     path: '/profile',
     name: 'UserProfile',
-    component: () => import('@/components/UserDashboard.vue')
-  }
+    component: () => import('@/components/UserDashboard.vue'),
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/dashboard',
+    component: UserDashboard,
+    meta: { requiresAuth: true },
+  },
+  {
+    path: '/booking',
+    component: BookingPage,
+    meta: { requiresAuth: true },
+  },
+  {
+  path: '/booking-confirm',
+  name: 'BookingConfirm',
+  component: () => import('@/components/BookingConfirm.vue')
+}
+
 ];
 
 const router = createRouter({
   history: createWebHistory(),
   routes,
 });
+
+// Global Navigation Guard
+router.beforeEach((to, from, next) => {
+  const isAuthenticated = !!localStorage.getItem('token');
+
+  if (to.meta.requiresAuth && !isAuthenticated) {
+    // Not logged in, redirect to login
+    next({ path: '/login' });
+  } else {
+    next(); // Proceed as normal
+  }
+});
+
+
 
 export default router;
 

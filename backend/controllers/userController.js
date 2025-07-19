@@ -45,6 +45,7 @@ exports.login = async (req, res) => {
   }
 };
 
+// Get Profile
 exports.getUserProfile = async (req, res) => {
   res.json({
     name: req.user.name,
@@ -52,3 +53,63 @@ exports.getUserProfile = async (req, res) => {
     id: req.user._id
   });
 };
+
+// controllers/userController.js
+
+exports.updateNotifications = async (req, res) => {
+  try {
+    const { email, sms, push } = req.body;
+
+    const user = await User.findByIdAndUpdate(
+      req.user.id,
+      {
+        notifications: {
+          email,
+          sms,
+          push
+        }
+      },
+      { new: true }
+    ).select('notifications');
+
+    if (!user) return res.status(404).json({ message: 'User not found' });
+
+    res.json({
+      message: 'Notification settings updated successfully.',
+      notifications: user.notifications
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
+
+// Change Password
+// controllers/userController.js
+exports.changePassword = async (req, res) => {
+  const { currentPassword, newPassword } = req.body;
+
+  if (!currentPassword || !newPassword) {
+    return res.status(400).json({ message: 'All fields are required' });
+  }
+
+  try {
+    const user = await User.findById(req.user._id);
+
+    const isMatch = await bcrypt.compare(currentPassword, user.password);
+    if (!isMatch) {
+      return res.status(401).json({ message: 'Current password is incorrect' });
+    }
+
+    const hashedNewPassword = await bcrypt.hash(newPassword, 10);
+    user.password = hashedNewPassword;
+    await user.save();
+
+    res.status(200).json({ message: 'Password changed successfully' });
+  } catch (err) {
+    console.error('Password change error:', err);
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+

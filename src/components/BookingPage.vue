@@ -57,10 +57,11 @@
 
       <!-- Submit Button -->
       <button
+        :disabled="loading"
         @click="submitBooking"
-        class="w-full bg-[#007EA7] text-white py-2 rounded hover:bg-[#005f6b]"
+        class="w-full bg-[#007EA7] text-white py-2 rounded hover:bg-[#005f6b] disabled:opacity-50"
       >
-        Confirm Booking
+       {{ loading ? 'Booking...' : 'Confirm Booking' }}
       </button>
     </div>
   </div>
@@ -70,9 +71,14 @@
 import { ref, onMounted } from 'vue';
 import { useRoute } from 'vue-router';
 import axios from 'axios';
+import { toast } from 'vue3-toastify';
+import 'vue3-toastify/dist/index.css';
+import { useRouter } from 'vue-router';
 
 const route = useRoute();
+const router = useRouter();
 
+const loading = ref(false);
 const selectedService = ref('');
 const name = ref('');
 const contact = ref('');
@@ -84,14 +90,14 @@ onMounted(() => {
 
 const submitBooking = async () => {
   if (!name.value || !contact.value || !address.value) {
-    alert('Please fill in all fields.');
+    toast.error('Please fill in all fields.');
     return;
   }
-
+   loading.value = true;
   const token = localStorage.getItem('token');
 
   try {
-    const response = await axios.post(
+    await axios.post(
       'http://localhost:5000/api/bookings',
       {
         service: selectedService.value,
@@ -106,7 +112,9 @@ const submitBooking = async () => {
       }
     );
 
-    alert(response.data.message || 'Booking confirmed!');
+   
+    router.push('/booking-confirm');
+
     
     // Clear form
     name.value = '';
@@ -114,10 +122,9 @@ const submitBooking = async () => {
     address.value = '';
 
   } catch (err) {
-    const errorMsg =
-      err.response?.data?.message || 'Booking failed. Please try again.';
-    alert(errorMsg);
-    console.error('Booking error:', err);
+     toast.error(err.response?.data?.message || 'Booking failed.');
+  } finally {
+    loading.value = false;
   }
 };
 </script>

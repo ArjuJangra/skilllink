@@ -88,13 +88,13 @@ const handleLogin = async () => {
       render: 'Login Successful!',
       type: 'success',
       isLoading: false,
-      autoClose: 2000,
+      autoClose: 1200,
       hideProgressBar: true,
       closeOnClick: true,
       pauseOnHover: false,
       style: {
         fontSize: '15px',
-        background: '#e6f4ea',
+        background: '#007EA7',
         color: '#0073b1',
         borderRadius: '12px',
       }
