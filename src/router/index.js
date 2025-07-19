@@ -10,6 +10,7 @@ import HomeLogged from '@/components/HomeLogged.vue';
 import AboutPage from '@/components/AboutPage.vue';
 import ContactPage from '@/components/ContactPage.vue';
 import HelpPage from '@/components/HelpPage.vue';
+import ServiceProvider from '@/components/ServiceProvider.vue';
 
 const routes = [
   { path: '/', redirect: '/homeboard' },
@@ -23,7 +24,7 @@ const routes = [
   { path: '/about', component: AboutPage },
   { path: '/contact', component: ContactPage },
   {path: '/help', component: HelpPage},
-  
+  {path: '/serviceprovider', component: ServiceProvider},
   {
     path: '/profile',
     name: 'UserProfile',
