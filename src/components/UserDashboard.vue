@@ -4,16 +4,57 @@
     <div class="max-w-4xl mx-auto bg-white rounded-2xl shadow-lg p-6">
 
       <!-- Profile Section -->
-      <div class="flex items-center space-x-4 border-b pb-4 mb-4">
-        <img src="@/assets/user.png" alt="User Profile" class="w-20 h-20 rounded-full border-2 border-[#00A8E8]" />
-        <div>
-          <h2 class="text-2xl font-bold text-[#007EA7]">{{ user.name }}</h2>
-          <p class="text-gray-500">{{ user.email }}</p>
-        </div>
+       <div class="max-w-2xl mx-auto bg-[#f1f2f3] hover:bg-[#eeeff0] p-8 rounded-2xl shadow-lg mt-6 transition-all duration-300 border border-gray-200 backdrop-blur-sm">
+
+    <!-- Edit Button Top Right -->
+    <div class="flex justify-end">
+      <button @click="showEditProfileForm = !showEditProfileForm"
+ class="flex items-center gap-1 text-blue-500 hover:text-blue-700">
+        <!-- Pencil Icon (Working Heroicon) -->
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M11 4H6a2 2 0 00-2 2v12a2 2 0 002 2h12a2 2 0 002-2v-5M18.5 2.5a2.121 2.121 0 113 3L12 15l-4 1 1-4 9.5-9.5z" />
+        </svg>
+        <span>Edit</span>
+      </button>
+    </div>
+
+    <!-- Profile Info -->
+    <div class="flex items-center space-x-4 border-b pb-4 mb-4">
+      <img src="@/assets/user.png" alt="User Profile" class="w-20 h-20 rounded-full border-2 border-[#00A8E8]" />
+      <div>
+        <h2 class="text-2xl font-bold text-[#007EA7]">{{ user.name }}</h2>
+        <p class="text-gray-500">{{ user.email }}</p>
       </div>
+    </div>
+
+    <!-- Edit Profile Form -->
+    <div v-if="showEditProfileForm">
+      <form @submit.prevent="updateUserProfile">
+        <div class="mb-4">
+          <label class="block text-gray-600">Full Name</label>
+          <input v-model="user.name" type="text" class="w-full mt-1 p-2 border rounded-md" />
+        </div>
+
+        <div class="mb-4">
+          <label class="block text-gray-600">Phone</label>
+          <input v-model="user.phone" type="text" class="w-full mt-1 p-2 border rounded-md" />
+        </div>
+
+        <div class="mb-4">
+          <label class="block text-gray-600">Bio</label>
+          <textarea v-model="user.bio" class="w-full mt-1 p-2 border rounded-md"></textarea>
+        </div>
+
+        <button type="submit" class="bg-[#00A8E8] hover:bg-[#007EA7] text-white px-4 py-2 rounded-md">
+          Save Changes
+        </button>
+      </form>
+    </div>
+  </div>
 
       <!-- Navigation Tabs -->
-      <div class="flex flex-wrap gap-2 border-b pb-2 mb-4 text-sm md:text-base">
+      <div class="flex flex-wrap gap-2 border-b pb-2 mb-4 text-sm md:text-base mt-6">
         <button v-for="tab in tabs" :key="tab" class="px-4 py-2 rounded-t-lg font-semibold"
           :class="activeTab === tab ? activeClass : inactiveClass" @click="activeTab = tab">
           {{ formatTab(tab) }}
@@ -199,13 +240,16 @@ const router = useRouter();
 const isAuthenticated = ref(false);
 const isLoading = ref(true);
 const showLogoutModal = ref(false);
+const showEditProfileForm = ref(false);
+
 
 const tabs = ['bookings', 'history', 'address', 'settings'];
 const activeTab = ref('bookings');
 const activeClass = 'text-[#007EA7] border-b-2 border-[#00A8E8]';
 const inactiveClass = 'text-gray-500 hover:text-[#00A8E8]';
 
-const user = ref({ name: '', email: '' });
+const user = ref({ name: '', email: '', phone: '', bio: '' });
+
 const bookings = ref([]);
 const history = ref([
   { service: 'Electrician - Fan Repair', date: '2025-07-01', status: 'Completed' },
@@ -275,6 +319,25 @@ const getUserProfile = async () => {
     toast.error("Failed to load user data");
   }
 };
+
+// eslint-disable-next-line no-unused-vars
+const updateUserProfile = async () => {
+  const token = localStorage.getItem('token');
+  try {
+    const { name, phone, bio } = user.value;
+    const res = await axios.put(
+      'http://localhost:5000/api/user/profile',
+      { name, phone, bio },
+      {
+        headers: { Authorization: `Bearer ${token}` },
+      }
+    );
+    toast.success(res.data.message || "Profile updated successfully!");
+  } catch (error) {
+    toast.error("Failed to update profile.");
+  }
+};
+
 
 const fetchBookings = async () => {
   const token = localStorage.getItem('token');
