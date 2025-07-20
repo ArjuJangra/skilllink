@@ -106,7 +106,7 @@
             :key="index"
             class="bg-green-50 p-4 rounded border border-green-200"
           >
-            ✅ <strong>{{ order.service }}</strong> completed for {{ order.customer }} on {{ order.date }}
+             <strong>{{ order.service }}</strong> completed for {{ order.customer }} on {{ order.date }}
           </li>
         </ul>
       </section>
