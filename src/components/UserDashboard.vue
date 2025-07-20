@@ -5,6 +5,7 @@
 
       <!-- Profile Section -->
       <div
+        v-if="user"
         class="max-w-2xl mx-auto bg-[#f1f2f3] hover:bg-[#eeeff0] p-8 rounded-2xl shadow-lg mt-6 transition-all duration-300 border border-gray-200 backdrop-blur-sm">
 
         <!-- Edit Button  -->
@@ -25,36 +26,32 @@
         <!-- Profile Info -->
         <div class="flex items-center space-x-4 border-b pb-4 mb-6">
 
-  <!-- Profile Image with Upload -->
-  <div class="relative group">
+          <!-- Profile Image with Upload -->
+          <div class="relative group">
 
-    <img
-      :src="user.profilePic ? `http://localhost:5000/uploads/${user.profilePic}` : require('@/assets/user.png')"
-      alt="Profile"
-      class="w-20 h-20 rounded-full border-2 border-[#00A8E8] object-cover"
-    />
+            <img
+              :src="auth.user?.profilePic ? `http://localhost:5000/uploads/${user.profilePic}` : require('@/assets/user.png')"
+              alt="User" class="w-20 h-20 rounded-full border-2 border-[#00A8E8] object-cover" />
 
 
-    <!-- Upload Icon -->
-    <label
-      class="absolute bottom-0 right-0 bg-[#007EA7] text-white rounded-full p-1 cursor-pointer opacity-0 group-hover:opacity-100 transition-opacity"
-      title="Change Photo"
-    >
-      <input type="file" class="hidden" @change="handleProfileImageChange" accept="image/*" />
-      <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="currentColor" viewBox="0 0 24 24">
-        <path d="M5 20h14v-2H5v2zm7-18C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 
-        18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"/>
-      </svg>
-    </label>
-  </div>
+            <!-- Upload Icon -->
+            <label
+              class="absolute bottom-0 right-0 bg-[#007EA7] text-white rounded-full p-1 cursor-pointer opacity-0 group-hover:opacity-100 transition-opacity"
+              title="Change Photo">
+              <input type="file" class="hidden" @change="handleProfileImageChange" accept="image/*" />
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M5 20h14v-2H5v2zm7-18C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 
+        18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z" />
+              </svg>
+            </label>
+          </div>
 
-  <!-- User Info -->
-  <div>
-    <h2 class="text-2xl font-bold text-[#007EA7]">{{ user.name }}</h2>
-    <p class="text-gray-500">{{ user.email }}</p>
-  </div>
-</div>
-
+          <!-- User Info -->
+             <div>
+            <h2 class="text-2xl font-bold text-[#007EA7]">{{ user?.name || 'Guest' }}</h2>
+            <p class="text-gray-500">{{ user?.email || 'No email' }}</p>
+          </div>
+        </div>
 
         <!-- Edit Profile Form -->
         <div v-if="showEditProfileForm">
@@ -94,21 +91,78 @@
       <div v-if="isLoading" class="text-center py-8 text-[#007EA7] font-semibold">Loading...</div>
 
       <!-- Tab Contents -->
+
       <div v-else>
+
         <!-- Bookings Tab -->
-        <div v-if="activeTab === 'bookings'" class="space-y-2">
-          <h3 class="text-lg font-semibold text-[#007EA7]">My Bookings</h3>
-          <div v-if="bookings.length" class="space-y-2">
-            <div v-for="(booking, index) in bookings" :key="index" class="border rounded-lg p-3 shadow-sm">
-              <h4 class="font-semibold text-[#007EA7]">{{ booking.service }}</h4>
-              <p class="text-sm text-gray-500">Name: {{ booking.name }}</p>
-              <p class="text-sm text-gray-500">Contact: {{ booking.contact }}</p>
-              <p class="text-sm text-gray-500">Address: {{ booking.address }}</p>
-              <p class="text-xs text-gray-400">Booked on: {{ new Date(booking.createdAt).toLocaleString() }}</p>
-            </div>
-          </div>
-          <p v-else class="text-gray-500">No bookings found.</p>
+      <div v-if="activeTab === 'bookings'" class="space-y-2">
+  <h3 class="text-lg font-semibold text-[#007EA7]">My Bookings</h3>
+
+  <div v-if="bookings.length" class="space-y-2">
+    <div
+      v-for="(booking, index) in bookings"
+      :key="index"
+      class="border rounded-lg p-3 shadow-sm relative"
+    >
+      <!-- Edit Mode -->
+      <div v-if="editingId === booking._id">
+        <input v-model="editableBooking.service" placeholder="Service" class="border rounded p-1 w-full mb-1" />
+        <input v-model="editableBooking.name" placeholder="Name" class="border rounded p-1 w-full mb-1" />
+        <input v-model="editableBooking.contact" placeholder="Contact" class="border rounded p-1 w-full mb-1" />
+        <input v-model="editableBooking.address" placeholder="Address" class="border rounded p-1 w-full mb-1" />
+
+        <div class="flex gap-2 mt-2">
+          <button @click="saveEdit(booking._id)" class="bg-green-500 text-white px-3 py-1 rounded hover:bg-green-600">
+            Save
+          </button>
+          <button @click="cancelEdit" class="bg-gray-400 text-white px-3 py-1 rounded hover:bg-gray-500">
+            Cancel
+          </button>
         </div>
+      </div>
+
+      <!-- Display Mode -->
+      <div v-else>
+        <h4 class="font-semibold text-[#007EA7]">{{ booking.service }}</h4>
+        <p class="text-sm text-gray-500">Name: {{ booking.name }}</p>
+        <p class="text-sm text-gray-500">Contact: {{ booking.contact }}</p>
+        <p class="text-sm text-gray-500">Address: {{ booking.address }}</p>
+        <p class="text-xs text-gray-400">Booked on: {{ new Date(booking.createdAt).toLocaleString() }}</p>
+
+        <!-- Status -->
+        <div class="mt-2">
+          <span
+            v-if="booking.status === 'Completed'"
+            class="text-green-600 font-medium text-sm"
+          >
+            Completed
+          </span>
+          <button
+            v-else
+            @click="markAsCompleted(booking._id)"
+            class="bg-blue-500 text-white text-sm px-3 py-1 rounded hover:bg-blue-600"
+          >
+            Mark as Completed
+          </button>
+        </div>
+      </div>
+
+      <!-- Edit/Delete Buttons -->
+      <div class="absolute top-2 right-2 flex space-x-2">
+        <button @click="startEdit(booking)" class="text-blue-600 hover:text-blue-800">
+          <i class="fas fa-edit"></i>
+        </button>
+        <button @click="deleteBooking(booking._id)" class="text-red-600 hover:text-red-800">
+          <i class="fas fa-trash-alt"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <p v-else class="text-gray-500">No bookings found.</p>
+</div>
+
+
 
         <!-- History Tab -->
         <div v-else-if="activeTab === 'history'" class="space-y-2">
@@ -248,6 +302,7 @@
             </div>
           </transition>
         </div>
+
       </div>
     </div>
   </div>
@@ -264,6 +319,8 @@ import axios from 'axios';
 import { useRouter } from 'vue-router';
 import { toast } from 'vue3-toastify';
 import 'vue3-toastify/dist/index.css';
+import { auth } from '@/stores/auth';
+
 
 const router = useRouter();
 
@@ -272,8 +329,11 @@ const isLoading = ref(true);
 const showLogoutModal = ref(false);
 const showEditProfileForm = ref(false);
 
+
+
 const previewImage = ref(null); // for temporary image preview
 const tabs = ['bookings', 'history', 'address', 'settings'];
+
 const activeTab = ref('bookings');
 const activeClass = 'text-[#007EA7] border-b-2 border-[#00A8E8]';
 const inactiveClass = 'text-gray-500 hover:text-[#00A8E8]';
@@ -281,10 +341,15 @@ const inactiveClass = 'text-gray-500 hover:text-[#00A8E8]';
 const user = ref({ name: '', email: '', phone: '', bio: '', profilePic: '' });
 
 const bookings = ref([]);
-const history = ref([
-  { service: 'Electrician - Fan Repair', date: '2025-07-01', status: 'Completed' },
-  { service: 'Plumber - Pipe Leakage', date: '2025-06-25', status: 'Completed' },
-]);
+const editingId = ref(null)
+const editableBooking = ref({
+   service: '',
+  name: '',
+  contact: '',
+  address: ''
+})
+
+const history = ref([]);
 
 const showAddressForm = ref(false);
 const savedAddresses = ref(JSON.parse(localStorage.getItem('addresses')) || []);
@@ -300,7 +365,7 @@ const showNotificationPreferences = ref(false);
 
 const formatTab = (tab) => tab.charAt(0).toUpperCase() + tab.slice(1).replace('-', ' ');
 
-// ✅ Fetch user profile
+//  Fetch user profile
 const getUserProfile = async () => {
   const token = localStorage.getItem('token');
   try {
@@ -308,13 +373,13 @@ const getUserProfile = async () => {
       headers: { Authorization: `Bearer ${token}` },
     });
     user.value = res.data;
-    localStorage.setItem("user", JSON.stringify(res.data)); 
+    localStorage.setItem("user", JSON.stringify(res.data));
   } catch (err) {
     toast.error("Failed to load user data");
   }
 };
 
-// ✅ Upload & preview profile image
+// Upload & preview profile image
 const handleProfileImageChange = async (event) => {
   const file = event.target.files[0];
 
@@ -330,25 +395,29 @@ const handleProfileImageChange = async (event) => {
   };
   reader.readAsDataURL(file);
 
-  // Upload to backend
   const formData = new FormData();
   formData.append('profile', file);
 
   try {
     const token = localStorage.getItem('token');
-    const res = await axios.post('http://localhost:5000/api/user/upload-profile-picture', formData, {
+    const res = await axios.put('http://localhost:5000/api/user/profile/picture', formData, {
       headers: {
         Authorization: `Bearer ${token}`,
         'Content-Type': 'multipart/form-data',
       },
     });
 
-    user.value.profilePic = res.data.profilePic;
+    //  Append timestamp to avoid caching
+    const timestampedProfilePic = `${res.data.profilePic}?t=${Date.now()}`;
+
+    user.value.profilePic = timestampedProfilePic;
+
     const existingUser = JSON.parse(localStorage.getItem("user"));
-if (existingUser) {
-  existingUser.profilePic = res.data.profilePic;
-  localStorage.setItem("user", JSON.stringify(existingUser));
-}
+    if (existingUser) {
+      existingUser.profilePic = timestampedProfilePic;
+      localStorage.setItem("user", JSON.stringify(existingUser));
+    }
+
     toast.success("Profile picture updated!");
   } catch (error) {
     console.error(error);
@@ -356,7 +425,8 @@ if (existingUser) {
   }
 };
 
-// ✅ Update profile info
+
+//  Update profile info
 const updateUserProfile = async () => {
   const token = localStorage.getItem('token');
   try {
@@ -374,7 +444,7 @@ const updateUserProfile = async () => {
   }
 };
 
-// ✅ Bookings
+//  Bookings
 const fetchBookings = async () => {
   const token = localStorage.getItem('token');
   try {
@@ -387,7 +457,96 @@ const fetchBookings = async () => {
   }
 };
 
-// ✅ Notification Settings
+const startEdit = (booking) => {
+  editingId.value = booking._id
+  editableBooking.value = { ...booking } // shallow copy
+}
+const cancelEdit = () => {
+  editingId.value = null
+  editableBooking.value = {
+     service: '',
+    name: '',
+    contact: '',
+    address: ''
+  }
+}
+
+const saveEdit = async (id) => {
+  try {
+   const res = await axios.put(`http://localhost:5000/api/bookings/${id}`, editableBooking.value, {
+  headers: {
+    Authorization: `Bearer ${localStorage.getItem('token')}`
+  }
+})
+    // Update local list
+    const index = bookings.value.findIndex(b => b._id === id)
+   
+ if (index !== -1) bookings.value[index] = res.data
+    editingId.value = null
+  } catch (err) {
+    console.error(err)
+    toast.error('Update failed')
+  }
+}
+
+const markAsCompleted = async (bookingId) => {
+  try {
+    const res = await axios.put(
+      `http://localhost:5000/api/bookings/mark-completed/${bookingId}`,
+      {},
+      {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`,
+        },
+      }
+    );
+
+    const updatedBooking = res.data.booking;
+
+    // Push to history
+    history.value.push({
+      service: updatedBooking.service,
+      date: new Date(updatedBooking.updatedAt).toLocaleDateString(),
+      status: updatedBooking.status,
+    });
+
+    // Remove from active bookings list
+    bookings.value = bookings.value.filter(b => b._id !== bookingId);
+
+    toast.success("Booking marked as completed");
+  } catch (err) {
+    console.error(err);
+    toast.error("Failed to update booking status");
+  }
+};
+
+
+
+const deleteBooking = async (bookingId) => {
+  try {
+    await axios.delete(`http://localhost:5000/api/bookings/${bookingId}`)
+    bookings.value = bookings.value.filter(b => b._id !== bookingId)
+    toast.success('Booking deleted successfully')
+  } catch (err) {
+    toast.error('Failed to delete booking')
+    console.error(err)
+  }
+}
+
+const fetchHistory = async () => {
+  try {
+    const token = localStorage.getItem('token');
+    const res = await axios.get('http://localhost:5000/api/bookings/history', {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    history.value = res.data;
+  } catch (err) {
+    console.error(err);
+    toast.error("Failed to load service history.");
+  }
+};
+
+//  Notification Settings
 const fetchNotificationSettings = async () => {
   try {
     const token = localStorage.getItem('token');
@@ -421,7 +580,7 @@ const updateNotificationSettings = async () => {
   }
 };
 
-// ✅ Address functions
+//  Address functions
 const saveAddress = () => {
   const { pincode, city, address } = newAddress.value;
   if (pincode && city && address) {
@@ -440,7 +599,7 @@ const deleteAddress = (index) => {
   toast.success("Address deleted.");
 };
 
-// ✅ Password change
+//  Password change
 const changePassword = async () => {
   const { current, new: newPass, confirm } = passwordForm.value;
   if (!current || !newPass || !confirm) return toast.error("All fields required");
@@ -466,21 +625,22 @@ const changePassword = async () => {
   }
 };
 
-// ✅ Logout
+//  Logout
 const logout = () => {
-  toast.success("Logged out");
-  setTimeout(() => {
-    localStorage.removeItem('token');
-    router.push('/homeboard');
-  }, 1000);
+  localStorage.removeItem('user');
+  auth.user = null;
+ user.value = { name: '', email: '', phone: '', bio: '', profilePic: '' };
+
+  router.push('/login');
 };
+
 
 const confirmLogout = () => {
   logout();
   showLogoutModal.value = false;
 };
 
-// ✅ Initial data
+//  Initial data
 onMounted(() => {
   const token = localStorage.getItem('token');
   if (!token) {
@@ -493,6 +653,7 @@ onMounted(() => {
   Promise.all([
     getUserProfile(),
     fetchBookings(),
+     fetchHistory(),
     fetchNotificationSettings()
   ]).finally(() => {
     isLoading.value = false;
