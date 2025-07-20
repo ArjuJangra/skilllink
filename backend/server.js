@@ -4,7 +4,6 @@ const dotenv = require('dotenv');
 const mongoose = require('mongoose');
 const http = require('http');
 const { Server } = require('socket.io');
-
 dotenv.config();
 
 const app = express();

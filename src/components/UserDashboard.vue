@@ -373,6 +373,7 @@ const getUserProfile = async () => {
       headers: { Authorization: `Bearer ${token}` },
     });
     user.value = res.data;
+    auth.user = res.data;
     localStorage.setItem("user", JSON.stringify(res.data));
   } catch (err) {
     toast.error("Failed to load user data");
@@ -417,6 +418,8 @@ const handleProfileImageChange = async (event) => {
       existingUser.profilePic = timestampedProfilePic;
       localStorage.setItem("user", JSON.stringify(existingUser));
     }
+    auth.user.profilePic = timestampedProfilePic;
+
 
     toast.success("Profile picture updated!");
   } catch (error) {
@@ -631,7 +634,7 @@ const logout = () => {
   auth.user = null;
  user.value = { name: '', email: '', phone: '', bio: '', profilePic: '' };
 
-  router.push('/login');
+  router.push('/homeboard');
 };
 
 

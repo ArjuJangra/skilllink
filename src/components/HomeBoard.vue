@@ -28,7 +28,7 @@
         </router-link>
 
         <!-- Login/Signup -->
-        <router-link to="/login">
+        <router-link to="/signup">
           <button class="px-4 py-2 bg-[#0073b1] text-white font-semibold rounded-lg hover:bg-[#005f91] transition duration-200">
             Login/Sign Up
           </button>

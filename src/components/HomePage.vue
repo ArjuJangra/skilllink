@@ -13,13 +13,28 @@
           placeholder="Search for services..."
           class="px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#00A8E8] w-64"
         />
-<router-link to="/dashboard" v-if="auth.user" >
-  <img
-    :src="auth.user.profilePic ? `http://localhost:5000/uploads/${auth.user.profilePic}` : require('@/assets/user.png')"
-    alt="User"
-    class="w-10 h-10 rounded-full object-cover border-2 border-[#0073b1] cursor-pointer"
-  />
-</router-link>
+
+<!-- If Logged In -->
+<template v-if="auth.user">
+  <router-link to="/dashboard">
+    <img
+      :src="auth.user.profilePic ? `http://localhost:5000/uploads/${auth.user.profilePic}?t=${Date.now()}` : require('@/assets/user.png')"
+      alt="User"
+      class="w-10 h-10 rounded-full object-cover border-2 border-[#0073b1] cursor-pointer"
+    />
+
+  </router-link>
+</template> 
+
+<!-- If NOT Logged In -->
+<template v-else>
+
+   <router-link to="/signup">
+          <button class="px-4 py-2 bg-[#0073b1] text-white font-semibold rounded-lg hover:bg-[#005f91] transition duration-200">
+            Login/Sign Up
+          </button>
+        </router-link>
+</template>
 
       </div>
     </header>
@@ -105,9 +120,16 @@ const searchQuery = ref('');
 
 
 onMounted(() => {
-  const storedUser = JSON.parse(localStorage.getItem('user'));
-  if (storedUser && !auth.user) {
-    auth.user = storedUser;
+  const storedUserRaw = localStorage.getItem('user');
+  if (storedUserRaw) {
+    try {
+      const storedUser = JSON.parse(storedUserRaw);
+      if (storedUser && !auth.user) {
+        auth.user = storedUser;
+      }
+    } catch (err) {
+      console.error('Failed to parse user from localStorage', err);
+    }
   }
 });
 
