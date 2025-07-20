@@ -13,14 +13,14 @@
           placeholder="Search for services..."
           class="px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#00A8E8] w-64"
         />
-<router-link to="/profile">
-    <img
-      :src="user?.profilePic ? `http://localhost:5000/uploads/${user.profilePic}` : require('@/assets/user.png')"
-      alt="User DP"
-      class="w-10 h-10 rounded-full object-cover border-2 border-[#0073b1] cursor-pointer"
-      @click="goToDashboard"
-    />
-  </router-link>
+<router-link to="/dashboard" v-if="auth.user" >
+  <img
+    :src="auth.user.profilePic ? `http://localhost:5000/uploads/${auth.user.profilePic}` : require('@/assets/user.png')"
+    alt="User"
+    class="w-10 h-10 rounded-full object-cover border-2 border-[#0073b1] cursor-pointer"
+  />
+</router-link>
+
       </div>
     </header>
 
@@ -95,25 +95,23 @@
 <script setup>
 import { ref ,computed ,onMounted} from 'vue';
 import { useRouter, useRoute } from 'vue-router';
+import { auth } from '@/stores/auth';
 
 const router = useRouter();
 const route = useRoute();
 
 const disableBooking = route.query.disableBooking === 'true';
 const searchQuery = ref('');
-const goToDashboard = () => {
-  router.push('/dashboard');
-};
-const profilePic = ref(null);
+
 
 onMounted(() => {
   const storedUser = JSON.parse(localStorage.getItem('user'));
-  if (storedUser && storedUser.profilePic) {
-    profilePic.value = `http://localhost:5000/uploads/${storedUser.profilePic}`;
+  if (storedUser && !auth.user) {
+    auth.user = storedUser;
   }
 });
 
-const user = JSON.parse(localStorage.getItem("user"));
+
 const goToBooking = (serviceTitle) => {
   if (!disableBooking) {
     router.push({ path: '/booking', query: { service: serviceTitle } });

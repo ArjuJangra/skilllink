@@ -1,19 +1,26 @@
 const express = require('express');
 const router = express.Router();
-const User = require('../models/User');
 const upload = require('../middleware/upload');
+const User = require('../models/User');
+const authenticateUser = require('../middleware/authMiddleware');
 
 const {
   signup,
-  login,
+  login
+} = require('../controllers/authController');
+
+
+const {
   getUserProfile,
-  changePassword,
   updateUserProfile,
+  changePassword,
+  updateProfilePicture
+} = require('../controllers/profileController');
+
+const {
   getNotificationSettings,
   updateNotifications
-} = require('../controllers/userController');
-
-const authenticateUser = require('../middleware/authMiddleware');
+} = require('../controllers/settingController');
 
 // Auth Routes
 router.post('/signup', signup);
@@ -23,38 +30,16 @@ router.post('/login', login);
 router.get('/profile', authenticateUser, getUserProfile);
 router.put('/profile', authenticateUser, updateUserProfile);
 router.post('/change-password', authenticateUser, changePassword);
-router.put('/profile', authenticateUser, updateUserProfile);
 
+router.put(
+  '/profile/picture',
+  authenticateUser,
+  upload.single('profile'),
+  updateProfilePicture
+);
 
 router.get('/notifications', authenticateUser, getNotificationSettings);
 router.put('/notifications', authenticateUser, updateNotifications);
-
-router.post('/upload-profile-picture', authenticateUser, upload.single('profile'), async (req, res) => {
-  try {
-    console.log("🟨 req.user: ", req.user);        // debug auth
-    console.log("🟨 req.file: ", req.file);        // debug multer
-
-    if (!req.file) {
-      return res.status(400).json({ message: 'No file uploaded' });
-    }
-
-    const userId = req.user._id;
-    const filename = req.file.filename;
-
-    const user = await User.findByIdAndUpdate(
-      userId,
-      { profilePic: filename },
-      { new: true }
-    );
-
-    return res.json({ message: 'Profile picture updated', profilePic: filename });
-  } catch (err) {
-    console.error("🔴 Upload Error:", err);
-    return res.status(500).json({ message: 'Upload failed', error: err.message });
-  }
-});
-
-
 
 module.exports = router;
 
