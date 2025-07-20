@@ -11,6 +11,10 @@ import AboutPage from '@/components/AboutPage.vue';
 import ContactPage from '@/components/ContactPage.vue';
 import HelpPage from '@/components/HelpPage.vue';
 import ServiceProvider from '@/components/ServiceProvider.vue';
+import ProviderOrders from '@/components/ProviderOrders.vue';
+import ProviderPolicies from '@/components/ProviderPolicies.vue';
+import ProviderAbout from '@/components/ProviderAbout.vue';
+import ProviderContact from '@/components/ProviderContact.vue';
 
 const routes = [
   { path: '/', redirect: '/homeboard' },
@@ -45,8 +49,33 @@ const routes = [
   path: '/booking-confirm',
   name: 'BookingConfirm',
   component: () => import('@/components/BookingConfirm.vue')
-}
+},
+  {
+  path: '/provider/orders',
+  name: 'ProviderOrders',
+  component: ProviderOrders,
+  meta: { requiresAuth: true }
+},
+  {
+    path: '/provider/policies',
+    name: 'ProviderPolicies',
+    component: ProviderPolicies,
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/provider/about',
+    name: 'ProviderAbout',
+    component: ProviderAbout,
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/provider/contact',
+    name: 'ProviderContact',
+    component: ProviderContact,
+    meta: { requiresAuth: true }
+  }
 
+  
 ];
 
 const router = createRouter({
