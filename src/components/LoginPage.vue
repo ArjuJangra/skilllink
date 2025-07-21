@@ -100,9 +100,14 @@ const handleLogin = async () => {
       }
     });
     
-   setTimeout(() => {
-      router.push('/homelogged');
-    }, 1000);
+ setTimeout(() => {
+  if (user.role === 'provider') {
+    router.push('/ServiceProvider');  // provider dashboard or orders page
+  } else {
+    router.push('/homelogged');       // normal user homepage
+  }
+}, 1000);
+
 
 
   } catch (error) {

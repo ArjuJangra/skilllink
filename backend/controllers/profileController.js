@@ -17,10 +17,11 @@ exports.getUserProfile = async (req, res) => {
 // Update Profile
 exports.updateUserProfile = async (req, res) => {
   try {
-    const { name, phone, bio } = req.body;
+  const { name, phone, bio, city, pincode } = req.body;
+
     const updatedUser = await User.findByIdAndUpdate(
       req.user._id,
-      { name, phone, bio },
+      { name, phone, bio, city, pincode },
       { new: true, runValidators: true }
     ).select('-password');
 

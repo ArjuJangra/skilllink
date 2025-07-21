@@ -4,86 +4,83 @@
     <div class="max-w-4xl mx-auto bg-white rounded-2xl shadow-lg p-6">
 
       <!-- Profile Section -->
-     <!-- Profile Section -->
-<div
-  v-if="user"
-  class="max-w-2xl mx-auto bg-[#f1f2f3] hover:bg-[#eeeff0] p-8 rounded-2xl shadow-lg mt-6 transition-all duration-300 border border-gray-200 backdrop-blur-sm"
->
-  <!-- Edit Button  -->
-  <div class="flex justify-end">
-    <button
-      @click="showEditProfileForm = !showEditProfileForm"
-      class="flex items-center gap-1 text-blue-500 hover:text-blue-700"
-    >
-      <!-- Pencil Icon -->
-      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          stroke-width="2"
-          d="M11 4H6a2 2 0 00-2 2v12a2 2 0 002 2h12a2 2 0 002-2v-5M18.5 2.5a2.121 2.121 0 113 3L12 15l-4 1 1-4 9.5-9.5z"
-        />
-      </svg>
-      <span>Edit</span>
-    </button>
-  </div>
 
-  <!-- Profile Info -->
-  <div class="flex items-center space-x-4 border-b pb-4 mb-6">
-    <!-- Profile Image with Upload -->
-    <div class="relative group">
-      <img
-        :src="user.profilePic ? `http://localhost:5000/uploads/${user.profilePic}?t=${profilePicTimestamp}` : require('@/assets/user.png')"
-        alt="User"
-        class="w-20 h-20 rounded-full border-2 border-[#00A8E8] object-cover"
-      />
+      <div v-if="user"
+        class="max-w-2xl mx-auto bg-[#f1f2f3] hover:bg-[#eeeff0] p-8 rounded-2xl shadow-lg mt-6 transition-all duration-300 border border-gray-200 backdrop-blur-sm">
+        <!-- Edit Button  -->
+        <div class="flex justify-end">
+          <button @click="showEditProfileForm = !showEditProfileForm"
+            class="flex items-center gap-1 text-blue-500 hover:text-blue-700">
+            <!-- Pencil Icon -->
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
+              stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M11 4H6a2 2 0 00-2 2v12a2 2 0 002 2h12a2 2 0 002-2v-5M18.5 2.5a2.121 2.121 0 113 3L12 15l-4 1 1-4 9.5-9.5z" />
+            </svg>
+            <span>Edit</span>
+          </button>
+        </div>
 
-      <!-- Upload Icon -->
-      <label
-        class="absolute bottom-0 right-0 bg-[#007EA7] text-white rounded-full p-1 cursor-pointer opacity-0 group-hover:opacity-100 transition-opacity"
-        title="Change Photo"
-      >
-        <input type="file" class="hidden" @change="handleProfileImageChange" accept="image/*" />
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="currentColor" viewBox="0 0 24 24">
-          <path
-            d="M5 20h14v-2H5v2zm7-18C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 
-        18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"
-          />
-        </svg>
-      </label>
-    </div>
+        <!-- Profile Info -->
+        <div class="flex items-center space-x-4 border-b pb-4 mb-6">
+          <!-- Profile Image with Upload -->
+          <div class="relative group">
+            <img
+              :src="user.profilePic ? `http://localhost:5000/uploads/${user.profilePic}?t=${profilePicTimestamp}` : require('@/assets/user.png')"
+              alt="User" class="w-20 h-20 rounded-full border-2 border-[#00A8E8] object-cover" />
 
-    <!-- User Info -->
-    <div>
-      <h2 class="text-2xl font-bold text-[#007EA7]">{{ user?.name || 'Guest' }}</h2>
-      <p class="text-gray-500">{{ user?.email || 'No email' }}</p>
-    </div>
-  </div>
+            <!-- Upload Icon -->
+            <label
+              class="absolute bottom-0 right-0 bg-[#007EA7] text-white rounded-full p-1 cursor-pointer opacity-0 group-hover:opacity-100 transition-opacity"
+              title="Change Photo">
+              <input type="file" class="hidden" @change="handleProfileImageChange" accept="image/*" />
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M5 20h14v-2H5v2zm7-18C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 
+        18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z" />
+              </svg>
+            </label>
+          </div>
 
-  <!-- Edit Profile Form -->
-  <div v-if="showEditProfileForm">
-    <form @submit.prevent="updateUserProfile">
-      <div class="mb-4">
-        <label class="block text-gray-600">Full Name</label>
-        <input v-model="user.name" type="text" class="w-full mt-1 p-2 border rounded-md" />
+          <!-- User Info -->
+          <div>
+            <h2 class="text-2xl font-bold text-[#007EA7]">{{ user?.name || 'Guest' }}</h2>
+            <p class="text-gray-500">{{ user?.email || 'No email' }}</p>
+          </div>
+        </div>
+
+        <!-- Edit Profile Form -->
+        <div v-if="showEditProfileForm">
+          <form @submit.prevent="updateUserProfile">
+            <div class="mb-4">
+              <label class="block text-gray-600">Full Name</label>
+              <input v-model="user.name" type="text" class="w-full mt-1 p-2 border rounded-md" />
+            </div>
+
+            <div class="mb-4">
+              <label class="block text-gray-600">Phone</label>
+              <input v-model="user.phone" type="text" class="w-full mt-1 p-2 border rounded-md" />
+            </div>
+
+            <div class="mb-4">
+              <label class="block text-gray-600">Bio</label>
+              <textarea v-model="user.bio" class="w-full mt-1 p-2 border rounded-md"></textarea>
+            </div>
+            <div class="mb-4">
+              <label class="block text-gray-600">City</label>
+              <input v-model="user.city" type="text" class="w-full mt-1 p-2 border rounded-md" />
+            </div>
+
+            <div class="mb-4">
+              <label class="block text-gray-600">Pincode</label>
+              <input v-model="user.pincode" type="text" class="w-full mt-1 p-2 border rounded-md" />
+            </div>
+
+            <button type="submit" class="bg-[#00A8E8] hover:bg-[#007EA7] text-white px-4 py-2 rounded-md">
+              Save Changes
+            </button>
+          </form>
+        </div>
       </div>
-
-      <div class="mb-4">
-        <label class="block text-gray-600">Phone</label>
-        <input v-model="user.phone" type="text" class="w-full mt-1 p-2 border rounded-md" />
-      </div>
-
-      <div class="mb-4">
-        <label class="block text-gray-600">Bio</label>
-        <textarea v-model="user.bio" class="w-full mt-1 p-2 border rounded-md"></textarea>
-      </div>
-
-      <button type="submit" class="bg-[#00A8E8] hover:bg-[#007EA7] text-white px-4 py-2 rounded-md">
-        Save Changes
-      </button>
-    </form>
-  </div>
-</div>
 
 
       <!-- Navigation Tabs -->
@@ -102,72 +99,63 @@
       <div v-else>
 
         <!-- Bookings Tab -->
-      <div v-if="activeTab === 'bookings'" class="space-y-2">
-  <h3 class="text-lg font-semibold text-[#007EA7]">My Bookings</h3>
+        <div v-if="activeTab === 'bookings'" class="space-y-2">
+          <h3 class="text-lg font-semibold text-[#007EA7]">My Bookings</h3>
 
-  <div v-if="bookings.length" class="space-y-2">
-    <div
-      v-for="(booking, index) in bookings"
-      :key="index"
-      class="border rounded-lg p-3 shadow-sm relative"
-    >
-      <!-- Edit Mode -->
-      <div v-if="editingId === booking._id">
-        <input v-model="editableBooking.service" placeholder="Service" class="border rounded p-1 w-full mb-1" />
-        <input v-model="editableBooking.name" placeholder="Name" class="border rounded p-1 w-full mb-1" />
-        <input v-model="editableBooking.contact" placeholder="Contact" class="border rounded p-1 w-full mb-1" />
-        <input v-model="editableBooking.address" placeholder="Address" class="border rounded p-1 w-full mb-1" />
+          <div v-if="bookings.length" class="space-y-2">
+            <div v-for="(booking, index) in bookings" :key="index" class="border rounded-lg p-3 shadow-sm relative">
+              <!-- Edit Mode -->
+              <div v-if="editingId === booking._id">
+                <input v-model="editableBooking.service" placeholder="Service" class="border rounded p-1 w-full mb-1" />
+                <input v-model="editableBooking.name" placeholder="Name" class="border rounded p-1 w-full mb-1" />
+                <input v-model="editableBooking.contact" placeholder="Contact" class="border rounded p-1 w-full mb-1" />
+                <input v-model="editableBooking.address" placeholder="Address" class="border rounded p-1 w-full mb-1" />
 
-        <div class="flex gap-2 mt-2">
-          <button @click="saveEdit(booking._id)" class="bg-green-500 text-white px-3 py-1 rounded hover:bg-green-600">
-            Save
-          </button>
-          <button @click="cancelEdit" class="bg-gray-400 text-white px-3 py-1 rounded hover:bg-gray-500">
-            Cancel
-          </button>
+                <div class="flex gap-2 mt-2">
+                  <button @click="saveEdit(booking._id)"
+                    class="bg-green-500 text-white px-3 py-1 rounded hover:bg-green-600">
+                    Save
+                  </button>
+                  <button @click="cancelEdit" class="bg-gray-400 text-white px-3 py-1 rounded hover:bg-gray-500">
+                    Cancel
+                  </button>
+                </div>
+              </div>
+
+              <!-- Display Mode -->
+              <div v-else>
+                <h4 class="font-semibold text-[#007EA7]">{{ booking.service }}</h4>
+                <p class="text-sm text-gray-500">Name: {{ booking.name }}</p>
+                <p class="text-sm text-gray-500">Contact: {{ booking.contact }}</p>
+                <p class="text-sm text-gray-500">Address: {{ booking.address }}</p>
+                <p class="text-xs text-gray-400">Booked on: {{ new Date(booking.createdAt).toLocaleString() }}</p>
+
+                <!-- Status -->
+                <div class="mt-2">
+                  <span v-if="booking.status === 'Completed'" class="text-green-600 font-medium text-sm">
+                    Completed
+                  </span>
+                  <button v-else @click="markAsCompleted(booking._id)"
+                    class="bg-blue-500 text-white text-sm px-3 py-1 rounded hover:bg-blue-600">
+                    Mark as Completed
+                  </button>
+                </div>
+              </div>
+
+              <!-- Edit/Delete Buttons -->
+              <div class="absolute top-2 right-2 flex space-x-2">
+                <button @click="startEdit(booking)" class="text-blue-600 hover:text-blue-800">
+                  <i class="fas fa-edit"></i>
+                </button>
+                <button @click="deleteBooking(booking._id)" class="text-red-600 hover:text-red-800">
+                  <i class="fas fa-trash-alt"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <p v-else class="text-gray-500">No bookings found.</p>
         </div>
-      </div>
-
-      <!-- Display Mode -->
-      <div v-else>
-        <h4 class="font-semibold text-[#007EA7]">{{ booking.service }}</h4>
-        <p class="text-sm text-gray-500">Name: {{ booking.name }}</p>
-        <p class="text-sm text-gray-500">Contact: {{ booking.contact }}</p>
-        <p class="text-sm text-gray-500">Address: {{ booking.address }}</p>
-        <p class="text-xs text-gray-400">Booked on: {{ new Date(booking.createdAt).toLocaleString() }}</p>
-
-        <!-- Status -->
-        <div class="mt-2">
-          <span
-            v-if="booking.status === 'Completed'"
-            class="text-green-600 font-medium text-sm"
-          >
-            Completed
-          </span>
-          <button
-            v-else
-            @click="markAsCompleted(booking._id)"
-            class="bg-blue-500 text-white text-sm px-3 py-1 rounded hover:bg-blue-600"
-          >
-            Mark as Completed
-          </button>
-        </div>
-      </div>
-
-      <!-- Edit/Delete Buttons -->
-      <div class="absolute top-2 right-2 flex space-x-2">
-        <button @click="startEdit(booking)" class="text-blue-600 hover:text-blue-800">
-          <i class="fas fa-edit"></i>
-        </button>
-        <button @click="deleteBooking(booking._id)" class="text-red-600 hover:text-red-800">
-          <i class="fas fa-trash-alt"></i>
-        </button>
-      </div>
-    </div>
-  </div>
-
-  <p v-else class="text-gray-500">No bookings found.</p>
-</div>
 
 
 
@@ -321,6 +309,7 @@
 
 
 <script setup>
+import { io } from 'socket.io-client';
 import { ref, onMounted } from 'vue';
 import axios from 'axios';
 import { useRouter } from 'vue-router';
@@ -343,7 +332,9 @@ const activeClass = 'text-[#007EA7] border-b-2 border-[#00A8E8]';
 const inactiveClass = 'text-gray-500 hover:text-[#00A8E8]';
 
 const user = ref({ name: '', email: '', phone: '', bio: '', profilePic: '' });
-
+const socket = io('http://localhost:5000', {
+  transports: ['websocket'],
+});
 const bookings = ref([]);
 const editingId = ref(null);
 const editableBooking = ref({ service: '', name: '', contact: '', address: '' });
@@ -635,12 +626,30 @@ onMounted(() => {
   }
 
   isAuthenticated.value = true;
+
   Promise.all([
     getUserProfile(),
     fetchBookings(),
     fetchHistory(),
     fetchNotificationSettings(),
-  ]).finally(() => {
+  ]).then(() => {
+    // Connect to Socket.IO after user profile is fetched
+    socket.value = io('http://localhost:5000', {
+      auth: {
+        token,
+      }
+    });
+
+    // Optional: join user-specific room
+    socket.value.emit('joinRoom', { userId: user.value._id });
+
+    // Listen for real-time provider updates
+    socket.value.on('orderAccepted', (data) => {
+      toast.info(`Your order has been accepted by ${data.providerName}`);
+      fetchBookings(); // Refresh bookings if needed
+    });
+
+  }).finally(() => {
     isLoading.value = false;
   });
 
@@ -648,6 +657,7 @@ onMounted(() => {
     activeTab.value = 'bookings';
   }
 });
+
 </script>
 
 

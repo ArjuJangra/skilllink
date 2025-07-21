@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const Booking = require('../models/Booking');
 const authenticateUser = require('../middleware/authMiddleware');
+const User = require('../models/User');
 
 // GET /api/bookings
 router.get('/', authenticateUser, async (req, res) => {
@@ -22,8 +23,28 @@ router.post('/', authenticateUser, async (req, res) => {
     console.log('🔐 Authenticated User:', req.user);
 
     const { service, name, contact, address } = req.body;
+   
+
+// Get user details including pincode
+const user = await User.findById(req.user.id);
+if (!user) return res.status(404).json({ message: 'User not found' });
+
+// Find providers offering this service in the same pincode
+const matchingProviders = await User.find({
+  role: 'provider',
+  services: service,
+  pincode: user.pincode
+});
+
+if (matchingProviders.length === 0) {
+  return res.status(404).json({ message: 'No service providers available in your area for this service' });
+}
+ // Select one provider randomly
+const assignedProvider = matchingProviders[Math.floor(Math.random() * matchingProviders.length)];
+
     const booking = new Booking({
       userId: req.user.id,
+       providerId: assignedProvider._id,
       service,
       name,
       contact,
@@ -104,6 +125,21 @@ router.get('/history', authenticateUser, async (req, res) => {
   }
 });
 
+// GET /api/bookings/provider-orders
+router.get('/provider-orders', authenticateUser, async (req, res) => {
+  try {
+    // Only allow access if the user is a provider
+    if (req.user.role !== 'provider') {
+      return res.status(403).json({ message: 'Access denied' });
+    }
+
+    const orders = await Booking.find({ providerId: req.user.id }).sort({ createdAt: -1 });
+
+    res.json(orders);
+  } catch (err) {
+    res.status(500).json({ message: 'Failed to fetch provider orders', error: err.message });
+  }
+});
 
 
 module.exports = router;
