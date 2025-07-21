@@ -4,80 +4,87 @@
     <div class="max-w-4xl mx-auto bg-white rounded-2xl shadow-lg p-6">
 
       <!-- Profile Section -->
-      <div
-        v-if="user"
-        class="max-w-2xl mx-auto bg-[#f1f2f3] hover:bg-[#eeeff0] p-8 rounded-2xl shadow-lg mt-6 transition-all duration-300 border border-gray-200 backdrop-blur-sm">
+     <!-- Profile Section -->
+<div
+  v-if="user"
+  class="max-w-2xl mx-auto bg-[#f1f2f3] hover:bg-[#eeeff0] p-8 rounded-2xl shadow-lg mt-6 transition-all duration-300 border border-gray-200 backdrop-blur-sm"
+>
+  <!-- Edit Button  -->
+  <div class="flex justify-end">
+    <button
+      @click="showEditProfileForm = !showEditProfileForm"
+      class="flex items-center gap-1 text-blue-500 hover:text-blue-700"
+    >
+      <!-- Pencil Icon -->
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          d="M11 4H6a2 2 0 00-2 2v12a2 2 0 002 2h12a2 2 0 002-2v-5M18.5 2.5a2.121 2.121 0 113 3L12 15l-4 1 1-4 9.5-9.5z"
+        />
+      </svg>
+      <span>Edit</span>
+    </button>
+  </div>
 
-        <!-- Edit Button  -->
-        <div class="flex justify-end">
-          <button @click="showEditProfileForm = !showEditProfileForm"
-            class="flex items-center gap-1 text-blue-500 hover:text-blue-700">
+  <!-- Profile Info -->
+  <div class="flex items-center space-x-4 border-b pb-4 mb-6">
+    <!-- Profile Image with Upload -->
+    <div class="relative group">
+      <img
+        :src="user.profilePic ? `http://localhost:5000/uploads/${user.profilePic}?t=${profilePicTimestamp}` : require('@/assets/user.png')"
+        alt="User"
+        class="w-20 h-20 rounded-full border-2 border-[#00A8E8] object-cover"
+      />
 
-            <!-- Pencil Icon (Working Heroicon) -->
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
-              stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                d="M11 4H6a2 2 0 00-2 2v12a2 2 0 002 2h12a2 2 0 002-2v-5M18.5 2.5a2.121 2.121 0 113 3L12 15l-4 1 1-4 9.5-9.5z" />
-            </svg>
-            <span>Edit</span>
-          </button>
-        </div>
+      <!-- Upload Icon -->
+      <label
+        class="absolute bottom-0 right-0 bg-[#007EA7] text-white rounded-full p-1 cursor-pointer opacity-0 group-hover:opacity-100 transition-opacity"
+        title="Change Photo"
+      >
+        <input type="file" class="hidden" @change="handleProfileImageChange" accept="image/*" />
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="currentColor" viewBox="0 0 24 24">
+          <path
+            d="M5 20h14v-2H5v2zm7-18C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 
+        18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"
+          />
+        </svg>
+      </label>
+    </div>
 
-        <!-- Profile Info -->
-        <div class="flex items-center space-x-4 border-b pb-4 mb-6">
+    <!-- User Info -->
+    <div>
+      <h2 class="text-2xl font-bold text-[#007EA7]">{{ user?.name || 'Guest' }}</h2>
+      <p class="text-gray-500">{{ user?.email || 'No email' }}</p>
+    </div>
+  </div>
 
-          <!-- Profile Image with Upload -->
-          <div class="relative group">
-
-            <img
-              :src="auth.user?.profilePic ? `http://localhost:5000/uploads/${user.profilePic}` : require('@/assets/user.png')"
-              alt="User" class="w-20 h-20 rounded-full border-2 border-[#00A8E8] object-cover" />
-
-
-            <!-- Upload Icon -->
-            <label
-              class="absolute bottom-0 right-0 bg-[#007EA7] text-white rounded-full p-1 cursor-pointer opacity-0 group-hover:opacity-100 transition-opacity"
-              title="Change Photo">
-              <input type="file" class="hidden" @change="handleProfileImageChange" accept="image/*" />
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M5 20h14v-2H5v2zm7-18C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 
-        18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z" />
-              </svg>
-            </label>
-          </div>
-
-          <!-- User Info -->
-             <div>
-            <h2 class="text-2xl font-bold text-[#007EA7]">{{ user?.name || 'Guest' }}</h2>
-            <p class="text-gray-500">{{ user?.email || 'No email' }}</p>
-          </div>
-        </div>
-
-        <!-- Edit Profile Form -->
-        <div v-if="showEditProfileForm">
-          <form @submit.prevent="updateUserProfile">
-            <div class="mb-4">
-              <label class="block text-gray-600">Full Name</label>
-              <input v-model="user.name" type="text" class="w-full mt-1 p-2 border rounded-md" />
-            </div>
-
-            <div class="mb-4">
-              <label class="block text-gray-600">Phone</label>
-              <input v-model="user.phone" type="text" class="w-full mt-1 p-2 border rounded-md" />
-            </div>
-
-            <div class="mb-4">
-              <label class="block text-gray-600">Bio</label>
-              <textarea v-model="user.bio" class="w-full mt-1 p-2 border rounded-md"></textarea>
-            </div>
-
-            <button type="submit" class="bg-[#00A8E8] hover:bg-[#007EA7] text-white px-4 py-2 rounded-md">
-              Save Changes
-            </button>
-          </form>
-        </div>
-
+  <!-- Edit Profile Form -->
+  <div v-if="showEditProfileForm">
+    <form @submit.prevent="updateUserProfile">
+      <div class="mb-4">
+        <label class="block text-gray-600">Full Name</label>
+        <input v-model="user.name" type="text" class="w-full mt-1 p-2 border rounded-md" />
       </div>
+
+      <div class="mb-4">
+        <label class="block text-gray-600">Phone</label>
+        <input v-model="user.phone" type="text" class="w-full mt-1 p-2 border rounded-md" />
+      </div>
+
+      <div class="mb-4">
+        <label class="block text-gray-600">Bio</label>
+        <textarea v-model="user.bio" class="w-full mt-1 p-2 border rounded-md"></textarea>
+      </div>
+
+      <button type="submit" class="bg-[#00A8E8] hover:bg-[#007EA7] text-white px-4 py-2 rounded-md">
+        Save Changes
+      </button>
+    </form>
+  </div>
+</div>
+
 
       <!-- Navigation Tabs -->
       <div class="flex flex-wrap gap-2 border-b pb-2 mb-4 text-sm md:text-base mt-6">
@@ -321,7 +328,6 @@ import { toast } from 'vue3-toastify';
 import 'vue3-toastify/dist/index.css';
 import { auth } from '@/stores/auth';
 
-
 const router = useRouter();
 
 const isAuthenticated = ref(false);
@@ -329,11 +335,9 @@ const isLoading = ref(true);
 const showLogoutModal = ref(false);
 const showEditProfileForm = ref(false);
 
-
-
 const previewImage = ref(null); // for temporary image preview
-const tabs = ['bookings', 'history', 'address', 'settings'];
 
+const tabs = ['bookings', 'history', 'address', 'settings'];
 const activeTab = ref('bookings');
 const activeClass = 'text-[#007EA7] border-b-2 border-[#00A8E8]';
 const inactiveClass = 'text-gray-500 hover:text-[#00A8E8]';
@@ -341,13 +345,8 @@ const inactiveClass = 'text-gray-500 hover:text-[#00A8E8]';
 const user = ref({ name: '', email: '', phone: '', bio: '', profilePic: '' });
 
 const bookings = ref([]);
-const editingId = ref(null)
-const editableBooking = ref({
-   service: '',
-  name: '',
-  contact: '',
-  address: ''
-})
+const editingId = ref(null);
+const editableBooking = ref({ service: '', name: '', contact: '', address: '' });
 
 const history = ref([]);
 
@@ -365,7 +364,7 @@ const showNotificationPreferences = ref(false);
 
 const formatTab = (tab) => tab.charAt(0).toUpperCase() + tab.slice(1).replace('-', ' ');
 
-//  Fetch user profile
+// Fetch user profile
 const getUserProfile = async () => {
   const token = localStorage.getItem('token');
   try {
@@ -383,13 +382,11 @@ const getUserProfile = async () => {
 // Upload & preview profile image
 const handleProfileImageChange = async (event) => {
   const file = event.target.files[0];
-
   if (!file || !file.type.startsWith('image/')) {
     toast.error("Please select a valid image file.");
     return;
   }
 
-  // Instant preview
   const reader = new FileReader();
   reader.onload = (e) => {
     previewImage.value = e.target.result;
@@ -408,18 +405,15 @@ const handleProfileImageChange = async (event) => {
       },
     });
 
-    //  Append timestamp to avoid caching
     const timestampedProfilePic = `${res.data.profilePic}?t=${Date.now()}`;
-
     user.value.profilePic = timestampedProfilePic;
+    auth.user.profilePic = timestampedProfilePic;
 
     const existingUser = JSON.parse(localStorage.getItem("user"));
     if (existingUser) {
       existingUser.profilePic = timestampedProfilePic;
       localStorage.setItem("user", JSON.stringify(existingUser));
     }
-    auth.user.profilePic = timestampedProfilePic;
-
 
     toast.success("Profile picture updated!");
   } catch (error) {
@@ -428,8 +422,7 @@ const handleProfileImageChange = async (event) => {
   }
 };
 
-
-//  Update profile info
+// Update profile info
 const updateUserProfile = async () => {
   const token = localStorage.getItem('token');
   try {
@@ -442,12 +435,13 @@ const updateUserProfile = async () => {
       }
     );
     toast.success(res.data.message || "Profile updated successfully!");
+    showEditProfileForm.value = false;
   } catch (error) {
     toast.error("Failed to update profile.");
   }
 };
 
-//  Bookings
+// Bookings
 const fetchBookings = async () => {
   const token = localStorage.getItem('token');
   try {
@@ -461,36 +455,30 @@ const fetchBookings = async () => {
 };
 
 const startEdit = (booking) => {
-  editingId.value = booking._id
-  editableBooking.value = { ...booking } // shallow copy
-}
+  editingId.value = booking._id;
+  editableBooking.value = { ...booking };
+};
+
 const cancelEdit = () => {
-  editingId.value = null
-  editableBooking.value = {
-     service: '',
-    name: '',
-    contact: '',
-    address: ''
-  }
-}
+  editingId.value = null;
+  editableBooking.value = { service: '', name: '', contact: '', address: '' };
+};
 
 const saveEdit = async (id) => {
   try {
-   const res = await axios.put(`http://localhost:5000/api/bookings/${id}`, editableBooking.value, {
-  headers: {
-    Authorization: `Bearer ${localStorage.getItem('token')}`
-  }
-})
-    // Update local list
-    const index = bookings.value.findIndex(b => b._id === id)
-   
- if (index !== -1) bookings.value[index] = res.data
-    editingId.value = null
+    const res = await axios.put(`http://localhost:5000/api/bookings/${id}`, editableBooking.value, {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem('token')}`,
+      },
+    });
+    const index = bookings.value.findIndex(b => b._id === id);
+    if (index !== -1) bookings.value[index] = res.data;
+    editingId.value = null;
   } catch (err) {
-    console.error(err)
-    toast.error('Update failed')
+    console.error(err);
+    toast.error('Update failed');
   }
-}
+};
 
 const markAsCompleted = async (bookingId) => {
   try {
@@ -506,14 +494,12 @@ const markAsCompleted = async (bookingId) => {
 
     const updatedBooking = res.data.booking;
 
-    // Push to history
     history.value.push({
       service: updatedBooking.service,
       date: new Date(updatedBooking.updatedAt).toLocaleDateString(),
       status: updatedBooking.status,
     });
 
-    // Remove from active bookings list
     bookings.value = bookings.value.filter(b => b._id !== bookingId);
 
     toast.success("Booking marked as completed");
@@ -523,24 +509,22 @@ const markAsCompleted = async (bookingId) => {
   }
 };
 
-
-
 const deleteBooking = async (bookingId) => {
   try {
-    await axios.delete(`http://localhost:5000/api/bookings/${bookingId}`)
-    bookings.value = bookings.value.filter(b => b._id !== bookingId)
-    toast.success('Booking deleted successfully')
+    await axios.delete(`http://localhost:5000/api/bookings/${bookingId}`);
+    bookings.value = bookings.value.filter(b => b._id !== bookingId);
+    toast.success('Booking deleted successfully');
   } catch (err) {
-    toast.error('Failed to delete booking')
-    console.error(err)
+    toast.error('Failed to delete booking');
+    console.error(err);
   }
-}
+};
 
 const fetchHistory = async () => {
   try {
     const token = localStorage.getItem('token');
     const res = await axios.get('http://localhost:5000/api/bookings/history', {
-      headers: { Authorization: `Bearer ${token}` }
+      headers: { Authorization: `Bearer ${token}` },
     });
     history.value = res.data;
   } catch (err) {
@@ -549,7 +533,7 @@ const fetchHistory = async () => {
   }
 };
 
-//  Notification Settings
+// Notification Settings
 const fetchNotificationSettings = async () => {
   try {
     const token = localStorage.getItem('token');
@@ -583,7 +567,7 @@ const updateNotificationSettings = async () => {
   }
 };
 
-//  Address functions
+// Address functions
 const saveAddress = () => {
   const { pincode, city, address } = newAddress.value;
   if (pincode && city && address) {
@@ -602,7 +586,7 @@ const deleteAddress = (index) => {
   toast.success("Address deleted.");
 };
 
-//  Password change
+// Password change
 const changePassword = async () => {
   const { current, new: newPass, confirm } = passwordForm.value;
   if (!current || !newPass || !confirm) return toast.error("All fields required");
@@ -613,9 +597,9 @@ const changePassword = async () => {
     const token = localStorage.getItem('token');
     const res = await axios.post('http://localhost:5000/api/user/change-password', {
       currentPassword: current,
-      newPassword: newPass
+      newPassword: newPass,
     }, {
-      headers: { Authorization: `Bearer ${token}` }
+      headers: { Authorization: `Bearer ${token}` },
     });
 
     toast.success(res.data.message || "Password updated!");
@@ -628,22 +612,20 @@ const changePassword = async () => {
   }
 };
 
-//  Logout
+// Logout
 const logout = () => {
   localStorage.removeItem('user');
   auth.user = null;
- user.value = { name: '', email: '', phone: '', bio: '', profilePic: '' };
-
+  user.value = { name: '', email: '', phone: '', bio: '', profilePic: '' };
   router.push('/homeboard');
 };
-
 
 const confirmLogout = () => {
   logout();
   showLogoutModal.value = false;
 };
 
-//  Initial data
+// Initial load
 onMounted(() => {
   const token = localStorage.getItem('token');
   if (!token) {
@@ -656,8 +638,8 @@ onMounted(() => {
   Promise.all([
     getUserProfile(),
     fetchBookings(),
-     fetchHistory(),
-    fetchNotificationSettings()
+    fetchHistory(),
+    fetchNotificationSettings(),
   ]).finally(() => {
     isLoading.value = false;
   });
@@ -667,6 +649,7 @@ onMounted(() => {
   }
 });
 </script>
+
 
 
 

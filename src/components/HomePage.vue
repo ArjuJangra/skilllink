@@ -18,7 +18,7 @@
 <template v-if="auth.user">
   <router-link to="/dashboard">
     <img
-      :src="auth.user.profilePic ? `http://localhost:5000/uploads/${auth.user.profilePic}?t=${Date.now()}` : require('@/assets/user.png')"
+      :src="profilePicUrl || require('@/assets/user.png')"
       alt="User"
       class="w-10 h-10 rounded-full object-cover border-2 border-[#0073b1] cursor-pointer"
     />
@@ -108,7 +108,7 @@
 </template>
 
 <script setup>
-import { ref ,computed ,onMounted} from 'vue';
+import { ref ,computed ,onMounted, watch} from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import { auth } from '@/stores/auth';
 
@@ -117,6 +117,7 @@ const route = useRoute();
 
 const disableBooking = route.query.disableBooking === 'true';
 const searchQuery = ref('');
+const profilePicUrl = ref('');
 
 
 onMounted(() => {
@@ -124,14 +125,28 @@ onMounted(() => {
   if (storedUserRaw) {
     try {
       const storedUser = JSON.parse(storedUserRaw);
-      if (storedUser && !auth.user) {
-        auth.user = storedUser;
+      auth.user = storedUser;
+
+      if (storedUser.profilePic) {
+        profilePicUrl.value = `http://localhost:5000/uploads/${storedUser.profilePic}?t=${Date.now()}`;
       }
     } catch (err) {
       console.error('Failed to parse user from localStorage', err);
     }
   }
 });
+
+
+watch(
+  () => auth.user?.profilePic,
+  (newPic) => {
+    if (newPic) {
+      profilePicUrl.value = `http://localhost:5000/uploads/${newPic}?t=${Date.now()}`;
+    }
+  },
+  { immediate: true }
+);
+
 
 
 const goToBooking = (serviceTitle) => {
