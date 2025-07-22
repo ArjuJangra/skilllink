@@ -21,19 +21,41 @@ const routes = [
   { path: '/signup', component: SignupPage },
   { path: '/home', component: HomePage },
   { path: '/homeboard', component: HomeBoard },
-  { path: '/homelogged', component: HomeLogged },
+  {
+    path: '/homelogged',
+    component: HomeLogged,
+    meta: { requiresAuth: true, role: 'user' }
+  },
   { path: '/about', component: AboutPage },
   { path: '/contact', component: ContactPage },
   { path: '/help', component: HelpPage },
-  { path: '/serviceprovider', component: ServiceProvider },
+   {
+    path: '/ServiceProvider',
+    component: ServiceProvider,
+    meta: { requiresAuth: true, role: 'provider' }
+  },
 
   // Auth-Protected Routes
-  {
-    path: '/profile',
-    name: 'UserProfile',
-    component: () => import('@/components/UserDashboard.vue'),
-    meta: { requiresAuth: true }
+ {
+  path: '/profile',
+  name: 'Profile',
+  component: () => {
+    const user = JSON.parse(localStorage.getItem('user'));
+    if (user?.role === 'provider') {
+      return import('@/components/ProviderDashboard.vue');
+    } else {
+      return import('@/components/UserDashboard.vue');
+    }
   },
+  meta: { requiresAuth: true }
+},
+{
+  path: '/provider/profile',
+  name: 'ProviderDashboard',
+  component: () => import('@/components/ProviderDashboard.vue'),
+  meta: { requiresAuth: true, role: 'provider' }
+},
+
   {
     path: '/dashboard',
     name: 'Dashboard',
@@ -89,14 +111,26 @@ const router = createRouter({
 });
 
 // 🔐Global Navigation Guard
-router.beforeEach((to, from, next) => {
-  const isAuthenticated = !!localStorage.getItem('token');
 
-  if (to.meta.requiresAuth && !isAuthenticated) {
-    next({ path: '/login' });
-  } else {
-    next();
+router.beforeEach((to, from, next) => {
+  const token = localStorage.getItem('token');
+  const user = JSON.parse(localStorage.getItem('user'));
+
+  const isAuthenticated = !!token;
+
+  if (to.meta.requiresAuth) {
+    if (!isAuthenticated || !user) {
+      return next({ path: '/login' });
+    }
+
+    //  Role-based route protection
+    if (to.meta.role && to.meta.role !== user.role) {
+      return next({ path: '/login' }); // or redirect to role-based default
+    }
   }
+
+  next();
 });
+
 
 export default router;

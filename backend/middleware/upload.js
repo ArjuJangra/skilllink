@@ -1,18 +1,9 @@
-// middleware/upload.js
 const multer = require('multer');
 const path = require('path');
-const fs = require('fs');
-
-const uploadDir = path.join(__dirname, '..', 'uploads');
-
-// Create the directory if it doesn't exist
-if (!fs.existsSync(uploadDir)) {
-  fs.mkdirSync(uploadDir);
-}
 
 const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, uploadDir);
+  destination: function (req, file, cb) {
+    cb(null, 'uploads/'); // ✅ Correct folder name
   },
   filename: (req, file, cb) => {
     const uniqueName = Date.now() + '-' + file.originalname;

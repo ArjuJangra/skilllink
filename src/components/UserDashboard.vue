@@ -618,6 +618,11 @@ const confirmLogout = () => {
 
 // Initial load
 onMounted(() => {
+   const localUser = JSON.parse(localStorage.getItem('user'));
+  if (localUser?.role === 'provider') {
+    router.push('/provider/profile');
+    return;
+  }
   const token = localStorage.getItem('token');
   if (!token) {
     toast.error("Please login first");
@@ -648,6 +653,13 @@ onMounted(() => {
       toast.info(`Your order has been accepted by ${data.providerName}`);
       fetchBookings(); // Refresh bookings if needed
     });
+    
+  socket.value.on('orderRejected', (data) => {
+      toast.info(`Your booking has been rejected by ${data.providerName}`);
+      fetchBookings(); // Refresh bookings if needed
+    });
+
+ 
 
   }).finally(() => {
     isLoading.value = false;

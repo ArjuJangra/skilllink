@@ -3,6 +3,7 @@ const router = express.Router();
 const Booking = require('../models/Booking');
 const authenticateUser = require('../middleware/authMiddleware');
 
+
 // GET all orders assigned to this provider
 router.get('/', authenticateUser, async (req, res) => {
   try {
@@ -49,12 +50,22 @@ console.log('📦 Order Provider ID:', order.providerId?.toString());
       });
     }
 
+     else if (status === 'Rejected') {
+  global.io.emit('orderRejected', {
+    userId: order.userId._id.toString(),
+    providerName: order.providerId?.name || 'Provider',
+    bookingId: order._id
+  });
+}
+
     res.json({ message: 'Order status updated', order });
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: 'Error updating order status' });
   }
 });
+
+
 
 
 module.exports = router;

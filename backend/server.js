@@ -5,7 +5,7 @@ const cors = require('cors');
 const dotenv = require('dotenv');
 const mongoose = require('mongoose');
 const path = require('path');
-
+const providerRoutes = require('./routes/providerRoutes');
 dotenv.config();
 
 const app = express();
@@ -44,6 +44,7 @@ app.use('/api/address', require('./routes/addressRoutes'));
 app.use('/api/services', require('./routes/serviceRoutes'));
 app.use('/api/messages', require('./routes/messageRoutes'));
 app.use('/api/provider/orders', require('./routes/providerOrders'));
+app.use('/api/providers', providerRoutes);
 
 // ===== Socket.IO connection =====
 io.on('connection', (socket) => {

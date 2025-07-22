@@ -25,14 +25,16 @@
               <a href="/logout" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Logout</a>
             </div>
           </div> -->
+
           <!-- Profile Picture Dropdown -->
 <div class="relative group">
- <router-link to="/profile">
-            <img v-if="user && user.profilePic" :src="`http://localhost:5000/uploads/${user.profilePic}`" alt="User DP"
-              class="w-10 h-10 rounded-full object-cover border-2 border-[#0073b1] cursor-pointer" />
-            <img v-else src="@/assets/user.png" alt="Default User DP"
-              class="w-10 h-10 rounded-full object-cover border-2 border-[#0073b1] cursor-pointer" />
-          </router-link>
+ <router-link :to="user?.role === 'provider' ? '/provider/profile' : '/profile'">
+  <img v-if="user && user.profilePic" :src="`http://localhost:5000/uploads/${user.profilePic}`" alt="User DP"
+    class="w-10 h-10 rounded-full object-cover border-2 border-[#0073b1] cursor-pointer" />
+  <img v-else src="@/assets/user.png" alt="Default User DP"
+    class="w-10 h-10 rounded-full object-cover border-2 border-[#0073b1] cursor-pointer" />
+</router-link>
+
 
 </div>
 
