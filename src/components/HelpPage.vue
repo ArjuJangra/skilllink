@@ -1,16 +1,19 @@
+
 <template>
   <div class="min-h-screen bg-blue-50 flex flex-col justify-between">
     <!-- Header -->
-    <header class="bg-white shadow px-6 py-4 flex items-center justify-between max-w-7xl mx-auto w-full">
-      <div class="flex items-center gap-2">
-        <img src="@/assets/skilllogo.png" alt="SkillLink Logo" class="w-10 h-10 rounded-full" />
-        <h1 class="text-2xl font-bold text-[#0073b1]">SkillLink Help Center</h1>
+    <header class="bg-white shadow w-full">
+      <div class="max-w-7xl mx-auto px-6 py-5 flex items-center justify-between">
+        <div class="flex items-center gap-2">
+          <img src="@/assets/skilllogo.png" alt="SkillLink Logo" class="w-auto h-10" />
+          <h1 class="text-2xl font-bold text-[#0073b1]">SkillLink Help Center</h1>
+        </div>
+        <router-link :to="backRoute">
+          <button class="bg-[#0073b1] text-white px-4 py-2 rounded-lg hover:bg-[#005f91] transition">
+            Back to Home
+          </button>
+        </router-link>
       </div>
-      <router-link :to="backRoute">
-        <button class="bg-[#0073b1] text-white px-4 py-2 rounded-lg hover:bg-[#005f91] transition">
-          Back to Home
-        </button>
-      </router-link>
     </header>
 
     <!-- Help Section -->
@@ -42,6 +45,7 @@
     </footer>
   </div>
 </template>
+
 
 <script setup>
 import { reactive, computed } from 'vue'
