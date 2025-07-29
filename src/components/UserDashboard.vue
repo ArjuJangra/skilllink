@@ -26,7 +26,7 @@
           <!-- Profile Image with Upload -->
           <div class="relative group">
             <img
-              :src="user.profilePic ? `http://localhost:5000/uploads/${user.profilePic}?t=${profilePicTimestamp}` : require('@/assets/user.png')"
+              :src="user.profilePic ? `http://localhost:5000/uploads/${user.profilePic}` : require('@/assets/user.png')"
               alt="User" class="w-20 h-20 rounded-full border-2 border-[#00A8E8] object-cover" />
 
             <!-- Upload Icon -->
