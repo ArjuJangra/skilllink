@@ -28,13 +28,14 @@
 
           <!-- Profile Picture Dropdown -->
 <div class="relative group">
- <router-link :to="user?.role === 'provider' ? '/provider/profile' : '/profile'">
-  <img v-if="user && user.profilePic" :src="`http://localhost:5000/uploads/${user.profilePic}`" alt="User DP"
-    class="w-10 h-10 rounded-full object-cover border-2 border-[#0073b1] cursor-pointer" />
-  <img v-else src="@/assets/user.png" alt="Default User DP"
-    class="w-10 h-10 rounded-full object-cover border-2 border-[#0073b1] cursor-pointer" />
-</router-link>
-
+       <router-link to="/provider/profile">
+              <img
+                :src="provider?.profilePic ? `http://localhost:5000/uploads/providers/${provider.profilePic}` : require('@/assets/user.png')"
+                @error="(e) => { e.target.src = require('@/assets/user.png') }"
+                alt="Provider DP"
+                class="w-10 h-10 rounded-full object-cover border-2 border-[#0073b1] cursor-pointer"
+              />
+            </router-link>
 
 </div>
 
@@ -117,30 +118,26 @@ export default {
   name: "ProviderWelcome",
   data() {
     return {
-      showProfile: false,
-      user: null
+      provider: null,
     };
   },
   methods: {
-    toggleProfileDropdown() {
-      this.showProfile = !this.showProfile;
-    },
-    async fetchUserProfile() {
+    async fetchProviderProfile() {
       try {
         const token = localStorage.getItem('token');
-        const res = await axios.get('http://localhost:5000/api/user/profile', {
+        const res = await axios.get('http://localhost:5000/api/provider/profile', {
           headers: {
             Authorization: `Bearer ${token}`
           }
         });
-        this.user = res.data;
+        this.provider = res.data;
       } catch (err) {
-        console.error('Failed to fetch user profile:', err);
+        console.error('Failed to fetch provider profile:', err);
       }
     }
   },
   mounted() {
-    this.fetchUserProfile();
+    this.fetchProviderProfile();
   }
 };
 </script>

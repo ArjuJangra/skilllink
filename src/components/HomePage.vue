@@ -15,7 +15,7 @@
         />
 
 <!-- If Logged In -->
-<template v-if="auth.user && auth.token">
+<template v-if="auth.isLoggedIn">
   <router-link to="/dashboard">
     <img
       :src="profilePicUrl || require('@/assets/user.png')"
@@ -107,7 +107,7 @@
 <script setup>
 import { ref ,computed ,onMounted, watch} from 'vue';
 import { useRouter, useRoute } from 'vue-router';
-import { auth } from '@/stores/auth';
+import { auth } from '@/stores/auth'; 
 
 const router = useRouter();
 const route = useRoute();
@@ -126,6 +126,7 @@ onMounted(() => {
       const storedUser = JSON.parse(storedUserRaw);
       auth.user = storedUser;
       auth.token = storedToken;
+      auth.isLoggedIn = true;
 
       if (storedUser.profilePic) {
         profilePicUrl.value = `http://localhost:5000/uploads/${storedUser.profilePic}?t=${Date.now()}`;
@@ -136,6 +137,7 @@ onMounted(() => {
   } else {
     auth.user = null;
     auth.token = null;
+      auth.isLoggedIn = false;
     localStorage.removeItem('user');
     localStorage.removeItem('token');
   }
@@ -144,13 +146,15 @@ onMounted(() => {
 
 
 watch(
-  () => auth.user?.profilePic,
-  (newPic) => {
-    if (newPic) {
-      profilePicUrl.value = `http://localhost:5000/uploads/${newPic}?t=${Date.now()}`;
+  () => auth.user,
+  (newUser) => {
+    if (newUser?.profilePic) {
+      profilePicUrl.value = `http://localhost:5000/uploads/${newUser.profilePic}?t=${Date.now()}`;
+    } else {
+      profilePicUrl.value = ''; // fallback
     }
   },
-  { immediate: true }
+  { immediate: true, deep: true }
 );
 
 

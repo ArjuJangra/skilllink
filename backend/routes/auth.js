@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const User = require('../models/User');
+const ServiceProvider = require('../models/ServiceProvider');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 
@@ -69,18 +70,24 @@ router.post('/signup', async (req, res) => {
 // LOGIN POST /api/auth/login
 router.post('/login', async (req, res) => {
   try {
-    const { email, password } = req.body;
+    const { email, password, role } = req.body;
 
-    console.log('➡️ Login attempt:', email);
+    console.log('➡️ Login attempt:', email, '| Role:', role);
 
-    // 1. Find user
-    const user = await User.findOne({ email });
+    let user;
+
+    // Check role and query appropriate model
+    if (role === 'provider') {
+      user = await ServiceProvider.findOne({ email });
+    } else {
+      user = await User.findOne({ email });
+    }
+
     if (!user) {
       console.log('❌ User not found');
       return res.status(401).json({ error: 'User not found' });
     }
 
-    // 2. Compare password
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
       console.log('❌ Invalid password');
@@ -94,28 +101,29 @@ router.post('/login', async (req, res) => {
       return res.status(500).json({ error: 'Server configuration error' });
     }
 
-    // 3. Sign JWT
-    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '1d' });
+    const token = jwt.sign({ id: user._id, role: user.role }, process.env.JWT_SECRET, {
+      expiresIn: '1d',
+    });
 
     res.status(200).json({
       message: 'Login successful',
       token,
       user: {
-         _id: user._id,
+        _id: user._id,
         name: user.name,
         email: user.email,
         role: user.role,
         services: user.services,
         experience: user.experience,
-        address: user.address
-      }
+        address: user.address,
+      },
     });
-
   } catch (err) {
-    console.error('❌ Login error:', err); 
+    console.error('❌ Login error:', err);
     res.status(500).json({ error: 'Login failed. Try again later' });
   }
 });
+
 
 module.exports = router;
 

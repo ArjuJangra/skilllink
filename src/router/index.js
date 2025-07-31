@@ -14,7 +14,7 @@ import ProviderOrders from '@/components/ProviderOrders.vue';
 import ProviderPolicies from '@/components/ProviderPolicies.vue';
 import ProviderAbout from '@/components/ProviderAbout.vue';
 import ProviderContact from '@/components/ProviderContact.vue';
-import { auth } from '@/stores/auth';
+// import { auth } from '@/stores/auth';
 
 const routes = [
   { path: '/', redirect: '/homeboard' },
@@ -114,21 +114,22 @@ const router = createRouter({
 // 🔐Global Navigation Guard
 
 router.beforeEach((to, from, next) => {
-  const isAuthenticated = auth.isLoggedIn;
-  const user = auth.user;
+  const storedUser = JSON.parse(localStorage.getItem('user'));
+  const isAuthenticated = !!storedUser;
 
   if (to.meta.requiresAuth) {
-    if (!isAuthenticated || !user) {
+    if (!isAuthenticated) {
       return next({ path: '/login' });
     }
 
-    if (to.meta.role && to.meta.role !== user.role) {
-      return next({ path: '/login' });
+    if (to.meta.role && storedUser.role !== to.meta.role) {
+      return next({ path: '/homeboard' }); // or just redirect to home
     }
   }
 
   next();
 });
+
 
 
 export default router;

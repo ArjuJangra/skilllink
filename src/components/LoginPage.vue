@@ -23,6 +23,16 @@
             placeholder="Enter your password" />
         </div>
 
+        <!-- Role Selection -->
+        <div>
+          <label class="block text-sm font-semibold text-gray-700">Login as</label>
+          <select v-model="loginForm.role" required
+            class="mt-1 w-full px-4 py-2 border border-gray-300 rounded-lg bg-white focus:ring-2 focus:ring-[#0073b1]">
+            <option value="user">User</option>
+            <option value="provider">Service Provider</option>
+          </select>
+        </div>
+
         <!-- Submit -->
         <button type="submit"
           class="w-full mt-2 bg-[#0073b1] text-white py-2 rounded-lg hover:bg-[#005f91] transition duration-200">
@@ -39,6 +49,7 @@
   </div>
 </template>
 
+
 <script setup>
 import { reactive } from 'vue';
 import { useRouter } from 'vue-router';
@@ -48,9 +59,11 @@ import { toast } from 'vue3-toastify';
 
 const router = useRouter();
 
+// Add role field to login form
 const loginForm = reactive({
   email: '',
-  password: ''
+  password: '',
+  role: 'user'  // default value; can be 'provider' or 'user'
 });
 
 const handleLogin = async () => {
@@ -66,9 +79,11 @@ const handleLogin = async () => {
   });
 
   try {
+    // Send role in the login request
     const res = await axios.post('http://localhost:5000/api/auth/login', {
       email: loginForm.email,
       password: loginForm.password,
+      role: loginForm.role
     });
 
     const { token, user } = res.data;
@@ -85,7 +100,7 @@ const handleLogin = async () => {
 
     // Store in localStorage
     localStorage.setItem('token', token);
-    localStorage.setItem('userId', user.id);  
+    localStorage.setItem('userId', user._id);  
     localStorage.setItem('user', JSON.stringify(user));
 
     // Success toast
@@ -100,12 +115,12 @@ const handleLogin = async () => {
       style: {
         fontSize: '15px',
         background: '#007EA7',
-        color: '#0073b1',
+        color: '#ffffff',
         borderRadius: '12px',
       }
     });
 
-    // Redirect after delay
+    // Redirect based on role
     setTimeout(() => {
       if (user.role === 'provider') {
         router.push('/ServiceProvider');
@@ -116,7 +131,7 @@ const handleLogin = async () => {
 
   } catch (error) {
     toast.update(toastId, {
-      render: error.response?.data?.message || 'Login failed. Please check credentials.',
+      render: error.response?.data?.error || 'Login failed. Please check credentials.',
       type: 'error',
       isLoading: false,
       autoClose: 3000,
@@ -125,3 +140,4 @@ const handleLogin = async () => {
   }
 };
 </script>
+

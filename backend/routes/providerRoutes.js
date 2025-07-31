@@ -8,6 +8,7 @@ const {
   providerSignup,
   providerLogin,
   updateProviderProfile, 
+   getProviderProfile ,
 } = require('../controllers/providerProfileController');
 
 // Provider signup
@@ -17,7 +18,7 @@ router.post('/signup', providerSignup);
 router.post('/login', providerLogin);
 
 router.put('/profile/update/:id', uploadProviderPic.single('profilePic'), updateProviderProfile);
-
+router.get('/profile', authMiddleware, getProviderProfile);
 
 
 module.exports = router;

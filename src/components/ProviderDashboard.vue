@@ -13,15 +13,19 @@
             alt="Provider DP"
             class="w-16 h-16 rounded-full object-cover border-2 border-[#007EA7]"
           />
+          
           <div>
             <h2 class="text-xl font-semibold text-gray-800">{{ provider?.name }}</h2>
             <p class="text-sm text-gray-500">{{ provider?.email }}</p>
           </div>
         </div>
+
+
         <button class="text-[#007EA7] font-medium hover:underline" @click="showEditProfileForm = !showEditProfileForm">
           Edit Profile
         </button>
       </div>
+
 
       <!-- Edit Profile Modal -->
       <div v-if="showEditProfileForm" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">

@@ -26,7 +26,7 @@ async function providerSignup(req, res) {
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
 
-    const provider = await Provider.create({
+    const provider = await ServiceProvider.create({
       name,
       email,
       password: hashedPassword,
@@ -61,7 +61,7 @@ async function providerLogin(req, res) {
   const { email, password } = req.body;
 
   try {
-    const provider = await Provider.findOne({ email });
+    const provider = await ServiceProvider.findOne({ email });
     if (!provider) {
       return res.status(400).json({ message: 'Invalid credentials' });
     }
@@ -101,7 +101,7 @@ async function updateProviderProfile(req, res) {
 
     
     
-    const provider = await Provider.findById(id);
+    const provider = await ServiceProvider.findById(id);
     if (!provider) {
       return res.status(404).json({ message: 'Provider not found' });
     }
@@ -116,7 +116,7 @@ async function updateProviderProfile(req, res) {
       updateData.profilePic = req.file.filename;
     }
 
-    const updatedProvider = await Provider.findByIdAndUpdate(id, updateData, { new: true });
+    const updatedProvider = await ServiceProvider.findByIdAndUpdate(id, updateData, { new: true });
 
     if (!updatedProvider) {
       return res.status(500).json({ message: 'Update failed' });
@@ -138,8 +138,20 @@ async function updateProviderProfile(req, res) {
 }
 
 
+const getProviderProfile = async (req, res) => {
+  try {
+    const provider = await ServiceProvider.findById(req.user.id).select('-password');
+    if (!provider) return res.status(404).json({ message: 'Provider not found' });
+    res.json(provider);
+  } catch (err) {
+    console.error('Error fetching provider profile:', err);
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
 module.exports = {
   providerSignup,
   providerLogin,
-  updateProviderProfile
+  updateProviderProfile,
+  getProviderProfile
 };
