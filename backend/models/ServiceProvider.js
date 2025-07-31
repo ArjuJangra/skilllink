@@ -1,21 +1,20 @@
-
 const mongoose = require('mongoose');
 
 const serviceProviderSchema = new mongoose.Schema({
   name: { type: String, required: true },
-   email: { type: String, required: true }, 
-  category: { type: String }, // or reference Service model
-  latitude: { type: Number, required: true },
-  longitude: { type: Number, required: true },
+  email: { type: String, required: true, unique: true },
+  password: { type: String, required: true },
   address: String,
   contact: String,
-
-
-  profilePic: {
+  profilePic: { type: String, default: '' },
+  role: {
     type: String,
-    default: '',
+    enum: ['user', 'provider'],
+    default: 'provider'
   },
-}, { timestamps: true });
+}, {
+  collection: 'serviceproviders', // explicit collection name
+  timestamps: true
+});
 
 module.exports = mongoose.model('ServiceProvider', serviceProviderSchema);
-

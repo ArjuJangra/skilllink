@@ -5,6 +5,7 @@ const cors = require('cors');
 const dotenv = require('dotenv');
 const mongoose = require('mongoose');
 const path = require('path');
+const jwt = require('jsonwebtoken');
 const providerRoutes = require('./routes/providerRoutes');
 dotenv.config();
 
@@ -42,21 +43,38 @@ app.use('/api/bookings', require('./routes/bookingRoutes'));
 app.use('/api/user', require('./routes/userRoutes'));
 app.use('/api/address', require('./routes/addressRoutes'));
 app.use('/api/services', require('./routes/serviceRoutes'));
-app.use('/api/messages', require('./routes/messageRoutes'));
 app.use('/api/provider/orders', require('./routes/providerOrders'));
-app.use('/api/providers', providerRoutes);
+app.use('/api/providers', require('./routes/providerRoutes'));
 
-// ===== Socket.IO connection =====
+
+// ===== Socket.IO JWT Authentication =====
+io.use((socket, next) => {
+  const token = socket.handshake.auth?.token;
+
+  if (!token) {
+    console.log('❌ Socket.IO: No token provided');
+    return next(new Error('Authentication error'));
+  }
+
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    socket.user = decoded;
+    next();
+  } catch (err) {
+    console.log('❌ Socket.IO: Invalid token');
+    return next(new Error('Authentication error'));
+  }
+});
+
+// ===== Socket.IO Connection Handler =====
 io.on('connection', (socket) => {
-  console.log('🟢 Client connected:', socket.id);
+  console.log('🟢 Authenticated client connected:', socket.user?.id || socket.id);
 
-  // Join user room
   socket.on('join', (userId) => {
     socket.join(userId);
     console.log(`👤 User ${userId} joined their room`);
   });
 
-  // Chat messages (optional)
   socket.on('message', (msg) => {
     io.emit('newMessage', msg);
   });

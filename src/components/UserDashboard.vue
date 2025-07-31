@@ -309,8 +309,8 @@
 
 
 <script setup>
-import { io } from 'socket.io-client';
 import { ref, onMounted } from 'vue';
+import { io } from 'socket.io-client';
 import axios from 'axios';
 import { useRouter } from 'vue-router';
 import { toast } from 'vue3-toastify';
@@ -332,9 +332,7 @@ const activeClass = 'text-[#007EA7] border-b-2 border-[#00A8E8]';
 const inactiveClass = 'text-gray-500 hover:text-[#00A8E8]';
 
 const user = ref({ name: '', email: '', phone: '', bio: '', profilePic: '' });
-const socket = io('http://localhost:5000', {
-  transports: ['websocket'],
-});
+const socket = ref(null);
 const bookings = ref([]);
 const editingId = ref(null);
 const editableBooking = ref({ service: '', name: '', contact: '', address: '' });
@@ -385,7 +383,8 @@ const handleProfileImageChange = async (event) => {
   reader.readAsDataURL(file);
 
   const formData = new FormData();
-  formData.append('profile', file);
+  formData.append('profilePic', file); 
+
 
   try {
     const token = localStorage.getItem('token');
@@ -618,15 +617,15 @@ const confirmLogout = () => {
 
 // Initial load
 onMounted(() => {
-   const localUser = JSON.parse(localStorage.getItem('user'));
-  if (localUser?.role === 'provider') {
-    router.push('/provider/profile');
-    return;
-  }
   const token = localStorage.getItem('token');
   if (!token) {
     toast.error("Please login first");
     router.push('/login');
+    return;
+  }
+   const localUser = JSON.parse(localStorage.getItem('user'));
+  if (localUser?.role === 'provider') {
+    router.push('/provider/profile');
     return;
   }
 
@@ -638,17 +637,19 @@ onMounted(() => {
     fetchHistory(),
     fetchNotificationSettings(),
   ]).then(() => {
-    // Connect to Socket.IO after user profile is fetched
+    
     socket.value = io('http://localhost:5000', {
-      auth: {
-        token,
-      }
-    });
+  auth: {
+    token,
+  },
+  withCredentials: true,
+  transports: ['websocket'],
+});
 
-    // Optional: join user-specific room
+
     socket.value.emit('joinRoom', { userId: user.value._id });
 
-    // Listen for real-time provider updates
+ 
     socket.value.on('orderAccepted', (data) => {
       toast.info(`Your order has been accepted by ${data.providerName}`);
       fetchBookings(); // Refresh bookings if needed

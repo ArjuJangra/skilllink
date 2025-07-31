@@ -15,25 +15,22 @@
         />
 
 <!-- If Logged In -->
-<template v-if="auth.user">
+<template v-if="auth.user && auth.token">
   <router-link to="/dashboard">
     <img
       :src="profilePicUrl || require('@/assets/user.png')"
       alt="User"
       class="w-10 h-10 rounded-full object-cover border-2 border-[#0073b1] cursor-pointer"
     />
-
   </router-link>
-</template> 
+</template>
 
-<!-- If NOT Logged In -->
 <template v-else>
-
-   <router-link to="/signup">
-          <button class="px-4 py-2 bg-[#0073b1] text-white font-semibold rounded-lg hover:bg-[#005f91] transition duration-200">
-            Login/Sign Up
-          </button>
-        </router-link>
+  <router-link to="/signup">
+    <button class="px-4 py-2 bg-[#0073b1] text-white font-semibold rounded-lg hover:bg-[#005f91] transition duration-200">
+      Login/Sign Up
+    </button>
+  </router-link>
 </template>
 
       </div>
@@ -122,10 +119,13 @@ const profilePicUrl = ref('');
 
 onMounted(() => {
   const storedUserRaw = localStorage.getItem('user');
-  if (storedUserRaw) {
+  const storedToken = localStorage.getItem('token');
+
+  if (storedUserRaw && storedToken) {
     try {
       const storedUser = JSON.parse(storedUserRaw);
       auth.user = storedUser;
+      auth.token = storedToken;
 
       if (storedUser.profilePic) {
         profilePicUrl.value = `http://localhost:5000/uploads/${storedUser.profilePic}?t=${Date.now()}`;
@@ -133,8 +133,14 @@ onMounted(() => {
     } catch (err) {
       console.error('Failed to parse user from localStorage', err);
     }
+  } else {
+    auth.user = null;
+    auth.token = null;
+    localStorage.removeItem('user');
+    localStorage.removeItem('token');
   }
 });
+
 
 
 watch(

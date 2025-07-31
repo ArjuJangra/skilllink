@@ -1,7 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { uploadUserPic } = require('../middleware/upload'); // ✅ Correct import
-const User = require('../models/User');
+const { uploadUserPic } = require('../middleware/upload'); 
 const authenticateUser = require('../middleware/authMiddleware');
 
 const {
@@ -14,7 +13,7 @@ const {
   updateUserProfile,
   changePassword,
   updateProfilePicture
-} = require('../controllers/profileController');
+} = require('../controllers/userProfileController');
 
 const {
   getNotificationSettings,
@@ -25,16 +24,16 @@ const {
 router.post('/signup', signup);
 router.post('/login', login);
 
-// ---------- Protected Routes ----------
+// ---------- Protected User Routes ----------
 router.get('/profile', authenticateUser, getUserProfile);
 router.put('/profile', authenticateUser, updateUserProfile);
-router.post('/change-password', authenticateUser, changePassword);
+router.put('/change-password', authenticateUser, changePassword);
 
-// Use correct middleware for user profile picture
+// ---------- Profile Picture Upload ----------
 router.put(
   '/profile/picture',
   authenticateUser,
-  uploadUserPic.single('profile'),
+  uploadUserPic.single('profilePic'), // ✅ updated field name
   updateProfilePicture
 );
 

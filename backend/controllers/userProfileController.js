@@ -1,9 +1,10 @@
+// controllers/userProfileController.js
 const path = require('path');
 const fs = require('fs');
-const User = require('../models/User');
 const bcrypt = require('bcryptjs');
-const Provider = require('../models/ServiceProvider');
-// Get Profile
+const User = require('../models/User');
+
+// Get User Profile
 exports.getUserProfile = async (req, res) => {
   try {
     const user = await User.findById(req.user._id).select('-password');
@@ -16,7 +17,7 @@ exports.getUserProfile = async (req, res) => {
   }
 };
 
-// Update Profile
+// Update User Profile
 exports.updateUserProfile = async (req, res) => {
   try {
     const { name, phone, bio, city, pincode } = req.body;
@@ -36,7 +37,7 @@ exports.updateUserProfile = async (req, res) => {
   }
 };
 
-// Update Profile Picture - deletes old one
+// Update User Profile Picture
 exports.updateProfilePicture = async (req, res) => {
   try {
     if (!req.file) {
@@ -49,7 +50,7 @@ exports.updateProfilePicture = async (req, res) => {
     const user = await User.findById(userId);
     if (!user) return res.status(404).json({ message: 'User not found' });
 
-    //  Delete the old picture from uploads folder
+    // Delete old profile picture
     if (user.profilePic) {
       const oldPath = path.join(__dirname, '..', 'uploads', user.profilePic);
       if (fs.existsSync(oldPath)) {
@@ -57,7 +58,6 @@ exports.updateProfilePicture = async (req, res) => {
       }
     }
 
-    //  Save the new filename
     user.profilePic = filename;
     await user.save();
 
@@ -66,47 +66,10 @@ exports.updateProfilePicture = async (req, res) => {
       profilePic: filename
     });
   } catch (err) {
-    console.error("🔴 Upload Error:", err);
+    console.error("Upload Error:", err);
     return res.status(500).json({ message: 'Upload failed', error: err.message });
   }
 };
-// Update Provider Profile
-exports.updateProviderProfile = async (req, res) => {
-  try {
-    const { id } = req.params;
-    const { name, email } = req.body;
-
-    const updateData = { name, email };
-
-    if (req.file) {
-      updateData.profilePic = req.file.filename;
-    }
-
-    const provider = await Provider.findById(id);
-    if (!provider) {
-      return res.status(404).json({ message: 'Provider not found' });
-    }
-
-    // Delete old profile pic if new one is uploaded
-    if (req.file && provider.profilePic) {
-      const oldPath = path.join(__dirname, '..', 'uploads', 'providers', provider.profilePic);
-      if (fs.existsSync(oldPath)) {
-        fs.unlinkSync(oldPath);
-      }
-    }
-
-    const updatedProvider = await Provider.findByIdAndUpdate(id, updateData, { new: true });
-
-    res.json({
-      message: 'Provider profile updated',
-      provider: updatedProvider
-    });
-  } catch (error) {
-    console.error('Update Provider Error:', error);
-    res.status(500).json({ message: 'Failed to update provider', error: error.message });
-  }
-};
-
 
 // Change Password
 exports.changePassword = async (req, res) => {
@@ -125,8 +88,7 @@ exports.changePassword = async (req, res) => {
       return res.status(401).json({ message: 'Current password is incorrect' });
     }
 
-    const hashedNewPassword = await bcrypt.hash(newPassword, 10);
-    user.password = hashedNewPassword;
+    user.password = await bcrypt.hash(newPassword, 10);
     await user.save();
 
     return res.status(200).json({ message: 'Password changed successfully' });

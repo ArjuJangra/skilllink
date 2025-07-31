@@ -107,10 +107,11 @@
 </template>
 
 <script setup>
-import { reactive } from 'vue'
+import { reactive, ref, watch } from 'vue'
 import axios from 'axios'
 import { useRouter } from 'vue-router'
 import { toast } from 'vue3-toastify'
+import { loginUser } from '@/stores/auth';
 
 const router = useRouter()
 
@@ -121,7 +122,32 @@ const form = reactive({
   password: '',
   services: [],
   experience: '',
-  address: ''
+  address: '',
+   contact: '', 
+  latitude: '',
+  longitude: ''
+})
+
+const latitude = ref(null)
+const longitude = ref(null)
+
+// Get location when provider role is selected
+watch(() => form.role, (newRole) => {
+  if (newRole === 'provider' && navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        latitude.value = position.coords.latitude
+        longitude.value = position.coords.longitude
+        console.log('📍 Location:', latitude.value, longitude.value)
+      },
+      (error) => {
+        console.error('Location error:', error.message)
+        toast.error('Could not get location. Please enable location access.', {
+          theme: 'colored'
+        })
+      }
+    )
+  }
 })
 
 const availableServices = [
@@ -152,23 +178,50 @@ const resetFields = () => {
 
 const handleSubmit = async () => {
   try {
-    const response = await axios.post('http://localhost:5000/api/auth/signup', form)
+    let endpoint = '';
+    if (form.role === 'user') {
+      endpoint = 'http://localhost:5000/api/auth/signup';
+    } else if (form.role === 'provider') {
+      endpoint = 'http://localhost:5000/api/providers/signup';
+    }
 
-    localStorage.setItem('token', response.data.token)
+    
+    if (form.role === 'provider') {
+      await new Promise((resolve, reject) => {
+        navigator.geolocation.getCurrentPosition(
+          (position) => {
+            form.latitude = position.coords.latitude;
+            form.longitude = position.coords.longitude;
+            resolve();
+          },
+          (error) => {
+            toast.error("Failed to get location. Allow location access.");
+            reject(error);
+          }
+        );
+      });
+    }
+
+    const response = await axios.post(endpoint, form);
+
+    loginUser(response.data.token, response.data.user);
 
     toast.success(`Welcome, ${response.data.user?.name || 'User'}!`, {
       theme: 'colored'
-    })
+    });
 
     if (form.role === 'user') {
-      router.push('/homelogged')
+      router.push('/homelogged');
     } else if (form.role === 'provider') {
-      router.push('/serviceprovider')
+      router.push('/serviceprovider');
     }
   } catch (error) {
-    toast.error(error.response?.data?.error || 'Signup failed. Try again.', {
+    toast.error(error.response?.data?.message || 'Signup failed. Try again.', {
       theme: 'colored'
-    })
+    });
   }
-}
+};
+
+
 </script>
+

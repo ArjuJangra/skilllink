@@ -14,6 +14,7 @@ import ProviderOrders from '@/components/ProviderOrders.vue';
 import ProviderPolicies from '@/components/ProviderPolicies.vue';
 import ProviderAbout from '@/components/ProviderAbout.vue';
 import ProviderContact from '@/components/ProviderContact.vue';
+import { auth } from '@/stores/auth';
 
 const routes = [
   { path: '/', redirect: '/homeboard' },
@@ -113,19 +114,16 @@ const router = createRouter({
 // 🔐Global Navigation Guard
 
 router.beforeEach((to, from, next) => {
-  const token = localStorage.getItem('token');
-  const user = JSON.parse(localStorage.getItem('user'));
-
-  const isAuthenticated = !!token;
+  const isAuthenticated = auth.isLoggedIn;
+  const user = auth.user;
 
   if (to.meta.requiresAuth) {
     if (!isAuthenticated || !user) {
       return next({ path: '/login' });
     }
 
-    //  Role-based route protection
     if (to.meta.role && to.meta.role !== user.role) {
-      return next({ path: '/login' }); // or redirect to role-based default
+      return next({ path: '/login' });
     }
   }
 

@@ -40,22 +40,21 @@
 </template>
 
 <script setup>
-import { reactive } from 'vue'
+import { reactive } from 'vue';
 import { useRouter } from 'vue-router';
 import axios from 'axios';
-import { auth } from '@/stores/auth';
-import { loginUser } from '@/stores/auth'
-import { toast } from 'vue3-toastify'
+import { auth, loginUser } from '@/stores/auth';
+import { toast } from 'vue3-toastify';
 
 const router = useRouter();
 
 const loginForm = reactive({
   email: '',
   password: ''
-})
+});
 
 const handleLogin = async () => {
-    const toastId = toast.loading("Logging in...", {
+  const toastId = toast.loading("Logging in...", {
     position: 'top-center',
     theme: 'light',
     style: {
@@ -73,18 +72,24 @@ const handleLogin = async () => {
     });
 
     const { token, user } = res.data;
-    // You can now store user info from response
+
+    // Save auth state
     loginUser(token, user);
     auth.isLoggedIn = true;
     auth.user.name = user.name;
-    auth.user.avatar = require('@/assets/user.png');
     auth.user.email = user.email;
     auth.user.role = user.role;
+    auth.user.avatar = user.profilePic
+      ? `http://localhost:5000/uploads/${user.profilePic}`
+      : require('@/assets/user.png');
 
-    localStorage.setItem('userId', user._id);
+    // Store in localStorage
     localStorage.setItem('token', token);
+    localStorage.setItem('userId', user.id);  
     localStorage.setItem('user', JSON.stringify(user));
-     toast.update(toastId, {
+
+    // Success toast
+    toast.update(toastId, {
       render: 'Login Successful!',
       type: 'success',
       isLoading: false,
@@ -99,20 +104,19 @@ const handleLogin = async () => {
         borderRadius: '12px',
       }
     });
-    
- setTimeout(() => {
-  if (user.role === 'provider') {
-    router.push('/ServiceProvider');  // provider dashboard or orders page
-  } else {
-    router.push('/homelogged');       // normal user homepage
-  }
-}, 1000);
 
-
+    // Redirect after delay
+    setTimeout(() => {
+      if (user.role === 'provider') {
+        router.push('/ServiceProvider');
+      } else {
+        router.push('/homelogged');
+      }
+    }, 1000);
 
   } catch (error) {
-      toast.update(toastId, {
-      render: error.response?.data?.error || 'Login failed. Please check credentials.',
+    toast.update(toastId, {
+      render: error.response?.data?.message || 'Login failed. Please check credentials.',
       type: 'error',
       isLoading: false,
       autoClose: 3000,

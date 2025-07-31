@@ -1,9 +1,12 @@
-const User = require('../models/User');
+// backend/controllers/authController.js
+
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const User = require('../models/User');
+const ServiceProvider = require('../models/ServiceProvider');
 const generateToken = require('../utils/generateToken');
 
-// Register
+// Signup Controller (for User only)
 exports.signup = async (req, res) => {
   const { name, email, password } = req.body;
 
@@ -24,7 +27,7 @@ exports.signup = async (req, res) => {
       },
     });
 
-    const token = generateToken(user._id);
+    const token = generateToken(user._id, 'user');
 
     return res.status(201).json({
       token,
@@ -32,6 +35,7 @@ exports.signup = async (req, res) => {
         id: user._id,
         name: user.name,
         email: user.email,
+        role: 'user',
         profilePic: user.profilePic || null,
       },
     });
@@ -41,18 +45,47 @@ exports.signup = async (req, res) => {
   }
 };
 
-// Login
+
+
+// Login Controller
 exports.login = async (req, res) => {
   const { email, password } = req.body;
 
   try {
-    const user = await User.findOne({ email });
-    if (!user) return res.status(400).json({ message: 'Invalid credentials' });
+    console.log('➡️ Login attempt:\n', email);
+
+    let user = await User.findOne({ email: { $regex: new RegExp(`^${email}$`, 'i') } });
+    console.log(user ? '✅ Found in User' : '❌ Not in User');
+
+    let role = 'user';
+
+    if (!user) {
+      console.log('🔍 Checking in ServiceProvider collection...');
+      const testQuery = { email: { $regex: new RegExp(`^${email}$`, 'i') } };
+      console.log('🔎 Query:', testQuery);
+
+      user = await ServiceProvider.findOne(testQuery);
+      console.log(user ? '✅ Found in ServiceProvider' : '❌ Not in ServiceProvider');
+
+      if (user) {
+        console.log('🧾 Found user:', {
+          name: user.name,
+          email: user.email,
+          id: user._id,
+        });
+      }
+
+      role = 'provider';
+    }
+
+    if (!user) {
+      return res.status(400).json({ message: 'User not found' });
+    }
 
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) return res.status(400).json({ message: 'Invalid credentials' });
 
-    const token = generateToken(user._id);
+    const token = generateToken(user._id, role);
 
     return res.json({
       token,
@@ -60,6 +93,7 @@ exports.login = async (req, res) => {
         id: user._id,
         name: user.name,
         email: user.email,
+        role,
         profilePic: user.profilePic || null,
       },
     });
@@ -68,3 +102,5 @@ exports.login = async (req, res) => {
     return res.status(500).json({ message: 'Server error', error: error.message });
   }
 };
+
+

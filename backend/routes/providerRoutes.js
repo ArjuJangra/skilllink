@@ -1,8 +1,24 @@
 const express = require('express');
 const router = express.Router();
-const { uploadProviderPic, updateProviderProfile } = require('../middleware/upload');
+const { uploadProviderPic } = require('../middleware/upload');
+ 
+const authMiddleware = require('../middleware/authMiddleware');
 
-router.put('/:id', uploadProviderPic.single('profilePic'), updateProviderProfile);
+const {
+  providerSignup,
+  providerLogin,
+  updateProviderProfile, 
+} = require('../controllers/providerProfileController');
+
+// Provider signup
+router.post('/signup', providerSignup);
+
+// Provider login
+router.post('/login', providerLogin);
+
+router.put('/profile/update/:id', uploadProviderPic.single('profilePic'), updateProviderProfile);
+
 
 
 module.exports = router;
+

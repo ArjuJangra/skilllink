@@ -1,4 +1,4 @@
-
+<!-- ProviderDashboard.vue -->
 <template>
   <div v-if="isAuthenticated" class="min-h-screen bg-gray-50 px-4 py-8">
     <div class="max-w-6xl mx-auto bg-white rounded-2xl shadow-lg p-6">
@@ -8,8 +8,8 @@
       <div class="flex items-center justify-between border-b pb-4 mb-6">
         <div class="flex items-center space-x-4">
           <img
-            :src="provider?.profilePic ? `http://localhost:5000/uploads/${provider.profilePic}` : require('@/assets/user.png')"
-            @error="e => e.target.src = require('@/assets/user.png')"
+            :src="provider?.profilePic ? `http://localhost:5000/uploads/providers/${provider.profilePic}` : require('@/assets/user.png')"
+            @error="(e) => { e.target.src = require('@/assets/user.png') }"
             alt="Provider DP"
             class="w-16 h-16 rounded-full object-cover border-2 border-[#007EA7]"
           />
@@ -18,58 +18,33 @@
             <p class="text-sm text-gray-500">{{ provider?.email }}</p>
           </div>
         </div>
-        <button
-          class="text-[#007EA7] font-medium hover:underline"
-          @click="showEditProfileForm = !showEditProfileForm"
-        >
+        <button class="text-[#007EA7] font-medium hover:underline" @click="showEditProfileForm = !showEditProfileForm">
           Edit Profile
         </button>
       </div>
 
       <!-- Edit Profile Modal -->
-      <div
-        v-if="showEditProfileForm"
-        class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50"
-      >
+      <div v-if="showEditProfileForm" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
         <div class="bg-white w-full max-w-md p-6 rounded-xl shadow-xl">
           <h2 class="text-xl font-semibold mb-4 text-gray-800">Edit Profile</h2>
           <form @submit.prevent="updateProfile">
             <div class="mb-4">
               <label class="block text-sm font-medium mb-1">Name</label>
-              <input
-                v-model="editForm.name"
-                type="text"
-                class="w-full px-3 py-2 border rounded-lg"
-              />
+              <input v-model="editForm.name" type="text" class="w-full px-3 py-2 border rounded-lg" />
             </div>
             <div class="mb-4">
               <label class="block text-sm font-medium mb-1">Email</label>
-              <input
-                v-model="editForm.email"
-                type="email"
-                class="w-full px-3 py-2 border rounded-lg"
-              />
+              <input v-model="editForm.email" type="email" class="w-full px-3 py-2 border rounded-lg" />
             </div>
             <div class="mb-4">
               <label class="block text-sm font-medium mb-1">Profile Picture</label>
-              <input
-                type="file"
-                @change="handleFileChange"
-                class="w-full"
-              />
+              <input type="file" @change="handleFileChange" class="w-full" />
             </div>
             <div class="flex justify-end space-x-2">
-              <button
-                type="button"
-                @click="showEditProfileForm = false"
-                class="px-4 py-2 bg-gray-300 text-gray-800 rounded-lg"
-              >
+              <button type="button" @click="showEditProfileForm = false" class="px-4 py-2 bg-gray-300 text-gray-800 rounded-lg">
                 Cancel
               </button>
-              <button
-                type="submit"
-                class="px-4 py-2 bg-[#007EA7] text-white rounded-lg"
-              >
+              <button type="submit" :disabled="isSubmitting" class="px-4 py-2 bg-[#007EA7] text-white rounded-lg disabled:opacity-50">
                 Save
               </button>
             </div>
@@ -105,10 +80,7 @@
       </div>
 
       <!-- Logout Confirmation Modal -->
-      <div
-        v-if="showLogoutModal"
-        class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
-      >
+      <div v-if="showLogoutModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
         <div class="bg-white p-6 rounded-2xl shadow-lg text-center w-full max-w-sm">
           <h2 class="text-lg font-semibold mb-4">Are you sure you want to logout?</h2>
           <div class="flex justify-center space-x-4">
@@ -136,7 +108,6 @@
   <div v-else class="text-center mt-10 text-gray-500">Redirecting to login...</div>
 </template>
 
-
 <script setup>
 import { ref, onMounted, reactive, watch } from 'vue'
 import { useRouter } from 'vue-router'
@@ -149,6 +120,7 @@ const isAuthenticated = ref(false)
 const provider = ref(null)
 const showEditProfileForm = ref(false)
 const showLogoutModal = ref(false)
+const isSubmitting = ref(false)
 const router = useRouter()
 
 const editForm = reactive({
@@ -158,7 +130,6 @@ const editForm = reactive({
 
 const selectedFile = ref(null)
 
-// Sync form with existing provider data
 watch(showEditProfileForm, (open) => {
   if (open && provider.value) {
     editForm.name = provider.value.name || ''
@@ -166,52 +137,58 @@ watch(showEditProfileForm, (open) => {
   }
 })
 
-// File input change handler
 const handleFileChange = (e) => {
   selectedFile.value = e.target.files[0]
 }
 
-// Update profile API call
 const updateProfile = async () => {
+  if (!provider.value || !provider.value._id) {
+    toast.error('Provider ID is missing')
+    return
+  }
+
+  isSubmitting.value = true
   try {
     const formData = new FormData()
     formData.append('name', editForm.name)
     formData.append('email', editForm.email)
-
     if (selectedFile.value) {
       formData.append('profilePic', selectedFile.value)
     }
 
+    const token = localStorage.getItem('token')
     const res = await axios.put(
-      `http://localhost:5000/api/providers/${provider.value._id}`,
+      `http://localhost:5000/api/providers/profile/update/${provider.value._id}`,
       formData,
       {
         headers: {
+          Authorization: `Bearer ${token}`,
           'Content-Type': 'multipart/form-data',
         },
       }
     )
 
+    const updated = res.data.provider || res.data
     toast.success('Profile updated successfully')
-    localStorage.setItem('user', JSON.stringify(res.data))
-    provider.value = res.data
+    localStorage.setItem('user', JSON.stringify(updated))
+    provider.value = updated
     showEditProfileForm.value = false
   } catch (err) {
-    console.error('Update Error:', err)
-    toast.error('Failed to update profile')
+    console.error('Update Error:', err.response?.data || err.message)
+    toast.error(err.response?.data?.message || 'Failed to update profile')
+  } finally {
+    isSubmitting.value = false
   }
 }
 
-// Logout functionality
 const handleLogout = () => {
-  auth.logoutUser?.() // Safely call if defined
+  auth.logoutUser?.()
   localStorage.removeItem('user')
   localStorage.removeItem('token')
   toast.success('Logged out successfully')
   router.push('/login')
 }
 
-// On mount, load provider data
 onMounted(() => {
   const storedUser = JSON.parse(localStorage.getItem('user'))
   if (storedUser?.role === 'provider') {
@@ -222,3 +199,7 @@ onMounted(() => {
   }
 })
 </script>
+
+
+
+
