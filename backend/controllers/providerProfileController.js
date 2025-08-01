@@ -17,7 +17,7 @@ async function providerSignup(req, res) {
     }
 
     // Check if provider already exists
-    const existingProvider = await Provider.findOne({ email });
+    const existingProvider = await ServiceProvider.findOne({ email });
     if (existingProvider) {
       return res.status(400).json({ message: 'Provider already exists' });
     }
@@ -34,7 +34,7 @@ async function providerSignup(req, res) {
       longitude,
       address,
       contact,
-      profilePic, //  Important for saving image
+      profilePic,
       role: 'provider'
     });
 
@@ -99,18 +99,16 @@ async function updateProviderProfile(req, res) {
     console.log('📦 Body:', { name, email });
     console.log('🖼️ File:', req.file);
 
-    
-    
     const provider = await ServiceProvider.findById(id);
     if (!provider) {
       return res.status(404).json({ message: 'Provider not found' });
     }
-    
+
     // Delete old profile picture if new one uploaded
     if (req.file && provider.profilePic) {
       deleteOldProviderPic(provider.profilePic);
     }
-    
+
     const updateData = { name, email };
     if (req.file) {
       updateData.profilePic = req.file.filename;
@@ -137,12 +135,15 @@ async function updateProviderProfile(req, res) {
   }
 }
 
-
+// ✅ FIXED: getProviderProfile now uses req.user from authMiddleware
 const getProviderProfile = async (req, res) => {
   try {
-    const provider = await ServiceProvider.findById(req.user.id).select('-password');
-    if (!provider) return res.status(404).json({ message: 'Provider not found' });
-    res.json(provider);
+    if (!req.user) {
+      return res.status(401).json({ message: 'Unauthorized' });
+    }
+
+    // Return the already authenticated provider (excluding password)
+    res.json(req.user);
   } catch (err) {
     console.error('Error fetching provider profile:', err);
     res.status(500).json({ message: 'Server error' });
