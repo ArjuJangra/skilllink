@@ -118,10 +118,9 @@
 import axios from 'axios';
 
 export default {
-  name: "ProviderWelcome",
   data() {
     return {
-      drawerOpen: false,
+       drawerOpen: false, 
       provider: null,
     };
   },
@@ -129,22 +128,23 @@ export default {
     async fetchProviderProfile() {
       try {
         const token = localStorage.getItem('token');
-        const res = await axios.get('http://localhost:5000/api/providers/profile', {
+        const response = await axios.get('http://localhost:5000/api/providers/profile', {
           headers: {
-            Authorization: `Bearer ${token}`
-          }
+            Authorization: `Bearer ${token}`,
+          },
         });
-        this.provider = res.data;
-      } catch (err) {
-        console.error('Failed to fetch provider profile:', err);
+        this.provider = response.data;
+      } catch (error) {
+        console.error('Failed to fetch provider profile:', error);
       }
-    }
+    },
   },
   mounted() {
     this.fetchProviderProfile();
-  }
+  },
 };
 </script>
+
 
 <style scoped>
 body {

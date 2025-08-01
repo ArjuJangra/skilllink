@@ -4,14 +4,36 @@ const serviceProviderSchema = new mongoose.Schema({
   name: { type: String, required: true },
   email: { type: String, required: true, unique: true },
   password: { type: String, required: true },
-  address: String,
-  contact: String,
+  address: { type: String },
+  contact: { type: String },
   profilePic: { type: String, default: '' },
   role: {
     type: String,
     enum: ['user', 'provider'],
     default: 'provider'
   },
+  services: {
+    type: [String],
+    required: true,
+    validate: {
+      validator: function (val) {
+        return val.length <= 3;
+      },
+      message: 'You can select up to 3 services only.'
+    }
+  },
+  experience: {
+    type: Number,
+    default: 0
+  },
+  latitude: {
+    type: Number,
+    required: true
+  },
+  longitude: {
+    type: Number,
+    required: true
+  }
 }, {
   collection: 'serviceproviders', // explicit collection name
   timestamps: true

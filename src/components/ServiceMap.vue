@@ -8,7 +8,7 @@ import L from 'leaflet'
 import 'leaflet/dist/leaflet.css'
 import axios from 'axios'
 
-
+// Fix leaflet icons
 delete L.Icon.Default.prototype._getIconUrl
 L.Icon.Default.mergeOptions({
   iconRetinaUrl: new URL('leaflet/dist/images/marker-icon-2x.png', import.meta.url).href,
@@ -25,7 +25,7 @@ onMounted(async () => {
     attribution: '&copy; OpenStreetMap contributors'
   }).addTo(map)
 
-  // 📍 Fetch service locations from backend
+  // 📍 Fetch service provider locations
   try {
     const token = localStorage.getItem('token')
     const res = await axios.get('http://localhost:5000/api/services/locations', {
@@ -34,16 +34,23 @@ onMounted(async () => {
       }
     })
 
-    res.data.forEach(loc => {
-      L.marker([loc.latitude, loc.longitude])
-        .addTo(map)
-        .bindPopup(`<strong>${loc.name}</strong><br>${loc.category}`)
+    const providers = res.data
+
+    providers.forEach((provider) => {
+      if (
+        provider.latitude !== undefined &&
+        provider.longitude !== undefined &&
+        provider.latitude !== null &&
+        provider.longitude !== null
+      ) {
+        L.marker([provider.latitude, provider.longitude]).addTo(map)
+      }
     })
   } catch (err) {
-    console.error('Failed to fetch locations:', err)
+    console.error('❌ Failed to fetch locations:', err)
   }
 
-  // 📍 Show user location
+  // 📍 Show current user location
   if (navigator.geolocation) {
     navigator.geolocation.getCurrentPosition(position => {
       const { latitude, longitude } = position.coords
@@ -54,14 +61,13 @@ onMounted(async () => {
 
       map.setView([latitude, longitude], 13)
     }, () => {
-      console.warn("Geolocation access denied or unavailable.")
+      console.warn("⚠️ Geolocation access denied or unavailable.")
     })
   } else {
-    console.warn("Geolocation is not supported by this browser.")
+    console.warn("⚠️ Geolocation is not supported by this browser.")
   }
 })
 </script>
-
 
 <style>
 #map {
@@ -72,5 +78,4 @@ onMounted(async () => {
     height: 400px;
   }
 }
-
 </style>

@@ -8,21 +8,37 @@ const { deleteOldProviderPic } = require('../middleware/upload');
 // Provider Signup
 async function providerSignup(req, res) {
   try {
-    const { name, email, password, latitude, longitude, address, contact } = req.body;
+    const {
+      name,
+      email,
+      password,
+      latitude,
+      longitude,
+      address,
+      contact,
+      services,
+      experience
+    } = req.body;
 
     let profilePic = null;
-
     if (req.file) {
       profilePic = req.file.filename;
     }
 
-    // Check if provider already exists
+    // Validations
+    if (!name || !email || !password || !latitude || !longitude || !Array.isArray(services) || services.length === 0) {
+      return res.status(400).json({ message: 'All required fields must be filled including at least one service.' });
+    }
+
+    if (services.length > 3) {
+      return res.status(400).json({ message: 'You can only select up to 3 services.' });
+    }
+
     const existingProvider = await ServiceProvider.findOne({ email });
     if (existingProvider) {
       return res.status(400).json({ message: 'Provider already exists' });
     }
 
-    // Hash password
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
 
@@ -34,6 +50,8 @@ async function providerSignup(req, res) {
       longitude,
       address,
       contact,
+      services,
+      experience,
       profilePic,
       role: 'provider'
     });
@@ -50,6 +68,7 @@ async function providerSignup(req, res) {
         role: provider.role,
       },
     });
+
   } catch (error) {
     console.error('Provider Signup Error:', error);
     res.status(500).json({ message: 'Server error', error: error.message });
@@ -135,7 +154,7 @@ async function updateProviderProfile(req, res) {
   }
 }
 
-// ✅ FIXED: getProviderProfile now uses req.user from authMiddleware
+// Get Provider Profile
 const getProviderProfile = async (req, res) => {
   try {
     if (!req.user) {
@@ -156,3 +175,4 @@ module.exports = {
   updateProviderProfile,
   getProviderProfile
 };
+

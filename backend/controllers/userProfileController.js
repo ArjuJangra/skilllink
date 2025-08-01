@@ -53,6 +53,7 @@ exports.updateProfilePicture = async (req, res) => {
     // Delete old profile picture
     if (user.profilePic) {
       const oldPath = path.join(__dirname, '..', 'uploads', user.profilePic);
+
       if (fs.existsSync(oldPath)) {
         fs.unlinkSync(oldPath);
       }

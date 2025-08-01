@@ -3,9 +3,15 @@ const router = express.Router();
 const Booking = require('../models/Booking');
 const authenticateUser = require('../middleware/authMiddleware');
 const User = require('../models/User');
+const ServiceProvider = require('../models/ServiceProvider'); 
 
+router.get('/test', (req, res) => {
+  res.send('✅ Booking route is working');
+});
+ 
 // GET /api/bookings
 router.get('/', authenticateUser, async (req, res) => {
+    res.send('Booking route working!');
   try {
    const bookings = await Booking.find({ userId: req.user.id, status: { $ne: 'Completed' } }).sort({ createdAt: -1 });
 
@@ -15,32 +21,48 @@ router.get('/', authenticateUser, async (req, res) => {
   }
 });
 
-
 // POST /api/bookings
 router.post('/', authenticateUser, async (req, res) => {
   try {
    console.log('➡️ Booking request received:', req.body);
     console.log('🔐 Authenticated User:', req.user);
 
-    const { service, name, contact, address } = req.body;
+    const { service, name, contact, address, providerId } = req.body;
+
    
 
 // Get user details including pincode
 const user = await User.findById(req.user.id);
 if (!user) return res.status(404).json({ message: 'User not found' });
 
-// Find providers offering this service in the same pincode
-const matchingProviders = await User.find({
-  role: 'provider',
-  services: service,
+console.log('🔍 Searching provider with ID and service:', providerId, service);
+// If providerId is provided, use that
+let assignedProvider;
+
+if (providerId) {
+ assignedProvider = await ServiceProvider.findOne({
+  _id: providerId,
+  services: { $in: [service] }
+});
+
+  if (!assignedProvider) {
+    return res.status(404).json({ message: 'Selected provider is not available for this service' });
+  }
+} else {
+  // Fallback: randomly assign a provider
+  const matchingProviders = await ServiceProvider.find({
+  services: { $in: [service] },
   pincode: user.pincode
 });
 
-if (matchingProviders.length === 0) {
-  return res.status(404).json({ message: 'No service providers available in your area for this service' });
+
+  if (matchingProviders.length === 0) {
+    return res.status(404).json({ message: 'No service providers available in your area for this service' });
+  }
+
+  assignedProvider = matchingProviders[Math.floor(Math.random() * matchingProviders.length)];
 }
- // Select one provider randomly
-const assignedProvider = matchingProviders[Math.floor(Math.random() * matchingProviders.length)];
+
 
     const booking = new Booking({
       userId: req.user.id,

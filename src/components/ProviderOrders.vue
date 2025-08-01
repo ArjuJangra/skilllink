@@ -21,10 +21,18 @@
           <!-- Profile Picture Dropdown -->
           <div class="relative group">
             <router-link to="/profile">
-              <img v-if="user && user.profilePic" :src="`http://localhost:5000/uploads/${user.profilePic}`"
-                alt="User DP" class="w-10 h-10 rounded-full object-cover border-2 border-[#0073b1] cursor-pointer" />
-              <img v-else src="@/assets/user.png" alt="Default User DP"
-                class="w-10 h-10 rounded-full object-cover border-2 border-[#0073b1] cursor-pointer" />
+               <img
+                v-if="provider && provider.profilePic"
+                :src="`http://localhost:5000/uploads/providers/${provider.profilePic}`"
+                alt="Provider DP"
+                class="w-10 h-10 rounded-full object-cover border-2 border-[#0073b1] cursor-pointer"
+              />
+              <img
+                v-else
+                src="@/assets/user.png"
+                alt="Default Provider DP"
+                class="w-10 h-10 rounded-full object-cover border-2 border-[#0073b1] cursor-pointer"
+              />
             </router-link>
 
           </div>
@@ -32,7 +40,7 @@
       </div>
     </header>
 
-    <!-- Page Content -->
+   
     <!-- Page Content -->
     <div class="max-w-5xl mx-auto px-4 py-6 ">
 
@@ -42,7 +50,7 @@
         <p class="text-gray-600 text-sm">View and manage your service orders here.</p>
       </div>
 
-      <!-- 🔽 Paste your new order block here -->
+      <!--  Paste your new order block here -->
       <div v-if="allOrders.length" class="mt-8 space-y-4">
         <div v-for="order in allOrders" :key="order._id"
           class="bg-white p-4 rounded-xl shadow-md border border-gray-200">
@@ -89,50 +97,60 @@ import axios from 'axios'
 import { toast } from 'vue3-toastify'
 import 'vue3-toastify/dist/index.css'
 
+//  Provider Info
+const provider = ref(null)
+
+onMounted(() => {
+  const storedProvider = localStorage.getItem('user')
+  if (storedProvider && JSON.parse(storedProvider).role === 'provider') {
+    provider.value = JSON.parse(storedProvider)
+  } else {
+    toast.error('Unauthorized access')
+    window.location.href = '/login'
+  }
+
+  fetchOrders()
+})
+
+// ✅ Orders Logic
 const allOrders = ref([])
 
 const fetchOrders = async () => {
   try {
-    const token = localStorage.getItem('token');
+    const token = localStorage.getItem('token')
     const res = await axios.get('http://localhost:5000/api/provider/orders', {
       headers: {
-        Authorization: `Bearer ${token}`
-      }
-    });
-    allOrders.value = res.data;
+        Authorization: `Bearer ${token}`,
+      },
+    })
+    allOrders.value = res.data
   } catch (err) {
-    console.error('❌ Failed to fetch orders:', err);
-    toast.error('Failed to load orders');
+    console.error('❌ Failed to fetch orders:', err)
+    toast.error('Failed to load orders')
   }
-};
+}
 
 const updateOrderStatus = async (id, status) => {
   try {
-    const token = localStorage.getItem('token');
-    await axios.put(`http://localhost:5000/api/provider/orders/${id}/status`, {
-      status,
-    }, {
-      headers: {
-        Authorization: `Bearer ${token}`
+    const token = localStorage.getItem('token')
+    await axios.put(
+      `http://localhost:5000/api/provider/orders/${id}/status`,
+      { status },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       }
-    });
-    toast.success(`Order ${status.toLowerCase()} successfully`);
-    fetchOrders();
+    )
+    toast.success(`Order ${status.toLowerCase()} successfully`)
+    fetchOrders()
   } catch (err) {
-    console.error(`❌ ${status} failed:`, err);
-    toast.error(`Could not ${status.toLowerCase()} order`);
+    console.error(`❌ ${status} failed:`, err)
+    toast.error(`Could not ${status.toLowerCase()} order`)
   }
-};
+}
 
-const acceptOrder = (id) => updateOrderStatus(id, 'Accepted');
-const rejectOrder = (id) => updateOrderStatus(id, 'Rejected');
-const completeOrder = (id) => updateOrderStatus(id, 'Completed');
-
-
-
-
-
-onMounted(() => {
-  fetchOrders()
-})
+const acceptOrder = (id) => updateOrderStatus(id, 'Accepted')
+const rejectOrder = (id) => updateOrderStatus(id, 'Rejected')
+const completeOrder = (id) => updateOrderStatus(id, 'Completed')
 </script>

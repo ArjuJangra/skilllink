@@ -1,3 +1,4 @@
+const bookingRoutes = require('./routes/bookingRoutes');
 const http = require('http');
 const { Server } = require('socket.io');
 const express = require('express');
@@ -7,6 +8,8 @@ const mongoose = require('mongoose');
 const path = require('path');
 const jwt = require('jsonwebtoken');
 const providerRoutes = require('./routes/providerRoutes');
+const contactRoutes = require('./routes/contactRoutes');
+
 dotenv.config();
 
 const app = express();
@@ -39,13 +42,13 @@ app.use(cors({
 
 // ===== Routes =====
 app.use('/api/auth', require('./routes/auth'));
-app.use('/api/bookings', require('./routes/bookingRoutes'));
 app.use('/api/user', require('./routes/userRoutes'));
 app.use('/api/address', require('./routes/addressRoutes'));
 app.use('/api/services', require('./routes/serviceRoutes'));
 app.use('/api/provider/orders', require('./routes/providerOrders'));
-app.use('/api/providers', require('./routes/providerRoutes'));
-
+app.use('/api/bookings', bookingRoutes);
+app.use('/api/providers',providerRoutes);
+app.use('/api/contact', contactRoutes);
 
 // ===== Socket.IO JWT Authentication =====
 io.use((socket, next) => {

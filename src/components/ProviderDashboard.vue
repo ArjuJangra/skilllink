@@ -13,19 +13,13 @@
             alt="Provider DP"
             class="w-16 h-16 rounded-full object-cover border-2 border-[#007EA7]"
           />
-          
           <div>
             <h2 class="text-xl font-semibold text-gray-800">{{ provider?.name }}</h2>
             <p class="text-sm text-gray-500">{{ provider?.email }}</p>
           </div>
         </div>
-
-
-        <button class="text-[#007EA7] font-medium hover:underline" @click="showEditProfileForm = !showEditProfileForm">
-          Edit Profile
-        </button>
+        <button class="text-[#007EA7] font-medium hover:underline" @click="showEditProfileForm = true">Edit Profile</button>
       </div>
-
 
       <!-- Edit Profile Modal -->
       <div v-if="showEditProfileForm" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
@@ -75,29 +69,20 @@
       <!-- Settings & Logout -->
       <div class="bg-white rounded-2xl shadow p-6 mt-8">
         <h3 class="text-xl font-semibold mb-4 text-[#007EA7]">Account Settings</h3>
-        <button
-          @click="showLogoutModal = true"
-          class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg transition"
-        >
+        <button @click="showLogoutModal = true" class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg transition">
           Logout
         </button>
       </div>
 
-      <!-- Logout Confirmation Modal -->
+      <!-- Logout Modal -->
       <div v-if="showLogoutModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
         <div class="bg-white p-6 rounded-2xl shadow-lg text-center w-full max-w-sm">
           <h2 class="text-lg font-semibold mb-4">Are you sure you want to logout?</h2>
           <div class="flex justify-center space-x-4">
-            <button
-              @click="handleLogout"
-              class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg transition"
-            >
+            <button @click="handleLogout" class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg transition">
               Yes, Logout
             </button>
-            <button
-              @click="showLogoutModal = false"
-              class="bg-gray-300 hover:bg-gray-400 text-gray-800 px-4 py-2 rounded-lg transition"
-            >
+            <button @click="showLogoutModal = false" class="bg-gray-300 hover:bg-gray-400 text-gray-800 px-4 py-2 rounded-lg transition">
               Cancel
             </button>
           </div>
@@ -108,7 +93,6 @@
     </div>
   </div>
 
-  <!-- Redirect Message -->
   <div v-else class="text-center mt-10 text-gray-500">Redirecting to login...</div>
 </template>
 
@@ -146,10 +130,9 @@ const handleFileChange = (e) => {
 }
 
 const updateProfile = async () => {
-  if (!provider.value || !provider.value._id) {
-    toast.error('Provider ID is missing')
-    return
-  }
+ const providerId = provider.value._id || provider.value.id
+if (!providerId) return toast.error('Provider ID is missing')
+
 
   isSubmitting.value = true
   try {
@@ -161,16 +144,17 @@ const updateProfile = async () => {
     }
 
     const token = localStorage.getItem('token')
-    const res = await axios.put(
-      `http://localhost:5000/api/providers/profile/update/${provider.value._id}`,
-      formData,
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'Content-Type': 'multipart/form-data',
-        },
-      }
-    )
+   const res = await axios.put(
+  `http://localhost:5000/api/providers/profile/update/${providerId}`,
+  formData,
+  {
+    headers: {
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'multipart/form-data',
+    },
+  }
+)
+
 
     const updated = res.data.provider || res.data
     toast.success('Profile updated successfully')
@@ -193,17 +177,36 @@ const handleLogout = () => {
   router.push('/login')
 }
 
-onMounted(() => {
+onMounted(async () => {
   const storedUser = JSON.parse(localStorage.getItem('user'))
-  if (storedUser?.role === 'provider') {
-    isAuthenticated.value = true
-    provider.value = storedUser
-  } else {
+  const token = localStorage.getItem('token')
+
+  console.log('Loaded user from localStorage:', storedUser)
+
+  if (storedUser?.role !== 'provider') {
+    return router.push('/login')
+  }
+
+  isAuthenticated.value = true
+
+  try {
+    const res = await axios.get('http://localhost:5000/api/providers/profile', {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
+
+    provider.value = res.data
+    localStorage.setItem('user', JSON.stringify(res.data)) // keep it in sync
+  } catch (err) {
+    console.error('Failed to fetch provider profile:', err.response?.data || err.message)
+    toast.error('Failed to fetch profile')
     router.push('/login')
   }
 })
-</script>
 
+
+</script>
 
 
 

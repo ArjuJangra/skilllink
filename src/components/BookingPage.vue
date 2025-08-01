@@ -1,10 +1,9 @@
 <template>
-  <div class ="min-h-screen bg-[#F0F9FF] flex items-center justify-center p-4">
+  <div class="min-h-screen bg-[#F0F9FF] flex items-center justify-center p-4">
     <div class="w-full max-w-md bg-white p-6 rounded-lg shadow-md">
       <!-- Logo & Name -->
       <div class="flex flex-col items-center mb-6">
         <img src="@/assets/skilllogo.png" alt="SkillLink Logo" class="w-16 h-16 mb-2" />
-        
       </div>
 
       <!-- Heading -->
@@ -12,15 +11,33 @@
         Book a Service
       </h2>
 
-      <!-- Selected Service -->
+      <!-- Service Selection -->
       <div class="mb-4">
-        <label class="block text-gray-700 font-medium mb-1">Selected Service</label>
-        <input
-          type="text"
+        <label class="block text-gray-700 font-medium mb-1">Select a Service</label>
+        <select
           v-model="selectedService"
-          class="w-full px-4 py-2 border rounded-md bg-gray-100"
-          readonly
-        />
+          @change="fetchProviders"
+          class="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#00A8E8]"
+        >
+          <option disabled value="">-- Select a Service --</option>
+          <option v-for="service in availableServices" :key="service" :value="service">
+            {{ service }}
+          </option>
+        </select>
+      </div>
+
+      <!-- Provider Selection -->
+      <div v-if="providers.length" class="mb-4">
+        <label class="block text-gray-700 font-medium mb-1">Select Provider</label>
+        <select
+          v-model="selectedProviderId"
+          class="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#00A8E8]"
+        >
+          <option disabled value="">-- Select a Provider --</option>
+          <option v-for="provider in providers" :key="provider._id" :value="provider._id">
+            {{ provider.name }} ({{ provider.address }})
+          </option>
+        </select>
       </div>
 
       <!-- Name -->
@@ -61,70 +78,130 @@
         @click="submitBooking"
         class="w-full bg-[#007EA7] text-white py-2 rounded hover:bg-[#005f6b] disabled:opacity-50"
       >
-       {{ loading ? 'Booking...' : 'Confirm Booking' }}
+        {{ loading ? 'Booking...' : 'Confirm Booking' }}
       </button>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
-import { useRoute } from 'vue-router';
-import axios from 'axios';
-import { toast } from 'vue3-toastify';
-import 'vue3-toastify/dist/index.css';
-import { useRouter } from 'vue-router';
+import { ref, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
+import axios from 'axios'
+import { toast } from 'vue3-toastify'
+import 'vue3-toastify/dist/index.css'
 
-const route = useRoute();
-const router = useRouter();
+const router = useRouter()
 
-const loading = ref(false);
-const selectedService = ref('');
-const name = ref('');
-const contact = ref('');
-const address = ref('');
+const loading = ref(false)
+const selectedService = ref('')
+const selectedProviderId = ref('')
+const name = ref('')
+const contact = ref('')
+const address = ref('')
 
-onMounted(() => {
-  selectedService.value = route.query.service || '';
-});
+const availableServices = ref([])
+const providers = ref([])
+const location = ref({ latitude: null, longitude: null })
 
-const submitBooking = async () => {
-  if (!name.value || !contact.value || !address.value) {
-    toast.error('Please fill in all fields.');
-    return;
+// Fetch providers when service is selected
+const fetchProviders = async () => {
+  const token = localStorage.getItem('token')
+  try {
+    const res = await axios.post('http://localhost:5000/api/services/nearby', {
+      latitude: location.value.latitude,
+      longitude: location.value.longitude,
+      service: selectedService.value
+    }, {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    })
+
+    providers.value = res.data || []
+  } catch (err) {
+    toast.error('Failed to fetch providers')
+    console.error(err)
   }
-   loading.value = true;
-  const token = localStorage.getItem('token');
+}
+
+// On mount: Get user location and available services nearby
+onMounted(async () => {
+  const token = localStorage.getItem('token')
+
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(async position => {
+      const { latitude, longitude } = position.coords
+      location.value = { latitude, longitude }
+
+      try {
+        const res = await axios.post('http://localhost:5000/api/services/nearby', {
+          latitude,
+          longitude,
+          service: null
+        }, {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        })
+
+        const servicesSet = new Set(res.data.flatMap(p => p.services || []))
+        availableServices.value = Array.from(servicesSet)
+
+      } catch (err) {
+        toast.error('Failed to fetch nearby services')
+        console.error(err)
+      }
+    }, () => {
+      toast.error('Geolocation denied or unavailable')
+    })
+  } else {
+    toast.error('Geolocation is not supported')
+  }
+})
+
+// Submit the booking request
+const submitBooking = async () => {
+  if (!name.value || !contact.value || !address.value || !selectedService.value || !selectedProviderId.value) {
+    toast.error('Please fill in all fields.')
+    return
+  }
+
+  loading.value = true
+  const token = localStorage.getItem('token')
 
   try {
-    await axios.post(
-      'http://localhost:5000/api/bookings',
-      {
-        service: selectedService.value,
-        name: name.value,
-        contact: contact.value,
-        address: address.value,
+    await axios.post('http://localhost:5000/api/bookings', {
+      service: selectedService.value,
+      providerId: selectedProviderId.value,
+      name: name.value,
+      contact: contact.value,
+      address: address.value,
+    }, {
+      headers: {
+        Authorization: `Bearer ${token}`,
       },
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
+    })
 
-   
-    router.push('/booking-confirm');
+    toast.success('Booking successful!')
+    router.push('/booking-confirm')
 
-    
-    // Clear form
-    name.value = '';
-    contact.value = '';
-    address.value = '';
+    name.value = ''
+    contact.value = ''
+    address.value = ''
+    selectedService.value = ''
+    selectedProviderId.value = ''
+    providers.value = []
 
   } catch (err) {
-     toast.error(err.response?.data?.message || 'Booking failed.');
+    const message = err.response?.data?.message || 'Booking failed.'
+    toast.error(message)
+    console.error('❌ Booking error:', err)
   } finally {
-    loading.value = false;
+    loading.value = false
   }
-};
+}
 </script>
+
+
+
