@@ -225,7 +225,7 @@
 </section>
 
     <!-- Service Area Map Section -->
-    <section class="py-12 bg-blue-50 px-4" v-if="mapReady">
+    <section class="py-12 bg-blue-50 px-4">
     <div class="max-w-screen-xl mx-auto text-center">
       <h2 class="text-2xl font-bold mb-6 text-gray-800">Service Coverage Area</h2>
       <ServiceMap />
