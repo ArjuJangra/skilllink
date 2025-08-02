@@ -17,7 +17,8 @@ async function providerSignup(req, res) {
       address,
       contact,
       services,
-      experience
+      experience,
+        area  
     } = req.body;
 
     let profilePic = null;
@@ -53,7 +54,8 @@ async function providerSignup(req, res) {
       services,
       experience,
       profilePic,
-      role: 'provider'
+      role: 'provider',
+        area  
     });
 
     const token = generateToken(provider._id, 'provider');

@@ -12,6 +12,7 @@ const serviceProviderSchema = new mongoose.Schema({
     enum: ['user', 'provider'],
     default: 'provider'
   },
+    area: { type: String, required: true },
   services: {
     type: [String],
     required: true,

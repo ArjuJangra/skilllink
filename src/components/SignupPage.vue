@@ -40,59 +40,64 @@
           </div>
         </div>
 
-        <!-- Service Provider Section -->
-        <div v-if="form.role === 'provider'" class="space-y-4">
-          <div>
-            <label class="block text-sm font-semibold text-gray-700">Email</label>
-            <input v-model="form.email" type="email" required class="mt-1 w-full px-4 py-2 border border-gray-300 rounded-lg" 
-            placeholder="you@example.com"/>
-          </div>
-          <div>
-          <label class="block text-gray-700 font-medium mb-1">Password</label>
-          <input
-            type="password"
-            v-model="form.password"
-            class="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#0073b1]"
-            placeholder="••••••••"
-            required
-          />
-        </div>
+      <!-- Service Provider Section -->
+<div v-if="form.role === 'provider'" class="space-y-4">
+  <div>
+    <label class="block text-sm font-semibold text-gray-700">Email</label>
+    <input v-model="form.email" type="email" required class="mt-1 w-full px-4 py-2 border border-gray-300 rounded-lg" placeholder="you@example.com"/>
+  </div>
 
-          <!-- Services as Checkboxes -->
-          <div>
-            <label class="block text-sm font-semibold text-gray-700 mb-1">Select up to 3 Services</label>
-            <div class="grid grid-cols-2 gap-2">
-              <label v-for="(option, index) in availableServices" :key="index" class="flex items-center space-x-2">
-                <input
-                  type="checkbox"
-                  :value="option"
-                  :checked="form.services.includes(option)"
-                  @change="toggleService(option)"
-                  :disabled="!form.services.includes(option) && form.services.length >= 3"
-                  class="accent-[#0073b1]"
-                />
-                <span class="text-gray-700">{{ option }}</span>
-              </label>
-            </div>
-            <p v-if="form.services.length >= 3" class="text-sm text-red-500 mt-1">
-              You can only select up to 3 services.
-            </p>
-          </div>
+  <div>
+    <label class="block text-sm font-semibold text-gray-700">Password</label>
+    <input
+      type="password"
+      v-model="form.password"
+      class="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#0073b1]"
+      placeholder="••••••••"
+      required
+    />
+  </div>
 
-          <div>
-            <label class="block text-sm font-semibold text-gray-700">Years of Experience</label>
-            <input v-model="form.experience" type="number" min="0" class="mt-1 w-full px-4 py-2 border border-gray-300 rounded-lg" />
-          </div>
+  <!-- Area Field (new) -->
+  <div>
+    <label class="block text-sm font-semibold text-gray-700">Area (Location Name)</label>
+    <input v-model="form.area" type="text" required placeholder="e.g., Sector 14, Rohini" class="mt-1 w-full px-4 py-2 border border-gray-300 rounded-lg" />
+  </div>
 
-          <div>
-            <label class="block text-sm font-semibold text-gray-700">Address</label>
-            <textarea v-model="form.address" rows="3" class="mt-1 w-full px-4 py-2 border border-gray-300 rounded-lg"></textarea>
-          </div>
-        </div>
+  <!-- Services as Checkboxes -->
+  <div>
+    <label class="block text-sm font-semibold text-gray-700 mb-1">Select up to 3 Services</label>
+    <div class="grid grid-cols-2 gap-2">
+      <label v-for="(option, index) in availableServices" :key="index" class="flex items-center space-x-2">
+        <input
+          type="checkbox"
+          :value="option"
+          :checked="form.services.includes(option)"
+          @change="toggleService(option)"
+          :disabled="!form.services.includes(option) && form.services.length >= 3"
+          class="accent-[#0073b1]"
+        />
+        <span class="text-gray-700">{{ option }}</span>
+      </label>
+    </div>
+    <p v-if="form.services.length >= 3" class="text-sm text-red-500 mt-1">
+      You can only select up to 3 services.
+    </p>
+  </div>
+
+  <div>
+    <label class="block text-sm font-semibold text-gray-700">Years of Experience</label>
+    <input v-model="form.experience" type="number" min="0" class="mt-1 w-full px-4 py-2 border border-gray-300 rounded-lg" />
+  </div>
+
+  <div>
+    <label class="block text-sm font-semibold text-gray-700">Address</label>
+    <textarea v-model="form.address" rows="3" class="mt-1 w-full px-4 py-2 border border-gray-300 rounded-lg"></textarea>
+  </div>
+</div>
 
         <!-- Submit Button -->
-        <button type="submit"
-          class="w-full mt-4 bg-[#0073b1] text-white py-2 rounded-lg hover:bg-[#005f91] transition duration-200 cursor-pointer">
+        <button type="submit" class="w-full mt-4 bg-[#0073b1] text-white py-2 rounded-lg hover:bg-[#005f91] transition duration-200 cursor-pointer">
           Sign Up
         </button>
 
@@ -111,7 +116,7 @@ import { reactive, ref, watch } from 'vue'
 import axios from 'axios'
 import { useRouter } from 'vue-router'
 import { toast } from 'vue3-toastify'
-import { loginUser } from '@/stores/auth';
+import { loginUser } from '@/stores/auth'
 
 const router = useRouter()
 
@@ -123,7 +128,8 @@ const form = reactive({
   services: [],
   experience: '',
   address: '',
-   contact: '', 
+  area: '',   
+  contact: '', 
   latitude: '',
   longitude: ''
 })
@@ -174,6 +180,7 @@ const resetFields = () => {
   form.services = []
   form.experience = ''
   form.address = ''
+  form.area = ''
 }
 
 const handleSubmit = async () => {
@@ -185,7 +192,6 @@ const handleSubmit = async () => {
       endpoint = 'http://localhost:5000/api/providers/signup';
     }
 
-    
     if (form.role === 'provider') {
       await new Promise((resolve, reject) => {
         navigator.geolocation.getCurrentPosition(
@@ -221,7 +227,5 @@ const handleSubmit = async () => {
     });
   }
 };
-
-
 </script>
 
