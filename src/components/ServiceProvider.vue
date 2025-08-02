@@ -11,15 +11,21 @@
 
         <!-- Desktop Nav -->
         <nav class="hidden md:flex items-center space-x-6 text-sm sm:text-base">
-          <router-link to="/serviceprovider" class="text-[#0073b1] font-semibold hover:underline">Home</router-link>
-          <router-link to="/provider/orders" class="text-[#0073b1] font-semibold hover:underline">Orders</router-link>
-          <router-link to="/provider/policies" class="text-[#0073b1] font-semibold hover:underline">Policies</router-link>
-          <router-link to="/provider/about" class="text-[#0073b1] font-semibold hover:underline">About</router-link>
-          <router-link to="/provider/contact" class="text-[#0073b1] font-semibold hover:underline">Contact</router-link>
+
+          <router-link to="/serviceprovider" class="px-4 py-2 text-l font-semibold text-[#0073b1] hover:bg-[#e6f4f9] rounded-full transition duration-200">Home</router-link>
+
+          <router-link to="/provider/orders" class="px-4 py-2 text-l font-semibold text-[#0073b1] hover:bg-[#e6f4f9] rounded-full transition duration-200">Orders</router-link>
+
+          <router-link to="/provider/policies" class="px-4 py-2 text-l font-semibold text-[#0073b1] hover:bg-[#e6f4f9] rounded-full transition duration-200">Policies</router-link>
+
+          <router-link to="/provider/about" class="px-4 py-2 text-l font-semibold text-[#0073b1] hover:bg-[#e6f4f9] rounded-full transition duration-200">About</router-link>
+
+          <router-link to="/provider/contact" class="px-4 py-2 text-l font-semibold text-[#0073b1] hover:bg-[#e6f4f9] rounded-full transition duration-200">Contact</router-link>
+
           <router-link to="/provider/profile">
             <img
-              :src="provider?.profilePic ? `http://localhost:5000/uploads/providers/${provider.profilePic}` : require('@/assets/user.png')"
-              @error="(e) => { e.target.src = require('@/assets/user.png') }"
+              :src="provider?.profilePic ? `http://localhost:5000/uploads/providers/${provider.profilePic}` : defaultPic"
+              @error="handleImageError"
               class="w-8 h-8 rounded-full object-cover border-2 border-[#0073b1] cursor-pointer"
               alt="Provider DP"
             />
@@ -48,8 +54,8 @@
         <router-link @click="drawerOpen = false" to="/provider/contact" class="block text-[#0073b1] font-semibold">Contact</router-link>
         <router-link @click="drawerOpen = false" to="/provider/profile" class="block">
           <img
-            :src="provider?.profilePic ? `http://localhost:5000/uploads/providers/${provider.profilePic}` : require('@/assets/user.png')"
-            @error="(e) => { e.target.src = require('@/assets/user.png') }"
+            :src="provider?.profilePic ? `http://localhost:5000/uploads/providers/${provider.profilePic}` : defaultPic"
+            @error="handleImageError"
             class="w-10 h-10 rounded-full object-cover border-2 border-[#0073b1] mt-2"
             alt="Provider DP"
           />
@@ -67,7 +73,21 @@
         </p>
       </section>
 
-      <!-- Sections... (unchanged from previous version) -->
+       <!-- Quick Stats -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-8">
+        <div class="bg-white rounded-2xl shadow p-6">
+          <h4 class="text-lg font-semibold text-gray-700 mb-2">Total Orders</h4>
+          <p class="text-3xl font-bold text-[#007EA7]">24</p>
+        </div>
+        <div class="bg-white rounded-2xl shadow p-6">
+          <h4 class="text-lg font-semibold text-gray-700 mb-2">Completed</h4>
+          <p class="text-3xl font-bold text-green-500">19</p>
+        </div>
+        <div class="bg-white rounded-2xl shadow p-6">
+          <h4 class="text-lg font-semibold text-gray-700 mb-2">Earnings</h4>
+          <p class="text-3xl font-bold text-yellow-600">₹12,500</p>
+        </div>
+      </div>
 
       <!-- Orders Info Section -->
       <section class="py-10 mt-8 text-center">
@@ -80,8 +100,7 @@
         </ul>
       </section>
 
-      <!-- Other sections like Policies, About, Contact... (same as before) -->
-
+      <!-- Policies -->
       <section class="py-8 sm:py-10 mt-8 bg-white shadow-sm rounded-lg text-center">
         <h3 class="text-xl sm:text-2xl font-semibold text-[#0073b1] mb-3">Our Policies</h3>
         <ul class="max-w-2xl mx-auto list-disc list-inside space-y-2 text-sm sm:text-base text-left text-gray-700">
@@ -92,6 +111,7 @@
         </ul>
       </section>
 
+      <!-- About Section -->
       <section class="py-8 sm:py-10 mt-8 text-center">
         <h3 class="text-xl sm:text-2xl font-semibold text-[#0073b1] mb-3">About SkillLink</h3>
         <p class="max-w-2xl mx-auto text-sm sm:text-base text-gray-700">
@@ -100,14 +120,16 @@
         </p>
       </section>
 
+      <!-- Contact -->
       <section class="py-8 sm:py-10 mt-8 bg-[#e6f4fa] rounded-lg text-center">
         <h3 class="text-xl sm:text-2xl font-semibold text-[#0073b1] mb-3">Contact Us</h3>
         <p class="max-w-2xl mx-auto text-sm sm:text-base text-gray-700">
-          Have questions or need help? Email <strong>support@skilllink.com</strong> or call <strong>+91 98765 43210</strong>.
+          Have questions or need help? Email <strong>connectteamskilllink@gmail.com</strong> or call <strong>+91 98765 43210</strong>.
         </p>
       </section>
     </main>
 
+    <!-- Footer -->
     <footer class="text-center py-6 text-xs sm:text-sm text-gray-500 mt-10">
       © 2025 SkillLink Provider Portal. All rights reserved.
     </footer>
@@ -118,10 +140,12 @@
 import axios from 'axios';
 
 export default {
+  name: 'ProviderHome',
   data() {
     return {
-       drawerOpen: false, 
+      drawerOpen: false,
       provider: null,
+      defaultPic: require('@/assets/user.png'),
     };
   },
   methods: {
@@ -135,33 +159,20 @@ export default {
         });
         this.provider = response.data;
       } catch (error) {
-        console.error('Failed to fetch provider profile:', error);
+        console.error('❌ Failed to fetch provider profile:', error);
       }
     },
+    handleImageError(event) {
+      event.target.src = this.defaultPic;
+    }
   },
   mounted() {
     this.fetchProviderProfile();
-  },
+  }
 };
 </script>
 
-
 <style scoped>
-body {
-  position: relative;
-}
-</style>
-
-
-<style scoped>
-body {
-  position: relative;
-}
-</style>
-
-
-<style scoped>
-
 body {
   position: relative;
 }

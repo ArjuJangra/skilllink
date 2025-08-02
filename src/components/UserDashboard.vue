@@ -107,51 +107,89 @@
         </div>
 
         <!-- History Tab -->
-        <div v-else-if="activeTab === 'history'" class="space-y-4">
-          <h3 class="text-xl font-semibold text-[#007EA7]">Previous Services</h3>
-          <div v-if="history.length" class="space-y-2">
-            <div v-for="item in history" :key="item._id"
-              class="bg-white p-4 rounded-xl shadow border flex justify-between items-center">
-              <div>
-                <h4 class="text-[#007EA7] font-semibold">{{ item.service }}</h4>
-                <p class="text-gray-500 text-sm">{{ item.date }}</p>
-              </div>
-              <span class="text-green-600 font-semibold text-sm">{{ item.status }}</span>
-            </div>
-          </div>
-          <p v-else class="text-gray-500">No service history available.</p>
+       <div v-else-if="activeTab === 'history'" class="space-y-6">
+  <h3 class="text-xl font-semibold text-[#007EA7]">Previous Services</h3>
+
+  <div v-if="history.length" class="grid md:grid-cols-2 gap-4">
+    <div
+      v-for="item in history"
+      :key="item._id"
+      class="bg-white border border-gray-200 rounded-xl shadow-sm hover:shadow-md p-4 transition"
+    >
+      <div class="flex justify-between items-start">
+        <div class="space-y-1">
+          <h4 class="text-lg text-[#007EA7] font-bold">{{ item.service }}</h4>
+          <p class="text-gray-500 text-sm">{{ formatDate(item.date) }}</p>
         </div>
+        <span
+          :class="[
+            'text-sm font-semibold px-3 py-1 rounded-full',
+            item.status === 'Completed'
+              ? 'bg-green-100 text-green-700'
+              : item.status === 'Pending'
+              ? 'bg-yellow-100 text-yellow-700'
+              : 'bg-gray-100 text-gray-600'
+          ]"
+        >
+          {{ item.status }}
+        </span>
+      </div>
+    </div>
+  </div>
+
+  <p v-else class="text-gray-500">No service history available.</p>
+</div>
+
 
         <!-- Address Tab -->
-        <div v-else-if="activeTab === 'address'" class="space-y-6">
-          <h3 class="text-xl font-semibold text-[#007EA7]">Saved Addresses</h3>
+     <div v-else-if="activeTab === 'address'" class="space-y-6">
+  <div class="flex items-center justify-between">
+    <h3 class="text-xl font-semibold text-[#007EA7]">Saved Addresses</h3>
+    <span @click="showAddressForm = !showAddressForm"
+      class="text-sm text-[#007EA7] hover:text-[#005f7f] font-medium cursor-pointer">
+      {{ showAddressForm ? 'Close' : 'Add New Address' }}
+    </span>
+  </div>
 
-          <!-- Address Form -->
-          <div v-if="showAddressForm" class="bg-gray-100 p-4 rounded-xl space-y-4">
-            <input v-model="newAddress.pincode" placeholder="Pincode" class="input-edit" />
-            <input v-model="newAddress.city" placeholder="City" class="input-edit" />
-            <textarea v-model="newAddress.address" placeholder="Full Address" rows="2"
-              class="w-full border rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-[#00A8E8]"></textarea>
-            <div class="flex gap-3">
-              <button @click="saveAddress" class="btn-blue">Save</button>
-              <button @click="showAddressForm = false" class="btn-gray">Cancel</button>
-            </div>
-          </div>
-          <button v-else @click="showAddressForm = true" class="btn-blue">Add New Address</button>
+  <!-- Address Form -->
+  <transition name="fade">
+    <div v-if="showAddressForm" class="bg-gray-50 border p-4 rounded-xl space-y-4">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <input v-model="newAddress.pincode" placeholder="Pincode" class="input-edit" />
+        <input v-model="newAddress.city" placeholder="City" class="input-edit" />
+      </div>
+      <textarea v-model="newAddress.address" placeholder="Full Address" rows="2"
+        class="w-full border rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-[#00A8E8]"></textarea>
+      <div class="flex gap-3">
+        <button @click="saveAddress" class="bg-[#007EA7] hover:bg-[#005f7f] text-white px-4 py-2 rounded-md transition">
+          Save
+        </button>
+        <button @click="showAddressForm = false"
+          class="bg-gray-300 hover:bg-gray-400 text-gray-700 px-4 py-2 rounded-md transition">
+          Cancel
+        </button>
+      </div>
+    </div>
+  </transition>
 
-          <!-- Address List -->
-          <div v-if="savedAddresses.length" class="grid md:grid-cols-2 gap-4">
-            <div v-for="(addr, index) in savedAddresses" :key="index"
-              class="bg-white p-4 rounded-xl shadow border relative">
-              <p><strong class="text-[#007EA7]">Pincode:</strong> {{ addr.pincode }}</p>
-              <p><strong class="text-[#007EA7]">City:</strong> {{ addr.city }}</p>
-              <p><strong class="text-[#007EA7]">Address:</strong> {{ addr.address }}</p>
-              <button @click="deleteAddress(index)"
-                class="absolute top-2 right-2 text-red-500 hover:text-red-700 text-sm">Delete</button>
-            </div>
-          </div>
-          <p v-else class="text-gray-500">No saved addresses.</p>
-        </div>
+  <!-- Address List -->
+  <div v-if="savedAddresses.length" class="grid md:grid-cols-2 gap-4">
+    <div v-for="(addr, index) in savedAddresses" :key="index"
+      class="bg-white p-4 rounded-xl border shadow-sm hover:shadow-md transition relative">
+      <div class="space-y-1 text-sm text-gray-700">
+        <p><strong class="text-[#007EA7]">Pincode:</strong> {{ addr.pincode }}</p>
+        <p><strong class="text-[#007EA7]">City:</strong> {{ addr.city }}</p>
+        <p><strong class="text-[#007EA7]">Address:</strong> {{ addr.address }}</p>
+      </div>
+      <button @click="deleteAddress(index)"
+        class="absolute top-2 right-2 text-red-500 hover:text-red-700 text-xs font-semibold">
+        ✕
+      </button>
+    </div>
+  </div>
+  <p v-else class="text-gray-500">No saved addresses found.</p>
+</div>
+
 
         <!-- Settings Tab -->
         <div v-else-if="activeTab === 'settings'" class="space-y-6">
@@ -286,6 +324,11 @@ const syncActiveTabFromHash = () => {
 watch(activeTab, (val) => {
   window.location.hash = val;
 });
+const formatDate = (dateString) => {
+  const options = { year: 'numeric', month: 'short', day: 'numeric' }
+  return new Date(dateString).toLocaleDateString(undefined, options)
+}
+
 
 // Get user profile
 const getUserProfile = async () => {

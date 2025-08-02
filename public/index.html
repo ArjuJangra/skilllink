@@ -1,25 +1,45 @@
 <!DOCTYPE html>
-<html lang="">
+<html lang="en">
   <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width,initial-scale=1.0">
-    <link rel="icon" href="<%= BASE_URL %>favicon.ico">
-    <!-- Add in public/index.html or main.js -->
-<link
-  rel="stylesheet"
-  href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
-/>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-   <!--  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script> -->
-     
-    <title><%= htmlWebpackPlugin.options.title %></title>
+    <!-- Title and Favicon -->
+    <title>SkillLink | Service at Your Doorstep</title>
+    <link rel="icon" href="<%= BASE_URL %>favicon.ico" type="image/x-icon" />
+
+    <!-- FontAwesome Icons -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+
+    <!-- Meta Tags for SEO -->
+    <meta name="description" content="SkillLink - Easily find and book trusted service providers near you." />
+    <meta name="keywords" content="SkillLink, local services, plumbers, electricians, booking app" />
+    <meta name="author" content="SkillLink Team" />
+
+    <!-- Open Graph (Social Sharing) -->
+    <meta property="og:title" content="SkillLink - Find Trusted Local Services" />
+    <meta property="og:description" content="Quickly find, connect, and book verified local service providers with SkillLink." />
+    <meta property="og:image" content="<%= BASE_URL %>preview.png" />
+    <meta property="og:url" content="https://skilllink.example.com" />
+    <meta property="og:type" content="website" />
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="SkillLink" />
+    <meta name="twitter:description" content="Easily find and book trusted local services." />
+    <meta name="twitter:image" content="<%= BASE_URL %>preview.png" />
   </head>
+
   <body>
     <noscript>
-      <strong>We're sorry but <%= htmlWebpackPlugin.options.title %> doesn't work properly without JavaScript enabled. Please enable it to continue.</strong>
+      <strong>
+        We're sorry but SkillLink doesn't work properly without JavaScript enabled. Please enable it to continue.
+      </strong>
     </noscript>
     <div id="app"></div>
-    
   </body>
 </html>

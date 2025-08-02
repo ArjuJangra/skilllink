@@ -112,10 +112,10 @@ async function providerLogin(req, res) {
 async function updateProviderProfile(req, res) {
   try {
     const { id } = req.params;
-    const { name, email } = req.body;
+    const { name, email, area } = req.body;
 
     console.log('📥 Params:', id);
-    console.log('📦 Body:', { name, email });
+    console.log('📦 Body:', { name, email, area });
     console.log('🖼️ File:', req.file);
 
     const provider = await ServiceProvider.findById(id);
@@ -123,18 +123,15 @@ async function updateProviderProfile(req, res) {
       return res.status(404).json({ message: 'Provider not found' });
     }
 
-    // Delete old profile picture if new one uploaded
     if (req.file && provider.profilePic) {
       deleteOldProviderPic(provider.profilePic);
     }
 
     const updateData = { name, email };
-    if (req.file) {
-      updateData.profilePic = req.file.filename;
-    }
+    if (area) updateData.area = area;
+    if (req.file) updateData.profilePic = req.file.filename;
 
     const updatedProvider = await ServiceProvider.findByIdAndUpdate(id, updateData, { new: true });
-
     if (!updatedProvider) {
       return res.status(500).json({ message: 'Update failed' });
     }
@@ -142,7 +139,7 @@ async function updateProviderProfile(req, res) {
     res.json({
       message: 'Provider profile updated successfully',
       provider: updatedProvider,
-      profilePicUrl: `/uploads/providers/${updatedProvider.profilePic}`
+      profilePicUrl: `/uploads/providers/${updatedProvider.profilePic}`,
     });
 
   } catch (error) {

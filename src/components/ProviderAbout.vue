@@ -1,29 +1,42 @@
 <template>
   <div class="min-h-screen bg-[#F0F9FF] text-gray-800 pt-20">
-    <!-- Navbar (copied from Orders page) -->
+    <!-- Navbar -->
     <header class="fixed top-0 left-0 right-0 z-50 bg-white shadow-md">
       <div class="max-w-5xl mx-auto px-6 py-4 flex justify-between items-center">
-        <!-- Left: Logo + Title -->
+        <!-- Logo + Title -->
         <div class="flex items-center space-x-2">
           <img src="@/assets/skilllogo.png" alt="SkillLink Logo" class="w-10 h-10" />
           <span class="text-xl font-bold text-[#0073b1]">SkillLink</span>
         </div>
 
-        <!-- Right: Navigation + Profile -->
+        <!-- Navigation -->
         <nav class="flex items-center space-x-4 text-sm md:text-base">
-          <router-link to="/serviceprovider" class="text-[#0073b1] font-bold hover:underline">Home</router-link>
-          <router-link to="/provider/orders" class="text-[#0073b1] font-bold hover:underline">Orders</router-link>
-          <router-link to="/provider/policies" class="text-[#0073b1] font-bold hover:underline">Policies</router-link>
-          <router-link to="/provider/about" class="text-[#0073b1] font-bold hover:underline">About</router-link>
-          <router-link to="/provider/contact" class="text-[#0073b1] font-bold hover:underline">Contact</router-link>
+          
+          <router-link to="/serviceprovider" class="px-4 py-2 text-l font-semibold text-[#0073b1] hover:bg-[#e6f4f9] rounded-full transition duration-200">Home</router-link>
+
+          <router-link to="/provider/orders" class="px-4 py-2 text-l font-semibold text-[#0073b1] hover:bg-[#e6f4f9] rounded-full transition duration-200">Orders</router-link>
+
+          <router-link to="/provider/policies" class="px-4 py-2 text-l font-semibold text-[#0073b1] hover:bg-[#e6f4f9] rounded-full transition duration-200">Policies</router-link>
+
+          <router-link to="/provider/about" class="px-4 py-2 text-l font-semibold text-[#0073b1] hover:bg-[#e6f4f9] rounded-full transition duration-200">About</router-link>
+
+          <router-link to="/provider/contact" class="px-4 py-2 text-l font-semibold text-[#0073b1] hover:bg-[#e6f4f9] rounded-full transition duration-200">Contact</router-link>
 
           <!-- Profile Picture -->
           <div class="relative group">
-            <router-link to="/profile">
-              <img v-if="user && user.profilePic" :src="`http://localhost:5000/uploads/${user.profilePic}`" alt="User DP"
-                class="w-10 h-10 rounded-full object-cover border-2 border-[#0073b1] cursor-pointer" />
-              <img v-else src="@/assets/user.png" alt="Default User DP"
-                class="w-10 h-10 rounded-full object-cover border-2 border-[#0073b1] cursor-pointer" />
+            <router-link to="/provider/profile">
+              <img
+                v-if="user && user.profilePic"
+                :src="`http://localhost:5000/uploads/providers/${user.profilePic}`"
+                alt="User DP"
+                class="w-10 h-10 rounded-full object-cover border-2 border-[#0073b1] cursor-pointer"
+              />
+              <img
+                v-else
+                src="@/assets/user.png"
+                alt="Default User DP"
+                class="w-10 h-10 rounded-full object-cover border-2 border-[#0073b1] cursor-pointer"
+              />
             </router-link>
           </div>
         </nav>
@@ -32,6 +45,7 @@
 
     <!-- About Content -->
     <div class="max-w-5xl mx-auto px-4 py-10">
+      <!-- Introduction -->
       <div class="text-center mb-8 bg-white p-6 rounded-lg shadow">
         <h1 class="text-3xl font-bold text-[#0073b1] mb-2">About SkillLink</h1>
         <p class="text-gray-600 max-w-xl mx-auto text-sm">
@@ -58,11 +72,15 @@
         </div>
       </div>
 
-      <!-- Why Join Section -->
+      <!-- Why Join -->
       <div class="mb-8">
         <h2 class="text-2xl font-bold text-[#0073b1] mb-4 text-center">Why Join SkillLink?</h2>
         <div class="grid md:grid-cols-2 gap-6">
-          <div v-for="(item, index) in reasons" :key="index" class="bg-[#f0f4f8] p-5 rounded shadow text-sm">
+          <div
+            v-for="(item, index) in reasons"
+            :key="index"
+            class="bg-[#f0f4f8] p-5 rounded shadow text-sm"
+          >
             <h3 class="text-[#0073b1] font-semibold mb-2">{{ item.title }}</h3>
             <p class="text-gray-600">{{ item.description }}</p>
           </div>
@@ -115,14 +133,14 @@ export default {
     async fetchUserProfile() {
       try {
         const token = localStorage.getItem('token');
-        const response = await axios.get('http://localhost:5000/api/user/profile', {
+        const response = await axios.get('http://localhost:5000/api/providers/profile', {
           headers: {
-            Authorization: `Bearer ${token}`,
-          },
+            Authorization: `Bearer ${token}`
+          }
         });
         this.user = response.data;
       } catch (error) {
-        console.error('Failed to fetch user profile:', error);
+        console.error('Failed to fetch provider profile:', error);
       }
     }
   },

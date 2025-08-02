@@ -26,6 +26,10 @@ const serviceProviderSchema = new mongoose.Schema({
     type: Number,
     default: 0
   },
+  area: {
+  type: String,
+  required: true
+},
   latitude: {
     type: Number,
     required: true
