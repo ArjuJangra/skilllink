@@ -42,17 +42,13 @@ console.log('📦 Order Provider ID:', order.providerId?.toString());
     await order.save();
 
     //  Emit real-time update if accepted
-    if (status === 'Accepted') {
-      global.io.emit('orderAccepted', {
-        userId: order.userId._id.toString(),
-        providerName: order.providerId?.name || 'Provider',
-        bookingId: order._id
-      });
-    }
-
-     else if (status === 'Rejected') {
-  global.io.emit('orderRejected', {
-    userId: order.userId._id.toString(),
+ if (status === 'Accepted') {
+  global.io.to(order.userId._id.toString()).emit('orderAccepted', {
+    providerName: order.providerId?.name || 'Provider',
+    bookingId: order._id
+  });
+} else if (status === 'Rejected') {
+  global.io.to(order.userId._id.toString()).emit('orderRejected', {
     providerName: order.providerId?.name || 'Provider',
     bookingId: order._id
   });

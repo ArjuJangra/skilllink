@@ -307,7 +307,6 @@
 </template>
 
 
-
 <script setup>
 import { ref, onMounted } from 'vue';
 import { io } from 'socket.io-client';
@@ -323,9 +322,7 @@ const isAuthenticated = ref(false);
 const isLoading = ref(true);
 const showLogoutModal = ref(false);
 const showEditProfileForm = ref(false);
-
-const previewImage = ref(null); // for temporary image preview
-
+const previewImage = ref(null);
 const tabs = ['bookings', 'history', 'address', 'settings'];
 const activeTab = ref('bookings');
 const activeClass = 'text-[#007EA7] border-b-2 border-[#00A8E8]';
@@ -338,7 +335,6 @@ const editingId = ref(null);
 const editableBooking = ref({ service: '', name: '', contact: '', address: '' });
 
 const history = ref([]);
-
 const showAddressForm = ref(false);
 const savedAddresses = ref(JSON.parse(localStorage.getItem('addresses')) || []);
 const newAddress = ref({ pincode: '', city: '', address: '' });
@@ -368,7 +364,7 @@ const getUserProfile = async () => {
   }
 };
 
-// Upload & preview profile image
+// Upload profile image
 const handleProfileImageChange = async (event) => {
   const file = event.target.files[0];
   if (!file || !file.type.startsWith('image/')) {
@@ -383,8 +379,7 @@ const handleProfileImageChange = async (event) => {
   reader.readAsDataURL(file);
 
   const formData = new FormData();
-  formData.append('profilePic', file); 
-
+  formData.append('profilePic', file);
 
   try {
     const token = localStorage.getItem('token');
@@ -623,7 +618,8 @@ onMounted(() => {
     router.push('/login');
     return;
   }
-   const localUser = JSON.parse(localStorage.getItem('user'));
+
+  const localUser = JSON.parse(localStorage.getItem('user'));
   if (localUser?.role === 'provider') {
     router.push('/provider/profile');
     return;
@@ -637,31 +633,24 @@ onMounted(() => {
     fetchHistory(),
     fetchNotificationSettings(),
   ]).then(() => {
-    
     socket.value = io('http://localhost:5000', {
-  auth: {
-    token,
-  },
-  withCredentials: true,
-  transports: ['websocket'],
-});
+      auth: { token },
+      withCredentials: true,
+      transports: ['websocket'],
+    });
 
+    // ✅ Fixed this line: emit correct event name
+    socket.value.emit('join', user.value._id);
 
-    socket.value.emit('joinRoom', { userId: user.value._id });
-
- 
     socket.value.on('orderAccepted', (data) => {
-      toast.info(`Your order has been accepted by ${data.providerName}`);
-      fetchBookings(); // Refresh bookings if needed
-    });
-    
-  socket.value.on('orderRejected', (data) => {
-      toast.info(`Your booking has been rejected by ${data.providerName}`);
-      fetchBookings(); // Refresh bookings if needed
+      toast.info(`✅ Your order has been accepted by ${data.providerName}`);
+      fetchBookings();
     });
 
- 
-
+    socket.value.on('orderRejected', (data) => {
+      toast.info(`❌ Your booking was rejected by ${data.providerName}`);
+      fetchBookings();
+    });
   }).finally(() => {
     isLoading.value = false;
   });
@@ -670,7 +659,6 @@ onMounted(() => {
     activeTab.value = 'bookings';
   }
 });
-
 </script>
 
 

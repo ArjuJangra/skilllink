@@ -10,16 +10,20 @@ router.get('/test', (req, res) => {
 });
  
 // GET /api/bookings
+
 router.get('/', authenticateUser, async (req, res) => {
-    res.send('Booking route working!');
   try {
-   const bookings = await Booking.find({ userId: req.user.id, status: { $ne: 'Completed' } }).sort({ createdAt: -1 });
+    const bookings = await Booking.find({
+      userId: req.user.id,
+      status: { $ne: 'Completed' },
+    }).sort({ createdAt: -1 });
 
     res.json(bookings);
   } catch (err) {
     res.status(500).json({ message: 'Failed to fetch bookings', error: err.message });
   }
 });
+
 
 // POST /api/bookings
 router.post('/', authenticateUser, async (req, res) => {

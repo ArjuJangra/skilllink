@@ -39,13 +39,12 @@ const routes = [
   // Auth-Protected Routes
  {
   path: '/profile',
-  name: 'Profile',
-  component: () => {
+  redirect: () => {
     const user = JSON.parse(localStorage.getItem('user'));
     if (user?.role === 'provider') {
-      return import('@/components/ProviderDashboard.vue');
+      return '/provider/profile';
     } else {
-      return import('@/components/UserDashboard.vue');
+      return '/dashboard';
     }
   },
   meta: { requiresAuth: true }

@@ -9,6 +9,8 @@ const path = require('path');
 const jwt = require('jsonwebtoken');
 const providerRoutes = require('./routes/providerRoutes');
 const contactRoutes = require('./routes/contactRoutes');
+const providerOrdersRoutes = require('./routes/providerOrders');
+
 
 dotenv.config();
 
@@ -49,6 +51,8 @@ app.use('/api/provider/orders', require('./routes/providerOrders'));
 app.use('/api/bookings', bookingRoutes);
 app.use('/api/providers',providerRoutes);
 app.use('/api/contact', contactRoutes);
+app.use('/api/provider/orders', providerOrdersRoutes);
+
 
 // ===== Socket.IO JWT Authentication =====
 io.use((socket, next) => {
