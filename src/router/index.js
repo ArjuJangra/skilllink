@@ -100,7 +100,14 @@ const routes = [
     name: 'ProviderContact',
     component: ProviderContact,
     meta: { requiresAuth: true }
-  }
+  },
+  {
+  path: '/notifications',
+  name: 'Notifications',
+  component: () => import('@/components/NotificationHistory.vue'),
+  meta: { requiresAuth: true }
+}
+
 
   
 ];

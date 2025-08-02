@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const Booking = require('../models/Booking');
+const Notification = require('../models/Notification');
 const authenticateUser = require('../middleware/authMiddleware');
 
 
@@ -39,6 +40,13 @@ console.log('📦 Order Provider ID:', order.providerId?.toString());
     }
 
     order.status = status;
+
+await Notification.create({
+  userId: order.userId._id,
+  type: status === 'Accepted' ? 'OrderAccepted' : 'OrderRejected',
+  message: `Your order has been ${status.toLowerCase()} by ${order.providerId?.name || 'Provider'}`,
+});
+
     await order.save();
 
     //  Emit real-time update if accepted

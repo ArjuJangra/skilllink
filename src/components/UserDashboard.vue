@@ -1,314 +1,243 @@
 <template>
-  <!-- Authenticated User Dashboard -->
-  <div v-if="isAuthenticated" class="min-h-screen bg-gray-50 px-4 py-8">
-    <div class="max-w-4xl mx-auto bg-white rounded-2xl shadow-lg p-6">
+  <!-- Authenticated Dashboard Wrapper -->
+  <div v-if="isAuthenticated" class="min-h-screen bg-gradient-to-b from-[#F0F9FF] to-white py-8 px-4">
+    <div class="max-w-5xl mx-auto bg-white rounded-3xl shadow-xl p-6">
 
-      <!-- Profile Section -->
-
+      <!-- User Profile Card -->
       <div v-if="user"
-        class="max-w-2xl mx-auto bg-[#f1f2f3] hover:bg-[#eeeff0] p-8 rounded-2xl shadow-lg mt-6 transition-all duration-300 border border-gray-200 backdrop-blur-sm">
-        <!-- Edit Button  -->
+        class="bg-[#f8fbfd] hover:bg-[#f0f8fc] transition-all p-6 rounded-2xl border border-gray-200 mb-8">
+        <!-- Edit Button -->
         <div class="flex justify-end">
           <button @click="showEditProfileForm = !showEditProfileForm"
-            class="flex items-center gap-1 text-blue-500 hover:text-blue-700">
-            <!-- Pencil Icon -->
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
-              stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                d="M11 4H6a2 2 0 00-2 2v12a2 2 0 002 2h12a2 2 0 002-2v-5M18.5 2.5a2.121 2.121 0 113 3L12 15l-4 1 1-4 9.5-9.5z" />
-            </svg>
+            class="flex items-center gap-1 text-blue-600 hover:text-blue-800 text-sm font-medium">
+            <i class="fas fa-pen"></i>
             <span>Edit</span>
           </button>
         </div>
 
-        <!-- Profile Info -->
-        <div class="flex items-center space-x-4 border-b pb-4 mb-6">
-          <!-- Profile Image with Upload -->
+        <!-- Profile Details -->
+        <div class="flex items-center gap-6 mt-2">
+          <!-- Profile Picture -->
           <div class="relative group">
             <img
               :src="user.profilePic ? `http://localhost:5000/uploads/${user.profilePic}` : require('@/assets/user.png')"
-              alt="User" class="w-20 h-20 rounded-full border-2 border-[#00A8E8] object-cover" />
-
-            <!-- Upload Icon -->
+              class="w-24 h-24 rounded-full border-4 border-[#00A8E8] object-cover shadow-md" />
             <label
-              class="absolute bottom-0 right-0 bg-[#007EA7] text-white rounded-full p-1 cursor-pointer opacity-0 group-hover:opacity-100 transition-opacity"
-              title="Change Photo">
-              <input type="file" class="hidden" @change="handleProfileImageChange" accept="image/*" />
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M5 20h14v-2H5v2zm7-18C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 
-        18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z" />
-              </svg>
+              class="absolute bottom-1 right-1 bg-[#007EA7] text-white rounded-full p-2 cursor-pointer opacity-0 group-hover:opacity-100 transition-opacity"
+              title="Upload Photo">
+              <input type="file" class="hidden" @change="handleProfileImageChange" />
+              <i class="fas fa-camera text-sm"></i>
             </label>
           </div>
 
-          <!-- User Info -->
+          <!-- Info -->
           <div>
             <h2 class="text-2xl font-bold text-[#007EA7]">{{ user?.name || 'Guest' }}</h2>
-            <p class="text-gray-500">{{ user?.email || 'No email' }}</p>
+            <p class="text-gray-500 text-sm">{{ user?.email }}</p>
           </div>
         </div>
 
         <!-- Edit Profile Form -->
-        <div v-if="showEditProfileForm">
-          <form @submit.prevent="updateUserProfile">
-            <div class="mb-4">
-              <label class="block text-gray-600">Full Name</label>
-              <input v-model="user.name" type="text" class="w-full mt-1 p-2 border rounded-md" />
-            </div>
-
-            <div class="mb-4">
-              <label class="block text-gray-600">Phone</label>
-              <input v-model="user.phone" type="text" class="w-full mt-1 p-2 border rounded-md" />
-            </div>
-
-            <div class="mb-4">
-              <label class="block text-gray-600">Bio</label>
-              <textarea v-model="user.bio" class="w-full mt-1 p-2 border rounded-md"></textarea>
-            </div>
-            <div class="mb-4">
-              <label class="block text-gray-600">City</label>
-              <input v-model="user.city" type="text" class="w-full mt-1 p-2 border rounded-md" />
-            </div>
-
-            <div class="mb-4">
-              <label class="block text-gray-600">Pincode</label>
-              <input v-model="user.pincode" type="text" class="w-full mt-1 p-2 border rounded-md" />
-            </div>
-
-            <button type="submit" class="bg-[#00A8E8] hover:bg-[#007EA7] text-white px-4 py-2 rounded-md">
-              Save Changes
-            </button>
-          </form>
+        <div v-if="showEditProfileForm" class="mt-6 space-y-4">
+          <div v-for="(field, key) in editableFields" :key="key">
+            <label class="block text-sm text-gray-600 mb-1">{{ field.label }}</label>
+            <input v-model="user[key]" :type="field.type || 'text'"
+              class="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#00A8E8]" />
+          </div>
+          <button type="button" @click="updateUserProfile"
+            class="mt-4 px-4 py-2 bg-[#00A8E8] hover:bg-[#007EA7] text-white rounded-md">
+            Save Changes
+          </button>
         </div>
       </div>
 
-
       <!-- Navigation Tabs -->
-      <div class="flex flex-wrap gap-2 border-b pb-2 mb-4 text-sm md:text-base mt-6">
-        <button v-for="tab in tabs" :key="tab" class="px-4 py-2 rounded-t-lg font-semibold"
-          :class="activeTab === tab ? activeClass : inactiveClass" @click="activeTab = tab">
+      <div class="flex flex-wrap gap-2 border-b pb-3 mb-6 text-sm md:text-base">
+        <button v-for="tab in tabs" :key="tab" @click="activeTab = tab"
+          :class="activeTab === tab ? activeClass : inactiveClass"
+          class="px-5 py-2 font-semibold rounded-t-lg transition-colors">
           {{ formatTab(tab) }}
         </button>
       </div>
 
-      <!-- Loading State -->
-      <div v-if="isLoading" class="text-center py-8 text-[#007EA7] font-semibold">Loading...</div>
+      <!-- Loading -->
+      <div v-if="isLoading" class="text-center text-[#007EA7] font-semibold py-8">Loading...</div>
 
-      <!-- Tab Contents -->
-
+      <!-- Content -->
       <div v-else>
-
         <!-- Bookings Tab -->
-        <div v-if="activeTab === 'bookings'" class="space-y-2">
-          <h3 class="text-lg font-semibold text-[#007EA7]">My Bookings</h3>
-
-          <div v-if="bookings.length" class="space-y-2">
-            <div v-for="(booking, index) in bookings" :key="index" class="border rounded-lg p-3 shadow-sm relative">
-              <!-- Edit Mode -->
-              <div v-if="editingId === booking._id">
-                <input v-model="editableBooking.service" placeholder="Service" class="border rounded p-1 w-full mb-1" />
-                <input v-model="editableBooking.name" placeholder="Name" class="border rounded p-1 w-full mb-1" />
-                <input v-model="editableBooking.contact" placeholder="Contact" class="border rounded p-1 w-full mb-1" />
-                <input v-model="editableBooking.address" placeholder="Address" class="border rounded p-1 w-full mb-1" />
-
-                <div class="flex gap-2 mt-2">
-                  <button @click="saveEdit(booking._id)"
-                    class="bg-green-500 text-white px-3 py-1 rounded hover:bg-green-600">
-                    Save
-                  </button>
-                  <button @click="cancelEdit" class="bg-gray-400 text-white px-3 py-1 rounded hover:bg-gray-500">
-                    Cancel
-                  </button>
+        <div v-if="activeTab === 'bookings'" class="space-y-4">
+          <h3 class="text-xl font-semibold text-[#007EA7]">My Bookings</h3>
+          <div v-if="bookings.length" class="grid md:grid-cols-2 gap-4">
+            <div v-for="booking in bookings" :key="booking._id" class="bg-white p-4 rounded-xl shadow border relative">
+              <template v-if="editingId === booking._id">
+                <input v-model="editableBooking.service" placeholder="Service" class="input-edit mb-2" />
+                <input v-model="editableBooking.name" placeholder="Name" class="input-edit mb-2" />
+                <input v-model="editableBooking.contact" placeholder="Contact" class="input-edit mb-2" />
+                <input v-model="editableBooking.address" placeholder="Address" class="input-edit mb-2" />
+                <div class="flex justify-end gap-2 mt-2">
+                  <button @click="saveEdit(booking._id)" class="btn-green">Save</button>
+                  <button @click="cancelEdit" class="btn-gray">Cancel</button>
                 </div>
-              </div>
-
-              <!-- Display Mode -->
-              <div v-else>
-                <h4 class="font-semibold text-[#007EA7]">{{ booking.service }}</h4>
+              </template>
+              <template v-else>
+                <h4 class="font-semibold text-[#007EA7] text-lg">{{ booking.service }}</h4>
                 <p class="text-sm text-gray-500">Name: {{ booking.name }}</p>
                 <p class="text-sm text-gray-500">Contact: {{ booking.contact }}</p>
                 <p class="text-sm text-gray-500">Address: {{ booking.address }}</p>
-                <p class="text-xs text-gray-400">Booked on: {{ new Date(booking.createdAt).toLocaleString() }}</p>
-
-                <!-- Status -->
+                <p class="text-xs text-gray-400">Booked: {{ new Date(booking.createdAt).toLocaleString() }}</p>
                 <div class="mt-2">
-                  <span v-if="booking.status === 'Completed'" class="text-green-600 font-medium text-sm">
-                    Completed
-                  </span>
+                  <span v-if="booking.status === 'Completed'"
+                    class="text-green-600 font-medium text-sm">Completed</span>
                   <button v-else @click="markAsCompleted(booking._id)"
-                    class="bg-blue-500 text-white text-sm px-3 py-1 rounded hover:bg-blue-600">
-                    Mark as Completed
-                  </button>
+                    class="text-sm px-3 py-1 bg-blue-500 hover:bg-blue-600 text-white rounded">Mark as
+                    Completed</button>
                 </div>
-              </div>
-
-              <!-- Edit/Delete Buttons -->
-              <div class="absolute top-2 right-2 flex space-x-2">
-                <button @click="startEdit(booking)" class="text-blue-600 hover:text-blue-800">
-                  <i class="fas fa-edit"></i>
-                </button>
-                <button @click="deleteBooking(booking._id)" class="text-red-600 hover:text-red-800">
-                  <i class="fas fa-trash-alt"></i>
-                </button>
+              </template>
+              <div class="absolute top-2 right-2 flex gap-2 text-sm">
+                <button @click="startEdit(booking)" class="text-blue-500 hover:text-blue-700"><i
+                    class="fas fa-edit"></i></button>
+                <button @click="deleteBooking(booking._id)" class="text-red-500 hover:text-red-700"><i
+                    class="fas fa-trash"></i></button>
               </div>
             </div>
           </div>
-
+          
           <p v-else class="text-gray-500">No bookings found.</p>
         </div>
 
-
-
         <!-- History Tab -->
-        <div v-else-if="activeTab === 'history'" class="space-y-2">
-          <h3 class="text-lg font-semibold text-[#007EA7]">Previous Services</h3>
+        <div v-else-if="activeTab === 'history'" class="space-y-4">
+          <h3 class="text-xl font-semibold text-[#007EA7]">Previous Services</h3>
           <div v-if="history.length" class="space-y-2">
-            <div v-for="(item, index) in history" :key="index"
-              class="border rounded-lg p-3 flex justify-between items-center shadow-sm">
+            <div v-for="item in history" :key="item._id"
+              class="bg-white p-4 rounded-xl shadow border flex justify-between items-center">
               <div>
-                <h4 class="font-semibold text-[#007EA7]">{{ item.service }}</h4>
-                <p class="text-sm text-gray-500">{{ item.date }}</p>
+                <h4 class="text-[#007EA7] font-semibold">{{ item.service }}</h4>
+                <p class="text-gray-500 text-sm">{{ item.date }}</p>
               </div>
-              <span class="text-sm font-medium text-green-600">{{ item.status }}</span>
+              <span class="text-green-600 font-semibold text-sm">{{ item.status }}</span>
             </div>
           </div>
           <p v-else class="text-gray-500">No service history available.</p>
         </div>
 
         <!-- Address Tab -->
-        <div v-else-if="activeTab === 'address'" class="space-y-4">
-          <h3 class="text-lg font-semibold text-[#007EA7]">Saved Addresses</h3>
+        <div v-else-if="activeTab === 'address'" class="space-y-6">
+          <h3 class="text-xl font-semibold text-[#007EA7]">Saved Addresses</h3>
 
-          <!-- Add Address Form -->
-          <div v-if="showAddressForm" class="bg-gray-100 p-4 rounded-lg space-y-3">
-            <input v-model="newAddress.pincode" type="text" placeholder="Pincode"
-              class="w-full border rounded p-2 focus:outline-none focus:ring-2 focus:ring-[#00A8E8]" />
-            <input v-model="newAddress.city" type="text" placeholder="City"
-              class="w-full border rounded p-2 focus:outline-none focus:ring-2 focus:ring-[#00A8E8]" />
-            <textarea v-model="newAddress.address" rows="2" placeholder="Full Address"
-              class="w-full border rounded p-2 focus:outline-none focus:ring-2 focus:ring-[#00A8E8]"></textarea>
+          <!-- Address Form -->
+          <div v-if="showAddressForm" class="bg-gray-100 p-4 rounded-xl space-y-4">
+            <input v-model="newAddress.pincode" placeholder="Pincode" class="input-edit" />
+            <input v-model="newAddress.city" placeholder="City" class="input-edit" />
+            <textarea v-model="newAddress.address" placeholder="Full Address" rows="2"
+              class="w-full border rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-[#00A8E8]"></textarea>
             <div class="flex gap-3">
-              <button @click="saveAddress"
-                class="px-4 py-2 bg-[#007EA7] text-white rounded hover:bg-[#005f78]">Save</button>
-              <button @click="showAddressForm = false"
-                class="px-4 py-2 border rounded text-[#007EA7] hover:bg-gray-200">Cancel</button>
+              <button @click="saveAddress" class="btn-blue">Save</button>
+              <button @click="showAddressForm = false" class="btn-gray">Cancel</button>
             </div>
           </div>
+          <button v-else @click="showAddressForm = true" class="btn-blue">Add New Address</button>
 
-          <!-- Add New Address Button -->
-          <button v-else @click="showAddressForm = true"
-            class="px-4 py-2 bg-[#007EA7] text-white rounded hover:bg-[#005f78]">
-            Add New Address
-          </button>
-
-          <!-- Saved Addresses List -->
-          <div v-if="savedAddresses.length" class="space-y-3">
+          <!-- Address List -->
+          <div v-if="savedAddresses.length" class="grid md:grid-cols-2 gap-4">
             <div v-for="(addr, index) in savedAddresses" :key="index"
-              class="border p-4 rounded bg-white shadow relative">
-              <p><span class="font-medium text-[#007EA7]">Pincode:</span> {{ addr.pincode }}</p>
-              <p><span class="font-medium text-[#007EA7]">City:</span> {{ addr.city }}</p>
-              <p><span class="font-medium text-[#007EA7]">Address:</span> {{ addr.address }}</p>
+              class="bg-white p-4 rounded-xl shadow border relative">
+              <p><strong class="text-[#007EA7]">Pincode:</strong> {{ addr.pincode }}</p>
+              <p><strong class="text-[#007EA7]">City:</strong> {{ addr.city }}</p>
+              <p><strong class="text-[#007EA7]">Address:</strong> {{ addr.address }}</p>
               <button @click="deleteAddress(index)"
                 class="absolute top-2 right-2 text-red-500 hover:text-red-700 text-sm">Delete</button>
             </div>
           </div>
-          <p v-else class="text-gray-500">No saved addresses yet.</p>
+          <p v-else class="text-gray-500">No saved addresses.</p>
         </div>
 
         <!-- Settings Tab -->
         <div v-else-if="activeTab === 'settings'" class="space-y-6">
-          <h3 class="text-lg font-semibold text-[#007EA7]">Account Settings</h3>
+          <h3 class="text-xl font-semibold text-[#007EA7]">Account Settings</h3>
 
-          <div>
-            <div @click="showNotificationPreferences = !showNotificationPreferences"
-              class="flex items-center justify-between cursor-pointer select-none border-b pb-2 mb-2">
-              <h4 class="font-semibold text-gray-700">Notifications</h4>
-            </div>
+          <!-- Notifications -->
+          <!-- Clickable Header Text -->
+          <h4 class="font-semibold text-gray-700 cursor-pointer hover:text-[#007EA7] transition"
+            @click="showNotificationPreferences = !showNotificationPreferences">
+            Notification Preferences
+          </h4>
 
-            <div v-if="showNotificationPreferences" class="mt-4 space-y-4">
-              <div v-for="(value, type) in notificationSettings" :key="type"
-                class="flex items-center justify-between border-b py-2">
-                <span class="text-gray-600 capitalize">{{ type }} Notifications</span>
-                <label class="inline-flex items-center cursor-pointer">
-                  <input type="checkbox" v-model="notificationSettings[type]" class="sr-only peer" />
+          <!-- Preferences Section (shown only if toggled) -->
+          <div v-if="showNotificationPreferences" class="mt-4 space-y-3">
+            <div v-for="(value, type) in notificationSettings" :key="type" class="flex justify-between items-center">
+              <span class="capitalize text-sm text-gray-600">{{ type }}</span>
+              <label class="relative inline-flex items-center cursor-pointer">
+                <input type="checkbox" v-model="notificationSettings[type]" class="sr-only peer" />
+                <div class="w-11 h-6 bg-gray-300 peer-checked:bg-[#007EA7] rounded-full transition-all">
                   <div
-                    class="w-11 h-6 bg-gray-300 rounded-full peer peer-checked:bg-[#007EA7] relative transition-colors duration-300">
-                    <div
-                      class="absolute left-1 top-1 w-4 h-4 bg-white rounded-full shadow-md transition-transform duration-300 peer-checked:translate-x-5">
-                    </div>
+                    class="absolute w-4 h-4 bg-white rounded-full left-1 top-1 transition peer-checked:translate-x-5">
                   </div>
-                </label>
-              </div>
-
-              <button @click="updateNotificationSettings"
-                class="mt-4 px-4 py-2 bg-[#007EA7] text-white rounded hover:bg-[#005f78]"
-                :disabled="isSavingNotifications">
-                {{ isSavingNotifications ? 'Saving...' : 'Save Preferences' }}
-              </button>
+                </div>
+              </label>
             </div>
-          </div>
 
-          <!-- Password Toggle -->
-          <div> <button @click="showPasswordForm = !showPasswordForm"
-              class="px-4 py-2 bg-[#007EA7] text-white rounded hover:bg-[#005f78] transition duration-300">
-              {{ showPasswordForm ? 'Cancel' : 'Change Password' }}
+            <button @click="updateNotificationSettings" :disabled="isSavingNotifications" class="btn-blue mt-2">
+              {{ isSavingNotifications ? 'Saving...' : 'Save Preferences' }}
             </button>
           </div>
 
 
+          <!-- Change Password -->
+          <div>
 
-          <!-- Password Form -->
-          <div v-if="showPasswordForm" class="bg-gray-100 p-4 rounded-lg space-y-3">
-            <input v-model="passwordForm.current" type="password" placeholder="Current Password"
-              class="w-full border rounded p-2 focus:outline-none focus:ring-2 focus:ring-[#00A8E8]" />
-            <input v-model="passwordForm.new" type="password" placeholder="New Password"
-              class="w-full border rounded p-2 focus:outline-none focus:ring-2 focus:ring-[#00A8E8]" />
-            <input v-model="passwordForm.confirm" type="password" placeholder="Confirm New Password"
-              class="w-full border rounded p-2 focus:outline-none focus:ring-2 focus:ring-[#00A8E8]" />
-            <div class="flex justify-between items-center">
-              <button @click="changePassword" :disabled="isChangingPassword"
-                class="px-4 py-2 bg-[#007EA7] text-white rounded hover:bg-[#005f78] disabled:opacity-50">
-                {{ isChangingPassword ? 'Changing...' : 'Submit' }}
-              </button>
-              <a href="/forgot-password" class="text-sm text-[#007EA7] hover:underline">Forgot Password?</a>
+            <h4 class="font-semibold text-gray-700 cursor-pointer hover:text-[#007EA7] transition"
+              @click="showPasswordForm = !showPasswordForm">
+              {{ showPasswordForm ? 'Cancel Change Password' : 'Change Password' }}
+            </h4>
+
+            <!-- Password Form -->
+            <div v-if="showPasswordForm" class="mt-4 space-y-3 bg-gray-100 p-4 rounded-xl">
+              <input v-model="passwordForm.current" placeholder="Current Password" type="password" class="input-edit" />
+              <input v-model="passwordForm.new" placeholder="New Password" type="password" class="input-edit" />
+              <input v-model="passwordForm.confirm" placeholder="Confirm New Password" type="password"
+                class="input-edit" />
+
+              <div class="flex justify-between items-center">
+                <button @click="changePassword" :disabled="isChangingPassword" class="btn-blue">
+                  {{ isChangingPassword ? 'Changing...' : 'Submit' }}
+                </button>
+                <a href="/forgot-password" class="text-sm text-[#007EA7] hover:underline">Forgot Password?</a>
+              </div>
             </div>
           </div>
 
-
           <!-- Logout -->
           <div>
-            <button class="mt-4 px-6 py-2 bg-[#007EA7] text-white rounded-lg hover:bg-[#005f78]"
-              @click="showLogoutModal = true">Logout</button>
-
+            <button @click="showLogoutModal = true" class="btn-red">Logout</button>
           </div>
 
           <!-- Logout Modal -->
           <transition name="fade-zoom">
             <div v-if="showLogoutModal"
               class="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
-              <div class="bg-white p-6 rounded-lg shadow-xl w-80">
-                <h2 class="text-lg font-semibold text-gray-800 mb-3">Confirm Logout</h2>
-                <p class="text-gray-600 mb-5">Are you sure you want to logout?</p>
+              <div class="bg-white p-6 rounded-xl shadow-xl w-80">
+                <h2 class="text-lg font-semibold mb-2">Confirm Logout</h2>
+                <p class="text-gray-600 mb-4">Are you sure you want to logout?</p>
                 <div class="flex justify-end space-x-3">
-                  <button @click="showLogoutModal = false" class="px-4 py-2 bg-gray-200 rounded">Cancel</button>
-                  <button @click="confirmLogout" class="px-4 py-2 bg-red-500 text-white rounded">Logout</button>
+                  <button @click="showLogoutModal = false" class="btn-gray">Cancel</button>
+                  <button @click="confirmLogout" class="btn-red">Logout</button>
                 </div>
               </div>
             </div>
           </transition>
         </div>
-
       </div>
     </div>
   </div>
 
-  <!-- Redirect Message -->
-  <div v-else class="text-center mt-10 text-gray-500">Redirecting to login...</div>
+  <!-- Redirect Notice -->
+  <div v-else class="text-center mt-20 text-gray-500">Redirecting to login...</div>
 </template>
 
-
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, onUnmounted, watch } from 'vue';
 import { io } from 'socket.io-client';
 import axios from 'axios';
 import { useRouter } from 'vue-router';
@@ -349,7 +278,16 @@ const showNotificationPreferences = ref(false);
 
 const formatTab = (tab) => tab.charAt(0).toUpperCase() + tab.slice(1).replace('-', ' ');
 
-// Fetch user profile
+const syncActiveTabFromHash = () => {
+  const hash = window.location.hash.replace('#', '');
+  if (tabs.includes(hash)) activeTab.value = hash;
+};
+
+watch(activeTab, (val) => {
+  window.location.hash = val;
+});
+
+// Get user profile
 const getUserProfile = async () => {
   const token = localStorage.getItem('token');
   try {
@@ -372,12 +310,7 @@ const handleProfileImageChange = async (event) => {
     return;
   }
 
-  const reader = new FileReader();
-  reader.onload = (e) => {
-    previewImage.value = e.target.result;
-  };
-  reader.readAsDataURL(file);
-
+  previewImage.value = URL.createObjectURL(file);
   const formData = new FormData();
   formData.append('profilePic', file);
 
@@ -402,15 +335,14 @@ const handleProfileImageChange = async (event) => {
 
     toast.success("Profile picture updated!");
   } catch (error) {
-    console.error(error);
     toast.error("Failed to upload profile picture.");
   }
 };
 
 // Update profile info
 const updateUserProfile = async () => {
-  const token = localStorage.getItem('token');
   try {
+    const token = localStorage.getItem('token');
     const { name, phone, bio } = user.value;
     const res = await axios.put(
       'http://localhost:5000/api/user/profile',
@@ -421,15 +353,15 @@ const updateUserProfile = async () => {
     );
     toast.success(res.data.message || "Profile updated successfully!");
     showEditProfileForm.value = false;
-  } catch (error) {
+  } catch {
     toast.error("Failed to update profile.");
   }
 };
 
 // Bookings
 const fetchBookings = async () => {
-  const token = localStorage.getItem('token');
   try {
+    const token = localStorage.getItem('token');
     const res = await axios.get('http://localhost:5000/api/bookings', {
       headers: { Authorization: `Bearer ${token}` },
     });
@@ -459,8 +391,7 @@ const saveEdit = async (id) => {
     const index = bookings.value.findIndex(b => b._id === id);
     if (index !== -1) bookings.value[index] = res.data;
     editingId.value = null;
-  } catch (err) {
-    console.error(err);
+  } catch {
     toast.error('Update failed');
   }
 };
@@ -476,7 +407,6 @@ const markAsCompleted = async (bookingId) => {
         },
       }
     );
-
     const updatedBooking = res.data.booking;
 
     history.value.push({
@@ -486,22 +416,23 @@ const markAsCompleted = async (bookingId) => {
     });
 
     bookings.value = bookings.value.filter(b => b._id !== bookingId);
-
     toast.success("Booking marked as completed");
-  } catch (err) {
-    console.error(err);
+  } catch {
     toast.error("Failed to update booking status");
   }
 };
 
 const deleteBooking = async (bookingId) => {
   try {
-    await axios.delete(`http://localhost:5000/api/bookings/${bookingId}`);
+    await axios.delete(`http://localhost:5000/api/bookings/${bookingId}`, {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem('token')}`,
+      },
+    });
     bookings.value = bookings.value.filter(b => b._id !== bookingId);
     toast.success('Booking deleted successfully');
-  } catch (err) {
+  } catch {
     toast.error('Failed to delete booking');
-    console.error(err);
   }
 };
 
@@ -512,13 +443,12 @@ const fetchHistory = async () => {
       headers: { Authorization: `Bearer ${token}` },
     });
     history.value = res.data;
-  } catch (err) {
-    console.error(err);
+  } catch {
     toast.error("Failed to load service history.");
   }
 };
 
-// Notification Settings
+// Notifications
 const fetchNotificationSettings = async () => {
   try {
     const token = localStorage.getItem('token');
@@ -526,8 +456,7 @@ const fetchNotificationSettings = async () => {
       headers: { Authorization: `Bearer ${token}` },
     });
     notificationSettings.value = res.data;
-  } catch (err) {
-    console.error('Failed to fetch notification settings:', err);
+  } catch {
     toast.error("Failed to load notification settings.");
   }
 };
@@ -544,15 +473,14 @@ const updateNotificationSettings = async () => {
       }
     );
     toast.success(res.data.message || "Notification preferences updated.");
-  } catch (err) {
-    console.error('Failed to update settings:', err);
+  } catch {
     toast.error("Could not update notification settings.");
   } finally {
     isSavingNotifications.value = false;
   }
 };
 
-// Address functions
+// Address
 const saveAddress = () => {
   const { pincode, city, address } = newAddress.value;
   if (pincode && city && address) {
@@ -571,7 +499,7 @@ const deleteAddress = (index) => {
   toast.success("Address deleted.");
 };
 
-// Password change
+// Password
 const changePassword = async () => {
   const { current, new: newPass, confirm } = passwordForm.value;
   if (!current || !newPass || !confirm) return toast.error("All fields required");
@@ -600,8 +528,10 @@ const changePassword = async () => {
 // Logout
 const logout = () => {
   localStorage.removeItem('user');
+  localStorage.removeItem('token');
   auth.user = null;
   user.value = { name: '', email: '', phone: '', bio: '', profilePic: '' };
+  socket.value?.disconnect();
   router.push('/homeboard');
 };
 
@@ -610,7 +540,7 @@ const confirmLogout = () => {
   showLogoutModal.value = false;
 };
 
-// Initial load
+// Initial Load
 onMounted(() => {
   const token = localStorage.getItem('token');
   if (!token) {
@@ -626,6 +556,7 @@ onMounted(() => {
   }
 
   isAuthenticated.value = true;
+  syncActiveTabFromHash();
 
   Promise.all([
     getUserProfile(),
@@ -639,7 +570,6 @@ onMounted(() => {
       transports: ['websocket'],
     });
 
-    // ✅ Fixed this line: emit correct event name
     socket.value.emit('join', user.value._id);
 
     socket.value.on('orderAccepted', (data) => {
@@ -654,10 +584,10 @@ onMounted(() => {
   }).finally(() => {
     isLoading.value = false;
   });
+});
 
-  if (window.location.hash === '#bookings') {
-    activeTab.value = 'bookings';
-  }
+ onUnmounted(() => {
+  socket.value?.disconnect();
 });
 </script>
 
@@ -674,5 +604,69 @@ onMounted(() => {
 .fade-zoom-leave-to {
   opacity: 0;
   transform: scale(0.9);
+}
+
+.input-edit {
+  width: 100%;
+  border: 1px solid #d1d5db;
+  /* gray-300 */
+  border-radius: 0.375rem;
+  /* rounded-md */
+  padding: 0.5rem;
+  /* p-2 */
+  outline: none;
+  transition: box-shadow 0.2s;
+}
+
+.input-edit:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px #00A8E8;
+  border-color: #00A8E8;
+}
+
+.btn-blue {
+  padding: 0.5rem 1rem;
+  background-color: #007EA7;
+  color: #fff;
+  border-radius: 0.375rem;
+  transition: background-color 0.2s;
+}
+
+.btn-blue:hover {
+  background-color: #005f78;
+}
+
+.btn-green {
+  padding: 0.25rem 0.75rem; /* px-3 py-1 */
+  background-color: #22c55e; /* bg-green-500 */
+  color: #fff; /* text-white */
+  border-radius: 0.375rem; /* rounded */
+  transition: background-color 0.2s;
+}
+.btn-green:hover {
+  background-color: #16a34a; /* bg-green-600 */
+}
+
+.btn-gray {
+  padding: 0.25rem 0.75rem; /* px-3 py-1 */
+  background-color: #d1d5db; /* bg-gray-300 */
+  color: #1f2937; /* text-gray-800 */
+  border-radius: 0.375rem; /* rounded */
+  transition: background-color 0.2s;
+}
+
+.btn-gray:hover {
+  background-color: #9ca3af; /* bg-gray-400 */
+}
+
+.btn-red {
+  padding: 0.5rem 1rem; /* px-4 py-2 */
+  background-color: #ef4444; /* bg-red-500 */
+  color: #fff; /* text-white */
+  border-radius: 0.375rem; /* rounded */
+  transition: background-color 0.2s;
+}
+.btn-red:hover {
+  background-color: #dc2626; /* bg-red-600 */
 }
 </style>
