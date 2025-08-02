@@ -5,6 +5,11 @@ import './assets/main.css';
 import './assets/tailwind.css'
 import Vue3Toastify from 'vue3-toastify'
 import 'vue3-toastify/dist/index.css';
+import 'aos/dist/aos.css'
+import AOS from 'aos'
+AOS.init()
+
+import '@fortawesome/fontawesome-free/css/all.css'
 
 const app = createApp(App);
 app.use(router);

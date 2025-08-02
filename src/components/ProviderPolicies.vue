@@ -1,10 +1,8 @@
 <template>
   <div class="min-h-screen bg-[#F0F9FF] text-gray-800">
-    
     <!-- Navbar -->
     <header class="fixed top-0 left-0 right-0 z-50 bg-white shadow-md h-20 flex items-center">
       <div class="max-w-screen-lg mx-auto px-4 flex justify-between items-center w-full">
-        
         <!-- Logo and Title -->
         <div class="flex items-center space-x-2">
           <img src="@/assets/skilllogo.png" alt="SkillLink Logo" class="h-12 w-12 object-contain" />
@@ -13,30 +11,25 @@
 
         <!-- Navigation and Profile Picture -->
         <nav class="flex items-center space-x-4 text-base">
-          <router-link to="/serviceprovider" class="px-4 py-2 text-l font-bold text-[#0073b1] hover:bg-[#e6f4f9] rounded-full transition duration-200">Home</router-link>
-
-          <router-link to="/provider/orders" class="px-4 py-2 text-l font-bold text-[#0073b1] hover:bg-[#e6f4f9] rounded-full transition duration-200">Orders</router-link>
-
-          <router-link to="/provider/policies" class="px-4 py-2 text-l font-bold text-[#0073b1] hover:bg-[#e6f4f9] rounded-full transition duration-200">Policies</router-link>
-
-          <router-link to="/provider/about" class="px-4 py-2 text-l font-bold text-[#0073b1] hover:bg-[#e6f4f9] rounded-full transition duration-200">About</router-link>
-
-          <router-link to="/provider/contact" class="px-4 py-2 text-l font-bold text-[#0073b1] hover:bg-[#e6f4f9] rounded-full transition duration-200">Contact</router-link>
+          <router-link to="/serviceprovider"
+            class="px-4 py-2 text-l font-bold text-[#0073b1] hover:bg-[#e6f4f9] rounded-full transition duration-200">Home</router-link>
+          <router-link to="/provider/orders"
+            class="px-4 py-2 text-l font-bold text-[#0073b1] hover:bg-[#e6f4f9] rounded-full transition duration-200">Orders</router-link>
+          <router-link to="/provider/policies"
+            class="px-4 py-2 text-l font-bold text-[#0073b1] hover:bg-[#e6f4f9] rounded-full transition duration-200">Policies</router-link>
+          <router-link to="/provider/about"
+            class="px-4 py-2 text-l font-bold text-[#0073b1] hover:bg-[#e6f4f9] rounded-full transition duration-200">About</router-link>
+          <router-link to="/provider/contact"
+            class="px-4 py-2 text-l font-bold text-[#0073b1] hover:bg-[#e6f4f9] rounded-full transition duration-200">Contact</router-link>
 
           <!-- Profile Pic -->
           <router-link to="/profile">
-            <img
-              v-if="provider && provider.profilePic"
-              :src="`http://localhost:5000/uploads/${provider.profilePic}`"
-              alt="Provider DP"
-              class="w-10 h-10 rounded-full object-cover border-2 border-[#0073b1] cursor-pointer"
-            />
-            <img
-              v-else
-              src="@/assets/user.png"
-              alt="Default Provider DP"
-              class="w-10 h-10 rounded-full object-cover border-2 border-[#0073b1] cursor-pointer"
-            />
+            <img v-if="provider && provider.profilePic"
+              :src="`http://localhost:5000/uploads/providers/${provider.profilePic}`" alt="Provider DP"
+              class="w-10 h-10 rounded-full object-cover border-2 border-[#0073b1] cursor-pointer" />
+
+            <img v-else src="@/assets/user.png" alt="Default Provider DP"
+              class="w-10 h-10 rounded-full object-cover border-2 border-[#0073b1] cursor-pointer" />
           </router-link>
         </nav>
       </div>
@@ -94,22 +87,42 @@
   </div>
 </template>
 
-<script>
-export default {
-  name: 'PoliciesPage',
-  data() {
-    return {
-      provider: null
-    };
-  },
-  mounted() {
-    const stored = localStorage.getItem('provider');
-    if (stored) {
-      this.provider = JSON.parse(stored);
-    }
+<script setup>
+import { ref, onMounted } from 'vue'
+import axios from 'axios'
+import { useRouter } from 'vue-router'
+import { toast } from 'vue3-toastify'
+import 'vue3-toastify/dist/index.css'
+
+const provider = ref(null)
+const router = useRouter()
+
+const fetchProviderProfile = async () => {
+  try {
+    const token = localStorage.getItem('token')
+    const res = await axios.get('http://localhost:5000/api/providers/profile', {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    })
+    provider.value = res.data
+  } catch (err) {
+    console.error('Failed to fetch provider profile:', err)
+    toast.error('Unable to load provider profile')
+    router.push('/login') // fallback
   }
-};
+}
+
+onMounted(() => {
+  const stored = localStorage.getItem('user')
+  if (stored && JSON.parse(stored).role === 'provider') {
+    fetchProviderProfile()
+  } else {
+    toast.error('Unauthorized access')
+    router.push('/login')
+  }
+})
 </script>
 
-<style scoped>
-</style>
+
+<style scoped></style>

@@ -12,15 +12,15 @@
         <!-- Desktop Nav -->
         <nav class="hidden md:flex items-center space-x-6 text-sm sm:text-base">
 
-          <router-link to="/serviceprovider" class="px-4 py-2 text-xl font-bold text-[#0073b1] hover:bg-[#e6f4f9] rounded-full transition duration-200">Home</router-link>
+          <router-link to="/serviceprovider" class="px-3 py-2 text-xl font-bold text-[#0073b1] hover:bg-[#e6f4f9] rounded-full transition duration-200">Home</router-link>
 
-          <router-link to="/provider/orders" class="px-4 py-2 text-xl font-bold text-[#0073b1] hover:bg-[#e6f4f9] rounded-full transition duration-200">Orders</router-link>
+          <router-link to="/provider/orders" class="px-3 py-2 text-xl font-bold text-[#0073b1] hover:bg-[#e6f4f9] rounded-full transition duration-200">Orders</router-link>
 
-          <router-link to="/provider/policies" class="px-4 py-2 text-xl font-bold text-[#0073b1] hover:bg-[#e6f4f9] rounded-full transition duration-200">Policies</router-link>
+          <router-link to="/provider/policies" class="px-3 py-2 text-xl font-bold text-[#0073b1] hover:bg-[#e6f4f9] rounded-full transition duration-200">Policies</router-link>
 
-          <router-link to="/provider/about" class="px-4 py-2 text-xl font-bold text-[#0073b1] hover:bg-[#e6f4f9] rounded-full transition duration-200">About</router-link>
+          <router-link to="/provider/about" class="px-3 py-2 text-xl font-bold text-[#0073b1] hover:bg-[#e6f4f9] rounded-full transition duration-200">About</router-link>
 
-          <router-link to="/provider/contact" class="px-4 py-2 text-xl font-bold text-[#0073b1] hover:bg-[#e6f4f9] rounded-full transition duration-200">Contact</router-link>
+          <router-link to="/provider/contact" class="px-3 py-2 text-xl font-bold text-[#0073b1] hover:bg-[#e6f4f9] rounded-full transition duration-200">Contact</router-link>
 
           <router-link to="/provider/profile">
             <img
