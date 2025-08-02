@@ -12,21 +12,21 @@
         <!-- Desktop Nav -->
         <nav class="hidden md:flex items-center space-x-6 text-sm sm:text-base">
 
-          <router-link to="/serviceprovider" class="px-4 py-2 text-l font-semibold text-[#0073b1] hover:bg-[#e6f4f9] rounded-full transition duration-200">Home</router-link>
+          <router-link to="/serviceprovider" class="px-4 py-2 text-xl font-bold text-[#0073b1] hover:bg-[#e6f4f9] rounded-full transition duration-200">Home</router-link>
 
-          <router-link to="/provider/orders" class="px-4 py-2 text-l font-semibold text-[#0073b1] hover:bg-[#e6f4f9] rounded-full transition duration-200">Orders</router-link>
+          <router-link to="/provider/orders" class="px-4 py-2 text-xl font-bold text-[#0073b1] hover:bg-[#e6f4f9] rounded-full transition duration-200">Orders</router-link>
 
-          <router-link to="/provider/policies" class="px-4 py-2 text-l font-semibold text-[#0073b1] hover:bg-[#e6f4f9] rounded-full transition duration-200">Policies</router-link>
+          <router-link to="/provider/policies" class="px-4 py-2 text-xl font-bold text-[#0073b1] hover:bg-[#e6f4f9] rounded-full transition duration-200">Policies</router-link>
 
-          <router-link to="/provider/about" class="px-4 py-2 text-l font-semibold text-[#0073b1] hover:bg-[#e6f4f9] rounded-full transition duration-200">About</router-link>
+          <router-link to="/provider/about" class="px-4 py-2 text-xl font-bold text-[#0073b1] hover:bg-[#e6f4f9] rounded-full transition duration-200">About</router-link>
 
-          <router-link to="/provider/contact" class="px-4 py-2 text-l font-semibold text-[#0073b1] hover:bg-[#e6f4f9] rounded-full transition duration-200">Contact</router-link>
+          <router-link to="/provider/contact" class="px-4 py-2 text-xl font-bold text-[#0073b1] hover:bg-[#e6f4f9] rounded-full transition duration-200">Contact</router-link>
 
           <router-link to="/provider/profile">
             <img
               :src="provider?.profilePic ? `http://localhost:5000/uploads/providers/${provider.profilePic}` : defaultPic"
               @error="handleImageError"
-              class="w-8 h-8 rounded-full object-cover border-2 border-[#0073b1] cursor-pointer"
+              class="w-9 h-9 rounded-full object-cover border-2 border-[#0073b1] cursor-pointer"
               alt="Provider DP"
             />
           </router-link>

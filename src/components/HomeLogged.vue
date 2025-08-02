@@ -14,18 +14,18 @@
         <!-- Navigation Links -->
         <nav class="hidden sm:flex gap-4 text-gray-700 font-medium text-sm items-center">
 
-          <router-link to="/about"  class="px-5 py-2 text-sm font-semibold text-[#0073b1] hover:bg-[#e6f4f9] rounded-full transition duration-200">About Us</router-link>
+          <router-link to="/about"  class="px-3 py-2 text-xl font-bold text-[#0073b1] hover:bg-[#e6f4f9] rounded-full transition duration-200">About Us</router-link>
 
-          <router-link to="/contact"  class="px-5 py-2 text-sm font-semibold text-[#0073b1] hover:bg-[#e6f4f9] rounded-full transition duration-200">Contact</router-link>
+          <router-link to="/contact"  class="px-3 py-2 text-xl font-bold text-[#0073b1] hover:bg-[#e6f4f9] rounded-full transition duration-200">Contact</router-link>
 
-          <router-link :to="{ path: '/help', query: { from: 'homelogged' } }"  class="px-5 py-2 text-sm font-semibold text-[#0073b1] hover:bg-[#e6f4f9] rounded-full transition duration-200">Help</router-link>
+          <router-link :to="{ path: '/help', query: { from: 'homelogged' } }"  class="px-3 py-2 text-xl font-bold text-[#0073b1] hover:bg-[#e6f4f9] rounded-full transition duration-200">Help</router-link>
         </nav>
 
        
         <!-- Book Service Button -->
         <router-link to="/home">
           <button
-            class="px-5 py-2 text-sm font-semibold text-[#0073b1] hover:bg-[#e6f4f9] rounded-full transition duration-200"
+            class="px-3 py-2 text-xl font-bold text-[#0073b1] hover:bg-[#e6f4f9] rounded-full transition duration-200"
           >
             Book Service
           </button>
@@ -42,11 +42,12 @@
             stroke-width="2"
             viewBox="0 0 24 24"
             xmlns="http://www.w3.org/2000/svg"
-          >
+          > <span>Notification</span>
             <path stroke-linecap="round" stroke-linejoin="round"
               d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9">
             </path>
           </svg>
+
         </router-link>
 
 

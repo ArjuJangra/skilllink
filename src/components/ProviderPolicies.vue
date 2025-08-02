@@ -13,15 +13,15 @@
 
         <!-- Navigation and Profile Picture -->
         <nav class="flex items-center space-x-4 text-base">
-          <router-link to="/serviceprovider" class="px-4 py-2 text-l font-semibold text-[#0073b1] hover:bg-[#e6f4f9] rounded-full transition duration-200">Home</router-link>
+          <router-link to="/serviceprovider" class="px-4 py-2 text-l font-bold text-[#0073b1] hover:bg-[#e6f4f9] rounded-full transition duration-200">Home</router-link>
 
-          <router-link to="/provider/orders" class="px-4 py-2 text-l font-semibold text-[#0073b1] hover:bg-[#e6f4f9] rounded-full transition duration-200">Orders</router-link>
+          <router-link to="/provider/orders" class="px-4 py-2 text-l font-bold text-[#0073b1] hover:bg-[#e6f4f9] rounded-full transition duration-200">Orders</router-link>
 
-          <router-link to="/provider/policies" class="px-4 py-2 text-l font-semibold text-[#0073b1] hover:bg-[#e6f4f9] rounded-full transition duration-200">Policies</router-link>
+          <router-link to="/provider/policies" class="px-4 py-2 text-l font-bold text-[#0073b1] hover:bg-[#e6f4f9] rounded-full transition duration-200">Policies</router-link>
 
-          <router-link to="/provider/about" class="px-4 py-2 text-l font-semibold text-[#0073b1] hover:bg-[#e6f4f9] rounded-full transition duration-200">About</router-link>
+          <router-link to="/provider/about" class="px-4 py-2 text-l font-bold text-[#0073b1] hover:bg-[#e6f4f9] rounded-full transition duration-200">About</router-link>
 
-          <router-link to="/provider/contact" class="px-4 py-2 text-l font-semibold text-[#0073b1] hover:bg-[#e6f4f9] rounded-full transition duration-200">Contact</router-link>
+          <router-link to="/provider/contact" class="px-4 py-2 text-l font-bold text-[#0073b1] hover:bg-[#e6f4f9] rounded-full transition duration-200">Contact</router-link>
 
           <!-- Profile Pic -->
           <router-link to="/profile">

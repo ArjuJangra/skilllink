@@ -29,8 +29,9 @@ global.io = io;
 
 // ===== MongoDB connection =====
 mongoose.connect(process.env.MONGO_URI)
-  .then(() => console.log('✅ MongoDB connected'))
-  .catch(err => console.error('❌ MongoDB error:', err));
+  .then(() => console.log("✅ Connected to MongoDB Atlas"))
+  .catch((err) => console.error("❌ MongoDB Atlas connection error:", err));
+
 
 // ===== Middleware =====
 app.use(express.json());

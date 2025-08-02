@@ -1,6 +1,6 @@
 <template>
   <div class="min-h-screen flex items-center justify-center bg-[#f4f6f8] px-4">
-    <div class="w-full max-w-md bg-white p-8 rounded-2xl shadow-xl">
+    <div class="w-full max-w-md bg-white p-6 md:p-8 rounded-2xl shadow-xl">
       <div class="text-center mb-6">
         <img src="@/assets/skilllogo.png" alt="SkillLink Logo" class="w-16 h-16 mx-auto mb-4" />
         <h2 class="text-2xl font-bold text-[#0073b1]">Create Your SkillLink Account</h2>
@@ -28,77 +28,80 @@
           <input v-model="form.name" type="text" required class="mt-1 w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0073b1]" />
         </div>
 
-        <!-- User Section -->
-        <div v-if="form.role === 'user'" class="space-y-4">
+        <!-- Shared Fields -->
+        <div>
+          <label class="block text-sm font-semibold text-gray-700">Email</label>
+          <input v-model="form.email" type="email" required class="mt-1 w-full px-4 py-2 border border-gray-300 rounded-lg" placeholder="you@example.com"/>
+        </div>
+
+        <div>
+          <label class="block text-sm font-semibold text-gray-700">Password</label>
+          <input
+            v-model="form.password"
+            type="password"
+            class="mt-1 w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2"
+            :class="{
+              'border-red-500': form.password.length > 0 && form.password.length < 6,
+              'border-gray-300': form.password.length >= 6 || form.password.length === 0
+            }"
+            placeholder="••••••••"
+            required
+          />
+          <p v-if="form.password.length > 0 && form.password.length < 6" class="text-red-500 text-sm mt-1">
+            Password must be at least 6 characters.
+          </p>
+        </div>
+
+        <!-- Provider Fields -->
+        <div v-if="form.role === 'provider'" class="space-y-4">
           <div>
-            <label class="block text-sm font-semibold text-gray-700">Email</label>
-            <input v-model="form.email" type="email" required class="mt-1 w-full px-4 py-2 border border-gray-300 rounded-lg" placeholder="you@example.com"/>
+            <label class="block text-sm font-semibold text-gray-700">Area (Location Name)</label>
+            <input v-model="form.area" type="text" required placeholder="e.g., Sector 14, Rohini" class="mt-1 w-full px-4 py-2 border border-gray-300 rounded-lg" />
+            <small class="text-gray-500">This helps users find you nearby.</small>
           </div>
+
+          <!-- Services -->
           <div>
-            <label class="block text-sm font-semibold text-gray-700">Password</label>
-            <input v-model="form.password" type="password" required class="mt-1 w-full px-4 py-2 border border-gray-300 rounded-lg" placeholder="••••••••" />
+            <label class="block text-sm font-semibold text-gray-700 mb-1">Select up to 3 Services</label>
+            <div class="grid grid-cols-2 gap-2">
+              <label v-for="(option, index) in availableServices" :key="index" class="flex items-center space-x-2">
+                <input
+                  type="checkbox"
+                  :value="option"
+                  :checked="form.services.includes(option)"
+                  @change="toggleService(option)"
+                  :disabled="!form.services.includes(option) && form.services.length >= 3"
+                  class="accent-[#0073b1]"
+                />
+                <span class="text-gray-700">{{ option }}</span>
+              </label>
+            </div>
+            <p v-if="form.services.length >= 3" class="text-sm text-red-500 mt-1">
+              You can only select up to 3 services.
+            </p>
+          </div>
+
+          <div>
+            <label class="block text-sm font-semibold text-gray-700">Years of Experience</label>
+            <input v-model="form.experience" type="number" min="0" class="mt-1 w-full px-4 py-2 border border-gray-300 rounded-lg" />
+          </div>
+
+          <div>
+            <label class="block text-sm font-semibold text-gray-700">Address</label>
+            <textarea v-model="form.address" rows="3" class="mt-1 w-full px-4 py-2 border border-gray-300 rounded-lg"></textarea>
           </div>
         </div>
 
-      <!-- Service Provider Section -->
-<div v-if="form.role === 'provider'" class="space-y-4">
-  <div>
-    <label class="block text-sm font-semibold text-gray-700">Email</label>
-    <input v-model="form.email" type="email" required class="mt-1 w-full px-4 py-2 border border-gray-300 rounded-lg" placeholder="you@example.com"/>
-  </div>
-
-  <div>
-    <label class="block text-sm font-semibold text-gray-700">Password</label>
-    <input
-      type="password"
-      v-model="form.password"
-      class="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#0073b1]"
-      placeholder="••••••••"
-      required
-    />
-  </div>
-
-  <!-- Area Field (new) -->
-  <div>
-    <label class="block text-sm font-semibold text-gray-700">Area (Location Name)</label>
-    <input v-model="form.area" type="text" required placeholder="e.g., Sector 14, Rohini" class="mt-1 w-full px-4 py-2 border border-gray-300 rounded-lg" />
-  </div>
-
-  <!-- Services as Checkboxes -->
-  <div>
-    <label class="block text-sm font-semibold text-gray-700 mb-1">Select up to 3 Services</label>
-    <div class="grid grid-cols-2 gap-2">
-      <label v-for="(option, index) in availableServices" :key="index" class="flex items-center space-x-2">
-        <input
-          type="checkbox"
-          :value="option"
-          :checked="form.services.includes(option)"
-          @change="toggleService(option)"
-          :disabled="!form.services.includes(option) && form.services.length >= 3"
-          class="accent-[#0073b1]"
-        />
-        <span class="text-gray-700">{{ option }}</span>
-      </label>
-    </div>
-    <p v-if="form.services.length >= 3" class="text-sm text-red-500 mt-1">
-      You can only select up to 3 services.
-    </p>
-  </div>
-
-  <div>
-    <label class="block text-sm font-semibold text-gray-700">Years of Experience</label>
-    <input v-model="form.experience" type="number" min="0" class="mt-1 w-full px-4 py-2 border border-gray-300 rounded-lg" />
-  </div>
-
-  <div>
-    <label class="block text-sm font-semibold text-gray-700">Address</label>
-    <textarea v-model="form.address" rows="3" class="mt-1 w-full px-4 py-2 border border-gray-300 rounded-lg"></textarea>
-  </div>
-</div>
-
         <!-- Submit Button -->
-        <button type="submit" class="w-full mt-4 bg-[#0073b1] text-white py-2 rounded-lg hover:bg-[#005f91] transition duration-200 cursor-pointer">
-          Sign Up
+        <button :disabled="loading" type="submit" class="relative w-full mt-4 bg-[#0073b1] text-white py-2 rounded-lg hover:bg-[#005f91] transition duration-200">
+          <span v-if="!loading">Sign Up</span>
+          <span v-else class="flex items-center justify-center gap-2">
+            <svg class="animate-spin h-4 w-4 text-white" fill="none" viewBox="0 0 24 24">
+              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"></path>
+            </svg>
+            Signing up...
+          </span>
         </button>
 
         <!-- Login Link -->
@@ -112,13 +115,14 @@
 </template>
 
 <script setup>
-import { reactive, ref, watch } from 'vue'
-import axios from 'axios'
-import { useRouter } from 'vue-router'
-import { toast } from 'vue3-toastify'
-import { loginUser } from '@/stores/auth'
+import { reactive, ref, watch } from 'vue';
+import axios from 'axios';
+import { useRouter } from 'vue-router';
+import { toast } from 'vue3-toastify';
+import { loginUser } from '@/stores/auth';
 
-const router = useRouter()
+const router = useRouter();
+const loading = ref(false);
 
 const form = reactive({
   name: '',
@@ -132,29 +136,24 @@ const form = reactive({
   contact: '', 
   latitude: '',
   longitude: ''
-})
+});
 
-const latitude = ref(null)
-const longitude = ref(null)
-
-// Get location when provider role is selected
 watch(() => form.role, (newRole) => {
   if (newRole === 'provider' && navigator.geolocation) {
     navigator.geolocation.getCurrentPosition(
       (position) => {
-        latitude.value = position.coords.latitude
-        longitude.value = position.coords.longitude
-        console.log('📍 Location:', latitude.value, longitude.value)
+        form.latitude = position.coords.latitude;
+        form.longitude = position.coords.longitude;
+        console.log('📍 Location:', form.latitude, form.longitude);
       },
-      (error) => {
-        console.error('Location error:', error.message)
+      () => {
         toast.error('Could not get location. Please enable location access.', {
           theme: 'colored'
-        })
+        });
       }
-    )
+    );
   }
-})
+});
 
 const availableServices = [
   'Plumber', 'Electrician', 'Mechanic', 'Carpenter', 'AC/Appliance Repair',
@@ -163,34 +162,32 @@ const availableServices = [
   'Beautician', 'Massage Therapist', 'Fitness Trainer', 'Babysitter', 'Laptop/PC Repair',
   'CCTV Installation', 'Mobile Technician', 'Internet Technician', 'Courier Pickup/Delivery',
   'House Shifting/Packers', 'Tailor', 'Event Decorator', 'Pet Grommer'
-]
+];
 
 const toggleService = (service) => {
-  const exists = form.services.includes(service)
+  const exists = form.services.includes(service);
   if (exists) {
-    form.services = form.services.filter(s => s !== service)
+    form.services = form.services.filter(s => s !== service);
   } else if (form.services.length < 3) {
-    form.services.push(service)
+    form.services.push(service);
   }
-}
+};
 
 const resetFields = () => {
-  form.email = ''
-  form.password = ''
-  form.services = []
-  form.experience = ''
-  form.address = ''
-  form.area = ''
-}
+  form.email = '';
+  form.password = '';
+  form.services = [];
+  form.experience = '';
+  form.address = '';
+  form.area = '';
+};
 
 const handleSubmit = async () => {
   try {
-    let endpoint = '';
-    if (form.role === 'user') {
-      endpoint = 'http://localhost:5000/api/auth/signup';
-    } else if (form.role === 'provider') {
-      endpoint = 'http://localhost:5000/api/providers/signup';
-    }
+    loading.value = true;
+    let endpoint = form.role === 'user'
+      ? 'http://localhost:5000/api/auth/signup'
+      : 'http://localhost:5000/api/providers/signup';
 
     if (form.role === 'provider') {
       await new Promise((resolve, reject) => {
@@ -200,31 +197,30 @@ const handleSubmit = async () => {
             form.longitude = position.coords.longitude;
             resolve();
           },
-          (error) => {
+          () => {
             toast.error("Failed to get location. Allow location access.");
-            reject(error);
+            reject();
           }
         );
       });
     }
 
+    await new Promise(resolve => setTimeout(resolve, 1000));
     const response = await axios.post(endpoint, form);
 
     loginUser(response.data.token, response.data.user);
-
     toast.success(`Welcome, ${response.data.user?.name || 'User'}!`, {
-      theme: 'colored'
+      theme: 'colored',
+       autoClose: 2000 
     });
 
-    if (form.role === 'user') {
-      router.push('/homelogged');
-    } else if (form.role === 'provider') {
-      router.push('/serviceprovider');
-    }
-  } catch (error) {
-    toast.error(error.response?.data?.message || 'Signup failed. Try again.', {
+    router.push(form.role === 'user' ? '/homelogged' : '/serviceprovider');
+  } catch (err) {
+    toast.error(err.response?.data?.message || 'Signup failed. Try again.', {
       theme: 'colored'
     });
+  } finally {
+    loading.value = false;
   }
 };
 </script>
