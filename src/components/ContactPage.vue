@@ -68,7 +68,7 @@
             <div class="bg-[#F6F9FC] p-4 rounded-md shadow-sm">
               <p class="text-sm text-gray-700">
                 📧 <span class="font-semibold">Email:</span>
-                <span class="text-blue-600">support@skilllink.com</span>
+                <span class="text-blue-600">connectteamskilllink@gmail.com</span>
               </p>
               <p class="text-sm text-gray-700 mt-1">
                 📞 <span class="font-semibold">Phone:</span> +91 98765 43210
