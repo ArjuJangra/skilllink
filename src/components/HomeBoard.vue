@@ -9,20 +9,30 @@
 
       <div class="flex items-center gap-6">
         <!-- Direct Links to Pages -->
-        <router-link to="/about" class="text-[#0073b1] hover:text-[#005f91] text-sm font-medium no-underline">
-          About Us
-        </router-link>
-        <router-link to="/contact" class="text-[#0073b1] hover:text-[#005f91] text-sm font-medium no-underline">
-          Contact
-        </router-link>
-        <router-link :to="{ path: '/help', query: { from: 'homeboard' } }" class="text-[#0073b1] hover:text-[#005f91] text-sm font-medium no-underline">
-  Help
-</router-link>
+        <router-link
+            to="/about"
+            class="px-2 py-2 text-sm sm:text-lg font-semibold text-[#0073b1] hover:bg-gray-100 rounded-lg transition-all duration-200 hover:scale-105"
+          >
+            About Us
+          </router-link>
+         <router-link
+            to="/contact"
+            class="px-2 py-2 text-sm sm:text-lg font-semibold text-[#0073b1] hover:bg-gray-100 rounded-lg transition-all duration-200 hover:scale-105"
+          >
+            Contact
+          </router-link>
+
+     <router-link
+            :to="{ path: '/help', query: { from: 'homelogged' } }"
+            class="px-3 py-2 text-sm sm:text-lg font-semibold text-[#0073b1] hover:bg-gray-100 rounded-full transition-all duration-200 hover:scale-105"
+          >
+            Help
+          </router-link>
 
 
         <!-- Book Service -->
         <router-link :to="{ path: '/home', query: { disableBooking: true } }">
-          <button class="px-4 py-2 border border-[#0073b1] text-[#0073b1] font-semibold rounded-lg hover:bg-[#0073b1]/10 transition duration-200">
+          <button class="px-4 py-2  text-[rgb(0,115,177)] font-bold rounded-lg hover:ring-1 hover:ring-[#0073b1]  transition duration-200">
             Book Service
           </button>
         </router-link>
@@ -113,51 +123,88 @@
     </section>
 
     <!-- About Us -->
-    <section class="py-12 bg-white">
-      <div class="max-w-screen-xl mx-auto px-4 md:px-8 text-center">
-        <h3 class="text-2xl font-bold text-gray-800 mb-4">About SkillLink</h3>
-        <p class="max-w-3xl mx-auto text-gray-600 leading-relaxed text-lg">
-          SkillLink is a one-stop platform built to connect people with skilled professionals across various domains.
-          Whether it's an urgent home repair, beauty service, or electrical setup — we bring the experts directly to your doorstep.
-          <br /><br />
-          ✅ Here's a complete list of services you can access through SkillLink:
-        </p>
+   <section class="relative py-20 px-4 bg-gradient-to-br from-[#F0F9FF] via-white to-[#E6F4F9] overflow-hidden">
+  <!-- SVG Illustration Background -->
+  <div class="absolute inset-0 z-0 pointer-events-none">
+    <svg class="absolute top-0 left-0 opacity-20 w-[600px]" viewBox="0 0 600 600" fill="none">
+      <circle cx="300" cy="300" r="300" fill="#0073b1" fill-opacity="0.05" />
+    </svg>
+    <svg class="absolute bottom-0 right-0 opacity-10 w-[400px]" viewBox="0 0 400 400" fill="none">
+      <rect x="0" y="0" width="400" height="400" fill="#00BFFF" fill-opacity="0.04" rx="80" />
+    </svg>
+  </div>
 
-        <!-- Centered 2-column service list -->
-        <div class="flex justify-center mt-6 mb-8">
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-16 gap-y-3 text-left text-gray-700">
-            <ul class="list-disc list-inside space-y-2">
-              <li>Plumber</li>
-              <li>Electrician</li>
-              <li>Mechanic</li>
-              <li>Carpenter</li>
-              <li>AC Repair</li>
-              <li>Painter</li>
-              <li>Welder</li>
-              <li>Makeup Artist</li>
-              <li>Cleaner</li>
-              <li>Gardener</li>
-            </ul>
-            <ul class="list-disc list-inside space-y-2">
-              <li>Home Appliance Repair</li>
-              <li>Pest Control</li>
-              <li>Mobile Technician</li>
-              <li>Computer Technician</li>
-              <li>Laundry Services</li>
-              <li>Water Purifier Technician</li>
-              <li>Interior Designer</li>
-              <li>Packers & Movers</li>
-              <li>Event Decorators</li>
-            </ul>
-          </div>
-        </div>
+  <!-- Main Content -->
+  <div class="relative z-10 max-w-screen-xl mx-auto text-center" data-aos="fade-up">
+    <h3 class="text-4xl font-extrabold text-[#0073b1] mb-6">About SkillLink</h3>
+    <p class="max-w-3xl mx-auto text-gray-700 leading-relaxed text-lg sm:text-xl mb-10">
+      SkillLink is your trusted platform to connect with skilled professionals across a wide range of services.
+      Whether it's urgent home repairs or lifestyle services — we bring verified experts right to your doorstep.
+    </p>
 
-        <p class="max-w-3xl mx-auto text-gray-600 leading-relaxed text-lg">
-          We verify every provider, ensure service quality, and make the experience seamless for both users and professionals.
-          With SkillLink, skilled help is now just a few taps away — quick, secure, and dependable.
-        </p>
+    <!-- Services Grid -->
+    <div class="bg-white shadow-xl rounded-xl p-8 mt-6" data-aos="fade-up" data-aos-delay="100">
+      <h4 class="text-2xl font-semibold text-[#0073b1] mb-6">Our Available Services</h4>
+      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 text-left text-gray-800 text-base">
+        <ul class="space-y-3">
+          <li><i class="fas fa-tools text-[#0073b1] mr-2"></i>Plumber</li>
+          <li><i class="fas fa-bolt text-[#0073b1] mr-2"></i>Electrician</li>
+          <li><i class="fas fa-car text-[#0073b1] mr-2"></i>Mechanic</li>
+          <li><i class="fas fa-hammer text-[#0073b1] mr-2"></i>Carpenter</li>
+          <li><i class="fas fa-wind text-[#0073b1] mr-2"></i>AC Repair</li>
+          <li><i class="fas fa-paint-roller text-[#0073b1] mr-2"></i>Painter</li>
+        </ul>
+        <ul class="space-y-3">
+          <li><i class="fas fa-wrench text-[#0073b1] mr-2"></i>Welder</li>
+          <li><i class="fas fa-magic text-[#0073b1] mr-2"></i>Makeup Artist</li>
+          <li><i class="fas fa-broom text-[#0073b1] mr-2"></i>Cleaner</li>
+          <li><i class="fas fa-seedling text-[#0073b1] mr-2"></i>Gardener</li>
+          <li><i class="fas fa-mobile-alt text-[#0073b1] mr-2"></i>Mobile Technician</li>
+          <li><i class="fas fa-desktop text-[#0073b1] mr-2"></i>Computer Technician</li>
+        </ul>
+        <ul class="space-y-3">
+          <li><i class="fas fa-cogs text-[#0073b1] mr-2"></i>Home Appliance Repair</li>
+          <li><i class="fas fa-bug text-[#0073b1] mr-2"></i>Pest Control</li>
+          <li><i class="fas fa-tshirt text-[#0073b1] mr-2"></i>Laundry Services</li>
+          <li><i class="fas fa-water text-[#0073b1] mr-2"></i>Water Purifier Technician</li>
+          <li><i class="fas fa-pencil-ruler text-[#0073b1] mr-2"></i>Interior Designer</li>
+          <li><i class="fas fa-truck-moving text-[#0073b1] mr-2"></i>Packers & Movers</li>
+          <li><i class="fas fa-gem text-[#0073b1] mr-2"></i>Event Decorators</li>
+        </ul>
       </div>
-    </section>
+    </div>
+
+    <!-- Why SkillLink -->
+    <div class="mt-16" data-aos="fade-up" data-aos-delay="200">
+      <h4 class="text-2xl font-semibold text-[#0073b1] mb-6">Why Choose SkillLink?</h4>
+      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 max-w-5xl mx-auto text-left">
+        <div class="bg-white shadow-md rounded-lg p-6 hover:shadow-xl transition" data-aos="zoom-in">
+          <h5 class="text-lg font-semibold text-gray-800 mb-2">
+            <i class="fas fa-check-circle text-[#0073b1] mr-2"></i>Verified Professionals
+          </h5>
+          <p class="text-gray-600 text-sm">All providers are background-checked and verified for your peace of mind.</p>
+        </div>
+        <div class="bg-white shadow-md rounded-lg p-6 hover:shadow-xl transition" data-aos="zoom-in" data-aos-delay="100">
+          <h5 class="text-lg font-semibold text-gray-800 mb-2">
+            <i class="fas fa-bolt text-[#0073b1] mr-2"></i>Fast & Reliable
+          </h5>
+          <p class="text-gray-600 text-sm">Get prompt responses and quality service on every request.</p>
+        </div>
+        <div class="bg-white shadow-md rounded-lg p-6 hover:shadow-xl transition" data-aos="zoom-in" data-aos-delay="200">
+          <h5 class="text-lg font-semibold text-gray-800 mb-2">
+            <i class="fas fa-wallet text-[#0073b1] mr-2"></i>Transparent Pricing
+          </h5>
+          <p class="text-gray-600 text-sm">No hidden costs — know what you pay for, always.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Closing Note -->
+    <p class="max-w-3xl mx-auto text-gray-700 leading-relaxed text-lg sm:text-xl mt-14" data-aos="fade-up" data-aos-delay="300">
+      With SkillLink, expert help is just a few taps away — fast, safe, and reliable. Join thousands of happy users today.
+    </p>
+  </div>
+</section>   
 
     <!-- Contact Us -->
     <section class="py-12 bg-blue-50">
