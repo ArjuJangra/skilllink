@@ -213,9 +213,14 @@
             class="text-[#0073b1] underline">connectteamskilllink@gmail.com</a></p>
         <p class="text-gray-700 text-base sm:text-lg mb-2">📞 Phone: +91-9876543210</p>
         <p class="text-gray-700 text-base sm:text-lg mb-4">⏰ Support Hours: 9 AM – 7 PM (Mon to Sat)</p>
-        <button class="bg-[#0073b1] text-white px-6 py-2 rounded-lg hover:bg-[#005f91] transition">
-          Send Us a Message
-        </button>
+
+       <router-link
+  to="/contact"
+  class="inline-block bg-[#0073b1] text-white px-6 py-2 rounded-lg hover:bg-[#005f91] transition"
+>
+  Send Us a Message
+</router-link>
+
       </div>
     </section>
 

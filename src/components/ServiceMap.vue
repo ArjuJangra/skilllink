@@ -1,12 +1,26 @@
 <template>
-  <div id="map" class="h-[400px] rounded-lg"></div>
+  <div class="relative">
+    <!-- Loading overlay -->
+    <div v-if="loading" class="absolute inset-0 flex items-center justify-center bg-white/70 z-10">
+      <span class="text-[#0073b1] font-semibold text-lg">Loading map...</span>
+    </div>
+
+    <!-- Map container -->
+    <div id="map" class="h-[400px] rounded-lg z-0"></div>
+  </div>
 </template>
 
 <script setup>
-import { onMounted } from 'vue'
+import { ref, onMounted } from 'vue'
 import L from 'leaflet'
 import 'leaflet/dist/leaflet.css'
+import 'leaflet-routing-machine'
+import 'leaflet-routing-machine/dist/leaflet-routing-machine.css'
 import axios from 'axios'
+
+const loading = ref(true)
+let routingControl = null
+let userLatLng = null
 
 // Fix leaflet icons
 delete L.Icon.Default.prototype._getIconUrl
@@ -17,54 +31,70 @@ L.Icon.Default.mergeOptions({
 })
 
 onMounted(async () => {
-  // Initialize map
   const map = L.map('map').setView([28.6139, 77.2090], 10)
 
-  // Add OpenStreetMap tiles
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     attribution: '&copy; OpenStreetMap contributors'
   }).addTo(map)
 
-  // 📍 Fetch service provider locations
+  // Show user location
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(pos => {
+      userLatLng = [pos.coords.latitude, pos.coords.longitude]
+
+      L.marker(userLatLng)
+        .addTo(map)
+        .bindPopup("You are here")
+        .openPopup()
+
+      map.setView(userLatLng, 13)
+    })
+  }
+
   try {
     const token = localStorage.getItem('token')
     const res = await axios.get('http://localhost:5000/api/services/locations', {
-      headers: {
-        Authorization: `Bearer ${token}`
-      }
+      headers: { Authorization: `Bearer ${token}` }
     })
 
     const providers = res.data
 
     providers.forEach((provider) => {
-      if (
-        provider.latitude !== undefined &&
-        provider.longitude !== undefined &&
-        provider.latitude !== null &&
-        provider.longitude !== null
-      ) {
-        L.marker([provider.latitude, provider.longitude]).addTo(map)
+      if (provider.latitude && provider.longitude) {
+        const marker = L.marker([provider.latitude, provider.longitude]).addTo(map)
+
+        marker.bindPopup(`
+          <div>
+            <strong>${provider.name}</strong><br/>
+            <button class="text-[#0073b1]" onclick="window.drawRoute(${provider.latitude}, ${provider.longitude})">🧭 Route</button>
+          </div>
+        `)
       }
     })
+
+    // Expose routing globally
+    window.drawRoute = (destLat, destLng) => {
+      if (!userLatLng) return alert("User location not available yet!")
+
+      // Remove previous route
+      if (routingControl) {
+        map.removeControl(routingControl)
+      }
+
+      routingControl = L.Routing.control({
+        waypoints: [
+          L.latLng(userLatLng),
+          L.latLng(destLat, destLng)
+        ],
+        routeWhileDragging: false,
+        show: false
+      }).addTo(map)
+    }
+
+    loading.value = false
   } catch (err) {
-    console.error('❌ Failed to fetch locations:', err)
-  }
-
-  // 📍 Show current user location
-  if (navigator.geolocation) {
-    navigator.geolocation.getCurrentPosition(position => {
-      const { latitude, longitude } = position.coords
-      L.marker([latitude, longitude])
-        .addTo(map)
-        .bindPopup("You are here")
-        .openPopup()
-
-      map.setView([latitude, longitude], 13)
-    }, () => {
-      console.warn("⚠️ Geolocation access denied or unavailable.")
-    })
-  } else {
-    console.warn("⚠️ Geolocation is not supported by this browser.")
+    console.error('❌ Failed to fetch provider locations:', err)
+    loading.value = false
   }
 })
 </script>
@@ -79,3 +109,4 @@ onMounted(async () => {
   }
 }
 </style>
+
