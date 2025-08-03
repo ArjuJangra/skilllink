@@ -24,7 +24,7 @@
 
      <router-link
             :to="{ path: '/help', query: { from: 'homelogged' } }"
-            class="px-3 py-2 text-sm sm:text-lg font-semibold text-[#0073b1] hover:bg-gray-100 rounded-full transition-all duration-200 hover:scale-105"
+            class="px-3 py-2 text-sm sm:text-lg font-semibold text-[#0073b1] hover:bg-gray-100 rounded-lg transition-all duration-200 hover:scale-105"
           >
             Help
           </router-link>

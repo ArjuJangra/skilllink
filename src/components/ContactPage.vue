@@ -1,4 +1,3 @@
-
 <template>
   <div class="min-h-screen bg-[#F6F9FC]">
     <!-- Fixed Header -->
@@ -8,17 +7,19 @@
           <img src="@/assets/skilllogo.png" alt="SkillLink Logo" class="h-10 w-auto" />
           <span class="text-xl font-bold text-[#0074B7]">SkillLink</span>
         </div>
-        <router-link to="/" class="bg-[#0074B7] text-white px-4 py-2 rounded hover:bg-[#005f91] transition">
+        <router-link
+          to="/"
+          class="bg-[#0074B7] text-white px-4 py-2 rounded hover:bg-[#005f91] transition"
+        >
           Back to Home
         </router-link>
       </div>
     </header>
 
-    <!-- Page Content with top padding -->
+    <!-- Page Content -->
     <div class="pt-[90px] px-4 py-6 flex items-center justify-center">
-      <!-- 📦 Main Contact Box -->
       <div class="w-full max-w-6xl bg-white rounded-xl shadow-xl p-6 md:p-10 overflow-y-auto max-h-[95vh]">
-        <!-- 💬 Header Inside White Box -->
+        <!-- Header -->
         <div class="text-center mb-8">
           <h1 class="text-3xl font-bold text-[#0074B7]">Contact SkillLink</h1>
           <p class="text-gray-600 text-base mt-1">
@@ -26,32 +27,38 @@
           </p>
         </div>
 
-        <!-- Content Grid -->
+        <!-- Grid -->
         <div class="grid md:grid-cols-2 gap-6 mb-6">
-          <!-- ✏️ Contact Form -->
-          <form class="space-y-4">
+          <!-- Contact Form -->
+          <form class="space-y-4" @submit.prevent="submitContactForm">
             <div>
               <label class="block text-sm text-gray-700 font-medium">Full Name</label>
               <input
+                v-model="form.name"
                 type="text"
                 placeholder="Your name"
                 class="w-full border border-gray-300 px-3 py-2 rounded-md focus:ring-2 focus:ring-[#0074B7]"
+                required
               />
             </div>
             <div>
               <label class="block text-sm text-gray-700 font-medium">Email</label>
               <input
+                v-model="form.email"
                 type="email"
                 placeholder="you@example.com"
                 class="w-full border border-gray-300 px-3 py-2 rounded-md focus:ring-2 focus:ring-[#0074B7]"
+                required
               />
             </div>
             <div>
               <label class="block text-sm text-gray-700 font-medium">Message</label>
               <textarea
+                v-model="form.message"
                 rows="3"
                 placeholder="Your message"
                 class="w-full border border-gray-300 px-3 py-2 rounded-md resize-none focus:ring-2 focus:ring-[#0074B7]"
+                required
               ></textarea>
             </div>
             <button
@@ -62,9 +69,9 @@
             </button>
           </form>
 
-          <!-- ☎️ Contact Info + FAQs -->
+          <!-- Contact Info + FAQs -->
           <div class="space-y-4">
-            <!-- Contact Info -->
+            <!-- Info -->
             <div class="bg-[#F6F9FC] p-4 rounded-md shadow-sm">
               <p class="text-sm text-gray-700">
                 📧 <span class="font-semibold">Email:</span>
@@ -114,6 +121,13 @@
 
 <script setup>
 import { reactive } from 'vue'
+import axios from 'axios'
+import { toast } from 'vue3-toastify'
+const form = reactive({
+  name: '',
+  email: '',
+  message: ''
+})
 
 const faqs = reactive([
   {
@@ -141,4 +155,42 @@ const faqs = reactive([
 const toggleFAQ = (index) => {
   faqs[index].open = !faqs[index].open
 }
+
+
+const submitContactForm = async () => {
+  if (!form.name || !form.email || !form.message) {
+    toast.error('❗ Please fill in all fields.')
+    return
+  }
+ const toastId = toast.loading('Sending your message...')
+  try {
+    await axios.post('http://localhost:5000/api/contact', {
+      name: form.name,
+      email: form.email,
+      message: form.message
+    })
+
+    toast.update(toastId, {
+      render: '📨 Message sent successfully!',
+      type: 'success',
+      isLoading: false,
+      autoClose: 2000,
+      theme: 'colored',
+    })
+
+    form.name = ''
+    form.email = ''
+    form.message = ''
+  } catch (error) {
+    console.error('Send message error:', error)
+       toast.update(toastId, {
+      render: '❌ Failed to send message. Try again later.',
+      type: 'error',
+      isLoading: false,
+      autoClose: 3000,
+      theme: 'colored',
+    })
+  }
+}
+
 </script>
