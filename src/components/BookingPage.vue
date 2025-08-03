@@ -72,14 +72,30 @@
         ></textarea>
       </div>
 
-      <!-- Submit Button -->
+      <!-- Confirm Booking -->
       <button
         :disabled="loading"
-        @click="submitBooking"
+        @click="openFakePayment"
         class="w-full bg-[#007EA7] text-white py-2 rounded hover:bg-[#005f6b] disabled:opacity-50"
       >
-        {{ loading ? 'Booking...' : 'Confirm Booking' }}
+        {{ loading ? 'Processing...' : `Pay ₹${getSelectedPrice() || '---'} & Book` }}
       </button>
+    </div>
+
+    <!-- Fake Payment Modal -->
+    <div v-if="showFakeModal" class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+      <div class="bg-white p-6 rounded shadow-lg w-80">
+        <h2 class="text-lg font-semibold mb-4">Simulated Payment</h2>
+        <p class="mb-4">Simulated payment amount: <strong>₹{{ getSelectedPrice() }}</strong></p>
+        <div class="flex justify-end gap-4">
+          <button @click="confirmFakePayment" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">
+            Confirm
+          </button>
+          <button @click="showFakeModal = false" class="bg-gray-300 px-4 py-2 rounded hover:bg-gray-400">
+            Cancel
+          </button>
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -94,6 +110,8 @@ import 'vue3-toastify/dist/index.css'
 const router = useRouter()
 
 const loading = ref(false)
+const showFakeModal = ref(false)
+
 const selectedService = ref('')
 const selectedProviderId = ref('')
 const name = ref('')
@@ -103,6 +121,67 @@ const address = ref('')
 const availableServices = ref([])
 const providers = ref([])
 const location = ref({ latitude: null, longitude: null })
+
+// Simulated service prices
+const servicePrices = {
+  "Plumber": 199,
+  "Electrician": 249,
+  "AC Repair": 399,
+  "Carpenter": 299,
+  "Cleaner": 149,
+  "Mechanic": 349
+}
+
+const getSelectedPrice = () => {
+  return servicePrices[selectedService.value] || 199
+}
+
+const openFakePayment = () => {
+  if (!name.value || !contact.value || !address.value || !selectedService.value || !selectedProviderId.value) {
+    toast.error('Please fill in all fields.')
+    return
+  }
+  showFakeModal.value = true
+}
+
+const confirmFakePayment = async () => {
+  showFakeModal.value = false
+  loading.value = true
+
+  const token = localStorage.getItem('token')
+
+  try {
+    await axios.post('http://localhost:5000/api/bookings', {
+      service: selectedService.value,
+      providerId: selectedProviderId.value,
+      name: name.value,
+      contact: contact.value,
+      address: address.value,
+      amount: getSelectedPrice(),
+      paymentStatus: 'paid' // Simulated paid
+    }, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
+
+    toast.success('✅ Booking confirmed with payment!')
+    router.push('/booking-confirm')
+
+    name.value = ''
+    contact.value = ''
+    address.value = ''
+    selectedService.value = ''
+    selectedProviderId.value = ''
+    providers.value = []
+  } catch (err) {
+    const message = err.response?.data?.message || 'Booking failed.'
+    toast.error(message)
+    console.error('❌ Booking error:', err)
+  } finally {
+    loading.value = false
+  }
+}
 
 // Fetch providers when service is selected
 const fetchProviders = async () => {
@@ -159,49 +238,4 @@ onMounted(async () => {
     toast.error('Geolocation is not supported')
   }
 })
-
-// Submit the booking request
-const submitBooking = async () => {
-  if (!name.value || !contact.value || !address.value || !selectedService.value || !selectedProviderId.value) {
-    toast.error('Please fill in all fields.')
-    return
-  }
-
-  loading.value = true
-  const token = localStorage.getItem('token')
-
-  try {
-    await axios.post('http://localhost:5000/api/bookings', {
-      service: selectedService.value,
-      providerId: selectedProviderId.value,
-      name: name.value,
-      contact: contact.value,
-      address: address.value,
-    }, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    })
-
-    toast.success('Booking successful!')
-    router.push('/booking-confirm')
-
-    name.value = ''
-    contact.value = ''
-    address.value = ''
-    selectedService.value = ''
-    selectedProviderId.value = ''
-    providers.value = []
-
-  } catch (err) {
-    const message = err.response?.data?.message || 'Booking failed.'
-    toast.error(message)
-    console.error('❌ Booking error:', err)
-  } finally {
-    loading.value = false
-  }
-}
 </script>
-
-
-

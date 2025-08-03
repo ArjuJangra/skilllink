@@ -4,52 +4,60 @@
     <div class="max-w-5xl mx-auto bg-white rounded-3xl shadow-xl p-6">
 
       <!-- User Profile Card -->
-      <div v-if="user"
-        class="bg-[#f8fbfd] hover:bg-[#f0f8fc] transition-all p-6 rounded-2xl border border-gray-200 mb-8">
-        <!-- Edit Button -->
-        <div class="flex justify-end">
-          <button @click="showEditProfileForm = !showEditProfileForm"
-            class="flex items-center gap-1 text-blue-600 hover:text-blue-800 text-sm font-medium">
-            <i class="fas fa-pen"></i>
-            <span>Edit</span>
-          </button>
-        </div>
+    <div v-if="user" class="bg-[#f8fbfd] hover:bg-[#f0f8fc] transition-all p-6 rounded-2xl border border-gray-200 mb-8">
+    <!-- Edit Button -->
+    <div class="flex justify-end">
+      <button @click="showEditProfileForm = !showEditProfileForm"
+        class="flex items-center gap-1 text-blue-600 hover:text-blue-800 text-sm font-medium">
+        <i class="fas fa-pen"></i>
+        <span>Edit</span>
+      </button>
+    </div>
 
-        <!-- Profile Details -->
-        <div class="flex items-center gap-6 mt-2">
-          <!-- Profile Picture -->
-          <div class="relative group">
-            <img
-              :src="user.profilePic ? `http://localhost:5000/uploads/${user.profilePic}` : require('@/assets/user.png')"
-              class="w-24 h-24 rounded-full border-4 border-[#00A8E8] object-cover shadow-md" />
-            <label
-              class="absolute bottom-1 right-1 bg-[#007EA7] text-white rounded-full p-2 cursor-pointer opacity-0 group-hover:opacity-100 transition-opacity"
-              title="Upload Photo">
-              <input type="file" class="hidden" @change="handleProfileImageChange" />
-              <i class="fas fa-camera text-sm"></i>
-            </label>
-          </div>
-
-          <!-- Info -->
-          <div>
-            <h2 class="text-2xl font-bold text-[#007EA7]">{{ user?.name || 'Guest' }}</h2>
-            <p class="text-gray-500 text-sm">{{ user?.email }}</p>
-          </div>
-        </div>
-
-        <!-- Edit Profile Form -->
-        <div v-if="showEditProfileForm" class="mt-6 space-y-4">
-          <div v-for="(field, key) in editableFields" :key="key">
-            <label class="block text-sm text-gray-600 mb-1">{{ field.label }}</label>
-            <input v-model="user[key]" :type="field.type || 'text'"
-              class="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#00A8E8]" />
-          </div>
-          <button type="button" @click="updateUserProfile"
-            class="mt-4 px-4 py-2 bg-[#00A8E8] hover:bg-[#007EA7] text-white rounded-md">
-            Save Changes
-          </button>
-        </div>
+    <!-- Profile Details -->
+    <div class="flex flex-col sm:flex-row items-center gap-6 mt-4">
+      <!-- Profile Picture -->
+      <div class="relative group">
+        <img
+          :src="user.profilePic ? `http://localhost:5000/uploads/${user.profilePic}` : require('@/assets/user.png')"
+          class="w-24 h-24 sm:w-28 sm:h-28 rounded-full border-4 border-[#00A8E8] object-cover shadow-md transition-transform hover:scale-105" />
+        <label
+          class="absolute bottom-1 right-1 bg-[#007EA7] text-white rounded-full p-2 cursor-pointer opacity-0 group-hover:opacity-100 transition-opacity"
+          title="Upload Photo">
+          <input type="file" class="hidden" @change="handleProfileImageChange" />
+          <i class="fas fa-camera text-sm"></i>
+        </label>
       </div>
+
+      <!-- Info -->
+      <div class="text-center sm:text-left">
+        <h2 class="text-2xl font-bold text-[#007EA7] break-words">{{ user?.name || 'Guest' }}</h2>
+        <p class="text-gray-500 text-sm break-words">{{ user?.email }}</p>
+      </div>
+    </div>
+
+    <!-- Edit Profile Form -->
+    <div v-if="showEditProfileForm" class="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <div v-for="(field, key) in editableFields" :key="key">
+        <label class="block text-sm text-gray-600 mb-1">{{ field.label }}</label>
+        <input
+          v-model="user[key]"
+          :type="field.type || 'text'"
+          class="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#00A8E8] focus:outline-none"
+        />
+      </div>
+      <div class="sm:col-span-2 flex justify-end">
+        <button
+          type="button"
+          @click="updateUserProfile"
+          class="mt-2 px-6 py-2 bg-[#00A8E8] hover:bg-[#007EA7] text-white rounded-md font-medium shadow-md transition"
+        >
+          Save Changes
+        </button>
+      </div>
+    </div>
+    
+  </div>
 
       <!-- Navigation Tabs -->
       <div class="flex flex-wrap gap-2 border-b pb-3 mb-6 text-sm md:text-base">
@@ -65,11 +73,14 @@
 
       <!-- Content -->
       <div v-else>
+        <transition name="fade-tab" mode="out-in">
         <!-- Bookings Tab -->
         <div v-if="activeTab === 'bookings'" class="space-y-4">
           <h3 class="text-xl font-semibold text-[#007EA7]">My Bookings</h3>
           <div v-if="bookings.length" class="grid md:grid-cols-2 gap-4">
-            <div v-for="booking in bookings" :key="booking._id" class="bg-white p-4 rounded-xl shadow border relative">
+            <div v-for="booking in bookings" :key="booking._id"
+              class="bg-white p-5 rounded-xl shadow-lg border relative  transition hover:shadow-xl">
+
               <template v-if="editingId === booking._id">
                 <input v-model="editableBooking.service" placeholder="Service" class="input-edit mb-2" />
                 <input v-model="editableBooking.name" placeholder="Name" class="input-edit mb-2" />
@@ -102,94 +113,88 @@
               </div>
             </div>
           </div>
-          
+
           <p v-else class="text-gray-500">No bookings found.</p>
         </div>
 
         <!-- History Tab -->
-       <div v-else-if="activeTab === 'history'" class="space-y-6">
-  <h3 class="text-xl font-semibold text-[#007EA7]">Previous Services</h3>
+        <div v-else-if="activeTab === 'history'" class="space-y-6">
+          <h3 class="text-xl font-semibold text-[#007EA7]">Previous Services</h3>
 
-  <div v-if="history.length" class="grid md:grid-cols-2 gap-4">
-    <div
-      v-for="item in history"
-      :key="item._id"
-      class="bg-white border border-gray-200 rounded-xl shadow-sm hover:shadow-md p-4 transition"
-    >
-      <div class="flex justify-between items-start">
-        <div class="space-y-1">
-          <h4 class="text-lg text-[#007EA7] font-bold">{{ item.service }}</h4>
-          <p class="text-gray-500 text-sm">{{ formatDate(item.date) }}</p>
+          <div v-if="history.length" class="grid md:grid-cols-2 gap-4">
+            <div v-for="item in history" :key="item._id"
+              class="bg-white border border-gray-200 rounded-xl shadow-sm hover:shadow-md p-4 transition">
+              <div class="flex justify-between items-start">
+                <div class="space-y-1">
+                  <h4 class="text-lg text-[#007EA7] font-bold">{{ item.service }}</h4>
+                  <p class="text-gray-500 text-sm">{{ formatDate(item.date) }}</p>
+                </div>
+                <span :class="[
+                  'text-sm font-semibold px-3 py-1 rounded-full',
+                  item.status === 'Completed'
+                    ? 'bg-green-100 text-green-700'
+                    : item.status === 'Pending'
+                      ? 'bg-yellow-100 text-yellow-700'
+                      : 'bg-gray-100 text-gray-600'
+                ]">
+                  {{ item.status }}
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <p v-else class="text-gray-500">No service history available.</p>
         </div>
-        <span
-          :class="[
-            'text-sm font-semibold px-3 py-1 rounded-full',
-            item.status === 'Completed'
-              ? 'bg-green-100 text-green-700'
-              : item.status === 'Pending'
-              ? 'bg-yellow-100 text-yellow-700'
-              : 'bg-gray-100 text-gray-600'
-          ]"
-        >
-          {{ item.status }}
-        </span>
-      </div>
-    </div>
-  </div>
-
-  <p v-else class="text-gray-500">No service history available.</p>
-</div>
-
 
         <!-- Address Tab -->
-     <div v-else-if="activeTab === 'address'" class="space-y-6">
-  <div class="flex items-center justify-between">
-    <h3 class="text-xl font-semibold text-[#007EA7]">Saved Addresses</h3>
-    <span @click="showAddressForm = !showAddressForm"
-      class="text-sm text-[#007EA7] hover:text-[#005f7f] font-medium cursor-pointer">
-      {{ showAddressForm ? 'Close' : 'Add New Address' }}
-    </span>
-  </div>
+        <div v-else-if="activeTab === 'address'" class="space-y-6">
+          <div class="flex items-center justify-between">
+            <h3 class="text-xl font-semibold text-[#007EA7]">Saved Addresses</h3>
+            <span @click="showAddressForm = !showAddressForm"
+              class="text-sm text-[#007EA7] hover:text-[#005f7f] font-medium cursor-pointer">
+              {{ showAddressForm ? 'Close' : 'Add New Address' }}
+            </span>
+          </div>
 
-  <!-- Address Form -->
-  <transition name="fade">
-    <div v-if="showAddressForm" class="bg-gray-50 border p-4 rounded-xl space-y-4">
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <input v-model="newAddress.pincode" placeholder="Pincode" class="input-edit" />
-        <input v-model="newAddress.city" placeholder="City" class="input-edit" />
-      </div>
-      <textarea v-model="newAddress.address" placeholder="Full Address" rows="2"
-        class="w-full border rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-[#00A8E8]"></textarea>
-      <div class="flex gap-3">
-        <button @click="saveAddress" class="bg-[#007EA7] hover:bg-[#005f7f] text-white px-4 py-2 rounded-md transition">
-          Save
-        </button>
-        <button @click="showAddressForm = false"
-          class="bg-gray-300 hover:bg-gray-400 text-gray-700 px-4 py-2 rounded-md transition">
-          Cancel
-        </button>
-      </div>
-    </div>
-  </transition>
+          <!-- Address Form -->
+          <transition name="fade">
+            <div v-if="showAddressForm" class="bg-gray-50 border p-4 rounded-xl space-y-4">
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <input v-model="newAddress.pincode" placeholder="Pincode" class="input-edit" />
+                <input v-model="newAddress.city" placeholder="City" class="input-edit" />
+              </div>
+              <textarea v-model="newAddress.address" placeholder="Full Address" rows="2"
+                class="w-full border rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-[#00A8E8]"></textarea>
+              <div class="flex gap-3">
+                <button @click="saveAddress"
+                  class="bg-[#007EA7] hover:bg-[#005f7f] text-white px-4 py-2 rounded-md transition">
+                  Save
+                </button>
+                <button @click="showAddressForm = false"
+                  class="bg-gray-300 hover:bg-gray-400 text-gray-700 px-4 py-2 rounded-md transition">
+                  Cancel
+                </button>
+              </div>
+            </div>
+          </transition>
 
-  <!-- Address List -->
-  <div v-if="savedAddresses.length" class="grid md:grid-cols-2 gap-4">
-    <div v-for="(addr, index) in savedAddresses" :key="index"
-      class="bg-white p-4 rounded-xl border shadow-sm hover:shadow-md transition relative">
-      <div class="space-y-1 text-sm text-gray-700">
-        <p><strong class="text-[#007EA7]">Pincode:</strong> {{ addr.pincode }}</p>
-        <p><strong class="text-[#007EA7]">City:</strong> {{ addr.city }}</p>
-        <p><strong class="text-[#007EA7]">Address:</strong> {{ addr.address }}</p>
-      </div>
-      <button @click="deleteAddress(index)"
-        class="absolute top-2 right-2 text-red-500 hover:text-red-700 text-xs font-semibold">
-        ✕
-      </button>
-    </div>
-  </div>
-  <p v-else class="text-gray-500">No saved addresses found.</p>
-</div>
-
+          <!-- Address List -->
+          <div v-if="savedAddresses.length" class="grid md:grid-cols-2 gap-4">
+            <div v-for="(addr, index) in savedAddresses" :key="index"
+              class="bg-white p-4 rounded-xl border shadow-sm hover:shadow-md transition relative">
+              <div class="space-y-1 text-sm text-gray-700">
+                <p><strong class="text-[#007EA7]">Pincode:</strong> {{ addr.pincode }}</p>
+                <p><strong class="text-[#007EA7]">City:</strong> {{ addr.city }}</p>
+                <p><strong class="text-[#007EA7]">Address:</strong> {{ addr.address }}</p>
+              </div>
+              <button @click="deleteAddress(index)"
+                class="absolute top-2 right-2 text-red-500 hover:text-red-700 text-xs font-semibold">
+                ✕
+              </button>
+            </div>
+          </div>
+          <p v-else class="text-gray-500">No saved addresses found.</p>
+        </div>
 
         <!-- Settings Tab -->
         <div v-else-if="activeTab === 'settings'" class="space-y-6">
@@ -266,7 +271,9 @@
             </div>
           </transition>
         </div>
+</transition>
       </div>
+
     </div>
   </div>
 
@@ -629,7 +636,7 @@ onMounted(() => {
   });
 });
 
- onUnmounted(() => {
+onUnmounted(() => {
   socket.value?.disconnect();
 });
 </script>
@@ -638,6 +645,14 @@ onMounted(() => {
 
 
 <style scoped>
+
+@media (max-width: 640px) {
+  img {
+    width: 5.5rem !important;
+    height: 5.5rem !important;
+  }
+}
+
 .fade-zoom-enter-active,
 .fade-zoom-leave-active {
   transition: all 0.3s ease;
@@ -680,36 +695,60 @@ onMounted(() => {
 }
 
 .btn-green {
-  padding: 0.25rem 0.75rem; /* px-3 py-1 */
-  background-color: #22c55e; /* bg-green-500 */
-  color: #fff; /* text-white */
-  border-radius: 0.375rem; /* rounded */
+  padding: 0.25rem 0.75rem;
+  /* px-3 py-1 */
+  background-color: #22c55e;
+  /* bg-green-500 */
+  color: #fff;
+  /* text-white */
+  border-radius: 0.375rem;
+  /* rounded */
   transition: background-color 0.2s;
 }
+
 .btn-green:hover {
-  background-color: #16a34a; /* bg-green-600 */
+  background-color: #16a34a;
+  /* bg-green-600 */
 }
 
 .btn-gray {
-  padding: 0.25rem 0.75rem; /* px-3 py-1 */
-  background-color: #d1d5db; /* bg-gray-300 */
-  color: #1f2937; /* text-gray-800 */
-  border-radius: 0.375rem; /* rounded */
+  padding: 0.25rem 0.75rem;
+  /* px-3 py-1 */
+  background-color: #d1d5db;
+  /* bg-gray-300 */
+  color: #1f2937;
+  /* text-gray-800 */
+  border-radius: 0.375rem;
+  /* rounded */
   transition: background-color 0.2s;
 }
 
 .btn-gray:hover {
-  background-color: #9ca3af; /* bg-gray-400 */
+  background-color: #9ca3af;
+  /* bg-gray-400 */
 }
 
 .btn-red {
-  padding: 0.5rem 1rem; /* px-4 py-2 */
-  background-color: #ef4444; /* bg-red-500 */
-  color: #fff; /* text-white */
-  border-radius: 0.375rem; /* rounded */
+  padding: 0.5rem 1rem;
+  /* px-4 py-2 */
+  background-color: #ef4444;
+  /* bg-red-500 */
+  color: #fff;
+  /* text-white */
+  border-radius: 0.375rem;
+  /* rounded */
   transition: background-color 0.2s;
 }
+
 .btn-red:hover {
-  background-color: #dc2626; /* bg-red-600 */
+  background-color: #dc2626;
+  /* bg-red-600 */
+}
+
+.fade-tab-enter-active, .fade-tab-leave-active {
+  transition: opacity 0.20s ease;
+}
+.fade-tab-enter-from, .fade-tab-leave-to {
+  opacity: 0;
 }
 </style>
