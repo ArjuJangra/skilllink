@@ -14,4 +14,47 @@ router.get('/', authenticateUser, async (req, res) => {
   }
 });
 
+// PATCH /api/notifications/:id/read
+router.patch('/:id/read', authenticateUser, async (req, res) => {
+  try {
+    const notificationId = req.params.id;
+
+    const updated = await Notification.findByIdAndUpdate(
+      notificationId,
+      { $set: { read: true } },
+      { new: true }
+    );
+
+    if (!updated) {
+      return res.status(404).json({ message: 'Notification not found' });
+    }
+
+    res.json(updated);
+  } catch (error) {
+    console.error('❌ Error marking notification as read:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
+// DELETE /api/notifications/:id
+router.delete('/:id', authenticateUser, async (req, res) => {
+  try {
+    const deleted = await Notification.findOneAndDelete({
+      _id: req.params.id,
+      userId: req.user.id, // ensure only the owner can delete
+    });
+
+    if (!deleted) {
+      return res.status(404).json({ message: 'Notification not found or unauthorized' });
+    }
+
+    res.json({ message: 'Notification deleted successfully' });
+  } catch (error) {
+    console.error('❌ Error deleting notification:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
+
+
 module.exports = router;
