@@ -102,7 +102,7 @@
 
 <script setup>
 import { ref, onMounted } from 'vue'
-import { useRouter } from 'vue-router'
+import { useRouter, useRoute } from 'vue-router'
 import axios from 'axios'
 import { toast } from 'vue3-toastify'
 import 'vue3-toastify/dist/index.css'
@@ -204,6 +204,11 @@ const fetchProviders = async () => {
   }
 }
 
+const route = useRoute(); 
+
+const preselectedService = route.query.service;
+
+
 // On mount: Get user location and available services nearby
 onMounted(async () => {
   const token = localStorage.getItem('token')
@@ -226,6 +231,11 @@ onMounted(async () => {
 
         const servicesSet = new Set(res.data.flatMap(p => p.services || []))
         availableServices.value = Array.from(servicesSet)
+
+         if (preselectedService) {
+          selectedService.value = preselectedService
+          fetchProviders()
+        }
 
       } catch (err) {
         toast.error('Failed to fetch nearby services')

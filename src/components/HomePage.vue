@@ -104,28 +104,35 @@
         <div v-for="category in services" :key="category.title">
           <h2 class="text-xl font-semibold text-gray-800 mb-4">{{ category.title }}</h2>
           <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+
             <div
-              v-for="(service, index) in category.items"
-              :key="index"
-              class="bg-white rounded-lg shadow-md p-4 flex items-center justify-between hover:shadow-lg transition"
-            >
-              <div>
-                <h3 class="text-lg font-semibold text-[#007EA7]">{{ service.title }}</h3>
-                <p class="text-sm text-gray-600 mt-1">{{ service.desc }}</p>
-              </div>
-              <button
-                @click="goToBooking(service.title)"
-                :disabled="disableBooking"
-                :class="[
-                  'ml-4 px-4 py-1 rounded transition',
-                  disableBooking
-                    ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                    : 'bg-[#007EA7] text-white hover:bg-[#005f6b]'
-                ]"
-              >
-                Book Now
-              </button>
-            </div>
+  v-for="(service, index) in category.items"
+  :key="index"
+  class="bg-white rounded-lg shadow-md p-4 flex items-center justify-between hover:shadow-lg transition"
+>
+  <!-- Wrap Title in Clickable div -->
+  <div @click="goToServiceDetails(service.title, service.desc, category.title)" class="cursor-pointer">
+    <h3 class="text-lg font-semibold text-[#007EA7] hover:underline">
+      {{ service.title }}
+    </h3>
+    <p class="text-sm text-gray-600 mt-1">{{ service.desc }}</p>
+  </div>
+  
+  <!-- Book Now Button -->
+  <button
+    @click="goToBooking(service.title)"
+    :disabled="disableBooking"
+    :class="[
+      'ml-4 px-4 py-1 rounded transition',
+      disableBooking
+        ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+        : 'bg-[#007EA7] text-white hover:bg-[#005f6b]'
+    ]"
+  >
+    Book Now
+  </button>
+</div>
+
           </div>
         </div>
       </div>
@@ -138,6 +145,7 @@
 import { ref ,computed ,onMounted, watch} from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import { auth } from '@/stores/auth'; 
+ 
 
 const router = useRouter();
 const route = useRoute();
@@ -145,7 +153,6 @@ const route = useRoute();
 const disableBooking = route.query.disableBooking === 'true';
 const searchQuery = ref('');
 const profilePicUrl = ref('');
-
 
 onMounted(() => {
   const storedUserRaw = localStorage.getItem('user');
@@ -167,13 +174,11 @@ onMounted(() => {
   } else {
     auth.user = null;
     auth.token = null;
-      auth.isLoggedIn = false;
+    auth.isLoggedIn = false;
     localStorage.removeItem('user');
     localStorage.removeItem('token');
   }
 });
-
-
 
 watch(
   () => auth.user,
@@ -181,19 +186,22 @@ watch(
     if (newUser?.profilePic) {
       profilePicUrl.value = `http://localhost:5000/uploads/${newUser.profilePic}?t=${Date.now()}`;
     } else {
-      profilePicUrl.value = ''; // fallback
+      profilePicUrl.value = '';
     }
   },
   { immediate: true, deep: true }
 );
-
-
 
 const goToBooking = (serviceTitle) => {
   if (!disableBooking) {
     router.push({ path: '/booking', query: { service: serviceTitle } });
   }
 };
+
+const goToServiceDetails = (title) => {
+  router.push({ name: 'ServiceDetails', params: { title } });
+};
+
 
 const services = [
   {
@@ -255,7 +263,7 @@ const services = [
     ]
   }
 ];
-// 🔍 Filter logic for search
+
 const filteredResults = computed(() => {
   if (!searchQuery.value.trim()) return [];
 

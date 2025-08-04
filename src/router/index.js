@@ -14,6 +14,7 @@ import ProviderOrders from '@/components/ProviderOrders.vue';
 import ProviderPolicies from '@/components/ProviderPolicies.vue';
 import ProviderAbout from '@/components/ProviderAbout.vue';
 import ProviderContact from '@/components/ProviderContact.vue';
+import ServiceDetails from '@/components/ServiceDetails.vue';
 // import { auth } from '@/stores/auth';
 
 const routes = [
@@ -30,31 +31,31 @@ const routes = [
   { path: '/about', component: AboutPage },
   { path: '/contact', component: ContactPage },
   { path: '/help', component: HelpPage },
-   {
+  {
     path: '/ServiceProvider',
     component: ServiceProvider,
     meta: { requiresAuth: true, role: 'provider' }
   },
 
   // Auth-Protected Routes
- {
-  path: '/profile',
-  redirect: () => {
-    const user = JSON.parse(localStorage.getItem('user'));
-    if (user?.role === 'provider') {
-      return '/provider/profile';
-    } else {
-      return '/dashboard';
-    }
+  {
+    path: '/profile',
+    redirect: () => {
+      const user = JSON.parse(localStorage.getItem('user'));
+      if (user?.role === 'provider') {
+        return '/provider/profile';
+      } else {
+        return '/dashboard';
+      }
+    },
+    meta: { requiresAuth: true }
   },
-  meta: { requiresAuth: true }
-},
-{
-  path: '/provider/profile',
-  name: 'ProviderDashboard',
-  component: () => import('@/components/ProviderDashboard.vue'),
-  meta: { requiresAuth: true, role: 'provider' }
-},
+  {
+    path: '/provider/profile',
+    name: 'ProviderDashboard',
+    component: () => import('@/components/ProviderDashboard.vue'),
+    meta: { requiresAuth: true, role: 'provider' }
+  },
 
   {
     path: '/dashboard',
@@ -68,21 +69,20 @@ const routes = [
     component: () => import('@/components/BookingPage.vue'),
     meta: { requiresAuth: true }
   },
-  
-   {
-  path: '/booking-confirm',
-  name: 'BookingConfirm',
-  component: () => import('@/components/BookingConfirm.vue'),
-  meta: { requiresAuth: true }
-},
-
 
   {
-  path: '/provider/orders',
-  name: 'ProviderOrders',
-  component: ProviderOrders,
-  meta: { requiresAuth: true }
-},
+    path: '/booking-confirm',
+    name: 'BookingConfirm',
+    component: () => import('@/components/BookingConfirm.vue'),
+    meta: { requiresAuth: true }
+  },
+
+  {
+    path: '/provider/orders',
+    name: 'ProviderOrders',
+    component: ProviderOrders,
+    meta: { requiresAuth: true }
+  },
   {
     path: '/provider/policies',
     name: 'ProviderPolicies',
@@ -102,14 +102,20 @@ const routes = [
     meta: { requiresAuth: true }
   },
   {
-  path: '/notifications',
-  name: 'Notifications',
-  component: () => import('@/components/NotificationHistory.vue'),
-  meta: { requiresAuth: true }
-}
+    path: '/notifications',
+    name: 'Notifications',
+    component: () => import('@/components/NotificationHistory.vue'),
+    meta: { requiresAuth: true }
+  },
+
+  {
+    path: '/services/:title',
+    name: 'ServiceDetails',
+    component: ServiceDetails,
+    props: true
+  },
 
 
-  
 ];
 
 const router = createRouter({

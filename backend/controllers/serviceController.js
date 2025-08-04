@@ -2,6 +2,7 @@
 const ServiceProvider = require('../models/ServiceProvider');
 
 exports.getNearbyServices = async (req, res) => {
+    console.log('📥 Incoming request:', req.body);
   const { latitude, longitude, service, maxDistance = 10000 } = req.body; // default 10 km
 
   if (!latitude || !longitude) {
