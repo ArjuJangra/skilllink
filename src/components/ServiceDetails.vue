@@ -32,8 +32,7 @@
 </template>
 
 <script>
-import { services } from '@/data/services'; // adjust the path if needed
-
+import { services } from '@/data/services';
 export default {
   data() {
     return {
@@ -41,28 +40,31 @@ export default {
         desc: '',
         category: ''
       },
-      title: this.$route.params.title  // ✅ Get the title from route param
+      title: this.$route.params.title
     };
   },
-
- mounted() {
-  let found = false;
-  for (const category of services) {
-    const item = category.items.find(item => item.title === this.title);
-    if (item) {
-      this.service = { ...item, category: category.title };
-      found = true;
-      break;
+  mounted() {
+    let found = false;
+    for (const category of services) {
+      const item = category.items.find(item => item.title === this.title);
+      if (item) {
+        this.service = { ...item, category: category.title };
+        found = true;
+        break;
+      }
+    }
+    if (!found) {
+      this.service = {
+        desc: 'This service could not be found.',
+        category: 'Unknown'
+      };
+    }
+  },
+  methods: {
+    goToBooking() {
+      this.$router.push(`/booking?service=${this.service.title}`);
     }
   }
-  if (!found) {
-    this.service = {
-      desc: 'This service could not be found.',
-      category: 'Unknown'
-    };
-  }
-}
-
-
 };
 </script>
+
