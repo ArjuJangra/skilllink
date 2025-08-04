@@ -5,10 +5,6 @@
             <img v-if="service.image" :src="service.image" :alt="service.title"
                 class="w-full h-64 object-cover rounded-lg shadow-md mb-6" @error="handleImageError" />
 
-<p class="text-xs text-gray-400 break-all">
-  🔗 Image URL: {{ service.image }}
-</p>
-
             <!-- ✅ Service Info -->
             <h1 class="text-2xl font-bold text-[#007EA7] mb-4">{{ service.title }}</h1>
             <p class="text-gray-700 mb-2">{{ service.desc }}</p>
