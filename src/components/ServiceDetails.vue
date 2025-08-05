@@ -50,7 +50,7 @@ export default {
     },
     methods: {
         goToBooking() {
-            this.$router.push(`/book?service=${encodeURIComponent(this.service.title)}`);
+            this.$router.push(`/booking?service=${encodeURIComponent(this.service.title)}`);
         }
     },
     mounted() {
