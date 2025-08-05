@@ -109,10 +109,11 @@ const routes = [
   },
 
   {
-    path: '/services/:title',
+    path: '/services-details',
     name: 'ServiceDetails',
     component: ServiceDetails,
-    props: true
+    meta: { requiresAuth: true, role: 'user' }
+
   },
 
 
@@ -141,7 +142,5 @@ router.beforeEach((to, from, next) => {
 
   next();
 });
-
-
 
 export default router;

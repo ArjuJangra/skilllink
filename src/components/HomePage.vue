@@ -1,151 +1,97 @@
 <template>
   <div class="min-h-screen bg-[#F0F9FF]">
     <!-- Header -->
-    <header class="flex items-center justify-between p-4 bg-white shadow-md max-w-7xl mx-auto">
+    <header class="sticky top-0 z-50 flex items-center justify-between p-4 bg-white shadow-md max-w-7xl mx-auto">
       <div class="flex items-center space-x-2">
         <img src="@/assets/skilllogo.png" alt="SkillLink Logo" class="w-10 h-10" />
         <h1 class="text-2xl font-bold text-[#007EA7]">SkillLink</h1>
       </div>
       <div class="flex items-center space-x-4">
-
-      <div class="relative w-full max-w-md mx-auto">
-  <!-- Search Icon -->
-  <span class="absolute inset-y-0 left-0 pl-2 flex items-center text-gray-400">
-    <i class="fas fa-search"></i>
-  </span>
-
-  <!-- Input -->
-  <input
-    type="text"
-    v-model="searchQuery"
-    placeholder="Search for services..."
-    class="pl-10 pr-10 py-2 w-full border border-gray-300 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-[#00A8E8] focus:border-[#00A8E8] transition duration-200"
-  />
-
-  <!-- Clear Icon -->
-  <button
-    v-if="searchQuery"
-    @click="searchQuery = ''"
-    class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-900 transition"
-    type="button"
-  >
-    <i class="fas fa-times-circle"></i>
-  </button>
-</div>
-
-
-<!-- If Logged In -->
-<template v-if="auth.isLoggedIn">
-  <router-link
-    to="/dashboard"
-    class="group relative inline-block"
-    
-  >
-    <img
-      :src="profilePicUrl || require('@/assets/user.png')"
-      alt="User Avatar"
-      class="w-10 h-10 rounded-full object-cover border-2 border-[#0073b1] shadow-sm transition-transform duration-200 group-hover:scale-105 group-hover:shadow-md"
-    />
-    <span
-      class="absolute -bottom-1 left-1/2 -translate-x-1/2 text-[10px] bg-black text-white px-1.5 py-0.5 rounded opacity-0 group-hover:opacity-90 pointer-events-none transition-opacity duration-200"
-    >
-      Dashboard
-    </span>
-  </router-link>
-</template>
-
-
-<template v-else>
-  <router-link to="/signup">
-    <button class="px-4 py-2 bg-[#0073b1] text-white font-semibold rounded-lg hover:bg-[#005f91] transition duration-200">
-      Login/Sign Up
-    </button>
-  </router-link>
-</template>
-
+        <div class="relative w-full max-w-md mx-auto">
+          <span class="absolute inset-y-0 left-0 pl-2 flex items-center text-gray-400">
+            <i class="fas fa-search"></i>
+          </span>
+          <input type="text" v-model="searchQuery" placeholder="Search for services..."
+            class="pl-10 pr-10 py-2 w-full border border-gray-300 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-[#00A8E8] focus:border-[#00A8E8] transition duration-200" />
+          <button v-if="searchQuery" @click="searchQuery = ''"
+            class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-900 transition"
+            type="button">
+            <i class="fas fa-times-circle"></i>
+          </button>
+        </div>
+        <template v-if="auth.isLoggedIn">
+          <router-link to="/dashboard" class="group relative inline-block">
+            <img :src="profilePicUrl || require('@/assets/user.png')" alt="User Avatar"
+              class="w-10 h-10 rounded-full object-cover border-2 border-[#0073b1] shadow-sm transition-transform duration-200 group-hover:scale-105 group-hover:shadow-md" />
+            <span
+              class="absolute -bottom-1 left-1/2 -translate-x-1/2 text-[10px] bg-black text-white px-1.5 py-0.5 rounded opacity-0 group-hover:opacity-90 pointer-events-none transition-opacity duration-200">
+              Dashboard
+            </span>
+          </router-link>
+        </template>
+        <template v-else>
+          <router-link to="/signup">
+            <button
+              class="px-4 py-2 bg-[#0073b1] text-white font-semibold rounded-lg hover:bg-[#005f91] transition duration-200">
+              Login/Sign Up
+            </button>
+          </router-link>
+        </template>
       </div>
     </header>
 
     <!-- Services Section -->
     <section class="px-4 py-6 max-w-7xl mx-auto space-y-10">
-      
       <!-- 🔍 Filtered Results Section -->
       <div v-if="filteredResults.length">
         <h2 class="text-xl font-semibold text-gray-800 mb-4">🔍 Search Results</h2>
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          <div
-            v-for="(service, index) in filteredResults"
-            :key="'filtered-' + index"
-            class="bg-white rounded-lg shadow-md p-4 flex items-center justify-between hover:shadow-lg transition"
-          >
-            <div>
-              <h3 class="text-lg font-semibold text-[#007EA7]">{{ service.title }}</h3>
+          <div v-for="(service, index) in filteredResults" :key="'filtered-' + index"
+            class="bg-white rounded-lg shadow-md p-4 flex items-center justify-between hover:shadow-lg transition">
+            <div @click="goToServiceDetails(service.title, service.desc, service.category)" class="cursor-pointer">
+              <h3 class="text-lg font-semibold text-[#007EA7] hover:underline">{{ service.title }}</h3>
               <p class="text-sm text-gray-600 mt-1">{{ service.desc }}</p>
               <p class="text-xs text-gray-400 mt-1 italic">From: {{ service.category }}</p>
             </div>
-            <button
-              @click="goToBooking(service.title)"
-              :disabled="disableBooking"
-              :class="[
-                'ml-4 px-4 py-1 rounded transition',
-                disableBooking
-                  ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                  : 'bg-[#007EA7] text-white hover:bg-[#005f6b]'
-              ]"
-            >
+            <button @click="goToBooking(service.title)" :disabled="disableBooking" :class="[
+              'ml-4 px-4 py-1 rounded transition',
+              disableBooking ? 'bg-gray-300 text-gray-500 cursor-not-allowed' : 'bg-[#007EA7] text-white hover:bg-[#005f6b]'
+            ]">
               Book Now
             </button>
           </div>
         </div>
       </div>
 
-      <!-- 🧾 Original Full List (only when no search) -->
+      <!-- 🧾 Original Full List -->
       <div v-if="!searchQuery">
         <div v-for="category in services" :key="category.title">
           <h2 class="text-xl font-semibold text-gray-800 mb-4">{{ category.title }}</h2>
           <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-
-            <div
-  v-for="(service, index) in category.items"
-  :key="index"
-  class="bg-white rounded-lg shadow-md p-4 flex items-center justify-between hover:shadow-lg transition"
->
-  <!-- Wrap Title in Clickable div -->
-  <div @click="goToServiceDetails(service.title, service.desc, category.title)" class="cursor-pointer">
-    <h3 class="text-lg font-semibold text-[#007EA7] hover:underline">
-      {{ service.title }}
-    </h3>
-    <p class="text-sm text-gray-600 mt-1">{{ service.desc }}</p>
-  </div>
-  
-  <!-- Book Now Button -->
-  <button
-    @click="goToBooking(service.title)"
-    :disabled="disableBooking"
-    :class="[
-      'ml-4 px-4 py-1 rounded transition',
-      disableBooking
-        ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-        : 'bg-[#007EA7] text-white hover:bg-[#005f6b]'
-    ]"
-  >
-    Book Now
-  </button>
-</div>
-
+            <div v-for="(service, index) in category.items" :key="index"
+              class="bg-white rounded-lg shadow-md p-4 flex items-center justify-between hover:shadow-lg transition">
+              <div @click="goToServiceDetails(service.title, service.desc, category.title)" class="cursor-pointer">
+                <h3 class="text-lg font-semibold text-[#007EA7] hover:underline">{{ service.title }}</h3>
+                <p class="text-sm text-gray-600 mt-1">{{ service.desc }}</p>
+              </div>
+              <button @click="goToBooking(service.title)" :disabled="disableBooking" :class="[
+                'ml-4 px-4 py-1 rounded transition',
+                disableBooking ? 'bg-gray-300 text-gray-500 cursor-not-allowed' : 'bg-[#007EA7] text-white hover:bg-[#005f6b]'
+              ]">
+                Book Now
+              </button>
+            </div>
           </div>
         </div>
       </div>
-
     </section>
   </div>
 </template>
 
 <script setup>
-import { ref ,computed ,onMounted, watch} from 'vue';
+import { ref, computed, onMounted, watch } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
-import { auth } from '@/stores/auth'; 
- 
+import { auth } from '@/stores/auth';
 
 const router = useRouter();
 const route = useRoute();
@@ -198,9 +144,17 @@ const goToBooking = (serviceTitle) => {
   }
 };
 
-const goToServiceDetails = (title) => {
-  router.push({ name: 'ServiceDetails', params: { title } });
+const goToServiceDetails = (title, desc, category) => {
+  router.push({
+    name: 'ServiceDetails',
+    query: {
+      title,
+      desc,
+      category
+    }
+  });
 };
+
 
 
 const services = [
@@ -266,10 +220,8 @@ const services = [
 
 const filteredResults = computed(() => {
   if (!searchQuery.value.trim()) return [];
-
   const query = searchQuery.value.toLowerCase();
   const results = [];
-
   services.forEach((category) => {
     category.items.forEach((item) => {
       if (
@@ -280,7 +232,6 @@ const filteredResults = computed(() => {
       }
     });
   });
-
   return results;
 });
 </script>
