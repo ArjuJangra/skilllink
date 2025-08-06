@@ -1,5 +1,7 @@
 const express = require('express');
 const router = express.Router();
+const Booking = require('../models/Booking'); // make sure this path is correct
+
 const { uploadProviderPic } = require('../middleware/upload');
  
 const authMiddleware = require('../middleware/authMiddleware');
@@ -38,6 +40,28 @@ router.post('/by-service', async (req, res) => {
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: 'Internal server error' });
+  }
+});
+
+router.get('/orders/count', authMiddleware, async (req, res) => {
+  try {
+    const providerId = req.user._id;
+    console.log("👤 Provider ID from token:", providerId.toString());
+
+    // ✅ Fetch using correct field name
+    const bookings = await Booking.find({ providerId });
+    console.log("📦 Bookings found:", bookings);
+
+    const count = await Booking.countDocuments({
+      providerId,
+      status: 'Pending',
+    });
+
+    console.log("✅ Order Count:", count);
+    res.json({ count });
+  } catch (error) {
+    console.error('❌ Error in /orders/count:', error);
+    res.status(500).json({ message: 'Failed to get order count' });
   }
 });
 

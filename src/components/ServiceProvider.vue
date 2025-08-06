@@ -11,69 +11,77 @@
 
         <!-- Desktop Nav -->
         <nav class="hidden md:flex items-center space-x-6 text-sm sm:text-base">
+          <router-link to="/serviceprovider"
+            class="px-3 py-2 text-xl font-bold text-[#0073b1] hover:bg-[#e6f4f9] rounded-full">Home</router-link>
 
-          <router-link to="/serviceprovider" class="px-3 py-2 text-xl font-bold text-[#0073b1] hover:bg-[#e6f4f9] rounded-full transition duration-200">Home</router-link>
+          <router-link to="/provider/orders"
+            class="relative flex items-center space-x-2 px-4 py-2 text-xl font-bold text-[#0073b1] hover:bg-[#e6f4f9] rounded-full">
+            <span>Orders</span>
 
-          <router-link to="/provider/orders" class="px-3 py-2 text-xl font-bold text-[#0073b1] hover:bg-[#e6f4f9] rounded-full transition duration-200">Orders</router-link>
+            <!-- Red dot with count -->
+            <span v-if="orderCount > 0"
+              class="absolute top-0 right-0 -mt-1 -mr-1 bg-red-500 text-white text-xs w-5 h-5 flex items-center justify-center rounded-full shadow">
+              {{ orderCount }}
+            </span>
+          </router-link>
 
-          <router-link to="/provider/policies" class="px-3 py-2 text-xl font-bold text-[#0073b1] hover:bg-[#e6f4f9] rounded-full transition duration-200">Policies</router-link>
 
-          <router-link to="/provider/about" class="px-3 py-2 text-xl font-bold text-[#0073b1] hover:bg-[#e6f4f9] rounded-full transition duration-200">About</router-link>
 
-          <router-link to="/provider/contact" class="px-3 py-2 text-xl font-bold text-[#0073b1] hover:bg-[#e6f4f9] rounded-full transition duration-200">Contact</router-link>
+          <router-link to="/provider/policies"
+            class="px-3 py-2 text-xl font-bold text-[#0073b1] hover:bg-[#e6f4f9] rounded-full">Policies</router-link>
+          <router-link to="/provider/about"
+            class="px-3 py-2 text-xl font-bold text-[#0073b1] hover:bg-[#e6f4f9] rounded-full">About</router-link>
+          <router-link to="/provider/contact"
+            class="px-3 py-2 text-xl font-bold text-[#0073b1] hover:bg-[#e6f4f9] rounded-full">Contact</router-link>
 
           <router-link to="/provider/profile">
-            <img
-              :src="provider?.profilePic ? `http://localhost:5000/uploads/providers/${provider.profilePic}` : defaultPic"
-              @error="handleImageError"
-              class="w-9 h-9 rounded-full object-cover border-2 border-[#0073b1] cursor-pointer"
-              alt="Provider DP"
-            />
+            <img :src="profileImage" @error="handleImageError"
+              class="w-9 h-9 rounded-full object-cover border-2 border-[#0073b1] cursor-pointer" alt="Provider DP" />
           </router-link>
         </nav>
 
-        <!-- Hamburger Menu Icon (Mobile) -->
+        <!-- Mobile Menu Button -->
         <button @click="drawerOpen = !drawerOpen" class="md:hidden focus:outline-none">
-          <svg class="h-6 w-6 text-[#0073b1]" fill="none" stroke="currentColor" stroke-width="2"
-            viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
+          <svg class="h-6 w-6 text-[#0073b1]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"
+            stroke-linecap="round" stroke-linejoin="round">
             <path v-if="!drawerOpen" d="M4 6h16M4 12h16M4 18h16" />
             <path v-else d="M6 18L18 6M6 6l12 12" />
           </svg>
         </button>
       </div>
 
-      <!-- Drawer (Mobile Only) -->
-      <div
-        v-if="drawerOpen"
-        class="md:hidden bg-white border-t border-gray-200 shadow-md w-full px-4 py-4 space-y-4 transition-all duration-300"
-      >
-        <router-link @click="drawerOpen = false" to="/serviceprovider" class="block text-[#0073b1] font-semibold">Home</router-link>
-        <router-link @click="drawerOpen = false" to="/provider/orders" class="block text-[#0073b1] font-semibold">Orders</router-link>
-        <router-link @click="drawerOpen = false" to="/provider/policies" class="block text-[#0073b1] font-semibold">Policies</router-link>
-        <router-link @click="drawerOpen = false" to="/provider/about" class="block text-[#0073b1] font-semibold">About</router-link>
-        <router-link @click="drawerOpen = false" to="/provider/contact" class="block text-[#0073b1] font-semibold">Contact</router-link>
+      <!-- Mobile Drawer -->
+      <div v-if="drawerOpen"
+        class="md:hidden bg-white border-t border-gray-200 shadow-md px-4 py-4 space-y-4 transition-all duration-300">
+        <router-link @click="drawerOpen = false" to="/serviceprovider"
+          class="block text-[#0073b1] font-semibold">Home</router-link>
+        <router-link @click="drawerOpen = false" to="/provider/orders"
+          class="block text-[#0073b1] font-semibold">Orders</router-link>
+        <router-link @click="drawerOpen = false" to="/provider/policies"
+          class="block text-[#0073b1] font-semibold">Policies</router-link>
+        <router-link @click="drawerOpen = false" to="/provider/about"
+          class="block text-[#0073b1] font-semibold">About</router-link>
+        <router-link @click="drawerOpen = false" to="/provider/contact"
+          class="block text-[#0073b1] font-semibold">Contact</router-link>
         <router-link @click="drawerOpen = false" to="/provider/profile" class="block">
-          <img
-            :src="provider?.profilePic ? `http://localhost:5000/uploads/providers/${provider.profilePic}` : defaultPic"
-            @error="handleImageError"
-            class="w-10 h-10 rounded-full object-cover border-2 border-[#0073b1] mt-2"
-            alt="Provider DP"
-          />
+          <img :src="profileImage" @error="handleImageError"
+            class="w-10 h-10 rounded-full border-2 border-[#0073b1] mt-2" alt="Provider DP" />
         </router-link>
       </div>
     </header>
 
     <!-- Main Content -->
     <main class="max-w-screen-xl mx-auto px-4 pt-28 sm:pt-32">
-      <!-- Hero Section -->
+      <!-- Welcome -->
       <section class="py-8 sm:py-10 text-center bg-white shadow-md rounded-xl mt-4">
-        <h2 class="text-2xl sm:text-3xl font-bold text-[#0073b1] mb-3">Welcome to SkillLink, Provider!</h2>
+        <h2 class="text-2xl sm:text-3xl font-bold text-[#0073b1] mb-3">Welcome, {{ provider?.name || 'Provider' }}!</h2>
         <p class="max-w-2xl mx-auto text-sm sm:text-base text-gray-600">
-          Thank you for joining us! Here you can accept service requests, manage orders, and grow your reach with SkillLink.
+          Thank you for joining us! Here you can accept service requests, manage orders, and grow your reach with
+          SkillLink.
         </p>
       </section>
 
-       <!-- Quick Stats -->
+      <!-- Quick Stats -->
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-8">
         <div class="bg-white rounded-2xl shadow p-6">
           <h4 class="text-lg font-semibold text-gray-700 mb-2">Total Orders</h4>
@@ -89,7 +97,7 @@
         </div>
       </div>
 
-      <!-- Orders Info Section -->
+      <!-- Orders Info -->
       <section class="py-10 mt-8 text-center">
         <h3 class="text-xl sm:text-2xl font-semibold text-[#0073b1] mb-4">How Orders Work</h3>
         <ul class="max-w-2xl mx-auto list-disc list-inside space-y-2 text-sm sm:text-base text-left text-gray-700">
@@ -111,11 +119,12 @@
         </ul>
       </section>
 
-      <!-- About Section -->
+      <!-- About -->
       <section class="py-8 sm:py-10 mt-8 text-center">
         <h3 class="text-xl sm:text-2xl font-semibold text-[#0073b1] mb-3">About SkillLink</h3>
         <p class="max-w-2xl mx-auto text-sm sm:text-base text-gray-700">
-          SkillLink connects verified service providers like you to customers needing reliable repair, maintenance, and support services.
+          SkillLink connects verified service providers like you to customers needing reliable repair, maintenance, and
+          support services.
           We empower local professionals and streamline home and field service delivery.
         </p>
       </section>
@@ -124,7 +133,8 @@
       <section class="py-8 sm:py-10 mt-8 bg-[#e6f4fa] rounded-lg text-center">
         <h3 class="text-xl sm:text-2xl font-semibold text-[#0073b1] mb-3">Contact Us</h3>
         <p class="max-w-2xl mx-auto text-sm sm:text-base text-gray-700">
-          Have questions or need help? Email <strong>connectteamskilllink@gmail.com</strong> or call <strong>+91 98765 43210</strong>.
+          Have questions or need help? Email <strong>connectteamskilllink@gmail.com</strong> or call <strong>+91 98765
+            43210</strong>.
         </p>
       </section>
     </main>
@@ -140,13 +150,21 @@
 import axios from 'axios';
 
 export default {
-  name: 'ProviderHome',
+  name: 'ServiceProvider',
   data() {
     return {
       drawerOpen: false,
       provider: null,
-      defaultPic: require('@/assets/user.png'),
+      orderCount: 0,
+      defaultPic: require('@/assets/user.png')
     };
+  },
+  computed: {
+    profileImage() {
+      return this.provider?.profilePic
+        ? `http://localhost:5000/uploads/providers/${this.provider.profilePic}`
+        : this.defaultPic;
+    }
   },
   methods: {
     async fetchProviderProfile() {
@@ -154,23 +172,39 @@ export default {
         const token = localStorage.getItem('token');
         const response = await axios.get('http://localhost:5000/api/providers/profile', {
           headers: {
-            Authorization: `Bearer ${token}`,
-          },
+            Authorization: `Bearer ${token}`
+          }
         });
         this.provider = response.data;
       } catch (error) {
         console.error('❌ Failed to fetch provider profile:', error);
       }
     },
-    handleImageError(event) {
-      event.target.src = this.defaultPic;
+   async fetchOrderCount() {
+  try {
+    const token = localStorage.getItem('token');
+    const res = await axios.get('http://localhost:5000/api/providers/orders/count', {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    this.orderCount = res.data.count || 0;
+    console.log('✅ Updated Order Count:', this.orderCount); // ✅ Move log here
+  } catch (error) {
+    console.error('❌ Error fetching order count:', error);
+  }
+},
+
+    handleImageError(e) {
+      e.target.src = this.defaultPic;
     }
   },
   mounted() {
     this.fetchProviderProfile();
+    this.fetchOrderCount();
+    console.log('🚨 Order Count:', this.orderCount);
   }
 };
 </script>
+
 
 <style scoped>
 body {
