@@ -1,4 +1,4 @@
-// in routes/notificationRoutes.js
+//  routes/notificationRoutes.js
 const express = require('express');
 const router = express.Router();
 const Notification = require('../models/Notification');
@@ -55,6 +55,32 @@ router.delete('/:id', authenticateUser, async (req, res) => {
   }
 });
 
+// GET /api/notifications/unread-count
+router.get('/unread-count', authenticateUser, async (req, res) => {
+  try {
+    const count = await Notification.countDocuments({
+      userId: req.user.id,
+      read: false
+    });
+    res.json({ count });
+  } catch (err) {
+    console.error('❌ Error fetching unread count:', err);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
 
+// PATCH /api/notifications/mark-all-read
+router.patch('/mark-all-read', authenticateUser, async (req, res) => {
+  try {
+    await Notification.updateMany(
+      { userId: req.user.id, read: false },
+      { $set: { read: true } }
+    );
+    res.json({ message: 'All notifications marked as read' });
+  } catch (error) {
+    console.error('❌ Error marking all as read:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
 
 module.exports = router;

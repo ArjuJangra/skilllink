@@ -1,67 +1,67 @@
 <template>
+
   <div class="p-6 bg-white rounded-2xl shadow-lg max-w-3xl mx-auto mt-6 relative">
     <!-- Header -->
-    <div class="flex justify-between items-center mb-6">
+
+    <div class="flex justify-between items-center mb-4">
       <h2 class="text-2xl font-semibold text-[#007EA7] flex items-center gap-2">
         <i class="fas fa-bell text-[#007EA7]" aria-hidden="true"></i>
         <span>Notifications</span>
       </h2>
-      <button
-        @click="markAllRead"
-        class="text-sm text-[#007EA7] hover:underline focus:outline-none"
-        v-if="notifications.length"
-        aria-label="Mark all notifications as read"
-      >
+      <button @click="markAllRead" class="text-sm text-[#007EA7] hover:underline focus:outline-none"
+        v-if="notifications.length" aria-label="Mark all notifications as read">
         Mark all as read
       </button>
     </div>
 
-    <!-- Loading Skeleton -->
+    <!-- Filters -->
+    <div class="flex gap-4 mb-6">
+      <button v-for="filter in ['all', 'unread', 'read']" :key="filter" @click="currentFilter = filter" :class="[
+        'text-sm font-medium px-3 py-1.5 rounded-full transition',
+        currentFilter === filter
+          ? 'bg-[#007EA7] text-white'
+          : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+      ]">
+        {{ filter.charAt(0).toUpperCase() + filter.slice(1) }}
+      </button>
+    </div>
+
+    <!-- Loading -->
     <div v-if="loading" class="space-y-4">
       <div class="h-5 bg-gray-200 rounded animate-pulse w-2/3"></div>
       <div class="h-4 bg-gray-200 rounded animate-pulse w-1/3"></div>
     </div>
 
-    <!-- Notifications Grouped by Date -->
+    <!-- Notifications -->
     <div v-else>
-      <div v-for="(notes, groupName) in nonEmptyGroups" :key="groupName" class="mb-6">
-        <h3 class="text-base font-semibold text-gray-600 mb-2">{{ groupName }}</h3>
+      <div v-for="(notes, groupName) in filteredGroups" :key="groupName" class="mb-6">
+        <h3 class="text-base font-semibold text-gray-800 mb-2">{{ groupName }}</h3>
 
         <div class="space-y-4">
-          <div
-            v-for="note in notes"
-            :key="note._id"
-            class="border-l-4 border-[#00A8E8] bg-[#F0F9FF] p-4 rounded-md shadow-sm hover:shadow-md transition group relative"
-              @click="markAsRead(note)"
-          >
+          <div v-for="note in notes" :key="note._id" :class="[
+            'p-4 rounded-md shadow-sm hover:shadow-md transition transform duration-300 ease-in-out translate-y-2  animate-slideIn group relative border-l-4 cursor-pointer',
+            note.read
+              ? 'border-gray-500 bg-indigo-50'
+              : 'border-[#78bdd8] bg-[#E6F7FF]'
+          ]" @click="markAsRead(note)">
             <div class="flex justify-between">
-              <!-- Icon and message -->
               <div class="flex items-start gap-2">
-                <i :class="getIconClass(note.type)" class="text-[#007EA7] mt-0.5" aria-hidden="true"></i>
+                <i :class="[getIconClass(note.type), note.read ? 'text-gray-500' : 'text-[#007EA7]']" class="mt-0.5" />
                 <div>
                   <p class="text-gray-800 text-sm sm:text-base font-medium leading-relaxed">
                     {{ note.message }}
-                    <span
-                      v-if="!note.read"
-                      class="ml-2 bg-[#00A8E8] text-white text-[10px] px-2 py-0.5 rounded-full"
-                      aria-label="New notification"
-                    >
+                    <span v-if="!note.read"
+                      class="ml-2 bg-[#007EA7] text-white text-[10px] px-2 py-0.5 rounded-full shadow-sm">
                       New
                     </span>
                   </p>
-                  <p class="text-xs text-gray-500 mt-2">
-                    {{ formatTime(note.createdAt) }}
-                  </p>
+                  <p class="text-xs text-gray-500 mt-2">{{ formatTime(note.createdAt) }}</p>
                 </div>
               </div>
 
-              <!-- Delete button -->
-              <button
-                @click.stop="deleteNotification(note._id)"
-                class="text-gray-400 hover:text-red-500 transition focus:outline-none"
-                aria-label="Delete notification"
-                title="Delete notification"
-              >
+              <button @click.stop="deleteNotification(note._id)"
+                class="text-gray-400 hover:text-red-500 transition focus:outline-none" aria-label="Delete notification"
+                title="Delete notification">
                 <i class="fas fa-times text-sm" aria-hidden="true"></i>
               </button>
             </div>
@@ -69,28 +69,73 @@
         </div>
       </div>
 
-      <div v-if="!notifications.length" class="text-gray-500 text-center py-12 text-base sm:text-lg">
-        No notifications yet. 🎉
+      <div v-if="isLoadingMore" class="text-center py-4 text-sm text-gray-500">
+        Loading more...
+      </div>
+
+      <!-- Optional fallback "Load More" button -->
+      <div v-if="hasMore && !isLoadingMore" class="text-center mt-6">
+        <button @click="loadMore"
+          class="px-4 py-2 text-sm bg-[#007EA7] text-white rounded-full hover:bg-[#005f73] transition">
+          Load More
+        </button>
+      </div>
+
+
+
+
+      <div v-if="!filteredNotifications.length" class="text-gray-500 text-center py-12 text-base sm:text-lg">
+        No {{ currentFilter }} notifications 🎉
       </div>
     </div>
+
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted, computed } from 'vue';
+import { ref, onMounted, onUnmounted, computed } from 'vue';
 import axios from 'axios';
-import { isToday, isYesterday, parseISO } from 'date-fns';
+import { isToday, isYesterday, isThisWeek, isLastWeek, parseISO } from 'date-fns';
 
 const notifications = ref([]);
 const loading = ref(true);
+const currentFilter = ref('all');
+
+const itemsPerPage = ref(5);
+const currentPage = ref(1);
+const isLoadingMore = ref(false); // loading state for infinite scroll
+
+const paginatedNotifications = computed(() => {
+  const end = currentPage.value * itemsPerPage.value;
+  return filteredNotifications.value.slice(0, end);
+});
+
+const hasMore = computed(() => {
+  return filteredNotifications.value.length > currentPage.value * itemsPerPage.value;
+});
+
+const loadMore = () => {
+  if (hasMore.value && !isLoadingMore.value) {
+    isLoadingMore.value = true;
+    setTimeout(() => {
+      currentPage.value++;
+      isLoadingMore.value = false;
+    }, 500); // simulate load delay
+  }
+};
+
+const handleScroll = () => {
+  const bottom = window.innerHeight + window.scrollY >= document.body.offsetHeight - 100;
+  if (bottom && hasMore.value && !loading.value && !isLoadingMore.value) {
+    loadMore();
+  }
+};
 
 const fetchNotifications = async () => {
   try {
     const token = localStorage.getItem('token');
     const res = await axios.get('http://localhost:5000/api/notifications', {
-      headers: {
-        Authorization: `Bearer ${token}`
-      }
+      headers: { Authorization: `Bearer ${token}` }
     });
     notifications.value = res.data;
   } catch (error) {
@@ -100,28 +145,41 @@ const fetchNotifications = async () => {
   }
 };
 
-onMounted(fetchNotifications);
+onMounted(() => {
+  fetchNotifications();
+  window.addEventListener('scroll', handleScroll);
+});
+
+onUnmounted(() => {
+  window.removeEventListener('scroll', handleScroll);
+});
 
 const formatTime = (time) => new Date(time).toLocaleString();
 
+const filteredNotifications = computed(() => {
+  if (currentFilter.value === 'unread') return notifications.value.filter(n => !n.read);
+  if (currentFilter.value === 'read') return notifications.value.filter(n => n.read);
+  return notifications.value;
+});
+
 const groupedNotifications = computed(() => {
-  const groups = { Today: [], Yesterday: [], Earlier: [] };
-  for (const note of notifications.value) {
+  const groups = { Today: [], Yesterday: [], 'This Week': [], 'Last Week': [], Earlier: [] };
+  for (const note of paginatedNotifications.value) {
     const date = parseISO(note.createdAt);
     if (isToday(date)) groups.Today.push(note);
     else if (isYesterday(date)) groups.Yesterday.push(note);
+    else if (isThisWeek(date)) groups['This Week'].push(note);
+    else if (isLastWeek(date)) groups['Last Week'].push(note);
     else groups.Earlier.push(note);
   }
   return groups;
 });
 
-const nonEmptyGroups = computed(() => {
+const filteredGroups = computed(() => {
   return Object.fromEntries(
     Object.entries(groupedNotifications.value).filter(([, notes]) => notes.length > 0)
-
   );
 });
-
 
 const deleteNotification = async (id) => {
   try {
@@ -141,9 +199,9 @@ const markAllRead = async () => {
     await axios.patch(`http://localhost:5000/api/notifications/mark-all-read`, {}, {
       headers: { Authorization: `Bearer ${token}` }
     });
-    fetchNotifications();
+    notifications.value.forEach(note => note.read = true);
   } catch (error) {
-    console.error('❌ Failed to mark as read:', error);
+    console.error('❌ Failed to mark all as read:', error);
   }
 };
 
@@ -161,23 +219,31 @@ const getIconClass = (type) => {
 };
 
 const markAsRead = async (note) => {
-  if (note.read) return; // already read
-
+  if (note.read) return;
   try {
     const token = localStorage.getItem('token');
     await axios.patch(`http://localhost:5000/api/notifications/${note._id}/read`, {}, {
       headers: { Authorization: `Bearer ${token}` }
     });
-
-    // Update the local state without re-fetching everything
     note.read = true;
   } catch (error) {
     console.error('❌ Failed to mark notification as read:', error);
   }
 };
-
 </script>
 
-<style scoped>
-/* Removed unused style */
+
+
+<style>
+/* In your global CSS or <style> section */
+@keyframes slideIn {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-slideIn {
+  animation: slideIn 0.4s ease-out forwards;
+}
 </style>

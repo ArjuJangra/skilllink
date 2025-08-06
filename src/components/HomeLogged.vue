@@ -38,17 +38,26 @@
             Book Service
           </router-link>
 
+         <!-- Notification Bell -->
+ <router-link
+    to="/notifications"
+    class="relative w-10 h-10 flex items-center justify-center rounded-full hover:ring-2 hover:ring-[#0073b1] transition"
+  >
+    <!-- Bell Icon -->
+    <svg class="w-7 h-7 text-gray-700 hover:text-[#0073b1]" fill="none" stroke="currentColor" stroke-width="2"
+      viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+      <path stroke-linecap="round" stroke-linejoin="round"
+        d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+    </svg>
 
-          <!-- Notification Bell -->
-          <router-link to="/notifications"
-            class="w-10 h-10 flex items-center justify-center rounded-full hover:ring-2 hover:ring-[#0073b1] transition">
-            <svg class="w-7 h-7 text-gray-700 hover:text-[#0073b1]" fill="none" stroke="currentColor" stroke-width="2"
-              viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-              <path stroke-linecap="round" stroke-linejoin="round"
-                d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9">
-              </path>
-            </svg>
-          </router-link>
+    <!-- 🔴 Badge -->
+    <span
+      v-if="unreadCount > 0"
+      class="absolute -top-0.5 -right-0.5 bg-red-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full"
+    >
+      {{ unreadCount }}
+    </span>
+  </router-link>
 
           <!-- Profile Picture -->
           <router-link to="/profile">
@@ -237,6 +246,21 @@ import axios from 'axios';
 import ServiceMap from '@/components/ServiceMap.vue';
 
 const user = ref(null);
+const unreadCount = ref(0);
+
+const fetchUnreadCount = async () => {
+  try {
+    const token = localStorage.getItem('token');
+    const response = await axios.get('http://localhost:5000/api/notifications/unread-count', {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    });
+    unreadCount.value = response.data.count;
+  } catch (error) {
+    console.error('❌ Failed to fetch unread count:', error);
+  }
+};
 
 const fetchUserProfile = async () => {
   try {
@@ -255,6 +279,7 @@ const fetchUserProfile = async () => {
 
 onMounted(() => {
   fetchUserProfile();
+  fetchUnreadCount();
 });
 
 const services = [
