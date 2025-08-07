@@ -3,7 +3,7 @@ const router = express.Router();
 const Booking = require('../models/Booking');
 const Notification = require('../models/Notification');
 const authenticateUser = require('../middleware/authMiddleware');
-
+const mongoose = require('mongoose');
 
 // GET all orders assigned to this provider
 router.get('/', authenticateUser, async (req, res) => {
@@ -14,8 +14,6 @@ router.get('/', authenticateUser, async (req, res) => {
     res.status(500).json({ message: 'Failed to fetch provider orders' });
   }
 });
-
-// PUT update order status (accept/reject/complete)
 
 router.put('/:id/status', authenticateUser, async (req, res) => {
   const { status } = req.body;
@@ -69,7 +67,32 @@ await Notification.create({
   }
 });
 
+// GET /api/providers/orders/stats
+router.get('/orders/stats', authenticateUser, async (req, res) => {
+  try {
+    const providerId = new mongoose.Types.ObjectId(req.user.id);
 
+    const orders = await Booking.find({ providerId });
+    console.log("📦 Total Orders for Provider:", orders.length);
+
+    const completed = orders.filter(order => order.status === 'Completed');
+    console.log("✅ Completed Orders:", completed.length);
+
+    const earnings = completed.reduce((total, order) => {
+      return total + (order.price || 0);
+    }, 0);
+    console.log("💰 Earnings:", earnings);
+
+    res.json({
+      total: orders.length,
+      completed: completed.length,
+      earnings
+    });
+  } catch (err) {
+    console.error('❌ Error in stats route:', err);
+    res.status(500).json({ message: 'Failed to fetch stats' });
+  }
+});
 
 
 module.exports = router;

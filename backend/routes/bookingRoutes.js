@@ -31,9 +31,8 @@ router.post('/', authenticateUser, async (req, res) => {
    console.log('➡️ Booking request received:', req.body);
     console.log('🔐 Authenticated User:', req.user);
 
-    const { service, name, contact, address, providerId } = req.body;
+    const { service, name, contact, address, providerId, price } = req.body;
 
-   
 
 // Get user details including pincode
 const user = await User.findById(req.user.id);
@@ -75,6 +74,7 @@ if (providerId) {
       name,
       contact,
       address,
+        price: price || 100
     });
       const savedBooking = await booking.save();
     console.log('✅ Booking saved:', savedBooking);

@@ -13,27 +13,20 @@
         <nav class="hidden md:flex items-center space-x-6 text-sm sm:text-base">
           <router-link to="/serviceprovider"
             class="px-3 py-2 text-xl font-bold text-[#0073b1] hover:bg-[#e6f4f9] rounded-full">Home</router-link>
-
           <router-link to="/provider/orders"
             class="relative flex items-center space-x-2 px-4 py-2 text-xl font-bold text-[#0073b1] hover:bg-[#e6f4f9] rounded-full">
             <span>Orders</span>
-
-            <!-- Red dot with count -->
             <span v-if="orderCount > 0"
               class="absolute top-0 right-0 -mt-1 -mr-1 bg-red-500 text-white text-xs w-5 h-5 flex items-center justify-center rounded-full shadow">
               {{ orderCount }}
             </span>
           </router-link>
-
-
-
           <router-link to="/provider/policies"
             class="px-3 py-2 text-xl font-bold text-[#0073b1] hover:bg-[#e6f4f9] rounded-full">Policies</router-link>
           <router-link to="/provider/about"
             class="px-3 py-2 text-xl font-bold text-[#0073b1] hover:bg-[#e6f4f9] rounded-full">About</router-link>
           <router-link to="/provider/contact"
             class="px-3 py-2 text-xl font-bold text-[#0073b1] hover:bg-[#e6f4f9] rounded-full">Contact</router-link>
-
           <router-link to="/provider/profile">
             <img :src="profileImage" @error="handleImageError"
               class="w-9 h-9 rounded-full object-cover border-2 border-[#0073b1] cursor-pointer" alt="Provider DP" />
@@ -85,15 +78,15 @@
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-8">
         <div class="bg-white rounded-2xl shadow p-6">
           <h4 class="text-lg font-semibold text-gray-700 mb-2">Total Orders</h4>
-          <p class="text-3xl font-bold text-[#007EA7]">24</p>
+          <p class="text-3xl font-bold text-[#007EA7]">{{ stats.total }}</p>
         </div>
         <div class="bg-white rounded-2xl shadow p-6">
           <h4 class="text-lg font-semibold text-gray-700 mb-2">Completed</h4>
-          <p class="text-3xl font-bold text-green-500">19</p>
+          <p class="text-3xl font-bold text-green-500">{{ stats.completed }}</p>
         </div>
         <div class="bg-white rounded-2xl shadow p-6">
           <h4 class="text-lg font-semibold text-gray-700 mb-2">Earnings</h4>
-          <p class="text-3xl font-bold text-yellow-600">₹12,500</p>
+          <p class="text-3xl font-bold text-yellow-600">₹{{ stats.earnings }}</p>
         </div>
       </div>
 
@@ -124,8 +117,7 @@
         <h3 class="text-xl sm:text-2xl font-semibold text-[#0073b1] mb-3">About SkillLink</h3>
         <p class="max-w-2xl mx-auto text-sm sm:text-base text-gray-700">
           SkillLink connects verified service providers like you to customers needing reliable repair, maintenance, and
-          support services.
-          We empower local professionals and streamline home and field service delivery.
+          support services. We empower local professionals and streamline home and field service delivery.
         </p>
       </section>
 
@@ -156,6 +148,11 @@ export default {
       drawerOpen: false,
       provider: null,
       orderCount: 0,
+      stats: {
+        total: 0,
+        completed: 0,
+        earnings: 0
+      },
       defaultPic: require('@/assets/user.png')
     };
   },
@@ -180,19 +177,28 @@ export default {
         console.error('❌ Failed to fetch provider profile:', error);
       }
     },
-   async fetchOrderCount() {
-  try {
-    const token = localStorage.getItem('token');
-    const res = await axios.get('http://localhost:5000/api/providers/orders/count', {
-      headers: { Authorization: `Bearer ${token}` }
-    });
-    this.orderCount = res.data.count || 0;
-    console.log('✅ Updated Order Count:', this.orderCount); // ✅ Move log here
-  } catch (error) {
-    console.error('❌ Error fetching order count:', error);
-  }
-},
-
+    async fetchOrderCount() {
+      try {
+        const token = localStorage.getItem('token');
+        const res = await axios.get('http://localhost:5000/api/providers/orders/count', {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        this.orderCount = res.data.count || 0;
+      } catch (error) {
+        console.error('❌ Error fetching order count:', error);
+      }
+    },
+    async fetchStats() {
+      try {
+        const token = localStorage.getItem('token');
+        const res = await axios.get('http://localhost:5000/api/providers/orders/stats', {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        this.stats = res.data;
+      } catch (err) {
+        console.error('❌ Failed to fetch stats:', err);
+      }
+    },
     handleImageError(e) {
       e.target.src = this.defaultPic;
     }
@@ -200,7 +206,7 @@ export default {
   mounted() {
     this.fetchProviderProfile();
     this.fetchOrderCount();
-    console.log('🚨 Order Count:', this.orderCount);
+    this.fetchStats();
   }
 };
 </script>

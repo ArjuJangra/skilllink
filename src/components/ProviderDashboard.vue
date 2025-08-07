@@ -18,12 +18,14 @@
             <p class="text-sm text-gray-500">{{ provider?.email }}</p>
           </div>
         </div>
-        <button class="text-[#007EA7] font-medium hover:underline" @click="showEditProfileForm = true">Edit Profile</button>
+        <button class="text-[#007EA7] font-medium hover:underline" @click="showEditProfileForm = true">
+          Edit Profile
+        </button>
       </div>
 
       <!-- Edit Profile Modal -->
       <div v-if="showEditProfileForm" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-        <div class="bg-white w-full max-w-md p-6 rounded-xl shadow-xl">
+        <div class="bg-white w-full max-w-md p-6 rounded-xl shadow-xl overflow-y-auto max-h-[90vh]">
           <h2 class="text-xl font-semibold mb-4 text-gray-800">Edit Profile</h2>
           <form @submit.prevent="updateProfile">
             <div class="mb-4">
@@ -33,6 +35,10 @@
             <div class="mb-4">
               <label class="block text-sm font-medium mb-1">Email</label>
               <input v-model="editForm.email" type="email" class="w-full px-3 py-2 border rounded-lg" />
+            </div>
+            <div class="mb-4">
+              <label class="block text-sm font-medium mb-1">Area</label>
+              <input v-model="editForm.area" type="text" class="w-full px-3 py-2 border rounded-lg" />
             </div>
             <div class="mb-4">
               <label class="block text-sm font-medium mb-1">Profile Picture</label>
@@ -46,7 +52,7 @@
                 Cancel
               </button>
               <button type="submit" :disabled="isSubmitting" class="px-4 py-2 bg-[#007EA7] text-white rounded-lg flex items-center">
-                <span v-if="isSubmitting" class="loader mr-2"></span>
+                <span v-if="isSubmitting" class="w-4 h-4 border-2 border-t-2 border-t-white border-white/40 rounded-full animate-spin mr-2"></span>
                 Save
               </button>
             </div>
@@ -54,36 +60,31 @@
         </div>
       </div>
 
-     
+      <!-- Location Display -->
+      <div class="bg-white rounded-2xl shadow p-6 mt-8">
+        <h3 class="text-xl font-semibold mb-2 text-[#007EA7]">Current Location</h3>
+        <p class="text-sm text-gray-700">Area: {{ provider?.area || 'Not set' }}</p>
+        <button @click="showLocationModal = true" class="mt-3 px-4 py-2 bg-[#007EA7] text-white rounded-lg">
+          Edit Location
+        </button>
+      </div>
 
-      <!-- Location Edit -->
-<div class="bg-white rounded-2xl shadow p-6 mt-8">
-  <h3 class="text-xl font-semibold mb-2 text-[#007EA7]">Current Location</h3>
-  <p class="text-sm text-gray-700">Latitude: {{ provider?.latitude }}</p>
-  <p class="text-sm text-gray-700">Longitude: {{ provider?.longitude }}</p>
-  <button @click="showLocationModal = true" class="mt-3 px-4 py-2 bg-[#007EA7] text-white rounded-lg">
-    Edit Location
-  </button>
-</div>
+      <!-- Location Modal -->
+      <div v-if="showLocationModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div class="bg-white p-6 rounded-2xl shadow-lg w-full max-w-sm">
+          <h2 class="text-lg font-semibold mb-4">Edit Location</h2>
+          <div class="mb-4">
+            <label class="block text-sm font-medium mb-1">Area</label>
+            <input v-model="editForm.area" type="text" class="w-full px-3 py-2 border rounded-lg" />
+          </div>
+          <div class="flex justify-end space-x-3">
+            <button @click="showLocationModal = false" class="px-4 py-2 bg-gray-300 rounded-lg">Cancel</button>
+            <button @click="updateLocation" class="px-4 py-2 bg-[#007EA7] text-white rounded-lg">Save</button>
+          </div>
+        </div>
+      </div>
 
-<!-- Location Modal -->
-<div v-if="showLocationModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-  <div class="bg-white p-6 rounded-2xl shadow-lg w-full max-w-sm">
-    <h2 class="text-lg font-semibold mb-4">Edit Location</h2>
-   <div class="mb-4">
-  <label class="block text-sm font-medium mb-1">Area</label>
-  <input v-model="editForm.area" type="text" class="w-full px-3 py-2 border rounded-lg" />
-</div>
-
-    <div class="flex justify-end space-x-3">
-      <button @click="showLocationModal = false" class="px-4 py-2 bg-gray-300 rounded-lg">Cancel</button>
-      <button @click="updateLocation" class="px-4 py-2 bg-[#007EA7] text-white rounded-lg">Save</button>
-    </div>
-  </div>
-</div>
-
-
-      <!-- Settings & Logout -->
+      <!-- Logout -->
       <div class="bg-white rounded-2xl shadow p-6 mt-8">
         <h3 class="text-xl font-semibold mb-4 text-[#007EA7]">Account Settings</h3>
         <button @click="showLogoutModal = true" class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg transition">
@@ -128,19 +129,16 @@ const showLogoutModal = ref(false)
 const isSubmitting = ref(false)
 const showLocationModal = ref(false)
 const router = useRouter()
+
 const editForm = reactive({
   name: '',
   email: '',
-  area: '',
+  area: ''
 })
 
 const selectedFile = ref(null)
 const previewImage = ref('')
-const locationForm = reactive({
-  latitude: null,
-  longitude: null
-})
-// Profile image logic
+
 const profileImage = computed(() => {
   if (provider.value?.profilePic) {
     return `http://localhost:5000/uploads/providers/${provider.value.profilePic}`
@@ -156,6 +154,7 @@ watch(showEditProfileForm, (open) => {
   if (open && provider.value) {
     editForm.name = provider.value.name || ''
     editForm.email = provider.value.email || ''
+    editForm.area = provider.value.area || ''
     previewImage.value = profileImage.value
   }
 })
@@ -189,8 +188,8 @@ const updateProfile = async () => {
       {
         headers: {
           Authorization: `Bearer ${token}`,
-          'Content-Type': 'multipart/form-data',
-        },
+          'Content-Type': 'multipart/form-data'
+        }
       }
     )
 
@@ -206,23 +205,6 @@ const updateProfile = async () => {
   }
 }
 
-const handleLogout = () => {
-  auth.logoutUser?.()
-  localStorage.removeItem('user')
-  localStorage.removeItem('token')
-  toast.success('Logged out successfully')
-  router.push('/login')
-}
-
-watch(showEditProfileForm, (open) => {
-  if (open && provider.value) {
-    editForm.name = provider.value.name || ''
-    editForm.email = provider.value.email || ''
-    editForm.area = provider.value.area || ''
-  }
-})
-
-
 const updateLocation = async () => {
   const providerId = provider.value._id || provider.value.id
   if (!providerId) return toast.error('Provider ID missing')
@@ -231,26 +213,25 @@ const updateLocation = async () => {
     const token = localStorage.getItem('token')
     const res = await axios.put(
       `http://localhost:5000/api/providers/profile/update/${providerId}`,
-      {
-        lat: locationForm.latitude,
-        lng: locationForm.longitude
-      },
-      {
-        headers: {
-          Authorization: `Bearer ${token}`
-        }
-      }
+      { area: editForm.area },
+      { headers: { Authorization: `Bearer ${token}` } }
     )
     provider.value = res.data.provider || res.data
     localStorage.setItem('user', JSON.stringify(provider.value))
     toast.success('Location updated successfully')
     showLocationModal.value = false
   } catch (err) {
-    console.error(err)
     toast.error('Failed to update location')
   }
 }
 
+const handleLogout = () => {
+  auth.logoutUser?.()
+  localStorage.removeItem('user')
+  localStorage.removeItem('token')
+  toast.success('Logged out successfully')
+  router.push('/login')
+}
 
 onMounted(async () => {
   const storedUser = JSON.parse(localStorage.getItem('user'))
@@ -264,9 +245,8 @@ onMounted(async () => {
 
   try {
     const res = await axios.get('http://localhost:5000/api/providers/profile', {
-      headers: { Authorization: `Bearer ${token}` },
+      headers: { Authorization: `Bearer ${token}` }
     })
-
     provider.value = res.data
     localStorage.setItem('user', JSON.stringify(res.data))
   } catch (err) {
@@ -275,6 +255,7 @@ onMounted(async () => {
   }
 })
 </script>
+
 
 <style scoped>
 .loader {

@@ -157,7 +157,7 @@ const confirmFakePayment = async () => {
       name: name.value,
       contact: contact.value,
       address: address.value,
-      amount: getSelectedPrice(),
+      price: getSelectedPrice(),
       paymentStatus: 'paid' // Simulated paid
     }, {
       headers: {
