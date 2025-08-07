@@ -48,7 +48,6 @@ app.use('/api/auth', require('./routes/auth'));
 app.use('/api/user', require('./routes/userRoutes'));
 app.use('/api/address', require('./routes/addressRoutes'));
 app.use('/api/services', require('./routes/serviceRoutes'));
-app.use('/api/provider/orders', require('./routes/providerOrders'));
 app.use('/api/bookings', bookingRoutes);
 app.use('/api/providers',providerRoutes);
 app.use('/api/contact', contactRoutes);

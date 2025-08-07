@@ -12,7 +12,12 @@ const serviceProviderSchema = new mongoose.Schema({
     enum: ['user', 'provider'],
     default: 'provider'
   },
-    area: { type: String, required: true },
+  area: { type: String, required: true },
+  privacySettings: {
+  showEmail: { type: Boolean, default: false },
+  showPhone: { type: Boolean, default: false }
+},
+
   services: {
     type: [String],
     required: true,
@@ -28,9 +33,9 @@ const serviceProviderSchema = new mongoose.Schema({
     default: 0
   },
   area: {
-  type: String,
-  required: true
-},
+    type: String,
+    required: true
+  },
   latitude: {
     type: Number,
     required: true

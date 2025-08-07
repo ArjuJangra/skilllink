@@ -65,6 +65,46 @@ router.get('/orders/count', authMiddleware, async (req, res) => {
   }
 });
 
+router.post('/privacy', authMiddleware, async (req, res) => {
+  try {
+    const { showEmail, showPhone } = req.body;
+    const ServiceProvider = require('../models/ServiceProvider');
+
+    const provider = await ServiceProvider.findById(req.user._id);
+    if (!provider) {
+      return res.status(404).json({ message: 'Provider not found' });
+    }
+
+    provider.privacySettings = {
+      showEmail: !!showEmail,
+      showPhone: !!showPhone,
+    };
+
+    await provider.save();
+    res.json({ message: 'Privacy settings updated successfully', privacySettings: provider.privacySettings });
+  } catch (error) {
+    console.error('Error updating privacy settings:', error);
+    res.status(500).json({ message: 'Failed to update privacy settings' });
+  }
+});
+
+// (Optional) Get provider privacy settings
+router.get('/privacy', authMiddleware, async (req, res) => {
+  try {
+    const ServiceProvider = require('../models/ServiceProvider');
+    const provider = await ServiceProvider.findById(req.user._id).select('privacySettings');
+    if (!provider) {
+      return res.status(404).json({ message: 'Provider not found' });
+    }
+
+    res.json(provider.privacySettings || {});
+  } catch (error) {
+    console.error('Error fetching privacy settings:', error);
+    res.status(500).json({ message: 'Failed to fetch privacy settings' });
+  }
+});
+
+
 
 module.exports = router;
 

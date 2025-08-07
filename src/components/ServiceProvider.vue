@@ -191,7 +191,7 @@ export default {
     async fetchStats() {
       try {
         const token = localStorage.getItem('token');
-        const res = await axios.get('http://localhost:5000/api/providers/orders/stats', {
+        const res = await axios.get('http://localhost:5000/api/provider/orders/stats', {
           headers: { Authorization: `Bearer ${token}` }
         });
         this.stats = res.data;

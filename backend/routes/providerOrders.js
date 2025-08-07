@@ -68,7 +68,7 @@ await Notification.create({
 });
 
 // GET /api/providers/orders/stats
-router.get('/orders/stats', authenticateUser, async (req, res) => {
+router.get('/stats', authenticateUser, async (req, res) => {
   try {
     const providerId = new mongoose.Types.ObjectId(req.user.id);
 
