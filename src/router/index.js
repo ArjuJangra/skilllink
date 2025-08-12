@@ -1,4 +1,3 @@
-
 import { createRouter, createWebHistory } from 'vue-router';
 
 import LoginPage from '@/components/LoginPage.vue';
@@ -108,13 +107,12 @@ const routes = [
     meta: { requiresAuth: true }
   },
 
-  {
-    path: '/services-details',
-    name: 'ServiceDetails',
-    component: ServiceDetails,
-    meta: { requiresAuth: true, role: 'user' }
-
-  },
+{
+  path: '/service-details',
+  name: 'ServiceDetails',
+  component: ServiceDetails,
+  meta: { requiresAuth: true, role: 'user' }
+}
 
 
 ];
