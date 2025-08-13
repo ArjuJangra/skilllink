@@ -76,7 +76,7 @@
     <!-- Hero Section -->
     <section class="text-center py-10 px-4 bg-gradient-to-br from-blue-100 to-white">
       <div class="max-w-[1300px] mx-auto">
-        <h2 class="text-2xl sm:text-3xl font-bold text-gray-800 mb-4">Connecting You to Trusted Local Experts</h2>
+        <h2 class="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-[#3B8D99] to-[#f46675]  bg-clip-text text-transparent mb-4">Connecting You to Trusted Local Experts</h2>
         <p class="text-gray-600 text-base sm:text-lg max-w-2xl mx-auto">
           Book skilled professionals like plumbers, electricians, makeup artists, and more — all in one platform.
         </p>

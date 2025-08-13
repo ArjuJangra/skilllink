@@ -1,7 +1,7 @@
 <template>
   <div class="min-h-screen bg-[#F0F9FF] text-gray-800">
     <!-- Navbar -->
-        <header class="fixed top-0 left-0 right-0 z-50 bg-white shadow-md">
+        <header class="fixed top-0 left-0 right-0 z-50 bg-gradient-to-r from-white via-[#f1faff] to-[#f5fafe]  shadow-md">
       <div class="max-w-5xl mx-auto px-6 py-4 flex justify-between items-center">
         <!-- Logo + Title -->
         <div class="flex items-center space-x-2">
