@@ -2,10 +2,30 @@ import axios from 'axios';
 import { reactive } from 'vue';
 
 export const auth = reactive({
-  isLoggedIn: !!localStorage.getItem('token'),
-  user: JSON.parse(localStorage.getItem('user')) || null,
-  token: localStorage.getItem('token') || null
+  isLoggedIn: false,
+  user: null,
+  token: null
 });
+
+export async function initAuth() {
+  const token = localStorage.getItem('token');
+  if (!token) {
+    logoutUser();
+    return;
+  }
+
+  axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+  try {
+    const res = await axios.get('/api/auth/check');
+    auth.token = token;
+    auth.user = res.data.user;
+    auth.isLoggedIn = true;
+    localStorage.setItem('user', JSON.stringify(res.data.user));
+  } catch (err) {
+    console.warn('Token invalid or expired:', err.response?.data || err.message);
+    logoutUser();
+  }
+}
 
 export function loginUser(token, userData) {
   localStorage.setItem('token', token);
@@ -32,6 +52,9 @@ export async function fetchUserProfile() {
     localStorage.setItem('user', JSON.stringify(response.data));
   } catch (error) {
     console.error('❌ Fetch profile error:', error);
+    if (error.response?.status === 401) {
+      logoutUser();
+    }
   }
 }
 

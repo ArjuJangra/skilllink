@@ -30,10 +30,11 @@
         <!-- Grid -->
         <div class="grid md:grid-cols-2 gap-6 mb-6">
           <!-- Contact Form -->
-          <form class="space-y-4" @submit.prevent="submitContactForm">
+          <form class="space-y-4" @submit.prevent="handleSubmit" novalidate>
             <div>
-              <label class="block text-sm text-gray-700 font-medium">Full Name</label>
+              <label for="name" class="block text-sm text-gray-700 font-medium">Full Name</label>
               <input
+                id="name"
                 v-model="form.name"
                 type="text"
                 placeholder="Your name"
@@ -42,8 +43,9 @@
               />
             </div>
             <div>
-              <label class="block text-sm text-gray-700 font-medium">Email</label>
+              <label for="email" class="block text-sm text-gray-700 font-medium">Email</label>
               <input
+                id="email"
                 v-model="form.email"
                 type="email"
                 placeholder="you@example.com"
@@ -52,8 +54,9 @@
               />
             </div>
             <div>
-              <label class="block text-sm text-gray-700 font-medium">Message</label>
+              <label for="message" class="block text-sm text-gray-700 font-medium">Message</label>
               <textarea
+                id="message"
                 v-model="form.message"
                 rows="3"
                 placeholder="Your message"
@@ -63,9 +66,10 @@
             </div>
             <button
               type="submit"
-              class="w-full bg-[#0074B7] text-white py-2 rounded-md font-semibold hover:bg-[#005a91] transition"
+              :disabled="loading"
+              class="w-full bg-[#0074B7] text-white py-2 rounded-md font-semibold hover:bg-[#005a91] transition disabled:opacity-50"
             >
-              Send Message
+              {{ loading ? 'Sending...' : 'Send Message' }}
             </button>
           </form>
 
@@ -92,7 +96,8 @@
               >
                 <button
                   @click="toggleFAQ(index)"
-                  class="w-full flex justify-between items-center px-4 py-2 text-left bg-[#F6F9FC] hover:bg-[#E8F1F9] transition"
+                  :aria-expanded="faq.open.toString()"
+                  class="w-full flex justify-between items-center px-4 py-2 text-left bg-[#F6F9FC] hover:bg-[#E8F1F9] transition cursor-pointer select-none"
                 >
                   <span class="text-sm font-medium text-[#0074B7]">{{ faq.question }}</span>
                   <svg
@@ -106,28 +111,32 @@
                     <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
                   </svg>
                 </button>
-                <div v-if="faq.open" class="px-4 py-2 text-sm text-gray-700 bg-white">
-                  {{ faq.answer }}
-                </div>
+                <transition name="fade">
+                  <div v-if="faq.open" class="px-4 py-2 text-sm text-gray-700 bg-white">
+                    {{ faq.answer }}
+                  </div>
+                </transition>
               </div>
             </div>
           </div>
         </div>
-
       </div>
     </div>
   </div>
 </template>
 
 <script setup>
-import { reactive } from 'vue'
+import { reactive, ref } from 'vue'
 import axios from 'axios'
 import { toast } from 'vue3-toastify'
+
 const form = reactive({
   name: '',
   email: '',
   message: ''
 })
+
+const loading = ref(false)
 
 const faqs = reactive([
   {
@@ -156,13 +165,21 @@ const toggleFAQ = (index) => {
   faqs[index].open = !faqs[index].open
 }
 
+const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 
-const submitContactForm = async () => {
+const handleSubmit = async () => {
   if (!form.name || !form.email || !form.message) {
     toast.error('❗ Please fill in all fields.')
     return
   }
- const toastId = toast.loading('Sending your message...')
+  if (!emailRegex.test(form.email)) {
+    toast.error('❗ Please enter a valid email address.')
+    return
+  }
+
+  loading.value = true
+  const toastId = toast.loading('Sending your message...')
+
   try {
     await axios.post('http://localhost:5000/api/contact', {
       name: form.name,
@@ -183,14 +200,26 @@ const submitContactForm = async () => {
     form.message = ''
   } catch (error) {
     console.error('Send message error:', error)
-       toast.update(toastId, {
+    toast.update(toastId, {
       render: '❌ Failed to send message. Try again later.',
       type: 'error',
       isLoading: false,
       autoClose: 3000,
       theme: 'colored',
     })
+  } finally {
+    loading.value = false
   }
 }
-
 </script>
+
+<style>
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.3s ease;
+}
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
+</style>

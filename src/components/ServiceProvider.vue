@@ -2,45 +2,44 @@
   <div class="min-h-screen bg-[#F0F9FF] text-gray-800">
     <!-- Navbar -->
     <header class="fixed top-0 left-0 right-0 z-50 bg-white shadow-md">
-      <div class="max-w-screen-xl mx-auto px-4 py-4 flex justify-between items-center">
-        <!-- Logo + Name -->
+     <div class="max-w-5xl mx-auto px-6 py-4 flex justify-between items-center">
+        <!-- Logo + Title -->
         <div class="flex items-center space-x-2">
-          <img src="@/assets/skilllogo.png" alt="SkillLink Logo" class="h-8 w-8 sm:h-10 sm:w-10 object-contain" />
-          <h1 class="text-xl sm:text-2xl font-bold text-[#0073b1]">SkillLink</h1>
+          <img src="@/assets/skilllogo.png" alt="SkillLink Logo" class="w-10 h-10" />
+          <span class="text-xl font-bold text-[#0073b1]">SkillLink</span>
         </div>
 
-        <!-- Desktop Nav -->
-        <nav class="hidden md:flex items-center space-x-6 text-sm sm:text-base">
-          <router-link to="/serviceprovider"
-            class="px-3 py-2 text-xl font-bold text-[#0073b1] hover:bg-[#e6f4f9] rounded-full">Home</router-link>
-          <router-link to="/provider/orders"
-            class="relative flex items-center space-x-2 px-4 py-2 text-xl font-bold text-[#0073b1] hover:bg-[#e6f4f9] rounded-full">
-            <span>Orders</span>
-            <span v-if="orderCount > 0"
-              class="absolute top-0 right-0 -mt-1 -mr-1 bg-red-500 text-white text-xs w-5 h-5 flex items-center justify-center rounded-full shadow">
-              {{ orderCount }}
-            </span>
-          </router-link>
-          <router-link to="/provider/policies"
-            class="px-3 py-2 text-xl font-bold text-[#0073b1] hover:bg-[#e6f4f9] rounded-full">Policies</router-link>
-          <router-link to="/provider/about"
-            class="px-3 py-2 text-xl font-bold text-[#0073b1] hover:bg-[#e6f4f9] rounded-full">About</router-link>
-          <router-link to="/provider/contact"
-            class="px-3 py-2 text-xl font-bold text-[#0073b1] hover:bg-[#e6f4f9] rounded-full">Contact</router-link>
-          <router-link to="/provider/profile">
-            <img :src="profileImage" @error="handleImageError"
-              class="w-9 h-9 rounded-full object-cover border-2 border-[#0073b1] cursor-pointer" alt="Provider DP" />
-          </router-link>
-        </nav>
+        <!-- Navigation + Profile -->
+        <nav class="flex items-center space-x-4 text-sm md:text-base">
+          <router-link to="/serviceprovider" class="px-4 py-2 text-l font-bold text-[#0073b1] hover:bg-[#e6f4f9] rounded-full transition duration-200">Home</router-link>
 
-        <!-- Mobile Menu Button -->
-        <button @click="drawerOpen = !drawerOpen" class="md:hidden focus:outline-none">
-          <svg class="h-6 w-6 text-[#0073b1]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"
-            stroke-linecap="round" stroke-linejoin="round">
-            <path v-if="!drawerOpen" d="M4 6h16M4 12h16M4 18h16" />
-            <path v-else d="M6 18L18 6M6 6l12 12" />
-          </svg>
-        </button>
+          <router-link to="/provider/orders" class="px-4 py-2 text-l font-bold text-[#0073b1] hover:bg-[#e6f4f9] rounded-full transition duration-200">Orders</router-link>
+
+          <router-link to="/provider/policies" class="px-4 py-2 text-l font-bold text-[#0073b1] hover:bg-[#e6f4f9] rounded-full transition duration-200">Policies</router-link>
+
+          <router-link to="/provider/about" class="px-4 py-2 text-l font-bold text-[#0073b1] hover:bg-[#e6f4f9] rounded-full transition duration-200">About</router-link>
+
+          <router-link to="/provider/contact" class="px-4 py-2 text-l font-bold text-[#0073b1] hover:bg-[#e6f4f9] rounded-full transition duration-200">Contact</router-link>
+
+          <!-- Profile Picture -->
+          <div class="relative group">
+            <router-link to="/profile">
+              <img
+                v-if="provider && provider.profilePic"
+                :src="`http://localhost:5000/uploads/providers/${provider.profilePic}`"
+                alt="Provider DP"
+                class="w-10 h-10 rounded-full object-cover border-2 border-[#0073b1] cursor-pointer"
+              />
+              <img
+                v-else
+                src="@/assets/user.png"
+                alt="Default Provider DP"
+                class="w-10 h-10 rounded-full object-cover border-2 border-[#0073b1] cursor-pointer"
+              />
+            </router-link>
+          </div>
+          
+        </nav>
       </div>
 
       <!-- Mobile Drawer -->
@@ -61,6 +60,7 @@
             class="w-10 h-10 rounded-full border-2 border-[#0073b1] mt-2" alt="Provider DP" />
         </router-link>
       </div>
+
     </header>
 
     <!-- Main Content -->

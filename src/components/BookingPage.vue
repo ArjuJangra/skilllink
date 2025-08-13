@@ -108,6 +108,7 @@ import { toast } from 'vue3-toastify'
 import 'vue3-toastify/dist/index.css'
 
 const router = useRouter()
+const route = useRoute()
 
 const loading = ref(false)
 const showFakeModal = ref(false)
@@ -122,23 +123,34 @@ const availableServices = ref([])
 const providers = ref([])
 const location = ref({ latitude: null, longitude: null })
 
-// Simulated service prices
+// Service prices
 const servicePrices = {
-  "Plumber": 199,
-  "Electrician": 249,
+  Plumber: 199,
+  Electrician: 249,
   "AC Repair": 399,
-  "Carpenter": 299,
-  "Cleaner": 149,
-  "Mechanic": 349
+  Carpenter: 299,
+  Cleaner: 149,
+  Mechanic: 349
 }
 
 const getSelectedPrice = () => {
-  return servicePrices[selectedService.value] || 199
+  return servicePrices[selectedService.value] ?? null
+}
+
+const isFormValid = () => {
+  return (
+    name.value &&
+    contact.value &&
+    address.value &&
+    selectedService.value &&
+    selectedProviderId.value &&
+    getSelectedPrice() !== null
+  )
 }
 
 const openFakePayment = () => {
-  if (!name.value || !contact.value || !address.value || !selectedService.value || !selectedProviderId.value) {
-    toast.error('Please fill in all fields.')
+  if (!isFormValid()) {
+    toast.error('Please fill in all fields correctly.')
     return
   }
   showFakeModal.value = true
@@ -151,23 +163,28 @@ const confirmFakePayment = async () => {
   const token = localStorage.getItem('token')
 
   try {
-    await axios.post('http://localhost:5000/api/bookings', {
-      service: selectedService.value,
-      providerId: selectedProviderId.value,
-      name: name.value,
-      contact: contact.value,
-      address: address.value,
-      price: getSelectedPrice(),
-      paymentStatus: 'paid' // Simulated paid
-    }, {
-      headers: {
-        Authorization: `Bearer ${token}`,
+    await axios.post(
+      'http://localhost:5000/api/bookings',
+      {
+        service: selectedService.value,
+        providerId: selectedProviderId.value,
+        name: name.value,
+        contact: contact.value,
+        address: address.value,
+        price: getSelectedPrice(),
+        paymentStatus: 'paid'
       },
-    })
+      {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      }
+    )
 
     toast.success('✅ Booking confirmed with payment!')
     router.push('/booking-confirm')
 
+    // Reset form
     name.value = ''
     contact.value = ''
     address.value = ''
@@ -175,77 +192,77 @@ const confirmFakePayment = async () => {
     selectedProviderId.value = ''
     providers.value = []
   } catch (err) {
-    const message = err.response?.data?.message || 'Booking failed.'
-    toast.error(message)
-    console.error('❌ Booking error:', err)
+    toast.error(err.response?.data?.message || 'Booking failed.')
   } finally {
     loading.value = false
   }
 }
 
-// Fetch providers when service is selected
 const fetchProviders = async () => {
+  if (!location.value.latitude || !location.value.longitude) return
   const token = localStorage.getItem('token')
   try {
-    const res = await axios.post('http://localhost:5000/api/services/nearby', {
-      latitude: location.value.latitude,
-      longitude: location.value.longitude,
-      service: selectedService.value
-    }, {
-      headers: {
-        Authorization: `Bearer ${token}`
+    const res = await axios.post(
+      'http://localhost:5000/api/services/nearby',
+      {
+        latitude: location.value.latitude,
+        longitude: location.value.longitude,
+        service: selectedService.value
+      },
+      {
+        headers: { Authorization: `Bearer ${token}` }
       }
-    })
-
+    )
     providers.value = res.data || []
-  } catch (err) {
+  } catch {
     toast.error('Failed to fetch providers')
-    console.error(err)
   }
 }
 
-const route = useRoute(); 
-
-const preselectedService = route.query.service;
-
-
-// On mount: Get user location and available services nearby
-onMounted(async () => {
+const loadNearbyServices = async (latitude, longitude) => {
   const token = localStorage.getItem('token')
+  try {
+    const res = await axios.post(
+      'http://localhost:5000/api/services/nearby',
+      { latitude, longitude, service: null },
+      { headers: { Authorization: `Bearer ${token}` } }
+    )
+    const servicesSet = new Set(res.data.flatMap(p => p.services || []))
+    availableServices.value = Array.from(servicesSet)
+  } catch {
+    toast.error('Failed to fetch nearby services')
+    // fallback if API fails
+    availableServices.value = Object.keys(servicePrices)
+  }
+}
+
+onMounted(() => {
+  const preselectedService = route.query.service
 
   if (navigator.geolocation) {
-    navigator.geolocation.getCurrentPosition(async position => {
-      const { latitude, longitude } = position.coords
-      location.value = { latitude, longitude }
-
-      try {
-        const res = await axios.post('http://localhost:5000/api/services/nearby', {
-          latitude,
-          longitude,
-          service: null
-        }, {
-          headers: {
-            Authorization: `Bearer ${token}`
-          }
-        })
-
-        const servicesSet = new Set(res.data.flatMap(p => p.services || []))
-        availableServices.value = Array.from(servicesSet)
-
-         if (preselectedService) {
-          selectedService.value = preselectedService
-          fetchProviders()
+    navigator.geolocation.getCurrentPosition(
+      async pos => {
+        location.value = {
+          latitude: pos.coords.latitude,
+          longitude: pos.coords.longitude
         }
+        await loadNearbyServices(pos.coords.latitude, pos.coords.longitude)
 
-      } catch (err) {
-        toast.error('Failed to fetch nearby services')
-        console.error(err)
+        if (preselectedService) {
+          selectedService.value = preselectedService
+          await fetchProviders()
+        }
+      },
+      async () => {
+        toast.error('Geolocation denied. Showing all services.')
+        availableServices.value = Object.keys(servicePrices)
+        if (preselectedService) selectedService.value = preselectedService
       }
-    }, () => {
-      toast.error('Geolocation denied or unavailable')
-    })
+    )
   } else {
-    toast.error('Geolocation is not supported')
+    toast.error('Geolocation not supported.')
+    availableServices.value = Object.keys(servicePrices)
   }
 })
 </script>
+

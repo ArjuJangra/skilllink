@@ -1,31 +1,30 @@
 <template>
   <div class="min-h-screen bg-[#F0F9FF] text-gray-800 pt-20">
     <!-- Navbar -->
-    <header class="fixed top-0 left-0 right-0 z-50 bg-white shadow-md">
+       <header class="fixed top-0 left-0 right-0 z-50 bg-white shadow-md">
       <div class="max-w-5xl mx-auto px-6 py-4 flex justify-between items-center">
-        <!-- Left: Logo + Title -->
+        <!-- Logo + Title -->
         <div class="flex items-center space-x-2">
           <img src="@/assets/skilllogo.png" alt="SkillLink Logo" class="w-10 h-10" />
           <span class="text-xl font-bold text-[#0073b1]">SkillLink</span>
         </div>
 
-        <!-- Right: Navigation + Profile -->
+        <!-- Navigation + Profile -->
         <nav class="flex items-center space-x-4 text-sm md:text-base">
-          <router-link to="/serviceprovider" class="px-3 py-2 text-xl font-bold text-[#0073b1] hover:bg-[#e6f4f9] rounded-full transition duration-200">Home</router-link>
+          <router-link to="/serviceprovider" class="px-4 py-2 text-l font-bold text-[#0073b1] hover:bg-[#e6f4f9] rounded-full transition duration-200">Home</router-link>
 
-          <router-link to="/provider/orders" class="px-3 py-2 text-xl font-bold text-[#0073b1] hover:bg-[#e6f4f9] rounded-full transition duration-200">Orders</router-link>
+          <router-link to="/provider/orders" class="px-4 py-2 text-l font-bold text-[#0073b1] hover:bg-[#e6f4f9] rounded-full transition duration-200">Orders</router-link>
 
-          <router-link to="/provider/policies" class="px-3 py-2 text-xl font-bold text-[#0073b1] hover:bg-[#e6f4f9] rounded-full transition duration-200">Policies</router-link>
+          <router-link to="/provider/policies" class="px-4 py-2 text-l font-bold text-[#0073b1] hover:bg-[#e6f4f9] rounded-full transition duration-200">Policies</router-link>
 
-          <router-link to="/provider/about" class="px-3 py-2 text-xl font-bold text-[#0073b1] hover:bg-[#e6f4f9] rounded-full transition duration-200">About</router-link>
+          <router-link to="/provider/about" class="px-4 py-2 text-l font-bold text-[#0073b1] hover:bg-[#e6f4f9] rounded-full transition duration-200">About</router-link>
 
-          <router-link to="/provider/contact" class="px-3 py-2 text-xl font-bold text-[#0073b1] hover:bg-[#e6f4f9] rounded-full transition duration-200">Contact</router-link>
+          <router-link to="/provider/contact" class="px-4 py-2 text-l font-bold text-[#0073b1] hover:bg-[#e6f4f9] rounded-full transition duration-200">Contact</router-link>
 
-
-          <!-- Profile Picture Dropdown -->
-          <div class="relative group">
+          <!-- Profile Picture -->
+         <div class="relative group">
             <router-link to="/profile">
-               <img
+              <img
                 v-if="provider && provider.profilePic"
                 :src="`http://localhost:5000/uploads/providers/${provider.profilePic}`"
                 alt="Provider DP"
@@ -38,12 +37,11 @@
                 class="w-10 h-10 rounded-full object-cover border-2 border-[#0073b1] cursor-pointer"
               />
             </router-link>
-
           </div>
         </nav>
       </div>
-    </header>
 
+    </header>
    
     <!-- Page Content -->
     <div class="max-w-5xl mx-auto px-4 py-6 ">
@@ -116,7 +114,7 @@ onMounted(() => {
   fetchOrders()
 })
 
-// ✅ Orders Logic
+//  Orders Logic
 const allOrders = ref([])
 
 const fetchOrders = async () => {

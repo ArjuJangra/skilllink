@@ -1,4 +1,3 @@
-
 <template>
   <div class="min-h-screen bg-blue-50 flex flex-col justify-between">
     <!-- Header -->
@@ -45,7 +44,6 @@
     </footer>
   </div>
 </template>
-
 
 <script setup>
 import { reactive, computed } from 'vue'

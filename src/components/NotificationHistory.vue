@@ -95,7 +95,7 @@
 <script setup>
 import { ref, onMounted, onUnmounted, computed } from 'vue';
 import axios from 'axios';
-import { isToday, isYesterday, isThisWeek, isLastWeek, parseISO } from 'date-fns';
+import { isToday, isYesterday, isThisWeek, parseISO, differenceInCalendarDays } from 'date-fns';
 
 const notifications = ref([]);
 const loading = ref(true);
@@ -103,7 +103,12 @@ const currentFilter = ref('all');
 
 const itemsPerPage = ref(5);
 const currentPage = ref(1);
-const isLoadingMore = ref(false); // loading state for infinite scroll
+const isLoadingMore = ref(false);
+
+const isLastWeek = (date) => {
+  const daysDiff = differenceInCalendarDays(new Date(), date);
+  return daysDiff >= 7 && daysDiff <= 13;
+};
 
 const paginatedNotifications = computed(() => {
   const end = currentPage.value * itemsPerPage.value;

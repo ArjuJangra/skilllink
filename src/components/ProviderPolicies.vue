@@ -1,36 +1,43 @@
 <template>
   <div class="min-h-screen bg-[#F0F9FF] text-gray-800">
     <!-- Navbar -->
-    <header class="fixed top-0 left-0 right-0 z-50 bg-white shadow-md h-20 flex items-center">
-      <div class="max-w-screen-lg mx-auto px-4 flex justify-between items-center w-full">
-        <!-- Logo and Title -->
+        <header class="fixed top-0 left-0 right-0 z-50 bg-white shadow-md">
+      <div class="max-w-5xl mx-auto px-6 py-4 flex justify-between items-center">
+        <!-- Logo + Title -->
         <div class="flex items-center space-x-2">
-          <img src="@/assets/skilllogo.png" alt="SkillLink Logo" class="h-12 w-12 object-contain" />
-          <h1 class="text-2xl font-bold text-[#0073b1]">SkillLink</h1>
+          <img src="@/assets/skilllogo.png" alt="SkillLink Logo" class="w-10 h-10" />
+          <span class="text-xl font-bold text-[#0073b1]">SkillLink</span>
         </div>
 
-        <!-- Navigation and Profile Picture -->
-        <nav class="flex items-center space-x-4 text-base">
-          <router-link to="/serviceprovider"
-            class="px-4 py-2 text-l font-bold text-[#0073b1] hover:bg-[#e6f4f9] rounded-full transition duration-200">Home</router-link>
-          <router-link to="/provider/orders"
-            class="px-4 py-2 text-l font-bold text-[#0073b1] hover:bg-[#e6f4f9] rounded-full transition duration-200">Orders</router-link>
-          <router-link to="/provider/policies"
-            class="px-4 py-2 text-l font-bold text-[#0073b1] hover:bg-[#e6f4f9] rounded-full transition duration-200">Policies</router-link>
-          <router-link to="/provider/about"
-            class="px-4 py-2 text-l font-bold text-[#0073b1] hover:bg-[#e6f4f9] rounded-full transition duration-200">About</router-link>
-          <router-link to="/provider/contact"
-            class="px-4 py-2 text-l font-bold text-[#0073b1] hover:bg-[#e6f4f9] rounded-full transition duration-200">Contact</router-link>
+        <!-- Navigation + Profile -->
+        <nav class="flex items-center space-x-4 text-sm md:text-base">
+          <router-link to="/serviceprovider" class="px-4 py-2 text-l font-bold text-[#0073b1] hover:bg-[#e6f4f9] rounded-full transition duration-200">Home</router-link>
 
-          <!-- Profile Pic -->
-          <router-link to="/profile">
-            <img v-if="provider && provider.profilePic"
-              :src="`http://localhost:5000/uploads/providers/${provider.profilePic}`" alt="Provider DP"
-              class="w-10 h-10 rounded-full object-cover border-2 border-[#0073b1] cursor-pointer" />
+          <router-link to="/provider/orders" class="px-4 py-2 text-l font-bold text-[#0073b1] hover:bg-[#e6f4f9] rounded-full transition duration-200">Orders</router-link>
 
-            <img v-else src="@/assets/user.png" alt="Default Provider DP"
-              class="w-10 h-10 rounded-full object-cover border-2 border-[#0073b1] cursor-pointer" />
-          </router-link>
+          <router-link to="/provider/policies" class="px-4 py-2 text-l font-bold text-[#0073b1] hover:bg-[#e6f4f9] rounded-full transition duration-200">Policies</router-link>
+
+          <router-link to="/provider/about" class="px-4 py-2 text-l font-bold text-[#0073b1] hover:bg-[#e6f4f9] rounded-full transition duration-200">About</router-link>
+
+          <router-link to="/provider/contact" class="px-4 py-2 text-l font-bold text-[#0073b1] hover:bg-[#e6f4f9] rounded-full transition duration-200">Contact</router-link>
+
+          <!-- Profile Picture -->
+          <div class="relative group">
+            <router-link to="/profile">
+              <img
+                v-if="provider && provider.profilePic"
+                :src="`http://localhost:5000/uploads/providers/${provider.profilePic}`"
+                alt="Provider DP"
+                class="w-10 h-10 rounded-full object-cover border-2 border-[#0073b1] cursor-pointer"
+              />
+              <img
+                v-else
+                src="@/assets/user.png"
+                alt="Default Provider DP"
+                class="w-10 h-10 rounded-full object-cover border-2 border-[#0073b1] cursor-pointer"
+              />
+            </router-link>
+          </div>
         </nav>
       </div>
     </header>
@@ -97,7 +104,7 @@ import 'vue3-toastify/dist/index.css'
 const provider = ref(null)
 const router = useRouter()
 
-const fetchProviderProfile = async () => {
+ const fetchProviderProfile = async () => {
   try {
     const token = localStorage.getItem('token')
     const res = await axios.get('http://localhost:5000/api/providers/profile', {

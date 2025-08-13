@@ -5,7 +5,7 @@
     <header class="w-full bg-white shadow-md fixed top-0 z-50">
       <div class="max-w-[1120px] mx-auto px-4 py-4 flex items-center justify-between">
         <div class="flex items-center space-x-2">
-          <img src="@/assets/skilllogo.png" alt="SkillLink Logo" class="h-10 w-auto" />
+          <img :src="skillLogo" alt="SkillLink Logo" class="h-10 w-auto" />
           <span class="text-xl font-bold text-[#0074B7]">SkillLink</span>
         </div>
         <router-link to="/" class="bg-[#0074B7] text-white px-4 py-2 rounded hover:bg-[#005f91] transition">
@@ -70,22 +70,15 @@
 </template>
 
 <script setup>
+import skillLogo from '@/assets/skilllogo.png'
+
 const reasons = [
-  {
-    title: 'Verified Professionals',
-    description: 'We verify identity, skills, and reviews before allowing any service provider on our platform.'
-  },
-  {
-    title: 'Easy Scheduling',
-    description: 'Our system lets you schedule, cancel, or reschedule bookings with ease, all from your dashboard.'
-  },
-  {
-    title: 'Customer Support',
-    description: 'Our team is always ready to help via chat or email with any questions or booking issues.'
-  },
-  {
-    title: 'Fair Pricing',
-    description: 'We promote transparent, competitive pricing. No hidden costs, ever.'
-  }
+  { title: 'Verified Professionals', description: 'We verify identity, skills, and reviews before allowing any service provider on our platform.' },
+  { title: 'Easy Scheduling', description: 'Schedule, cancel, or reschedule bookings with ease from your dashboard.' },
+  { title: 'Customer Support', description: 'Our team is ready to help via chat or email with any questions or booking issues.' },
+  { title: 'Fair Pricing', description: 'Transparent, competitive pricing. No hidden costs, ever.' }
 ]
 </script>
+
+<img :src="skillLogo" alt="SkillLink Logo" class="h-10 w-auto" />
+
