@@ -7,69 +7,54 @@
     </div>
 
     <div class="max-w-6xl mx-auto bg-white rounded-2xl shadow-lg p-6 space-y-8 ">
+       <!-- Header -->
       <h1 class="text-2xl sm:text-3xl font-bold mb-6 text-center 
           bg-gradient-to-r from-[#3B8D99] to-[#f46675]
-
            bg-clip-text text-transparent">
         Hello, {{ provider?.name || 'Provider' }} – Let’s Get to Work!
       </h1>
 
       <!-- Profile Section -->
-     <div
-  class="bg-white rounded-2xl shadow-md p-5 sm:p-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border border-gray-100"
->
-  <!-- Profile Info -->
-  <div class="flex items-center space-x-4 sm:space-x-5">
-    <!-- Profile Picture Wrapper -->
-    <div class="relative group">
-      <img
-        :src="profileImage"
-        @error="useDefaultImage"
-        alt="Provider DP"
-        class="w-16 h-16 sm:w-20 sm:h-20 rounded-full object-cover border border-gray-200 shadow-sm group-hover:scale-105 transition-transform duration-200"
-      />
-      <!-- Glowing Online/Offline Dot -->
-      <span
-        class="absolute bottom-1 right-1 block w-3.5 h-3.5 rounded-full border-2 border-white"
-        :class="isOnline ? 'bg-green-500 animate-ping-once' : 'bg-gray-400'"
-      ></span>
-      <span
-        v-if="isOnline"
-        class="absolute bottom-1 right-1 block w-3.5 h-3.5 rounded-full border-2 border-white bg-green-500"
-      ></span>
-    </div>
+      <div
+        class="bg-white rounded-2xl shadow-md p-5 sm:p-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border border-gray-100">
+        <!-- Profile Info -->
+        <div class="flex items-center space-x-4 sm:space-x-5">
+          <!-- Profile Picture Wrapper -->
+          <div class="relative group">
+            <img :src="profileImage" @error="useDefaultImage" alt="Provider DP"
+              class="w-16 h-16 sm:w-20 sm:h-20 rounded-full object-cover border border-gray-200 shadow-sm group-hover:scale-105 transition-transform duration-200" />
+            <!-- Glowing Online/Offline Dot -->
+            <span class="absolute bottom-1 right-1 block w-3.5 h-3.5 rounded-full border-2 border-white"
+              :class="isOnline ? 'bg-green-500 animate-ping-once' : 'bg-gray-400'"></span>
+            <span v-if="isOnline"
+              class="absolute bottom-1 right-1 block w-3.5 h-3.5 rounded-full border-2 border-white bg-green-500"></span>
+          </div>
 
-    <!-- Name & Details -->
-    <div>
-      <h2
-        class="text-lg sm:text-2xl font-bold bg-gradient-to-r from-[#007EA7] via-[#00B4DB] to-[#4dd0e1] bg-clip-text text-transparent"
-      >
-        {{ provider?.name || 'Provider Name' }}
-      </h2>
-      <p class="text-sm text-gray-500">
-        {{ provider?.email || 'No email available' }}
-      </p>
-      <p class="text-xs text-gray-400 mt-0.5">
-        Last Login: {{ lastLoginFormatted || 'N/A' }}
-      </p>
-    </div>
-  </div>
+          <!-- Name & Details -->
+          <div>
+            <h2
+              class="text-lg sm:text-2xl font-bold bg-gradient-to-r from-[#007EA7] via-[#00B4DB] to-[#4dd0e1] bg-clip-text text-transparent">
+              {{ provider?.name || 'Provider Name' }}
+            </h2>
+            <p class="text-sm text-gray-500">
+              {{ provider?.email || 'No email available' }}
+            </p>
+            <p class="text-xs text-gray-400 mt-0.5">
+              Last Login: {{ lastLoginFormatted || 'N/A' }}
+            </p>
+          </div>
+        </div>
 
-  <!-- Edit Profile Button -->
-  <button
-    class="px-5 py-2 bg-gradient-to-r from-[#007EA7] to-[#00B4DB] text-white text-sm font-semibold rounded-full shadow hover:shadow-md hover:opacity-95 transition-all"
-    @click="showEditProfileForm = true"
-  >
-    Edit Profile
-  </button>
-</div>
+        <!-- Edit Profile Button -->
+        <button
+          class="px-5 py-2 bg-gradient-to-r from-[#007EA7] to-[#00B4DB] text-white text-sm font-semibold rounded-full shadow hover:shadow-md hover:opacity-95 transition-all"
+          @click="showEditProfileForm = true">
+          Edit Profile
+        </button>
+      </div>
 
-
-
-
-
+      <!-- Account Settings Section -->
       <div class="flex flex-col lg:flex-row gap-6">
-        <!-- Account Settings Section -->
         <div class="bg-white rounded-2xl shadow-lg p-6 space-y-6 w-full max-w-lg ">
           <!-- 🔧 Header -->
           <h3 class="text-2xl font-bold text-[#007EA7]">Account Settings</h3>
@@ -390,6 +375,7 @@
           </div>
         </div>
       </transition>
+
     </div>
   </div>
 
@@ -397,7 +383,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, reactive, watch, computed } from 'vue'
+import { ref, reactive, computed, onMounted, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import axios from 'axios'
 import { toast } from 'vue3-toastify'
@@ -405,10 +391,23 @@ import 'vue3-toastify/dist/index.css'
 import dayjs from 'dayjs'
 import { auth } from '@/stores/auth'
 
- const isAuthenticated = ref(false)
+// Props
+const props = defineProps({
+  lastActive: {
+    type: String,
+    default: null
+  }
+})
+
+// Router
+const router = useRouter()
+
+// Auth & state
+const isAuthenticated = ref(false)
 const provider = ref(null)
 const loading = ref(false)
 
+// Modals & sections
 const showEditProfileForm = ref(false)
 const showSecuritySection = ref(false)
 const showLogoutModal = ref(false)
@@ -418,8 +417,10 @@ const showDeactivateModal = ref(false)
 const showNotificationPrefs = ref(false)
 const showAvailability = ref(false)
 const showLanguagePref = ref(false)
-const showPrivacySettings = ref(false);
+const showPrivacySettings = ref(false)
+const showConnectedAccounts = ref(false)
 
+// Form states
 const isSubmitting = ref(false)
 const passwordSubmitting = ref(false)
 const notifSubmitting = ref(false)
@@ -427,50 +428,32 @@ const availabilitySubmitting = ref(false)
 const languageSubmitting = ref(false)
 const privacySubmitting = ref(false)
 
-
-const router = useRouter()
-
 // Profile form
-const editForm = reactive({
-  name: '',
-  email: '',
-  area: ''
-})
+const editForm = reactive({ name: '', email: '', area: '' })
 const selectedFile = ref(null)
 const previewImage = ref('')
 
 // Password form
-const passwordForm = reactive({
-  currentPassword: '',
-  newPassword: '',
-  confirmPassword: ''
-})
+const passwordForm = reactive({ currentPassword: '', newPassword: '', confirmPassword: '' })
 
-// Notifications
-const notificationPrefs = reactive({
-  email: false,
-  sms: false,
-  push: false,
-})
+// Notification prefs
+const notificationPrefs = reactive({ email: false, sms: false, push: false })
 
 // Availability scheduling
-const availability = reactive({
-  start: '',
-  end: '',
-})
+const availability = reactive({ start: '', end: '' })
 
 // Language preference
 const languagePref = ref('en')
 
 // Privacy settings
-const privacySettings = reactive({
-  showEmail: false,
-  showPhone: false,
-})
+const privacySettings = reactive({ showEmail: false, showPhone: false })
 
-// Two factor auth
+// Two-factor auth
 const twoFactorEnabled = ref(false)
 
+// Connected accounts
+const isGoogleLinked = ref(false)
+const isFacebookLinked = ref(false)
 
 // Computed properties
 const profileImage = computed(() => {
@@ -485,9 +468,15 @@ const lastLoginFormatted = computed(() => {
   return dayjs(provider.value.lastLogin).format('MMM D, YYYY h:mm A')
 })
 
-const useDefaultImage = (e) => {
-  e.target.src = require('@/assets/user.png')
-}
+const isOnline = computed(() => {
+  if (!props.lastActive) return false
+  const lastActiveTime = new Date(props.lastActive).getTime()
+  const now = Date.now()
+  return now - lastActiveTime < 5 * 60 * 1000 // online if active in last 5 min
+})
+
+// Methods
+const useDefaultImage = (e) => e.target.src = require('@/assets/user.png')
 
 watch(showEditProfileForm, (open) => {
   if (open && provider.value) {
@@ -516,21 +505,13 @@ const updateProfile = async () => {
     formData.append('name', editForm.name)
     formData.append('email', editForm.email)
     formData.append('area', editForm.area)
-
-    if (selectedFile.value) {
-      formData.append('profilePic', selectedFile.value)
-    }
+    if (selectedFile.value) formData.append('profilePic', selectedFile.value)
 
     const token = localStorage.getItem('token')
     const res = await axios.put(
       `http://localhost:5000/api/providers/profile/update/${providerId}`,
       formData,
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'Content-Type': 'multipart/form-data'
-        }
-      }
+      { headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'multipart/form-data' } }
     )
 
     const updated = res.data.provider || res.data
@@ -577,23 +558,17 @@ const handleLogout = () => {
 
 // Change password
 const changePassword = async () => {
-  if (passwordForm.newPassword !== passwordForm.confirmPassword) {
-    return toast.error('New passwords do not match')
-  }
+  if (passwordForm.newPassword !== passwordForm.confirmPassword) return toast.error('New passwords do not match')
   passwordSubmitting.value = true
   try {
     const token = localStorage.getItem('token')
     await axios.put(
       'http://localhost:5000/api/providers/change-password',
-      {
-        currentPassword: passwordForm.currentPassword,
-        newPassword: passwordForm.newPassword
-      },
+      { currentPassword: passwordForm.currentPassword, newPassword: passwordForm.newPassword },
       { headers: { Authorization: `Bearer ${token}` } }
     )
     toast.success('Password changed successfully')
     showChangePasswordModal.value = false
-    // clear form
     passwordForm.currentPassword = ''
     passwordForm.newPassword = ''
     passwordForm.confirmPassword = ''
@@ -612,26 +587,22 @@ const autoUpdateNotificationPrefs = async () => {
     await axios.put(
       'http://localhost:5000/api/providers/notification-preferences',
       notificationPrefs,
-      {
-        headers: { Authorization: `Bearer ${token}` },
-      }
+      { headers: { Authorization: `Bearer ${token}` } }
     )
     toast.success('Notification preferences updated')
-  } catch (error) {
+  } catch {
     toast.error('Failed to update notification preferences')
   } finally {
     notifSubmitting.value = false
   }
 }
 
+// Availability update
 const autoUpdateAvailability = async () => {
   availabilitySubmitting.value = true
   try {
     const providerId = provider.value._id || provider.value.id
-    if (!providerId) {
-      toast.error('Provider ID missing')
-      return
-    }
+    if (!providerId) return toast.error('Provider ID missing')
     const token = localStorage.getItem('token')
     await axios.put(
       `http://localhost:5000/api/providers/availability/${providerId}`,
@@ -639,22 +610,19 @@ const autoUpdateAvailability = async () => {
       { headers: { Authorization: `Bearer ${token}` } }
     )
     toast.success('Availability updated')
-  } catch (error) {
+  } catch {
     toast.error('Failed to update availability')
   } finally {
     availabilitySubmitting.value = false
   }
 }
 
+// Language
 const updateLanguagePref = async () => {
   languageSubmitting.value = true
   try {
     const token = localStorage.getItem('token')
-    await axios.put(
-      `http://localhost:5000/api/providers/language`,
-      { language: languagePref.value },
-      { headers: { Authorization: `Bearer ${token}` } }
-    )
+    await axios.put(`http://localhost:5000/api/providers/language`, { language: languagePref.value }, { headers: { Authorization: `Bearer ${token}` } })
     toast.success('Language preference updated')
   } catch {
     toast.error('Failed to update language preference')
@@ -663,16 +631,12 @@ const updateLanguagePref = async () => {
   }
 }
 
-// Privacy settings update
+// Privacy settings
 const updatePrivacySettings = async () => {
   privacySubmitting.value = true
   try {
     const token = localStorage.getItem('token')
-    await axios.post(
-      `http://localhost:5000/api/providers/privacy`,
-      privacySettings,
-      { headers: { Authorization: `Bearer ${token}` } }
-    )
+    await axios.post(`http://localhost:5000/api/providers/privacy`, privacySettings, { headers: { Authorization: `Bearer ${token}` } })
     toast.success('Privacy settings updated')
   } catch {
     toast.error('Failed to update privacy settings')
@@ -681,23 +645,19 @@ const updatePrivacySettings = async () => {
   }
 }
 
-// Two-factor auth toggle (placeholder)
+// Watch privacy changes
+watch(() => ({ ...privacySettings }), () => { updatePrivacySettings() }, { deep: true })
+
+// Two-factor toggle
 const toggleTwoFactor = () => {
-  toast.info(
-    twoFactorEnabled.value
-      ? '2FA enabled (placeholder)'
-      : '2FA disabled (placeholder)'
-  )
+  toast.info(twoFactorEnabled.value ? '2FA enabled (placeholder)' : '2FA disabled (placeholder)')
 }
 
-// Account deactivation
+// Deactivate account
 const deactivateAccount = async () => {
   try {
     const token = localStorage.getItem('token')
-    await axios.delete(
-      `http://localhost:5000/api/providers/deactivate`,
-      { headers: { Authorization: `Bearer ${token}` } }
-    )
+    await axios.delete(`http://localhost:5000/api/providers/deactivate`, { headers: { Authorization: `Bearer ${token}` } })
     toast.success('Account deactivated successfully')
     localStorage.clear()
     router.push('/login')
@@ -707,89 +667,40 @@ const deactivateAccount = async () => {
   showDeactivateModal.value = false
 }
 
-const showConnectedAccounts = ref(false)
-const isGoogleLinked = ref(false)
-const isFacebookLinked = ref(false)
+// Connected accounts
+function toggleGoogleLink() { isGoogleLinked.value = !isGoogleLinked.value }
+function toggleFacebookLink() { isFacebookLinked.value = !isFacebookLinked.value }
 
-function toggleGoogleLink() {
-  isGoogleLinked.value = !isGoogleLinked.value
-  // Add API call here
-}
-
-function toggleFacebookLink() {
-  isFacebookLinked.value = !isFacebookLinked.value
-  // Add API call here
-}
-
-
-// On mount, fetch provider data and load saved preferences if any
+// On mount: fetch provider
 onMounted(async () => {
   const storedUser = JSON.parse(localStorage.getItem('user'))
   const token = localStorage.getItem('token')
-
-  if (storedUser?.role !== 'provider') {
-    return router.push('/login')
-  }
+  if (storedUser?.role !== 'provider') return router.push('/login')
 
   isAuthenticated.value = true
   loading.value = true
-
   try {
-    const res = await axios.get('http://localhost:5000/api/providers/profile', {
-      headers: { Authorization: `Bearer ${token}` }
-    })
+    const res = await axios.get('http://localhost:5000/api/providers/profile', { headers: { Authorization: `Bearer ${token}` } })
     provider.value = res.data
     localStorage.setItem('user', JSON.stringify(res.data))
 
-    // Initialize settings from provider data or defaults
+    // Initialize settings
     notificationPrefs.email = res.data.notificationPrefs?.email ?? true
     notificationPrefs.sms = res.data.notificationPrefs?.sms ?? false
     notificationPrefs.push = res.data.notificationPrefs?.push ?? true
-
     availability.start = res.data.availability?.start ?? '09:00'
     availability.end = res.data.availability?.end ?? '17:00'
-
     languagePref.value = res.data.languagePref ?? 'en'
-
     privacySettings.showEmail = res.data.privacySettings?.showEmail ?? true
     privacySettings.showPhone = res.data.privacySettings?.showPhone ?? false
-
     twoFactorEnabled.value = res.data.twoFactorEnabled ?? false
-  } catch (err) {
+  } catch {
     toast.error('Failed to fetch profile')
     router.push('/login')
   } finally {
     loading.value = false
   }
 })
-watch(
-  () => ({ ...privacySettings }),
-  () => {
-    updatePrivacySettings()
-  },
-  { deep: true }
-)
-
-
-</script>
-
-<script>
-export default {
-  props: {
-    lastActive: {
-      type: String,
-      default: null
-    }
-  },
-  computed: {
-    isOnline() {
-      if (!this.lastActive) return false;
-      const lastActiveTime = new Date(this.lastActive).getTime();
-      const now = Date.now();
-      return now - lastActiveTime < 5 * 60 * 1000; // online if active in last 5 min
-    }
-  }
-};
 </script>
 
 <style scoped>
@@ -799,18 +710,22 @@ export default {
     transform: scale(1);
     opacity: 0.7;
   }
+
   50% {
     transform: scale(1.8);
     opacity: 0;
   }
+
   100% {
     transform: scale(1);
     opacity: 0;
   }
 }
+
 .animate-ping-once {
   animation: pulseGlow 1.5s infinite;
 }
+
 .loader {
   border: 4px solid #f3f3f3;
   border-top: 4px solid #007EA7;
