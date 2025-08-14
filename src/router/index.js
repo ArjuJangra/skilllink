@@ -14,6 +14,7 @@ import ProviderPolicies from '@/components/ProviderPolicies.vue';
 import ProviderAbout from '@/components/ProviderAbout.vue';
 import ProviderContact from '@/components/ProviderContact.vue';
 import ServiceDetails from '@/components/ServiceDetails.vue';
+import AddService from '@/components/AddService.vue';
 // import { auth } from '@/stores/auth';
 
 const routes = [
@@ -112,7 +113,12 @@ const routes = [
   name: 'ServiceDetails',
   component: ServiceDetails,
   meta: { requiresAuth: true, role: 'user' }
-}
+},
+  {
+    path: '/provider/add-service',
+    name: 'AddService',
+    component: AddService,
+  }
 
 
 ];

@@ -68,7 +68,8 @@
     <main class="max-w-screen-xl mx-auto px-4 pt-28">
       <!-- Dynamic Greeting -->
       <section class="text-center mb-6">
-        <h2 class="text-2xl sm:text-3xl font-bold text-[#0073b1] mb-2">
+        <h2 class="text-2xl sm:text-3xl font-bold  bg-gradient-to-r from-[#3B8D99] to-[#f46675]
+           bg-clip-text text-transparent mb-2">
           {{ greeting }}, {{ provider?.name || 'Provider' }}!
         </h2>
         <p class="text-gray-600">Manage your services, orders, and earnings efficiently from here.</p>
