@@ -2,7 +2,6 @@
   <div class="min-h-screen bg-[#F0F9FF]">
 
     <!-- Header -->
-
     <header class="sticky top-0 z-50 bg-white shadow-md w-full">
       <div class="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
         <!-- Logo -->
@@ -76,8 +75,6 @@
         </div>
       </div>
     </header>
-
-
 
     <!-- Services Section -->
     <section class="px-4 py-6 max-w-7xl mx-auto space-y-10">

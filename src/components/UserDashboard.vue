@@ -274,7 +274,7 @@ const tabs = ['bookings', 'history', 'address', 'settings'];
 const activeTab = ref('bookings');
 const activeClass = 'text-[#007EA7] border-b-2 border-[#00A8E8]';
 const inactiveClass = 'text-gray-500 hover:text-[#00A8E8]';
-
+const userImg = ref('/images/default-user.png');
 const user = ref({ name: '', email: '', phone: '', bio: '', profilePic: '' });
 const socket = ref(null);
 const bookings = ref([]);

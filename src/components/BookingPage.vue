@@ -1,18 +1,16 @@
+
 <template>
   <div class="min-h-screen bg-[#F0F9FF] flex items-center justify-center p-4">
     <div class="w-full max-w-md bg-white p-6 rounded-lg shadow-md">
-      <!-- Logo & Name -->
+      <!-- Logo -->
       <div class="flex flex-col items-center mb-6">
         <img src="@/assets/skilllogo.png" alt="SkillLink Logo" class="w-16 h-16 mb-2" />
       </div>
 
-      <!-- Heading -->
-      <h2 class="text-xl font-bold text-[#007EA7] mb-6 text-center">
-        Book a Service
-      </h2>
+      <h2 class="text-xl font-bold text-[#007EA7] mb-6 text-center">Book a Service</h2>
 
       <!-- Service Selection -->
-      <div class="mb-4">
+      <div v-if="!hasPrefilledService" class="mb-4">
         <label class="block text-gray-700 font-medium mb-1">Select a Service</label>
         <select
           v-model="selectedService"
@@ -27,7 +25,7 @@
       </div>
 
       <!-- Provider Selection -->
-      <div v-if="providers.length" class="mb-4">
+      <div v-if="!hasPrefilledProvider && providers.length" class="mb-4">
         <label class="block text-gray-700 font-medium mb-1">Select Provider</label>
         <select
           v-model="selectedProviderId"
@@ -83,7 +81,10 @@
     </div>
 
     <!-- Fake Payment Modal -->
-    <div v-if="showFakeModal" class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+    <div
+      v-if="showFakeModal"
+      class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50"
+    >
       <div class="bg-white p-6 rounded shadow-lg w-80">
         <h2 class="text-lg font-semibold mb-4">Simulated Payment</h2>
         <p class="mb-4">Simulated payment amount: <strong>₹{{ getSelectedPrice() }}</strong></p>
@@ -101,7 +102,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import axios from 'axios'
 import { toast } from 'vue3-toastify'
@@ -115,6 +116,7 @@ const showFakeModal = ref(false)
 
 const selectedService = ref('')
 const selectedProviderId = ref('')
+const prefilledPrice = ref(null) // for price passed from query
 const name = ref('')
 const contact = ref('')
 const address = ref('')
@@ -123,7 +125,7 @@ const availableServices = ref([])
 const providers = ref([])
 const location = ref({ latitude: null, longitude: null })
 
-// Service prices
+// Static fallback prices
 const servicePrices = {
   Plumber: 199,
   Electrician: 249,
@@ -133,7 +135,12 @@ const servicePrices = {
   Mechanic: 349
 }
 
+const hasPrefilledService = computed(() => !!route.query.service)
+const hasPrefilledProvider = computed(() => !!route.query.providerId)
+
 const getSelectedPrice = () => {
+  // Prefer price from query if available
+  if (prefilledPrice.value) return prefilledPrice.value
   return servicePrices[selectedService.value] ?? null
 }
 
@@ -159,7 +166,6 @@ const openFakePayment = () => {
 const confirmFakePayment = async () => {
   showFakeModal.value = false
   loading.value = true
-
   const token = localStorage.getItem('token')
 
   try {
@@ -174,11 +180,7 @@ const confirmFakePayment = async () => {
         price: getSelectedPrice(),
         paymentStatus: 'paid'
       },
-      {
-        headers: {
-          Authorization: `Bearer ${token}`
-        }
-      }
+      { headers: { Authorization: `Bearer ${token}` } }
     )
 
     toast.success('✅ Booking confirmed with payment!')
@@ -191,6 +193,7 @@ const confirmFakePayment = async () => {
     selectedService.value = ''
     selectedProviderId.value = ''
     providers.value = []
+    prefilledPrice.value = null
   } catch (err) {
     toast.error(err.response?.data?.message || 'Booking failed.')
   } finally {
@@ -209,9 +212,7 @@ const fetchProviders = async () => {
         longitude: location.value.longitude,
         service: selectedService.value
       },
-      {
-        headers: { Authorization: `Bearer ${token}` }
-      }
+      { headers: { Authorization: `Bearer ${token}` } }
     )
     providers.value = res.data || []
   } catch {
@@ -231,13 +232,16 @@ const loadNearbyServices = async (latitude, longitude) => {
     availableServices.value = Array.from(servicesSet)
   } catch {
     toast.error('Failed to fetch nearby services')
-    // fallback if API fails
     availableServices.value = Object.keys(servicePrices)
   }
 }
 
 onMounted(() => {
-  const preselectedService = route.query.service
+  const { service, providerId, price } = route.query
+
+  if (service) selectedService.value = service
+  if (providerId) selectedProviderId.value = providerId
+  if (price) prefilledPrice.value = Number(price)
 
   if (navigator.geolocation) {
     navigator.geolocation.getCurrentPosition(
@@ -248,21 +252,25 @@ onMounted(() => {
         }
         await loadNearbyServices(pos.coords.latitude, pos.coords.longitude)
 
-        if (preselectedService) {
-          selectedService.value = preselectedService
+        // Fetch providers even if providerId is already set
+        if (selectedService.value) {
           await fetchProviders()
         }
       },
       async () => {
         toast.error('Geolocation denied. Showing all services.')
         availableServices.value = Object.keys(servicePrices)
-        if (preselectedService) selectedService.value = preselectedService
+        if (selectedService.value) await fetchProviders()
       }
     )
   } else {
     toast.error('Geolocation not supported.')
     availableServices.value = Object.keys(servicePrices)
+    if (selectedService.value) fetchProviders()
   }
 })
 </script>
+
+
+
 

@@ -4,6 +4,7 @@ const User = require('../models/User');
 const ServiceProvider = require('../models/ServiceProvider');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
+const authenticateUser = require('../middleware/authMiddleware');
 
 // SIGNUP POST /api/auth/signup
 router.post('/signup', async (req, res) => {
@@ -124,6 +125,9 @@ router.post('/login', async (req, res) => {
   }
 });
 
+router.get('/check', authenticateUser, (req, res) => {
+  res.json({ user: req.user });
+});
 
 module.exports = router;
 
