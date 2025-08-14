@@ -1,128 +1,155 @@
 <template>
-  <div class="min-h-screen flex items-center justify-center bg-[#f4f6f8] px-4">
-    <div class="w-full max-w-md bg-white p-6 md:p-8 rounded-2xl shadow-xl">
-      <div class="text-center mb-6">
-        <img src="@/assets/skilllogo.png" alt="SkillLink Logo" class="w-16 h-16 mx-auto mb-4" />
-        <h2 class="text-2xl font-bold text-[#0073b1]">Create Your SkillLink Account</h2>
-      </div>
-
-      <form @submit.prevent="handleSubmit" class="space-y-4">
-        <!-- Role Selection -->
-        <div>
-          <label class="block text-lg font-bold text-gray-800 mb-2">Register as:</label>
-          <div class="flex gap-6">
-            <label class="flex items-center space-x-2">
-              <input type="radio" value="user" v-model="form.role" @change="resetFields" class="accent-[#0073b1]" />
-              <span class="text-gray-800">User</span>
-            </label>
-            <label class="flex items-center space-x-2">
-              <input type="radio" value="provider" v-model="form.role" @change="resetFields" class="accent-[#0073b1]" />
-              <span class="text-gray-800">Service Provider</span>
-            </label>
-          </div>
+  <div class="min-h-screen flex items-center justify-center bg-gray-100 px-4 py-8 relative">
+    
+    <!-- Signup Form Card -->
+    <transition name="fade">
+      <div v-if="!showSplash" class="w-full max-w-md bg-white p-6 md:p-8 rounded-2xl shadow-xl z-10">
+        
+        <!-- Header -->
+        <div class="text-center mb-6">
+          <img src="@/assets/skilllogo.png" alt="SkillLink Logo" class="w-20 h-20 mx-auto mb-4" />
+          <h2 class="text-2xl font-bold text-[#0073b1]">Create Your SkillLink Account</h2>
         </div>
 
-        <!-- Full Name -->
-        <div>
-          <label class="block text-sm font-semibold text-gray-700">Full Name</label>
-          <input v-model="form.name" type="text" required class="mt-1 w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0073b1]" />
-        </div>
+        <form @submit.prevent="handleSubmit" class="space-y-5">
 
-        <!-- Shared Fields -->
-        <div>
-          <label class="block text-sm font-semibold text-gray-700">Email</label>
-          <input v-model="form.email" type="email" required class="mt-1 w-full px-4 py-2 border border-gray-300 rounded-lg" placeholder="you@example.com"/>
-        </div>
-
-        <div>
-          <label class="block text-sm font-semibold text-gray-700">Password</label>
-          <input
-            v-model="form.password"
-            type="password"
-            class="mt-1 w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2"
-            :class="{
-              'border-red-500': form.password.length > 0 && form.password.length < 6,
-              'border-gray-300': form.password.length >= 6 || form.password.length === 0
-            }"
-            placeholder="••••••••"
-            required
-          />
-          <p v-if="form.password.length > 0 && form.password.length < 6" class="text-red-500 text-sm mt-1">
-            Password must be at least 6 characters.
-          </p>
-        </div>
-
-        <!-- Provider Fields -->
-        <div v-if="form.role === 'provider'" class="space-y-4">
+          <!-- Role Selection -->
           <div>
-            <label class="block text-sm font-semibold text-gray-700">Area (Location Name)</label>
-            <input v-model="form.area" type="text" required placeholder="e.g., Sector 14, Rohini" class="mt-1 w-full px-4 py-2 border border-gray-300 rounded-lg" />
-            <small class="text-gray-500">This helps users find you nearby.</small>
-          </div>
-
-          <!-- Services -->
-          <div>
-            <label class="block text-sm font-semibold text-gray-700 mb-1">Select up to 3 Services</label>
-            <div class="grid grid-cols-2 gap-2">
-              <label v-for="(option, index) in availableServices" :key="index" class="flex items-center space-x-2">
-                <input
-                  type="checkbox"
-                  :value="option"
-                  :checked="form.services.includes(option)"
-                  @change="toggleService(option)"
-                  :disabled="!form.services.includes(option) && form.services.length >= 3"
-                  class="accent-[#0073b1]"
-                />
-                <span class="text-gray-700">{{ option }}</span>
+            <label class="block text-lg font-semibold text-gray-800 mb-2">Register as:</label>
+            <div class="flex gap-6">
+              <label class="flex items-center space-x-2 cursor-pointer">
+                <input type="radio" value="user" v-model="form.role" @change="resetFields" class="accent-[#0073b1]" />
+                <span class="text-gray-800">User</span>
+              </label>
+              <label class="flex items-center space-x-2 cursor-pointer">
+                <input type="radio" value="provider" v-model="form.role" @change="resetFields" class="accent-[#0073b1]" />
+                <span class="text-gray-800">Service Provider</span>
               </label>
             </div>
-            <p v-if="form.services.length >= 3" class="text-sm text-red-500 mt-1">
-              You can only select up to 3 services.
+          </div>
+
+          <!-- Full Name -->
+          <div>
+            <label class="block text-sm font-semibold text-gray-700 mb-1">Full Name</label>
+            <input v-model="form.name" type="text" placeholder="Your Name" required
+              class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0073b1] transition" />
+          </div>
+
+          <!-- Email -->
+          <div>
+            <label class="block text-sm font-semibold text-gray-700 mb-1">Email</label>
+            <input v-model="form.email" type="email" placeholder="you@example.com" required
+              class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0073b1] transition" />
+          </div>
+
+          <!-- Password -->
+          <div>
+            <label class="block text-sm font-semibold text-gray-700 mb-1">Password</label>
+            <input v-model="form.password" type="password" placeholder="••••••••" required
+              class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 transition"
+              :class="{
+                'border-red-500': form.password.length > 0 && form.password.length < 6,
+                'border-gray-300': form.password.length >= 6 || form.password.length === 0
+              }"
+            />
+            <p v-if="form.password.length > 0 && form.password.length < 6" class="text-red-500 text-sm mt-1">
+              Password must be at least 6 characters.
             </p>
           </div>
 
-          <div>
-            <label class="block text-sm font-semibold text-gray-700">Years of Experience</label>
-            <input v-model="form.experience" type="number" min="0" class="mt-1 w-full px-4 py-2 border border-gray-300 rounded-lg" />
+          <!-- Provider Fields -->
+          <div v-if="form.role === 'provider'" class="space-y-4">
+            
+            <!-- Area -->
+            <div>
+              <label class="block text-sm font-semibold text-gray-700 mb-1">Area (Location)</label>
+              <input v-model="form.area" type="text" placeholder="e.g., Sector 14, Rohini" required
+                class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 transition" />
+              <small class="text-gray-500">Helps users find you nearby.</small>
+            </div>
+
+            <!-- Services -->
+            <div>
+              <label class="block text-sm font-semibold text-gray-700 mb-1">Select up to 3 Services</label>
+              <div class="grid grid-cols-2 gap-2">
+                <label v-for="(option, index) in availableServices" :key="index" class="flex items-center space-x-2 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    :value="option"
+                    :checked="form.services.includes(option)"
+                    @change="toggleService(option)"
+                    :disabled="!form.services.includes(option) && form.services.length >= 3"
+                    class="accent-[#0073b1]"
+                  />
+                  <span class="text-gray-700">{{ option }}</span>
+                </label>
+              </div>
+              <p v-if="form.services.length >= 3" class="text-sm text-red-500 mt-1">
+                You can only select up to 3 services.
+              </p>
+            </div>
+
+            <!-- Experience -->
+            <div>
+              <label class="block text-sm font-semibold text-gray-700 mb-1">Years of Experience</label>
+              <input v-model="form.experience" type="number" min="0"
+                class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 transition" />
+            </div>
+
+            <!-- Address -->
+            <div>
+              <label class="block text-sm font-semibold text-gray-700 mb-1">Address</label>
+              <textarea v-model="form.address" rows="3"
+                class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 transition"></textarea>
+            </div>
+
           </div>
 
-          <div>
-            <label class="block text-sm font-semibold text-gray-700">Address</label>
-            <textarea v-model="form.address" rows="3" class="mt-1 w-full px-4 py-2 border border-gray-300 rounded-lg"></textarea>
-          </div>
-        </div>
+          <!-- Submit Button -->
+          <button :disabled="loading" type="submit"
+            class="w-full py-2 rounded-lg text-white font-semibold bg-gradient-to-r from-blue-500 to-blue-700 hover:from-blue-600 hover:to-blue-800 transition flex justify-center items-center gap-2 relative">
+            <span v-if="!loading">Sign Up</span>
+            <span v-else class="flex items-center justify-center gap-2">
+              <svg class="animate-spin h-4 w-4 text-white" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"></path>
+              </svg>
+              Signing up...
+            </span>
+          </button>
 
-        <!-- Submit Button -->
-        <button :disabled="loading" type="submit" class="relative w-full mt-4 bg-[#0073b1] text-white py-2 rounded-lg hover:bg-[#005f91] transition duration-200">
-          <span v-if="!loading">Sign Up</span>
-          <span v-else class="flex items-center justify-center gap-2">
-            <svg class="animate-spin h-4 w-4 text-white" fill="none" viewBox="0 0 24 24">
-              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"></path>
-            </svg>
-            Signing up...
-          </span>
-        </button>
+          <!-- Login Link -->
+          <p class="text-center text-gray-500 text-sm mt-3">
+            Already have an account?
+            <router-link to="/login" class="text-[#0073b1] font-medium hover:underline">Login here</router-link>
+          </p>
 
-        <!-- Login Link -->
-        <div class="text-center mt-4 text-sm text-gray-600">
-          Already have an account?
-          <router-link to="/login" class="text-[#0073b1] font-medium hover:underline">Login here</router-link>
-        </div>
-      </form>
-    </div>
+        </form>
+      </div>
+    </transition>
+
+    <!-- Splash Screen -->
+    <transition name="overlay-fade">
+      <div v-if="showSplash" class="absolute inset-0 flex flex-col items-center justify-center bg-white z-20">
+        <img src="@/assets/skilllogo.png" alt="SkillLink Logo"
+          class="w-32 mb-4 animate-scale-bounce" />
+        <p class="text-gray-700 font-medium text-lg animate-pulse">Signing Up...</p>
+      </div>
+    </transition>
+
   </div>
 </template>
 
 <script setup>
 import { reactive, ref, watch } from 'vue';
-import axios from 'axios';
 import { useRouter } from 'vue-router';
+import axios from 'axios';
 import { toast } from 'vue3-toastify';
 import { loginUser } from '@/stores/auth';
 
 const router = useRouter();
 const loading = ref(false);
+const showSplash = ref(false);
 
 const form = reactive({
   name: '',
@@ -132,27 +159,9 @@ const form = reactive({
   services: [],
   experience: '',
   address: '',
-  area: '',   
-  contact: '', 
+  area: '',
   latitude: '',
   longitude: ''
-});
-
-watch(() => form.role, (newRole) => {
-  if (newRole === 'provider' && navigator.geolocation) {
-    navigator.geolocation.getCurrentPosition(
-      (position) => {
-        form.latitude = position.coords.latitude;
-        form.longitude = position.coords.longitude;
-        console.log('📍 Location:', form.latitude, form.longitude);
-      },
-      () => {
-        toast.error('Could not get location. Please enable location access.', {
-          theme: 'colored'
-        });
-      }
-    );
-  }
 });
 
 const availableServices = [
@@ -161,12 +170,11 @@ const availableServices = [
   'Pest Cleaner', 'Gardener', 'Security Guard', 'Driver on Call', 'Cook/Chef',
   'Beautician', 'Massage Therapist', 'Fitness Trainer', 'Babysitter', 'Laptop/PC Repair',
   'CCTV Installation', 'Mobile Technician', 'Internet Technician', 'Courier Pickup/Delivery',
-  'House Shifting/Packers', 'Tailor', 'Event Decorator', 'Pet Grommer'
+  'House Shifting/Packers', 'Tailor', 'Event Decorator', 'Pet Groomer'
 ];
 
 const toggleService = (service) => {
-  const exists = form.services.includes(service);
-  if (exists) {
+  if (form.services.includes(service)) {
     form.services = form.services.filter(s => s !== service);
   } else if (form.services.length < 3) {
     form.services.push(service);
@@ -182,9 +190,24 @@ const resetFields = () => {
   form.area = '';
 };
 
+watch(() => form.role, (role) => {
+  if (role === 'provider' && navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(
+      pos => {
+        form.latitude = pos.coords.latitude;
+        form.longitude = pos.coords.longitude;
+      },
+      () => {
+        toast.error('Enable location access for better results.', { theme: 'colored' });
+      }
+    );
+  }
+});
+
 const handleSubmit = async () => {
   try {
     loading.value = true;
+
     let endpoint = form.role === 'user'
       ? 'http://localhost:5000/api/auth/signup'
       : 'http://localhost:5000/api/providers/signup';
@@ -192,36 +215,76 @@ const handleSubmit = async () => {
     if (form.role === 'provider') {
       await new Promise((resolve, reject) => {
         navigator.geolocation.getCurrentPosition(
-          (position) => {
-            form.latitude = position.coords.latitude;
-            form.longitude = position.coords.longitude;
+          pos => {
+            form.latitude = pos.coords.latitude;
+            form.longitude = pos.coords.longitude;
             resolve();
           },
           () => {
-            toast.error("Failed to get location. Allow location access.");
+            toast.error('Failed to get location. Enable location access.');
             reject();
           }
         );
       });
     }
 
-    await new Promise(resolve => setTimeout(resolve, 1000));
     const response = await axios.post(endpoint, form);
 
     loginUser(response.data.token, response.data.user);
-    toast.success(`Welcome, ${response.data.user?.name || 'User'}!`, {
-      theme: 'colored',
-       autoClose: 2000 
-    });
 
-    router.push(form.role === 'user' ? '/homelogged' : '/serviceprovider');
+    // Show splash
+    showSplash.value = true;
+
+    // Delay and redirect
+    setTimeout(() => {
+      showSplash.value = false;
+      router.push(form.role === 'user' ? '/homelogged' : '/serviceprovider');
+      toast.success(`Welcome, ${response.data.user?.name || 'User'}!`, { theme: 'colored', autoClose: 2000 });
+    }, 1500);
+
   } catch (err) {
-    toast.error(err.response?.data?.message || 'Signup failed. Try again.', {
-      theme: 'colored'
-    });
+    toast.error(err.response?.data?.message || 'Signup failed. Try again.', { theme: 'colored' });
   } finally {
     loading.value = false;
   }
 };
 </script>
+
+<style scoped>
+/* Fade animation for form */
+.fade-enter-active, .fade-leave-active {
+  transition: opacity 0.5s ease, transform 0.5s ease;
+}
+.fade-enter-from, .fade-leave-to {
+  opacity: 0;
+  transform: scale(0.95);
+}
+
+/* Splash animations */
+@keyframes scale-bounce {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+}
+.animate-scale-bounce {
+  animation: scale-bounce 1s infinite;
+}
+
+.overlay-fade-enter-active, .overlay-fade-leave-active {
+  transition: opacity 0.4s ease, transform 0.4s ease;
+}
+.overlay-fade-enter-from, .overlay-fade-leave-to {
+  opacity: 0;
+  transform: scale(0.95);
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+.animate-pulse {
+  animation: pulse 1s infinite;
+}
+</style>
+
+
 
