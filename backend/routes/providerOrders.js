@@ -94,5 +94,18 @@ router.get('/stats', authenticateUser, async (req, res) => {
   }
 });
 
+// GET /api/providers/orders/recent
+router.get('/recent', authenticateUser, async (req, res) => {
+  try {
+    const orders = await Booking.find({ providerId: req.user.id })
+      .sort({ createdAt: -1 })
+      .limit(5); // latest 5 orders
+    res.json(orders);
+  } catch (err) {
+    console.error('❌ Error fetching recent orders:', err);
+    res.status(500).json({ message: 'Failed to fetch recent orders' });
+  }
+});
+
 
 module.exports = router;
