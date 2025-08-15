@@ -215,9 +215,14 @@
               <div class="flex-1">
                 <div class="flex items-center gap-2">
                   <div class="font-semibold text-gray-900">{{ provider.name }}</div>
-                  <span class="inline-flex items-center gap-1 text-xs bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded-full">
-                    ✅ Verified
-                  </span>
+                 <span class="inline-flex items-center gap-1 text-xs bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded-full">
+  <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" viewBox="0 0 24 24" fill="currentColor">
+    <path fill-rule="evenodd" d="M12 22C6.477 22 2 17.523 2 12S6.477 2 12 2s10 4.477 10 10-4.477 10-10 10zm-1.293-5.707a1 1 0 011.414 0l5-5a1 1 0 10-1.414-1.414L11 14.586l-2.293-2.293a1 1 0 10-1.414 1.414l3 3z" clip-rule="evenodd"/>
+  </svg>
+  Verified
+</span>
+
+
                 </div>
                 <div class="text-sm text-gray-600">{{ provider.bio }}</div>
                 <div class="text-xs text-gray-500 mt-1">
@@ -521,6 +526,7 @@ export default {
       const total = Object.values(this.ratingCounts).reduce((s, n) => s + n, 0) || 1;
       return ((this.ratingCounts[star] || 0) / total) * 100;
     },
+    
     goToBooking() {
       const q = new URLSearchParams({
         service: this.title,

@@ -13,11 +13,11 @@
         Our service provider will contact you shortly.
       </p>
 
-      <!-- Optional Booking Details (static placeholders for now) -->
+      <!-- Booking Details -->
       <div class="bg-gray-50 rounded-lg p-4 mb-4 text-sm text-left">
-        <p><strong>Service:</strong> {{ serviceName || 'Your Selected Service' }}</p>
-        <p><strong>Amount Paid:</strong> ₹{{ amount || '0.00' }}</p>
-        <p><strong>Provider:</strong> {{ providerName || 'Assigned Expert' }}</p>
+        <p><strong>Service:</strong> {{ serviceName }}</p>
+        <p><strong>Amount Paid:</strong> ₹{{ amount }}</p>
+        <p><strong>Provider:</strong> {{ providerName }}</p>
       </div>
 
       <!-- Countdown Notice -->
@@ -36,15 +36,16 @@
 
 <script setup>
 import { onMounted, ref } from 'vue';
-import { useRouter } from 'vue-router';
+import { useRouter, useRoute } from 'vue-router';
 
 const router = useRouter();
+const route = useRoute();
 const countdown = ref(3);
 
-// Optional placeholders (can be populated via props or state later)
-const serviceName = ref('');
-const amount = ref('');
-const providerName = ref('');
+// Read query parameters from previous page
+const serviceName = ref(route.query.service || 'Your Selected Service');
+const amount = ref(route.query.amount || '0.00');       // total from ServiceDetails
+const providerName = ref(route.query.providerName || 'Assigned Expert');
 
 onMounted(() => {
   const timer = setInterval(() => {

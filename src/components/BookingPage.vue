@@ -1,4 +1,3 @@
-
 <template>
   <div class="min-h-screen bg-[#F0F9FF] flex items-center justify-center p-4">
     <div class="w-full max-w-md bg-white p-6 rounded-lg shadow-md">
@@ -70,38 +69,24 @@
         ></textarea>
       </div>
 
-      <!-- Confirm Booking -->
+      <!-- Confirm Booking Button -->
       <button
-        :disabled="loading"
-        @click="openFakePayment"
+        :disabled="loading || !isFormValid()"
+        @click="confirmBooking"
         class="w-full bg-[#007EA7] text-white py-2 rounded hover:bg-[#005f6b] disabled:opacity-50"
       >
-        {{ loading ? 'Processing...' : `Pay ₹${getSelectedPrice() || '---'} & Book` }}
+        {{ loading ? 'Processing...' : `Pay ₹${total || '---'} & Book` }}
       </button>
-    </div>
 
-    <!-- Fake Payment Modal -->
-    <div
-      v-if="showFakeModal"
-      class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50"
-    >
-      <div class="bg-white p-6 rounded shadow-lg w-80">
-        <h2 class="text-lg font-semibold mb-4">Simulated Payment</h2>
-        <p class="mb-4">Simulated payment amount: <strong>₹{{ getSelectedPrice() }}</strong></p>
-        <div class="flex justify-end gap-4">
-          <button @click="confirmFakePayment" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">
-            Confirm
-          </button>
-          <button @click="showFakeModal = false" class="bg-gray-300 px-4 py-2 rounded hover:bg-gray-400">
-            Cancel
-          </button>
-        </div>
-      </div>
+      <!-- Info -->
+      <p class="text-xs text-gray-500 mt-2">
+        No advance charged. Pay after service confirmation.
+      </p>
     </div>
   </div>
 </template>
 
-<script setup>
+ <script setup>
 import { ref, computed, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import axios from 'axios'
@@ -112,20 +97,25 @@ const router = useRouter()
 const route = useRoute()
 
 const loading = ref(false)
-const showFakeModal = ref(false)
 
 const selectedService = ref('')
 const selectedProviderId = ref('')
-const prefilledPrice = ref(null) // for price passed from query
 const name = ref('')
 const contact = ref('')
 const address = ref('')
+const selectedTier = ref({ name: '', price: 0 })
+const selectedAddons = ref([])
+const qty = ref(1)
+const selectedDate = ref('')
+const selectedTime = ref('')
+const couponCode = ref('')
+const total = ref(0)
 
 const availableServices = ref([])
 const providers = ref([])
 const location = ref({ latitude: null, longitude: null })
 
-// Static fallback prices
+// Static fallback prices (optional, for selection if needed)
 const servicePrices = {
   Plumber: 199,
   Electrician: 249,
@@ -135,14 +125,14 @@ const servicePrices = {
   Mechanic: 349
 }
 
+const getSelectedPrice = () => {
+  // Use `total.value` if already computed
+  return total.value || servicePrices[selectedService.value] || 0
+}
+
+
 const hasPrefilledService = computed(() => !!route.query.service)
 const hasPrefilledProvider = computed(() => !!route.query.providerId)
-
-const getSelectedPrice = () => {
-  // Prefer price from query if available
-  if (prefilledPrice.value) return prefilledPrice.value
-  return servicePrices[selectedService.value] ?? null
-}
 
 const isFormValid = () => {
   return (
@@ -151,20 +141,19 @@ const isFormValid = () => {
     address.value &&
     selectedService.value &&
     selectedProviderId.value &&
-    getSelectedPrice() !== null
+    total.value > 0 &&
+    selectedDate.value &&
+    selectedTime.value
   )
 }
 
-const openFakePayment = () => {
+// Booking submit method
+const confirmBooking = async () => {
   if (!isFormValid()) {
-    toast.error('Please fill in all fields correctly.')
+    toast.error('Please fill in all required fields.')
     return
   }
-  showFakeModal.value = true
-}
 
-const confirmFakePayment = async () => {
-  showFakeModal.value = false
   loading.value = true
   const token = localStorage.getItem('token')
 
@@ -174,17 +163,31 @@ const confirmFakePayment = async () => {
       {
         service: selectedService.value,
         providerId: selectedProviderId.value,
+        tier: selectedTier.value.name,
+        addons: selectedAddons.value.map(a => a.key),
+        qty: qty.value,
+        date: selectedDate.value,
+        time: selectedTime.value,
         name: name.value,
         contact: contact.value,
         address: address.value,
-        price: getSelectedPrice(),
+        total: total.value,
+        coupon: couponCode.value,
         paymentStatus: 'paid'
       },
       { headers: { Authorization: `Bearer ${token}` } }
     )
 
-    toast.success('✅ Booking confirmed with payment!')
-    router.push('/booking-confirm')
+    toast.success('✅ Booking confirmed!')
+   router.push({
+  path: '/booking-confirm',
+  query: {
+    service: selectedService.value,
+    providerName: providers.value.find(p => p._id === selectedProviderId.value)?.name || 'Assigned Expert',
+    amount: getSelectedPrice()
+  }
+});
+
 
     // Reset form
     name.value = ''
@@ -192,8 +195,13 @@ const confirmFakePayment = async () => {
     address.value = ''
     selectedService.value = ''
     selectedProviderId.value = ''
-    providers.value = []
-    prefilledPrice.value = null
+    selectedTier.value = { name: '', price: 0 }
+    selectedAddons.value = []
+    qty.value = 1
+    selectedDate.value = ''
+    selectedTime.value = ''
+    couponCode.value = ''
+    total.value = 0
   } catch (err) {
     toast.error(err.response?.data?.message || 'Booking failed.')
   } finally {
@@ -201,6 +209,7 @@ const confirmFakePayment = async () => {
   }
 }
 
+// Fetch providers based on selected service and location
 const fetchProviders = async () => {
   if (!location.value.latitude || !location.value.longitude) return
   const token = localStorage.getItem('token')
@@ -220,6 +229,7 @@ const fetchProviders = async () => {
   }
 }
 
+// Load nearby services (optional)
 const loadNearbyServices = async (latitude, longitude) => {
   const token = localStorage.getItem('token')
   try {
@@ -236,12 +246,29 @@ const loadNearbyServices = async (latitude, longitude) => {
   }
 }
 
+// Prefill form from query params
 onMounted(() => {
-  const { service, providerId, price } = route.query
+  const {
+    service,
+    providerId,
+    tier,
+    addons,
+    qty: q,
+    date,
+    time,
+    total: t,
+    coupon
+  } = route.query
 
   if (service) selectedService.value = service
   if (providerId) selectedProviderId.value = providerId
-  if (price) prefilledPrice.value = Number(price)
+  if (tier) selectedTier.value.name = tier
+  if (addons) selectedAddons.value = addons.split(',').map(k => ({ key: k, label: k }))
+  if (q) qty.value = Number(q)
+  if (date) selectedDate.value = date
+  if (time) selectedTime.value = time
+  if (t) total.value = Number(t)
+  if (coupon) couponCode.value = coupon
 
   if (navigator.geolocation) {
     navigator.geolocation.getCurrentPosition(
@@ -251,11 +278,7 @@ onMounted(() => {
           longitude: pos.coords.longitude
         }
         await loadNearbyServices(pos.coords.latitude, pos.coords.longitude)
-
-        // Fetch providers even if providerId is already set
-        if (selectedService.value) {
-          await fetchProviders()
-        }
+        if (selectedService.value) await fetchProviders()
       },
       async () => {
         toast.error('Geolocation denied. Showing all services.')
