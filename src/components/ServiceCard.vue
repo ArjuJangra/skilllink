@@ -1,22 +1,43 @@
 <template>
-  <div class="bg-white rounded-xl shadow-md p-4 flex flex-col hover:shadow-lg transition transform hover:-translate-y-1">
-    <!-- Title -->
-    <h3 class="text-lg font-semibold text-[#007EA7] hover:underline cursor-pointer" @click="goToDetails">
-      {{ service.title }}
-    </h3>
+  <div
+    class="bg-white rounded-2xl shadow-md hover:shadow-xl transition-transform transform hover:-translate-y-1 duration-300 flex flex-col overflow-hidden"
+  >
+    <!-- Optional Category Badge -->
+    <div class="px-4 pt-4">
+      <span
+        v-if="service.category"
+        class="inline-block bg-[#E0F2FE] text-[#007EA7] text-xs font-semibold px-2 py-1 rounded-full"
+      >
+        {{ service.category }}
+      </span>
+    </div>
 
-    <!-- Description -->
-    <p class="text-sm text-gray-600 mt-1">{{ service.desc }}</p>
+    <!-- Title & Description -->
+    <div class="px-4 py-3 flex-1">
+      <h3
+        class="text-lg font-semibold text-gray-800 hover:text-[#007EA7] cursor-pointer truncate"
+        @click="goToDetails"
+        :title="service.title"
+      >
+        {{ service.title }}
+      </h3>
+      <p class="text-gray-600 text-sm mt-1 line-clamp-3">
+        {{ service.desc }}
+      </p>
+    </div>
 
-    <!-- Category -->
-    <p class="text-xs text-gray-400 mt-1 italic">{{ service.category }}</p>
-
-    <!-- Price & Button -->
-    <div class="mt-auto flex items-center justify-between">
-      <span class="text-[#007EA7] font-semibold">₹{{ service.price || '199' }}</span>
-      <button @click="goToDetails"
-        class="px-3 py-1 rounded transition bg-[#007EA7] text-white hover:bg-[#005f6b]">
-        Book Now
+    <!-- Footer: Price & Action Button -->
+    <div
+      class="px-4 py-3 border-t border-gray-100 flex items-center justify-between bg-gray-50"
+    >
+      <span class="text-[#007EA7] font-bold text-base">
+        ₹{{ service.price || '199' }}
+      </span>
+      <button
+        @click="goToDetails"
+        class="bg-[#007EA7] text-white font-medium px-4 py-2 rounded-lg hover:bg-[#005f6b] transition duration-200 shadow-sm hover:shadow-md"
+      >
+        View Details
       </button>
     </div>
   </div>
@@ -25,7 +46,7 @@
 <script setup>
 import { useRouter } from 'vue-router'
 
-// Destructure props properly
+// Props
 const props = defineProps({
   service: {
     type: Object,
@@ -35,8 +56,9 @@ const props = defineProps({
 
 const router = useRouter()
 
+// Navigate to ServiceDetails page
 const goToDetails = () => {
-  const s = props.service  // use props.service here
+  const s = props.service
   router.push({
     name: 'ServiceDetails',
     query: {
@@ -48,4 +70,15 @@ const goToDetails = () => {
   })
 }
 </script>
+
+<style scoped>
+/* Limit description text to 3 lines */
+.line-clamp-3 {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;  
+  overflow: hidden;
+}
+</style>
+
 
