@@ -17,82 +17,80 @@
         <!-- LEFT: Gallery + Overview -->
         <div class="lg:col-span-2 space-y-6">
           <!-- HERO: Carousel / Video -->
-          <div class="relative rounded-3xl overflow-hidden shadow-[0_8px_30px_rgba(0,0,0,0.12)]">
-            <div class="group relative h-[280px] sm:h-[360px] md:h-[420px] bg-black">
-              <!-- Video (optional) -->
-              <video
-                v-if="activeIsVideo"
-                :src="activeMedia.src"
-                class="w-full h-full object-cover"
-                autoplay
-                muted
-                loop
-                playsinline
-                @error="fallbackToImage"
-              ></video>
+          <!-- HERO: Image Carousel -->
+<div class="relative rounded-3xl overflow-hidden shadow-[0_8px_30px_rgba(0,0,0,0.12)]">
+  <div class="group relative h-[280px] sm:h-[360px] md:h-[420px] bg-gray-100">
+    <!-- Image -->
+    <img
+      v-if="activeMedia && activeMedia.src"
+      :src="activeMedia.src"
+      :alt="title"
+      class="w-full h-full object-cover object-center"
+      @error="handleImageError"
+    />
 
-              <!-- Image -->
-              <img
-                v-else
-                :src="activeMedia.src"
-                :alt="title"
-                class="w-full h-full object-cover"
-                @error="handleImageError"
-              />
+    <!-- gradient overlay only if image is present -->
+    <div
+      v-if="activeMedia && activeMedia.src"
+      class="absolute inset-0 bg-gradient-to-t from-black/40 via-black/10 to-transparent"
+    ></div>
 
-              <!-- gradient overlay -->
-              <div class="absolute inset-0 bg-gradient-to-t from-black/40 via-black/10 to-transparent"></div>
+    <!-- badges -->
+    <div class="absolute top-4 left-4 flex items-center gap-2">
+      <span class="badge">Top Rated</span>
+      <span class="badge bg-amber-500/90">Bestseller</span>
+    </div>
 
-              <!-- badges -->
-              <div class="absolute top-4 left-4 flex items-center gap-2">
-                <span class="badge">Top Rated</span>
-                <span class="badge bg-amber-500/90">Bestseller</span>
-              </div>
+    <!-- left/right controls -->
+    <button
+      @click="prevMedia"
+      class="carousel-btn left-3"
+      aria-label="Previous"
+    >‹</button>
+    <button
+      @click="nextMedia"
+      class="carousel-btn right-3"
+      aria-label="Next"
+    >›</button>
 
-              <!-- left/right controls -->
-              <button
-                @click="prevMedia"
-                class="carousel-btn left-3"
-                aria-label="Previous"
-              >‹</button>
-              <button
-                @click="nextMedia"
-                class="carousel-btn right-3"
-                aria-label="Next"
-              >›</button>
+    <!-- dots -->
+    <div class="absolute bottom-3 w-full flex justify-center gap-1.5">
+      <button
+        v-for="(m, i) in media"
+        :key="m.key"
+        @click="currentIndex = i"
+        class="h-1.5 rounded-full transition-all"
+        :class="currentIndex === i ? 'w-8 bg-white' : 'w-3 bg-white/60 hover:bg-white/80'"
+      ></button>
+    </div>
 
-              <!-- dots -->
-              <div class="absolute bottom-3 w-full flex justify-center gap-1.5">
-                <button
-                  v-for="(m, i) in media"
-                  :key="m.key"
-                  @click="currentIndex = i"
-                  class="h-1.5 rounded-full transition-all"
-                  :class="currentIndex === i ? 'w-8 bg-white' : 'w-3 bg-white/60 hover:bg-white/80'"
-                ></button>
-              </div>
+    <!-- title overlay -->
+    <h1
+      v-if="activeMedia && activeMedia.src"
+      class="absolute bottom-5 left-5 text-white text-2xl sm:text-3xl md:text-4xl font-extrabold drop-shadow"
+    >
+      {{ title }}
+    </h1>
+  </div>
 
-              <!-- title overlay -->
-              <h1 class="absolute bottom-5 left-5 text-white text-2xl sm:text-3xl md:text-4xl font-extrabold drop-shadow">
-                {{ title }}
-              </h1>
-            </div>
-            <!-- thumbs -->
-            <div class="grid grid-cols-5 gap-2 p-3 bg-white">
-              <button
-                v-for="(m, i) in media"
-                :key="m.key + '-thumb'"
-                @click="currentIndex = i"
-                class="relative rounded-xl overflow-hidden border transition hover:scale-[1.01]"
-                :class="currentIndex===i ? 'border-[#00B4D8]' : 'border-gray-200'"
-              >
-                <img v-if="m.type==='image'" :src="m.src" class="h-16 w-full object-cover" />
-                <div v-else class="h-16 w-full bg-black grid place-content-center text-white text-xs">
-                  ▶ Video
-                </div>
-              </button>
-            </div>
-          </div>
+  <!-- thumbs -->
+  <div class="grid grid-cols-5 gap-2 p-3 bg-white">
+    <button
+      v-for="(m, i) in media"
+      :key="m.key + '-thumb'"
+      @click="currentIndex = i"
+      class="relative rounded-xl overflow-hidden border transition hover:scale-[1.01]"
+      :class="currentIndex === i ? 'border-[#00B4D8]' : 'border-gray-200'"
+    >
+      <img
+        v-if="m.type === 'image'"
+        :src="m.src"
+        class="h-16 w-full object-cover object-center"
+      />
+    </button>
+  </div>
+</div>
+
 
           <!-- Overview -->
           <div class="bg-white rounded-2xl shadow p-6">
@@ -217,9 +215,14 @@
               <div class="flex-1">
                 <div class="flex items-center gap-2">
                   <div class="font-semibold text-gray-900">{{ provider.name }}</div>
-                  <span class="inline-flex items-center gap-1 text-xs bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded-full">
-                    ✅ Verified
-                  </span>
+                 <span class="inline-flex items-center gap-1 text-xs bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded-full">
+  <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" viewBox="0 0 24 24" fill="currentColor">
+    <path fill-rule="evenodd" d="M12 22C6.477 22 2 17.523 2 12S6.477 2 12 2s10 4.477 10 10-4.477 10-10 10zm-1.293-5.707a1 1 0 011.414 0l5-5a1 1 0 10-1.414-1.414L11 14.586l-2.293-2.293a1 1 0 10-1.414 1.414l3 3z" clip-rule="evenodd"/>
+  </svg>
+  Verified
+</span>
+
+
                 </div>
                 <div class="text-sm text-gray-600">{{ provider.bio }}</div>
                 <div class="text-xs text-gray-500 mt-1">
@@ -385,8 +388,7 @@ export default {
       title: '',
       desc: '',
       category: '',
-      // media (first item can be video, rest images)
-      media: [],
+      media: [],              // only images now
       currentIndex: 0,
 
       // pricing
@@ -455,11 +457,7 @@ export default {
   },
   computed: {
     activeMedia() {
-      return this.media[{ src: '/images/carpenter-2.jpg', type: 'image' }
-] || {};
-    },
-    activeIsVideo() {
-      return this.activeMedia.type === 'video';
+      return this.media[this.currentIndex] || {};
     },
     today() {
       const d = new Date();
@@ -477,7 +475,6 @@ export default {
     },
     discountAmount() {
       if (!this.couponValid) return 0;
-      // simple 10% off demo
       return Math.round(this.subtotal * 0.1);
     },
     total() {
@@ -500,11 +497,6 @@ export default {
   methods: {
     handleImageError(e) {
       e.target.src = '/images/default-service.jpg';
-    },
-    fallbackToImage() {
-      // If video fails, switch to first image if available
-      const firstImageIdx = this.media.findIndex(m => m.type === 'image');
-      if (firstImageIdx !== -1) this.currentIndex = firstImageIdx;
     },
     nextMedia() {
       this.currentIndex = (this.currentIndex + 1) >= this.media.length ? 0 : this.currentIndex + 1;
@@ -534,8 +526,8 @@ export default {
       const total = Object.values(this.ratingCounts).reduce((s, n) => s + n, 0) || 1;
       return ((this.ratingCounts[star] || 0) / total) * 100;
     },
+    
     goToBooking() {
-      // Pass the important selections via query
       const q = new URLSearchParams({
         service: this.title,
         date: this.selectedDate || '',
@@ -549,7 +541,6 @@ export default {
       this.$router.push(`/booking?${q}`);
     },
     buildRelated() {
-      // simple related generator from category / title
       const base = (this.title || 'general').toLowerCase().replace(/\s+/g, '-');
       this.related = [
         { title: 'AC Cleaning', category: 'AC Repair', desc: 'Complete cleaning & sanitization', image: `/images/${base}-related-1.jpg` },
@@ -558,11 +549,8 @@ export default {
       ];
     },
     buildMediaFromTitle() {
-      // Creates a video (optional) + a few images based on title slug
       const slug = (this.title || 'service').toLowerCase().replace(/\s+/g, '-');
       this.media = [
-        // Try video at first index (file optional; will fallback if not found)
-        { key: 'vid', type: 'video', src: `/media/${slug}.mp4` },
         { key: 'img1', type: 'image', src: `/images/${slug}.jpg` },
         { key: 'img2', type: 'image', src: `/images/${slug}-2.jpg` },
         { key: 'img3', type: 'image', src: `/images/${slug}-3.jpg` },
@@ -570,21 +558,19 @@ export default {
     },
   },
   mounted() {
-    // Read from query like previous version
     const { title, desc, category } = this.$route.query;
     this.title = title || 'Service Detail';
     this.desc = desc || 'High-quality service at your doorstep with verified professionals.';
     this.category = category || 'General';
 
-    // Build media & related
     this.buildMediaFromTitle();
     this.buildRelated();
 
-    // Default selected tier
     this.selectedTier = this.tiers[1]; // Standard
   },
 };
 </script>
+
 
 <style scoped>
 .badge {

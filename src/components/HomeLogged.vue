@@ -29,7 +29,6 @@
               class="px-3 py-2 text-sm sm:text-lg font-bold text-[#0073b1] hover:bg-gray-100 rounded-lg transition-all duration-200 hover:scale-105">
               Help
             </router-link>
-
           </nav>
 
           <!-- Book Service Button -->
@@ -38,36 +37,42 @@
             Book Service
           </router-link>
 
-         <!-- Notification Bell -->
- <router-link
-    to="/notifications"
-    class="relative w-10 h-10 flex items-center justify-center rounded-full hover:ring-2 hover:ring-[#0073b1] transition"
-  >
-    <!-- Bell Icon -->
-    <svg class="w-7 h-7 text-gray-700 hover:text-[#0073b1]" fill="none" stroke="currentColor" stroke-width="2"
-      viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-      <path stroke-linecap="round" stroke-linejoin="round"
-        d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
-    </svg>
+          <!-- Notification Bell -->
+          <router-link
+            to="/notifications"
+            class="relative w-10 h-10 flex items-center justify-center rounded-full hover:ring-2 hover:ring-[#0073b1] transition"
+          >
+            <svg class="w-7 h-7 text-gray-700 hover:text-[#0073b1]" fill="none" stroke="currentColor" stroke-width="2"
+              viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path stroke-linecap="round" stroke-linejoin="round"
+                d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+            </svg>
 
-    <!-- 🔴 Badge -->
-    <span
-      v-if="unreadCount > 0"
-      class="absolute -top-0.5 -right-0.5 bg-red-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full"
-    >
-      {{ unreadCount }}
-    </span>
-  </router-link>
+            <!-- 🔴 Badge -->
+            <span
+              v-if="unreadCount > 0"
+              class="absolute -top-0.5 -right-0.5 bg-red-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full"
+            >
+              {{ unreadCount }}
+            </span>
+          </router-link>
 
           <!-- Profile Picture -->
           <router-link to="/profile">
-            <img v-if="user && user.profilePic" :src="`http://localhost:5000/uploads/${user.profilePic}`"
+            <img
+              v-if="user && user.profilePic"
+              :src="'http://localhost:5000/uploads/' + user.profilePic"
               alt="User Profile"
               class="w-10 h-10 rounded-full object-cover border-2 border-[#0073b1] hover:ring-1 hover:ring-[#0073b1] transition"
-              loading="lazy" />
-            <img v-else src="@/assets/user.png" alt="Default Profile"
+              loading="lazy"
+            />
+            <img
+              v-else
+              src="@/assets/user.png"
+              alt="Default Profile"
               class="w-10 h-10 rounded-full object-cover border-2 border-[#0073b1] hover:ring-2 hover:ring-[#0073b1] transition"
-              loading="lazy" />
+              loading="lazy"
+            />
           </router-link>
         </div>
       </div>
@@ -76,7 +81,10 @@
     <!-- Hero Section -->
     <section class="text-center py-10 px-4 bg-gradient-to-br from-blue-100 to-white">
       <div class="max-w-[1300px] mx-auto">
-        <h2 class="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-[#3B8D99] to-[#f46675]  bg-clip-text text-transparent mb-4">Connecting You to Trusted Local Experts</h2>
+        <h2
+          class="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-[#3B8D99] to-[#f46675] bg-clip-text text-transparent mb-4">
+          Connecting You to Trusted Local Experts
+        </h2>
         <p class="text-gray-600 text-base sm:text-lg max-w-2xl mx-auto">
           Book skilled professionals like plumbers, electricians, makeup artists, and more — all in one platform.
         </p>
@@ -88,9 +96,12 @@
       <div class="max-w-[1300px] mx-auto">
         <h3 class="text-2xl font-bold text-gray-800 mb-6 text-center">Services We Provide</h3>
         <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 sm:gap-6">
-          <router-link v-for="service in services" :key="service"
-            :to="`/booking?service=${encodeURIComponent(service)}`"
-            class="bg-[#0073b1] text-white p-4 rounded-lg shadow text-center font-semibold transform hover:scale-105 hover:shadow-lg transition duration-300">
+          <router-link
+            v-for="service in services"
+            :key="service"
+            :to="{ path: '/booking', query: { service: service } }"
+            class="bg-[#0073b1] text-white p-4 rounded-lg shadow text-center font-semibold transform hover:scale-105 hover:shadow-lg transition duration-300"
+          >
             {{ service }}
           </router-link>
         </div>
@@ -100,16 +111,23 @@
     <!-- Solved Cases Section -->
     <section class="bg-blue-50 py-12 px-4">
       <div class="max-w-[1300px] mx-auto">
-        <h3 class="text-2xl font-bold text-gray-800 mb-6 text-center">Some Cases We've Solved</h3>
+        <h3 class="text-2xl font-bold text-gray-800 mb-6 text-center">
+          Some Cases We've Solved
+        </h3>
         <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-          <div v-for="caseItem in solvedCases" :key="caseItem.title"
-            class="bg-white rounded-xl shadow-md overflow-hidden flex flex-col">
-            <div class="w-full aspect-[4/3] bg-gray-100 flex items-center justify-center overflow-hidden">
-              <img :src="caseItem.image" :alt="caseItem.title" class="w-full h-full object-cover" loading="lazy" />
+          <div
+            v-for="caseItem in solvedCases"
+            :key="caseItem.title"
+            class="bg-white rounded-xl shadow-md overflow-hidden flex flex-col"
+          >
+            <div class="w-full h-60 bg-gray-100 overflow-hidden">
+              <img
+                :src="caseItem.image"
+                :alt="caseItem.title"
+                class="w-full h-full object-cover object-top"
+                loading="lazy"
+              />
             </div>
-    
-
-      
             <div class="p-4 flex-1">
               <h4 class="text-lg font-bold text-[#0073b1] mb-2">{{ caseItem.title }}</h4>
               <p class="text-gray-700 text-sm">{{ caseItem.description }}</p>
@@ -121,7 +139,7 @@
 
     <!-- About Section -->
     <section class="relative py-20 px-4 bg-gradient-to-br from-[#F0F9FF] via-white to-[#E6F4F9] overflow-hidden">
-      <!-- SVG Illustration Background -->
+      <!-- SVG Background -->
       <div class="absolute inset-0 z-0 pointer-events-none">
         <svg class="absolute top-0 left-0 opacity-20 w-[600px]" viewBox="0 0 600 600" fill="none">
           <circle cx="300" cy="300" r="300" fill="#0073b1" fill-opacity="0.05" />
@@ -131,7 +149,6 @@
         </svg>
       </div>
 
-      <!-- Main Content -->
       <div class="relative z-10 max-w-screen-xl mx-auto text-center" data-aos="fade-up">
         <h3 class="text-4xl font-extrabold text-[#0073b1] mb-6">About SkillLink</h3>
         <p class="max-w-3xl mx-auto text-gray-700 leading-relaxed text-lg sm:text-xl mb-10">
@@ -216,7 +233,6 @@
       </div>
     </section>
 
-
     <!-- Contact Section -->
     <section class="bg-blue-50 py-12 px-4 text-center">
       <div class="max-w-[1300px] mx-auto">
@@ -226,13 +242,12 @@
         <p class="text-gray-700 text-base sm:text-lg mb-2">📞 Phone: +91-9876543210</p>
         <p class="text-gray-700 text-base sm:text-lg mb-4">⏰ Support Hours: 9 AM – 7 PM (Mon to Sat)</p>
 
-       <router-link
-  to="/contact"
-  class="inline-block bg-[#0073b1] text-white px-6 py-2 rounded-lg hover:bg-[#005f91] transition"
->
-  Send Us a Message
-</router-link>
-
+        <router-link
+          to="/contact"
+          class="inline-block bg-[#0073b1] text-white px-6 py-2 rounded-lg hover:bg-[#005f91] transition"
+        >
+          Send Us a Message
+        </router-link>
       </div>
     </section>
 
@@ -255,9 +270,7 @@ const fetchUnreadCount = async () => {
   try {
     const token = localStorage.getItem('token');
     const response = await axios.get('http://localhost:5000/api/notifications/unread-count', {
-      headers: {
-        Authorization: `Bearer ${token}`
-      }
+      headers: { Authorization: `Bearer ${token}` }
     });
     unreadCount.value = response.data.count;
   } catch (error) {
@@ -270,9 +283,7 @@ const fetchUserProfile = async () => {
     const token = localStorage.getItem('token');
     if (!token) return;
     const { data } = await axios.get('http://localhost:5000/api/user/profile', {
-      headers: {
-        Authorization: `Bearer ${token}`
-      }
+      headers: { Authorization: `Bearer ${token} `}
     });
     user.value = data;
   } catch (error) {
