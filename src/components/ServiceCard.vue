@@ -28,12 +28,12 @@
 
     <!-- Footer: Price & Action Button -->
     <div
-      class="px-4 py-3 border-t border-gray-100 flex items-center justify-end bg-gray-50"
+      class=" px-4 py-3 border-t border-gray-100 flex items-center justify-end bg-gray-50"
     >
       
       <button
         @click="goToDetails"
-        class="bg-[#007EA7] text-white font-medium px-4 py-2 rounded-lg hover:bg-[#005f6b] transition duration-200 shadow-sm hover:shadow-md"
+        class="bg-[#007EA7] flex items-center  text-white font-medium px-4 py-2 rounded-lg hover:bg-[#005f6b] transition duration-200 shadow-sm hover:shadow-md"
       >
         View Details
          <svg

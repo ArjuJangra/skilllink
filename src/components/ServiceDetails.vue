@@ -382,7 +382,7 @@ export default {
       // availability
       selectedDate: '',
       selectedTime: '',
-      timeSlots: ['09:00 AM', '10:30 AM', '12:00 PM', '02:00 PM', '04:00 PM', '06:00 PM'],
+      timeSlots: ['09:00 AM', '10:30 AM', '12:00 PM', '01:00 PM', '03:00 PM', '05:00 PM'],
 
       // provider
       provider: {
@@ -511,14 +511,13 @@ export default {
       }).toString();
       this.$router.push(`/booking?${q}`);
     },
-    buildRelated() {
-      const base = (this.title || 'general').toLowerCase().replace(/\s+/g, '-');
-      this.related = [
-        { title: 'AC Cleaning', category: 'AC Repair', desc: 'Complete cleaning & sanitization', image: `/images/${base}-related-1.jpg` },
-        { title: 'Electrical Checkup', category: 'Electrician', desc: 'Home safety audit', image: `/images/${base}-related-2.jpg` },
-        { title: 'Appliance Diagnosis', category: 'Home Appliance', desc: 'Quick issue identification', image: `/images/${base}-related-3.jpg` },
-      ];
-    },
+   buildRelated() {
+  this.related = [
+    { title: 'AC Cleaning', category: 'AC Repair', desc: 'Complete cleaning & sanitization', image: '/images/related-1.jpg' },
+    { title: 'Electrical Checkup', category: 'Electrician', desc: 'Home safety audit', image: '/images/related-2.jpg' },
+    { title: 'Appliance Diagnosis', category: 'Home Appliance', desc: 'Quick issue identification', image: '/images/related-3.jpg' },
+  ];
+},
     buildMediaFromTitle() {
       const slug = (this.title || 'service').toLowerCase().replace(/\s+/g, '-');
       this.media = [
