@@ -5,91 +5,79 @@
 
     <div class="max-w-6xl mx-auto px-4 sm:px-6 py-6 lg:py-10">
       <!-- Header breadcrumbs -->
-      <div class="text-sm text-gray-500 mb-4 flex items-center gap-2">
-        <router-link to="/home" class="hover:text-[#007EA7]">Home</router-link>
-        <span>/</span>
-        <span class="capitalize">{{ category || 'Service' }}</span>
-        <span>/</span>
-        <span class="text-gray-700 font-medium line-clamp-1">{{ title || 'Detail' }}</span>
+      <div class="text-sm text-gray-500 mb-4 flex items-center gap-2 flex-wrap">
+        <!-- Home link -->
+        <router-link to="/home"
+          class="hover:text-[#007EA7] transition-colors duration-200 font-medium flex items-center gap-1">
+          <i class="fas fa-home text-xs"></i> Home
+        </router-link>
+
+        <!-- Separator -->
+        <span class="text-gray-400">/</span>
+
+        <!-- Category (just text) -->
+        <span class="capitalize font-medium text-gray-500">
+          {{ category || 'Service' }}
+        </span>
+
+        <!-- Separator -->
+        <span class="text-gray-400">/</span>
+
+        <!-- Current service -->
+        <span class="text-gray-700 font-semibold line-clamp-1" :title="title || 'Detail'">
+          {{ title || 'Detail' }}
+        </span>
       </div>
+
 
       <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <!-- LEFT: Gallery + Overview -->
         <div class="lg:col-span-2 space-y-6">
           <!-- HERO: Carousel / Video -->
           <!-- HERO: Image Carousel -->
-<div class="relative rounded-3xl overflow-hidden shadow-[0_8px_30px_rgba(0,0,0,0.12)]">
-  <div class="group relative h-[280px] sm:h-[360px] md:h-[420px] bg-gray-100">
-    <!-- Image -->
-    <img
-      v-if="activeMedia && activeMedia.src"
-      :src="activeMedia.src"
-      :alt="title"
-      class="w-full h-full object-cover object-center"
-      @error="handleImageError"
-    />
+          <div class="relative rounded-3xl overflow-hidden shadow-[0_8px_30px_rgba(0,0,0,0.12)]">
+            <div class="group relative h-[280px] sm:h-[360px] md:h-[420px] bg-gray-100">
+              <!-- Image -->
+              <img v-if="activeMedia && activeMedia.src" :src="activeMedia.src" :alt="title"
+                class="w-full h-full object-cover object-center" @error="handleImageError" />
 
-    <!-- gradient overlay only if image is present -->
-    <div
-      v-if="activeMedia && activeMedia.src"
-      class="absolute inset-0 bg-gradient-to-t from-black/40 via-black/10 to-transparent"
-    ></div>
+              <!-- gradient overlay only if image is present -->
+              <div v-if="activeMedia && activeMedia.src"
+                class="absolute inset-0 bg-gradient-to-t from-black/40 via-black/10 to-transparent"></div>
 
-    <!-- badges -->
-    <div class="absolute top-4 left-4 flex items-center gap-2">
-      <span class="badge">Top Rated</span>
-      <span class="badge bg-amber-500/90">Bestseller</span>
-    </div>
+              <!-- badges -->
+              <div class="absolute top-4 left-4 flex items-center gap-2">
+                <span class="badge">Top Rated</span>
+                <span class="badge bg-amber-500/90">Bestseller</span>
+              </div>
 
-    <!-- left/right controls -->
-    <button
-      @click="prevMedia"
-      class="carousel-btn left-3"
-      aria-label="Previous"
-    >‹</button>
-    <button
-      @click="nextMedia"
-      class="carousel-btn right-3"
-      aria-label="Next"
-    >›</button>
+              <!-- left/right controls -->
+              <button @click="prevMedia" class="carousel-btn left-3" aria-label="Previous">‹</button>
+              <button @click="nextMedia" class="carousel-btn right-3" aria-label="Next">›</button>
 
-    <!-- dots -->
-    <div class="absolute bottom-3 w-full flex justify-center gap-1.5">
-      <button
-        v-for="(m, i) in media"
-        :key="m.key"
-        @click="currentIndex = i"
-        class="h-1.5 rounded-full transition-all"
-        :class="currentIndex === i ? 'w-8 bg-white' : 'w-3 bg-white/60 hover:bg-white/80'"
-      ></button>
-    </div>
+              <!-- dots -->
+              <div class="absolute bottom-3 w-full flex justify-center gap-1.5">
+                <button v-for="(m, i) in media" :key="m.key" @click="currentIndex = i"
+                  class="h-1.5 rounded-full transition-all"
+                  :class="currentIndex === i ? 'w-8 bg-white' : 'w-3 bg-white/60 hover:bg-white/80'"></button>
+              </div>
 
-    <!-- title overlay -->
-    <h1
-      v-if="activeMedia && activeMedia.src"
-      class="absolute bottom-5 left-5 text-white text-2xl sm:text-3xl md:text-4xl font-extrabold drop-shadow"
-    >
-      {{ title }}
-    </h1>
-  </div>
+              <!-- title overlay -->
+              <h1 v-if="activeMedia && activeMedia.src"
+                class="absolute bottom-5 left-5 text-white text-2xl sm:text-3xl md:text-4xl font-extrabold drop-shadow">
+                {{ title }}
+              </h1>
+            </div>
 
-  <!-- thumbs -->
-  <div class="grid grid-cols-5 gap-2 p-3 bg-white">
-    <button
-      v-for="(m, i) in media"
-      :key="m.key + '-thumb'"
-      @click="currentIndex = i"
-      class="relative rounded-xl overflow-hidden border transition hover:scale-[1.01]"
-      :class="currentIndex === i ? 'border-[#00B4D8]' : 'border-gray-200'"
-    >
-      <img
-        v-if="m.type === 'image'"
-        :src="m.src"
-        class="h-16 w-full object-cover object-center"
-      />
-    </button>
-  </div>
-</div>
+            <!-- thumbs -->
+            <div class="grid grid-cols-5 gap-2 p-3 bg-white">
+              <button v-for="(m, i) in media" :key="m.key + '-thumb'" @click="currentIndex = i"
+                class="relative rounded-xl overflow-hidden border transition hover:scale-[1.01]"
+                :class="currentIndex === i ? 'border-[#00B4D8]' : 'border-gray-200'">
+                <img v-if="m.type === 'image'" :src="m.src" class="h-16 w-full object-cover object-center" />
+              </button>
+            </div>
+          </div>
 
 
           <!-- Overview -->
@@ -122,13 +110,8 @@
               <span class="text-xs text-gray-500">Tap to select</span>
             </div>
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <button
-                v-for="tier in tiers"
-                :key="tier.name"
-                @click="selectTier(tier)"
-                class="tier"
-                :class="selectedTier.name === tier.name ? 'ring-2 ring-[#00B4D8]' : 'hover:shadow-md'"
-              >
+              <button v-for="tier in tiers" :key="tier.name" @click="selectTier(tier)" class="tier"
+                :class="selectedTier.name === tier.name ? 'ring-2 ring-[#00B4D8]' : 'hover:shadow-md'">
                 <div class="flex items-center justify-between">
                   <div class="text-lg font-semibold text-gray-800">{{ tier.name }}</div>
                   <div class="text-gray-900 font-bold">₹{{ tier.price }}</div>
@@ -157,7 +140,7 @@
               <div class="p-4 rounded-xl bg-gray-50">
                 <div class="font-semibold text-gray-800 mb-2">Quantity</div>
                 <div class="flex items-center gap-3">
-                  <button @click="qty = Math.max(1, qty-1)" class="qty-btn">−</button>
+                  <button @click="qty = Math.max(1, qty - 1)" class="qty-btn">−</button>
                   <div class="w-12 text-center font-semibold">{{ qty }}</div>
                   <button @click="qty++" class="qty-btn">+</button>
                 </div>
@@ -182,12 +165,7 @@
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <label class="block text-sm text-gray-600 mb-1">Select Date</label>
-                <input
-                  type="date"
-                  class="input w-full"
-                  :min="today"
-                  v-model="selectedDate"
-                />
+                <input type="date" class="input w-full" :min="today" v-model="selectedDate" />
               </div>
               <div>
                 <label class="block text-sm text-gray-600 mb-1">Select Time</label>
@@ -206,21 +184,20 @@
           <div class="bg-white rounded-2xl shadow p-6">
             <h2 class="text-xl font-bold text-gray-900 mb-4">About the Provider</h2>
             <div class="flex items-center gap-4">
-              <img
-                :src="provider.avatar"
-                @error="e=>e.target.src=defaultAvatar"
-                class="w-16 h-16 rounded-full object-cover border"
-                alt="Provider"
-              />
+              <img :src="provider.avatar" @error="e => e.target.src = defaultAvatar"
+                class="w-16 h-16 rounded-full object-cover border" alt="Provider" />
               <div class="flex-1">
                 <div class="flex items-center gap-2">
                   <div class="font-semibold text-gray-900">{{ provider.name }}</div>
-                 <span class="inline-flex items-center gap-1 text-xs bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded-full">
-  <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" viewBox="0 0 24 24" fill="currentColor">
-    <path fill-rule="evenodd" d="M12 22C6.477 22 2 17.523 2 12S6.477 2 12 2s10 4.477 10 10-4.477 10-10 10zm-1.293-5.707a1 1 0 011.414 0l5-5a1 1 0 10-1.414-1.414L11 14.586l-2.293-2.293a1 1 0 10-1.414 1.414l3 3z" clip-rule="evenodd"/>
-  </svg>
-  Verified
-</span>
+                  <span
+                    class="inline-flex items-center gap-1 text-xs bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded-full">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" viewBox="0 0 24 24" fill="currentColor">
+                      <path fill-rule="evenodd"
+                        d="M12 22C6.477 22 2 17.523 2 12S6.477 2 12 2s10 4.477 10 10-4.477 10-10 10zm-1.293-5.707a1 1 0 011.414 0l5-5a1 1 0 10-1.414-1.414L11 14.586l-2.293-2.293a1 1 0 10-1.414 1.414l3 3z"
+                        clip-rule="evenodd" />
+                    </svg>
+                    Verified
+                  </span>
 
 
                 </div>
@@ -249,13 +226,10 @@
             <!-- rating bars -->
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
               <div class="space-y-2">
-                <div v-for="star in [5,4,3,2,1]" :key="'bar-'+star" class="flex items-center gap-3">
+                <div v-for="star in [5, 4, 3, 2, 1]" :key="'bar-' + star" class="flex items-center gap-3">
                   <div class="w-12 text-sm text-gray-600">{{ star }}★</div>
                   <div class="flex-1 h-2 bg-gray-100 rounded-full overflow-hidden">
-                    <div
-                      class="h-2 bg-amber-400"
-                      :style="{ width: ratingBarWidth(star) + '%' }"
-                    ></div>
+                    <div class="h-2 bg-amber-400" :style="{ width: ratingBarWidth(star) + '%' }"></div>
                   </div>
                   <div class="w-10 text-right text-xs text-gray-500">{{ ratingCounts[star] || 0 }}</div>
                 </div>
@@ -274,13 +248,10 @@
 
             <!-- review list -->
             <div class="space-y-5">
-              <div
-                v-for="r in reviews"
-                :key="r.id"
-                class="p-4 border rounded-xl hover:shadow-sm transition"
-              >
+              <div v-for="r in reviews" :key="r.id" class="p-4 border rounded-xl hover:shadow-sm transition">
                 <div class="flex items-start gap-3">
-                  <img :src="r.userAvatar" @error="e=>e.target.src=defaultAvatar" class="w-10 h-10 rounded-full object-cover" />
+                  <img :src="r.userAvatar" @error="e => e.target.src = defaultAvatar"
+                    class="w-10 h-10 rounded-full object-cover" />
                   <div class="flex-1">
                     <div class="flex items-center gap-2">
                       <div class="font-semibold text-gray-800">{{ r.user }}</div>
@@ -288,12 +259,8 @@
                       <div class="text-xs text-gray-500">— {{ r.date }}</div>
                     </div>
                     <p class="text-gray-700 text-sm mt-1">{{ r.text }}</p>
-                    <img
-                      v-if="r.photo"
-                      :src="r.photo"
-                      class="mt-2 w-full max-w-xs rounded-lg border"
-                      alt="Review proof"
-                    />
+                    <img v-if="r.photo" :src="r.photo" class="mt-2 w-full max-w-xs rounded-lg border"
+                      alt="Review proof" />
                   </div>
                 </div>
               </div>
@@ -304,12 +271,9 @@
           <div class="bg-white rounded-2xl shadow p-6">
             <h2 class="text-xl font-bold text-gray-900 mb-4">You might also like</h2>
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-              <router-link
-                v-for="s in related"
-                :key="s.title"
+              <router-link v-for="s in related" :key="s.title"
                 :to="`/service-details?title=${encodeURIComponent(s.title)}&desc=${encodeURIComponent(s.desc)}&category=${encodeURIComponent(s.category)}`"
-                class="group rounded-xl border overflow-hidden hover:shadow-md transition"
-              >
+                class="group rounded-xl border overflow-hidden hover:shadow-md transition">
                 <img :src="s.image" class="h-36 w-full object-cover group-hover:scale-105 transition-transform" />
                 <div class="p-3">
                   <div class="font-semibold text-gray-800 line-clamp-1">{{ s.title }}</div>
@@ -331,30 +295,37 @@
                 <div class="text-sm text-gray-500 capitalize">{{ category }}</div>
               </div>
               <div class="mt-4 space-y-2 text-sm text-gray-700">
-                <div class="flex justify-between"><span>Tier</span><span class="font-medium">{{ selectedTier.name }}</span></div>
+                <div class="flex justify-between"><span>Tier</span><span class="font-medium">{{ selectedTier.name
+                }}</span></div>
                 <div class="flex justify-between"><span>Quantity</span><span class="font-medium">{{ qty }}</span></div>
                 <div class="flex justify-between">
                   <span>Add-ons</span>
                   <span class="font-medium">
-                    <template v-if="selectedAddons.length">{{ selectedAddons.map(a=>a.label).join(', ') }}</template>
+                    <template v-if="selectedAddons.length">{{selectedAddons.map(a => a.label).join(', ')}}</template>
                     <template v-else>None</template>
                   </span>
                 </div>
-                <div class="flex justify-between"><span>Date</span><span class="font-medium">{{ selectedDate || 'Not set' }}</span></div>
-                <div class="flex justify-between"><span>Time</span><span class="font-medium">{{ selectedTime || 'Not set' }}</span></div>
+                <div class="flex justify-between"><span>Date</span><span class="font-medium">{{ selectedDate || `Not
+                    set` }}</span>
+
+                </div>
+                <div class="flex justify-between">
+                  <span>Time</span>
+                  <span class="font-medium">{{ selectedTime || 'Not set' }}</span>
+                </div>
+
               </div>
 
               <div class="border-t mt-4 pt-4 space-y-2 text-sm">
                 <div class="flex justify-between"><span>Subtotal</span><span>₹{{ subtotal }}</span></div>
-                <div class="flex justify-between" v-if="discountAmount>0"><span>Discount</span><span class="text-emerald-600">− ₹{{ discountAmount }}</span></div>
-                <div class="flex justify-between font-bold text-gray-900 text-base"><span>Total</span><span>₹{{ total }}</span></div>
+                <div class="flex justify-between" v-if="discountAmount > 0"><span>Discount</span><span
+                    class="text-emerald-600">− ₹{{
+                      discountAmount }}</span></div>
+                <div class="flex justify-between font-bold text-gray-900 text-base"><span>Total</span><span>₹{{ total
+                }}</span></div>
               </div>
 
-              <button
-                class="mt-4 btn-primary w-full"
-                :disabled="!canBook"
-                @click="goToBooking"
-              >
+              <button class="mt-4 btn-primary w-full" :disabled="!canBook" @click="goToBooking">
                 Book Now — ₹{{ total }}
               </button>
 
@@ -526,7 +497,7 @@ export default {
       const total = Object.values(this.ratingCounts).reduce((s, n) => s + n, 0) || 1;
       return ((this.ratingCounts[star] || 0) / total) * 100;
     },
-    
+
     goToBooking() {
       const q = new URLSearchParams({
         service: this.title,
@@ -576,32 +547,50 @@ export default {
 .badge {
   display: inline-flex;
   align-items: center;
-  font-size: 0.75rem; /* text-xs */
-  font-weight: 500;   /* font-medium */
-  padding-left: 0.5rem;  /* px-2 */
+  font-size: 0.75rem;
+  /* text-xs */
+  font-weight: 500;
+  /* font-medium */
+  padding-left: 0.5rem;
+  /* px-2 */
   padding-right: 0.5rem;
-  padding-top: 0.125rem; /* py-0.5 */
+  padding-top: 0.125rem;
+  /* py-0.5 */
   padding-bottom: 0.125rem;
-  border-radius: 9999px; /* rounded-full */
-  background-color: rgba(255,255,255,0.9); /* bg-white/90 */
-  color: #1f2937; /* text-gray-800 */
+  border-radius: 9999px;
+  /* rounded-full */
+  background-color: rgba(255, 255, 255, 0.9);
+  /* bg-white/90 */
+  color: #1f2937;
+  /* text-gray-800 */
 }
 
 /* Reusable cards */
 .card-soft {
-  border-radius: 0.75rem; /* rounded-xl */
-  padding: 1rem; /* p-4 */
-  background: linear-gradient(to bottom right, #f9fafb, #fff); /* bg-gradient-to-br from-gray-50 to-white */
-  border: 1px solid #f3f4f6; /* border border-gray-100 */
+  border-radius: 0.75rem;
+  /* rounded-xl */
+  padding: 1rem;
+  /* p-4 */
+  background: linear-gradient(to bottom right, #f9fafb, #fff);
+  /* bg-gradient-to-br from-gray-50 to-white */
+  border: 1px solid #f3f4f6;
+  /* border border-gray-100 */
 }
+
 .card-title {
-  font-size: 0.875rem; /* text-sm */
-  font-weight: 600; /* font-semibold */
-  color: #1f2937; /* text-gray-800 */
+  font-size: 0.875rem;
+  /* text-sm */
+  font-weight: 600;
+  /* font-semibold */
+  color: #1f2937;
+  /* text-gray-800 */
 }
+
 .card-text {
-  color: #4b5563; /* text-gray-600 */
-  font-size: 0.875rem; /* text-sm */
+  color: #4b5563;
+  /* text-gray-600 */
+  font-size: 0.875rem;
+  /* text-sm */
 }
 
 /* Buttons & inputs */
@@ -620,13 +609,16 @@ export default {
   box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1);
   transition: background 0.2s, opacity 0.2s;
 }
+
 .btn-primary:hover {
   background-color: #006786;
 }
+
 .btn-primary:disabled {
   opacity: 0.5;
   cursor: not-allowed;
 }
+
 .btn-secondary {
   display: inline-flex;
   align-items: center;
@@ -642,9 +634,11 @@ export default {
   font-weight: 500;
   transition: opacity 0.2s;
 }
+
 .btn-secondary:hover {
   opacity: 0.9;
 }
+
 .input {
   border-radius: 0.5rem;
   border: 1px solid #d1d5db;
@@ -655,10 +649,12 @@ export default {
   outline: none;
   transition: border-color 0.2s, box-shadow 0.2s;
 }
+
 .input:focus {
   border-color: #00B4D8;
   box-shadow: 0 0 0 2px #00B4D833;
 }
+
 .qty-btn {
   width: 2.25rem;
   height: 2.25rem;
@@ -670,12 +666,15 @@ export default {
   place-content: center;
   transition: background 0.2s, transform 0.1s;
 }
+
 .qty-btn:hover {
   background: #f9fafb;
 }
+
 .qty-btn:active {
   transform: scale(0.95);
 }
+
 .tier {
   border-radius: 1rem;
   border: 1px solid #e5e7eb;
@@ -684,6 +683,7 @@ export default {
   transition: box-shadow 0.2s;
   background: #fff;
 }
+
 .tier:hover {
   box-shadow: 0 4px 12px 0 rgb(0 0 0 / 0.08);
 }
@@ -693,20 +693,32 @@ export default {
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
-  height: 2.25rem; /* h-9 */
-  width: 2.25rem;  /* w-9 */
-  border-radius: 9999px; /* rounded-full */
-  background-color: rgba(255,255,255,0.9); /* bg-white/90 */
-  display: grid; /* grid */
-  place-content: center; /* place-content-center */
-  color: #374151; /* text-gray-700 */
-  font-size: 1.25rem; /* text-xl */
-  box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05); /* shadow */
-  border: 1px solid #e5e7eb; /* border */
+  height: 2.25rem;
+  /* h-9 */
+  width: 2.25rem;
+  /* w-9 */
+  border-radius: 9999px;
+  /* rounded-full */
+  background-color: rgba(255, 255, 255, 0.9);
+  /* bg-white/90 */
+  display: grid;
+  /* grid */
+  place-content: center;
+  /* place-content-center */
+  color: #374151;
+  /* text-gray-700 */
+  font-size: 1.25rem;
+  /* text-xl */
+  box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  /* shadow */
+  border: 1px solid #e5e7eb;
+  /* border */
   transition: background 0.2s;
 }
+
 .carousel-btn:hover {
-  background-color: #fff; /* hover:bg-white */
+  background-color: #fff;
+  /* hover:bg-white */
 }
 
 /* Utilities */
@@ -718,4 +730,3 @@ export default {
   overflow: hidden;
 }
 </style>
-

@@ -12,15 +12,12 @@
 
         <!-- Right Side -->
         <div class="flex items-center space-x-4">
-          <!-- Search Icon (Mobile) -->
-          <button @click="showMobileSearch = !showMobileSearch"
-            class="sm:hidden text-gray-600 text-xl focus:outline-none">
-            <i class="fas fa-search text-[#007EA7] hover:text-[#005f6b] cursor-pointer" title="Search services">
-            </i>
-
+          <!-- Mobile Search -->
+          <button @click="showMobileSearch = !showMobileSearch" class="sm:hidden text-gray-600 text-xl focus:outline-none">
+            <i class="fas fa-search text-[#007EA7] hover:text-[#005f6b] cursor-pointer" title="Search services"></i>
           </button>
 
-          <!-- Search Bar (Desktop) -->
+          <!-- Desktop Search -->
           <div class="hidden sm:block relative w-72">
             <span class="absolute inset-y-0 left-0 pl-2 flex items-center text-gray-400">
               <i class="fas fa-search"></i>
@@ -33,7 +30,7 @@
             </button>
           </div>
 
-          <!-- User Icon -->
+          <!-- User Login/Profile -->
           <template v-if="auth.isLoggedIn">
             <router-link to="/dashboard" class="group relative inline-block">
               <img :src="profilePicUrl || require('@/assets/user.png')" alt="User Avatar"
@@ -41,20 +38,14 @@
             </router-link>
           </template>
           <template v-else>
-            <router-link to="/signup" class="text-xl text-gray-700 sm:hidden">
-              <div class="relative group">
-                <i class="fas fa-user-circle text-[#007EA7] text-2xl hover:text-[#005f6b] cursor-pointer"
-                  title="Login / Signup">
-                </i>
-               
-              </div>
-
-            </router-link>
             <router-link to="/signup" class="hidden sm:block">
               <button
                 class="px-6 py-2 bg-[#0073b1] text-white font-semibold rounded-lg hover:bg-[#005f91] transition duration-200">
                 Login / Sign Up
               </button>
+            </router-link>
+            <router-link to="/signup" class="sm:hidden">
+              <i class="fas fa-user-circle text-[#007EA7] text-2xl hover:text-[#005f6b] cursor-pointer" title="Login / Signup"></i>
             </router-link>
           </template>
         </div>
@@ -78,48 +69,39 @@
 
     <!-- Services Section -->
     <section class="px-4 py-6 max-w-7xl mx-auto space-y-10">
-      <!-- 🔍 Filtered Results Section -->
+
+      <!-- Filtered Search Results -->
       <div v-if="filteredResults.length">
         <h2 class="text-xl font-semibold text-gray-800 mb-4">🔍 Search Results</h2>
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          <div v-for="(service, index) in filteredResults" :key="'filtered-' + index"
-            class="bg-white rounded-lg shadow-md p-4 flex items-center justify-between hover:shadow-lg transition">
-            <div @click="goToServiceDetails(service.title, service.desc, service.category)" class="cursor-pointer">
-              <h3 class="text-lg font-semibold text-[#007EA7] hover:underline">{{ service.title }}</h3>
-              <p class="text-sm text-gray-600 mt-1">{{ service.desc }}</p>
-              <p class="text-xs text-gray-400 mt-1 italic">From: {{ service.category }}</p>
-            </div>
-            <button @click="goToBooking(service.title)" :disabled="disableBooking" :class="[
-              'ml-4 px-4 py-1 rounded transition',
-              disableBooking ? 'bg-gray-300 text-gray-500 cursor-not-allowed' : 'bg-[#007EA7] text-white hover:bg-[#005f6b]'
-            ]">
-              Book Now
-            </button>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          <service-card
+            v-for="(service, index) in filteredResults"
+            :key="'filtered-' + index"
+            :service="service"
+            @book="goToBooking(service.title)"
+            @details="goToServiceDetails(service.title, service.desc, service.category)"
+            :disableBooking="disableBooking"
+          />
+        </div>
+      </div>
+
+      <!-- Full List -->
+      <div v-if="!searchQuery">
+        <div v-for="category in services" :key="category.title" class="space-y-6">
+          <h2 class="text-xl font-semibold text-gray-800 mb-4">{{ category.title }}</h2>
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            <service-card
+              v-for="(service, index) in category.items"
+              :key="index"
+              :service="{ ...service, category: category.title }"
+              @book="goToBooking(service.title)"
+              @details="goToServiceDetails(service.title, service.desc, category.title)"
+              :disableBooking="disableBooking"
+            />
           </div>
         </div>
       </div>
 
-      <!-- 🧾 Original Full List -->
-      <div v-if="!searchQuery">
-        <div v-for="category in services" :key="category.title">
-          <h2 class="text-xl font-semibold text-gray-800 mb-4">{{ category.title }}</h2>
-          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            <div v-for="(service, index) in category.items" :key="index"
-              class="bg-white rounded-lg shadow-md p-4 flex items-center justify-between hover:shadow-lg transition">
-              <div @click="goToServiceDetails(service.title, service.desc, category.title)" class="cursor-pointer">
-                <h3 class="text-lg font-semibold text-[#007EA7] hover:underline">{{ service.title }}</h3>
-                <p class="text-sm text-gray-600 mt-1">{{ service.desc }}</p>
-              </div>
-              <button @click="goToBooking(service.title)" :disabled="disableBooking" :class="[
-                'ml-4 px-4 py-1 rounded transition',
-                disableBooking ? 'bg-gray-300 text-gray-500 cursor-not-allowed' : 'bg-[#007EA7] text-white hover:bg-[#005f6b]'
-              ]">
-                Book Now
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
     </section>
   </div>
 </template>
@@ -128,16 +110,16 @@
 import { ref, computed, onMounted, watch } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import { auth } from '@/stores/auth';
+import ServiceCard from '@/components/ServiceCard.vue';
 
 const router = useRouter();
 const route = useRoute();
 const showMobileSearch = ref(false);
-
-const disableBooking = route.query.disableBooking === 'true';
 const searchQuery = ref('');
 const profilePicUrl = ref('');
+const disableBooking = route.query.disableBooking === 'true';
 
-
+// User profile handling
 onMounted(() => {
   const storedUserRaw = localStorage.getItem('user');
   const storedToken = localStorage.getItem('token');
@@ -148,110 +130,77 @@ onMounted(() => {
       auth.user = storedUser;
       auth.token = storedToken;
       auth.isLoggedIn = true;
-
-      if (storedUser.profilePic) {
-        profilePicUrl.value = `http://localhost:5000/uploads/${storedUser.profilePic}?t=${Date.now()}`;
-      }
-    } catch (err) {
-      console.error('Failed to parse user from localStorage', err);
+      if (storedUser.profilePic) profilePicUrl.value = `http://localhost:5000/uploads/${storedUser.profilePic}?t=${Date.now()}`;
+    } catch {
+      auth.user = null;
+      auth.token = null;
+      auth.isLoggedIn = false;
+      localStorage.removeItem('user');
+      localStorage.removeItem('token');
     }
-  } else {
-    auth.user = null;
-    auth.token = null;
-    auth.isLoggedIn = false;
-    localStorage.removeItem('user');
-    localStorage.removeItem('token');
   }
 });
 
-watch(
-  () => auth.user,
-  (newUser) => {
-    if (newUser?.profilePic) {
-      profilePicUrl.value = `http://localhost:5000/uploads/${newUser.profilePic}?t=${Date.now()}`;
-    } else {
-      profilePicUrl.value = '';
-    }
-  },
-  { immediate: true, deep: true }
-);
+watch(() => auth.user, (newUser) => {
+  if (newUser?.profilePic) {
+    profilePicUrl.value = `http://localhost:5000/uploads/${newUser.profilePic}?t=${Date.now()}`;
+  } else profilePicUrl.value = '';
+}, { immediate: true, deep: true });
 
+// Navigation methods
 const goToBooking = (serviceTitle) => {
-  if (!disableBooking) {
-    router.push({ path: '/booking', query: { service: serviceTitle } });
-  }
+  if (!disableBooking) router.push({ path: '/booking', query: { service: serviceTitle } });
 };
-
 const goToServiceDetails = (title, desc, category) => {
-  router.push({
-    name: 'ServiceDetails',
-    query: {
-      title,
-      desc,
-      category
-    }
-  });
+  router.push({ name: 'ServiceDetails', query: { title, desc, category } });
 };
 
-
-
+// Services data
 const services = [
-  {
-    title: '🛠️ Home & Repair Services',
-    items: [
-      { title: 'Carpenter', desc: 'Furniture repair, wooden work' },
-      { title: 'Electrician', desc: 'Wiring, appliance fitting, fans' },
-      { title: 'Plumber', desc: 'Pipe leakage, taps, water motors' },
-      { title: 'Mechanic', desc: 'Bike/car repair & servicing' },
-      { title: 'AC/Appliance Repair', desc: 'AC, fridge, washing machine repairs' },
-      { title: 'Painter', desc: 'House painting, texture walls' },
-      { title: 'Welder', desc: 'Metalwork, gates, frames' },
+  { title: '🛠️ Home & Repair Services', items: [
+      { title: 'Carpenter', desc: 'Furniture repair, wooden work', price: 299 },
+      { title: 'Electrician', desc: 'Wiring, appliance fitting, fans', price: 249 },
+      { title: 'Plumber', desc: 'Pipe leakage, taps, water motors', price: 199 },
+      { title: 'Mechanic', desc: 'Bike/car repair & servicing', price: 349 },
+      { title: 'AC/Appliance Repair', desc: 'AC, fridge, washing machine repairs', price: 399 },
+      { title: 'Painter', desc: 'House painting, texture walls', price: 299 },
+      { title: 'Welder', desc: 'Metalwork, gates, frames', price: 199 }
     ]
   },
-  {
-    title: '🧼 Cleaning & Maintenance',
-    items: [
-      { title: 'House Cleaner', desc: 'Daily/weekly cleaning' },
-      { title: 'Sofa/Curtain Cleaner', desc: 'Deep cleaning for fabrics' },
-      { title: 'Water Tank Cleaner', desc: 'Sanitation of overhead tanks' },
-      { title: 'Pest Control', desc: 'Termite, cockroach, mosquito control' },
+  { title: '🧼 Cleaning & Maintenance', items: [
+      { title: 'House Cleaner', desc: 'Daily/weekly cleaning', price: 149 },
+      { title: 'Sofa/Curtain Cleaner', desc: 'Deep cleaning for fabrics', price: 199 },
+      { title: 'Water Tank Cleaner', desc: 'Sanitation of overhead tanks', price: 249 },
+      { title: 'Pest Control', desc: 'Termite, cockroach, mosquito control', price: 299 },
     ]
   },
-  {
-    title: '🧑‍🌾 Outdoor & Utility',
-    items: [
-      { title: 'Gardener', desc: 'Planting, trimming, maintenance' },
-      { title: 'Security Guard', desc: 'Residential/commercial security' },
-      { title: 'Driver on Call', desc: 'Hourly/daily drivers' },
-      { title: 'Cook/Chef', desc: 'Part-time or full-time cooking help' },
+  { title: '🧑‍🌾 Outdoor & Utility', items: [
+      { title: 'Gardener', desc: 'Planting, trimming, maintenance', price: 199 },
+      { title: 'Security Guard', desc: 'Residential/commercial security', price: 299 },
+      { title: 'Driver on Call', desc: 'Hourly/daily drivers', price: 199 },
+      { title: 'Cook/Chef', desc: 'Part-time or full-time cooking help', price: 249 },
     ]
   },
-  {
-    title: '👩‍⚕️ Personal Services',
-    items: [
-      { title: 'Beautician', desc: 'Home salon, bridal makeup' },
-      { title: 'Massage Therapist', desc: 'Body massage, relaxation therapy' },
-      { title: 'Fitness Trainer', desc: 'Home workout or yoga sessions' },
-      { title: 'Babysitter', desc: 'Child care during office hours' },
+  { title: '👩‍⚕️ Personal Services', items: [
+      { title: 'Beautician', desc: 'Home salon, bridal makeup', price: 249 },
+      { title: 'Massage Therapist', desc: 'Body massage, relaxation therapy', price: 299 },
+      { title: 'Fitness Trainer', desc: 'Home workout or yoga sessions', price: 199 },
+      { title: 'Babysitter', desc: 'Child care during office hours', price: 149 },
     ]
   },
-  {
-    title: '💻 Tech & Digital Services',
-    items: [
-      { title: 'Laptop/PC Repair', desc: 'Hardware/software issues' },
-      { title: 'CCTV Installation', desc: 'Camera setup for home/shop' },
-      { title: 'Mobile Technician', desc: 'Screen repair, battery, etc.' },
-      { title: 'Internet Technician', desc: 'Router, broadband, Wi-Fi setup' },
+  { title: '💻 Tech & Digital Services', items: [
+      { title: 'Laptop/PC Repair', desc: 'Hardware/software issues', price: 299 },
+      { title: 'CCTV Installation', desc: 'Camera setup for home/shop', price: 249 },
+      { title: 'Mobile Technician', desc: 'Screen repair, battery, etc.', price: 199 },
+      { title: 'Internet Technician', desc: 'Router, broadband, Wi-Fi setup', price: 149 },
     ]
   },
-  {
-    title: '📦 Bonus Services',
-    items: [
-      { title: 'Courier Pickup/Delivery', desc: 'Local package pickup & drop' },
-      { title: 'House Shifting/Packers', desc: 'Relocation and moving help' },
-      { title: 'Tailor', desc: 'Stitching & alteration' },
-      { title: 'Event Decorator', desc: 'Events & party decoration' },
-      { title: 'Pet Groomer', desc: 'Pet care and grooming at home' },
+  { title: '📦 Bonus Services', items: [
+      { title: 'Courier Pickup/Delivery', desc: 'Local package pickup & drop', price: 99 },
+      { title: 'House Shifting/Packers', desc: 'Relocation and moving help', price: 399 },
+      { title: 'Tailor', desc: 'Stitching & alteration', price: 149 },
+      { title: 'Event Decorator', desc: 'Events & party decoration', price: 399 },
+      { title: 'Pet Groomer', desc: 'Pet care and grooming at home', price: 199 },
     ]
   }
 ];
@@ -260,12 +209,9 @@ const filteredResults = computed(() => {
   if (!searchQuery.value.trim()) return [];
   const query = searchQuery.value.toLowerCase();
   const results = [];
-  services.forEach((category) => {
-    category.items.forEach((item) => {
-      if (
-        item.title.toLowerCase().includes(query) ||
-        item.desc.toLowerCase().includes(query)
-      ) {
+  services.forEach(category => {
+    category.items.forEach(item => {
+      if (item.title.toLowerCase().includes(query) || item.desc.toLowerCase().includes(query)) {
         results.push({ ...item, category: category.title });
       }
     });
@@ -273,3 +219,4 @@ const filteredResults = computed(() => {
   return results;
 });
 </script>
+

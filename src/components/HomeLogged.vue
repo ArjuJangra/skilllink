@@ -283,7 +283,7 @@ const fetchUserProfile = async () => {
     const token = localStorage.getItem('token');
     if (!token) return;
     const { data } = await axios.get('http://localhost:5000/api/user/profile', {
-      headers: { Authorization: `Bearer ${token} `}
+      headers: { Authorization: `Bearer ${token}` }
     });
     user.value = data;
   } catch (error) {
