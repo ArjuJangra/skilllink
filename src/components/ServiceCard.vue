@@ -1,6 +1,6 @@
 <template>
-  <div
-    class="bg-white rounded-2xl shadow-md hover:shadow-xl transition-transform transform hover:-translate-y-1 duration-300 flex flex-col overflow-hidden"
+  <div   @click="goToDetails"
+    class="bg-white rounded-2xl shadow-md hover:shadow-xl transition-transform transform hover:-translate-y-1 duration-300 flex flex-col overflow-hidden  cursor-pointer max-w-sm w-full"
   >
     <!-- Optional Category Badge -->
     <div class="px-4 pt-4">
@@ -28,16 +28,28 @@
 
     <!-- Footer: Price & Action Button -->
     <div
-      class="px-4 py-3 border-t border-gray-100 flex items-center justify-between bg-gray-50"
+      class="px-4 py-3 border-t border-gray-100 flex items-center justify-end bg-gray-50"
     >
-      <span class="text-[#007EA7] font-bold text-base">
-        ₹{{ service.price || '199' }}
-      </span>
+      
       <button
         @click="goToDetails"
         class="bg-[#007EA7] text-white font-medium px-4 py-2 rounded-lg hover:bg-[#005f6b] transition duration-200 shadow-sm hover:shadow-md"
       >
         View Details
+         <svg
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke-width="1.5"
+          stroke="currentColor"
+          class="w-4 h-4 ml-1"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M17.25 8.25L21 12l-3.75 3.75M21 12H3"
+          />
+        </svg>
       </button>
     </div>
   </div>
@@ -65,7 +77,7 @@ const goToDetails = () => {
       title: s.title,
       desc: s.desc,
       category: s.category,
-      price: s.price || '199'
+      price: s.price || '299'
     }
   })
 }
@@ -75,10 +87,14 @@ const goToDetails = () => {
 /* Limit description text to 3 lines */
 .line-clamp-3 {
   display: -webkit-box;
-  -webkit-line-clamp: 3;
-  -webkit-box-orient: vertical;  
+  display: box; /* Legacy spec for older browsers */
+  -webkit-box-orient: vertical;
+  box-orient: vertical; /* Legacy spec */
+  -webkit-line-clamp: 3; /* Chrome, Safari, Edge */
+  line-clamp: 3; /* Standard property */
   overflow: hidden;
 }
+
 </style>
 
 

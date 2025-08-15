@@ -38,10 +38,8 @@
           </router-link>
 
           <!-- Notification Bell -->
-          <router-link
-            to="/notifications"
-            class="relative w-10 h-10 flex items-center justify-center rounded-full hover:ring-2 hover:ring-[#0073b1] transition"
-          >
+          <router-link to="/notifications"
+            class="relative w-10 h-10 flex items-center justify-center rounded-full hover:ring-2 hover:ring-[#0073b1] transition">
             <svg class="w-7 h-7 text-gray-700 hover:text-[#0073b1]" fill="none" stroke="currentColor" stroke-width="2"
               viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
               <path stroke-linecap="round" stroke-linejoin="round"
@@ -49,30 +47,21 @@
             </svg>
 
             <!-- 🔴 Badge -->
-            <span
-              v-if="unreadCount > 0"
-              class="absolute -top-0.5 -right-0.5 bg-red-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full"
-            >
+            <span v-if="unreadCount > 0"
+              class="absolute -top-0.5 -right-0.5 bg-red-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full">
               {{ unreadCount }}
             </span>
           </router-link>
 
           <!-- Profile Picture -->
           <router-link to="/profile">
-            <img
-              v-if="user && user.profilePic"
-              :src="'http://localhost:5000/uploads/' + user.profilePic"
+            <img v-if="user && user.profilePic" :src="'http://localhost:5000/uploads/' + user.profilePic"
               alt="User Profile"
               class="w-10 h-10 rounded-full object-cover border-2 border-[#0073b1] hover:ring-1 hover:ring-[#0073b1] transition"
-              loading="lazy"
-            />
-            <img
-              v-else
-              src="@/assets/user.png"
-              alt="Default Profile"
+              loading="lazy" />
+            <img v-else src="@/assets/user.png" alt="Default Profile"
               class="w-10 h-10 rounded-full object-cover border-2 border-[#0073b1] hover:ring-2 hover:ring-[#0073b1] transition"
-              loading="lazy"
-            />
+              loading="lazy" />
           </router-link>
         </div>
       </div>
@@ -96,12 +85,9 @@
       <div class="max-w-[1300px] mx-auto">
         <h3 class="text-2xl font-bold text-gray-800 mb-6 text-center">Services We Provide</h3>
         <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 sm:gap-6">
-          <router-link
-            v-for="service in services"
-            :key="service"
+          <router-link v-for="service in services" :key="service"
             :to="{ path: '/booking', query: { service: service } }"
-            class="bg-[#0073b1] text-white p-4 rounded-lg shadow text-center font-semibold transform hover:scale-105 hover:shadow-lg transition duration-300"
-          >
+            class="bg-[#0073b1] text-white p-4 rounded-lg shadow text-center font-semibold transform hover:scale-105 hover:shadow-lg transition duration-300">
             {{ service }}
           </router-link>
         </div>
@@ -115,18 +101,11 @@
           Some Cases We've Solved
         </h3>
         <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-          <div
-            v-for="caseItem in solvedCases"
-            :key="caseItem.title"
-            class="bg-white rounded-xl shadow-md overflow-hidden flex flex-col"
-          >
+          <div v-for="caseItem in solvedCases" :key="caseItem.title"
+            class="bg-white rounded-xl shadow-md overflow-hidden flex flex-col">
             <div class="w-full h-60 bg-gray-100 overflow-hidden">
-              <img
-                :src="caseItem.image"
-                :alt="caseItem.title"
-                class="w-full h-full object-cover object-top"
-                loading="lazy"
-              />
+              <img :src="caseItem.image" :alt="caseItem.title" class="w-full h-full object-cover object-top"
+                loading="lazy" />
             </div>
             <div class="p-4 flex-1">
               <h4 class="text-lg font-bold text-[#0073b1] mb-2">{{ caseItem.title }}</h4>
@@ -242,10 +221,8 @@
         <p class="text-gray-700 text-base sm:text-lg mb-2">📞 Phone: +91-9876543210</p>
         <p class="text-gray-700 text-base sm:text-lg mb-4">⏰ Support Hours: 9 AM – 7 PM (Mon to Sat)</p>
 
-        <router-link
-          to="/contact"
-          class="inline-block bg-[#0073b1] text-white px-6 py-2 rounded-lg hover:bg-[#005f91] transition"
-        >
+        <router-link to="/contact"
+          class="inline-block bg-[#0073b1] text-white px-6 py-2 rounded-lg hover:bg-[#005f91] transition">
           Send Us a Message
         </router-link>
       </div>
@@ -263,7 +240,7 @@ import { ref, onMounted } from 'vue';
 import axios from 'axios';
 import ServiceMap from '@/components/ServiceMap.vue';
 
-const user = ref(null);
+ const user = ref(null);
 const unreadCount = ref(0);
 
 const fetchUnreadCount = async () => {
