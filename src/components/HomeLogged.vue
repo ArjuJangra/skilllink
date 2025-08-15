@@ -107,6 +107,9 @@
             <div class="w-full aspect-[4/3] bg-gray-100 flex items-center justify-center overflow-hidden">
               <img :src="caseItem.image" :alt="caseItem.title" class="w-full h-full object-cover" loading="lazy" />
             </div>
+    
+
+      
             <div class="p-4 flex-1">
               <h4 class="text-lg font-bold text-[#0073b1] mb-2">{{ caseItem.title }}</h4>
               <p class="text-gray-700 text-sm">{{ caseItem.description }}</p>
