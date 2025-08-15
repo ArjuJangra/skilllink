@@ -99,22 +99,37 @@
 
     <!-- Solved Cases Section -->
     <section class="bg-blue-50 py-12 px-4">
-      <div class="max-w-[1300px] mx-auto">
-        <h3 class="text-2xl font-bold text-gray-800 mb-6 text-center">Some Cases We've Solved</h3>
-        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-          <div v-for="caseItem in solvedCases" :key="caseItem.title"
-            class="bg-white rounded-xl shadow-md overflow-hidden flex flex-col">
-            <div class="w-full aspect-[4/3] bg-gray-100 flex items-center justify-center overflow-hidden">
-              <img :src="caseItem.image" :alt="caseItem.title" class="w-full h-full object-cover" loading="lazy" />
-            </div>
-            <div class="p-4 flex-1">
-              <h4 class="text-lg font-bold text-[#0073b1] mb-2">{{ caseItem.title }}</h4>
-              <p class="text-gray-700 text-sm">{{ caseItem.description }}</p>
-            </div>
-          </div>
+  <div class="max-w-[1300px] mx-auto">
+    <h3 class="text-2xl font-bold text-gray-800 mb-6 text-center">
+      Some Cases We've Solved
+    </h3>
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+      <div
+        v-for="caseItem in solvedCases"
+        :key="caseItem.title"
+        class="bg-white rounded-xl shadow-md overflow-hidden flex flex-col"
+      >
+        <!-- Fixed Height Image (Fill Width, Keep Top Visible) -->
+        <div class="w-full h-60 bg-gray-100 overflow-hidden">
+          <img
+            :src="caseItem.image"
+            :alt="caseItem.title"
+            class="w-full h-full object-cover object-top"
+            loading="lazy"
+          />
+        </div>
+
+        <!-- Content -->
+        <div class="p-4 flex-1">
+          <h4 class="text-lg font-bold text-[#0073b1] mb-2">
+            {{ caseItem.title }}
+          </h4>
+          <p class="text-gray-700 text-sm">{{ caseItem.description }}</p>
         </div>
       </div>
-    </section>
+    </div>
+  </div>
+</section>
 
     <!-- About Section -->
     <section class="relative py-20 px-4 bg-gradient-to-br from-[#F0F9FF] via-white to-[#E6F4F9] overflow-hidden">
