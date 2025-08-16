@@ -162,14 +162,14 @@ const services = [
       { title: 'Electrician', desc: 'Wiring, appliance fitting, fans', price: 249 },
       { title: 'Plumber', desc: 'Pipe leakage, taps, water motors', price: 199 },
       { title: 'Mechanic', desc: 'Bike/car repair & servicing', price: 349 },
-      { title: 'AC/Appliance Repair', desc: 'AC, fridge, washing machine repairs', price: 399 },
+      { title: 'AC-Appliance Repair', desc: 'AC, fridge, washing machine repairs', price: 399 },
       { title: 'Painter', desc: 'House painting, texture walls', price: 299 },
       { title: 'Welder', desc: 'Metalwork, gates, frames', price: 199 }
     ]
   },
   { title: '🧼 Cleaning & Maintenance', items: [
       { title: 'House Cleaner', desc: 'Daily/weekly cleaning', price: 149 },
-      { title: 'Sofa/Curtain Cleaner', desc: 'Deep cleaning for fabrics', price: 199 },
+      { title: 'Sofa-Curtain Cleaner', desc: 'Deep cleaning for fabrics', price: 199 },
       { title: 'Water Tank Cleaner', desc: 'Sanitation of overhead tanks', price: 249 },
       { title: 'Pest Control', desc: 'Termite, cockroach, mosquito control', price: 299 },
     ]
@@ -178,7 +178,7 @@ const services = [
       { title: 'Gardener', desc: 'Planting, trimming, maintenance', price: 199 },
       { title: 'Security Guard', desc: 'Residential/commercial security', price: 299 },
       { title: 'Driver on Call', desc: 'Hourly/daily drivers', price: 199 },
-      { title: 'Cook/Chef', desc: 'Part-time or full-time cooking help', price: 249 },
+      { title: 'Cook-Chef', desc: 'Part-time or full-time cooking help', price: 249 },
     ]
   },
   { title: '👩‍⚕️ Personal Services', items: [
@@ -189,15 +189,15 @@ const services = [
     ]
   },
   { title: '💻 Tech & Digital Services', items: [
-      { title: 'Laptop/PC Repair', desc: 'Hardware/software issues', price: 299 },
+      { title: 'Laptop-PC Repair', desc: 'Hardware/software issues', price: 299 },
       { title: 'CCTV Installation', desc: 'Camera setup for home/shop', price: 249 },
       { title: 'Mobile Technician', desc: 'Screen repair, battery, etc.', price: 199 },
       { title: 'Internet Technician', desc: 'Router, broadband, Wi-Fi setup', price: 149 },
     ]
   },
   { title: '📦 Bonus Services', items: [
-      { title: 'Courier Pickup/Delivery', desc: 'Local package pickup & drop', price: 99 },
-      { title: 'House Shifting/Packers', desc: 'Relocation and moving help', price: 399 },
+      { title: 'Courier Pickup-Delivery', desc: 'Local package pickup & drop', price: 99 },
+      { title: 'Home Shifting', desc: 'Relocation and moving help', price: 399 },
       { title: 'Tailor', desc: 'Stitching & alteration', price: 149 },
       { title: 'Event Decorator', desc: 'Events & party decoration', price: 399 },
       { title: 'Pet Groomer', desc: 'Pet care and grooming at home', price: 199 },

@@ -33,7 +33,7 @@
       <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <!-- LEFT: Gallery + Overview -->
         <div class="lg:col-span-2 space-y-6">
-          
+          <!-- HERO: Carousel / Video -->
           <!-- HERO: Image Carousel -->
           <div class="relative rounded-3xl overflow-hidden shadow-[0_8px_30px_rgba(0,0,0,0.12)]">
             <div class="group relative h-[280px] sm:h-[360px] md:h-[420px] bg-gray-100">
@@ -511,21 +511,54 @@ export default {
       }).toString();
       this.$router.push(`/booking?${q}`);
     },
-   buildRelated() {
-  this.related = [
-    { title: 'AC Cleaning', category: 'AC Repair', desc: 'Complete cleaning & sanitization', image: '/images/related-1.jpg' },
-    { title: 'Electrical Checkup', category: 'Electrician', desc: 'Home safety audit', image: '/images/related-2.jpg' },
-    { title: 'Appliance Diagnosis', category: 'Home Appliance', desc: 'Quick issue identification', image: '/images/related-3.jpg' },
-  ];
-},
-    buildMediaFromTitle() {
-      const slug = (this.title || 'service').toLowerCase().replace(/\s+/g, '-');
-      this.media = [
-        { key: 'img1', type: 'image', src: `/images/${slug}.jpg` },
-        { key: 'img2', type: 'image', src: `/images/${slug}-2.jpg` },
-        { key: 'img3', type: 'image', src: `/images/${slug}-3.jpg` },
+    buildRelated() {
+      this.related = [
+        { title: 'AC Cleaning', category: 'AC Repair', desc: 'Complete cleaning & sanitization', image: '/images/related-1.jpg' },
+        { title: 'Electrical Checkup', category: 'Electrician', desc: 'Home safety audit', image: '/images/related-2.jpg' },
+        { title: 'Appliance Diagnosis', category: 'Home Appliance', desc: 'Quick issue identification', image: '/images/related-3.jpg' },
       ];
     },
+   buildMediaFromTitle() {
+  const slug = (this.title || 'service')
+    .toLowerCase()
+    .replace(/[\\?%*:|"<>]/g, '-') // removed useless escape
+    .replace(/\s+/g, '-')          // spaces -> dash
+    .replace(/-+/g, '-');           // collapse multiple dashes
+
+  const extensions = ['avif','jpg', 'jpeg', 'png', 'webp'];
+  const media = [];
+
+   for (let i = 1; i <= 3; i++) {
+    const base = `/images/${slug}${i > 1 ? `-${i}` : ''}`;
+
+    let found = false; // track success
+
+    const tryExt = async (extIndex = 0) => {
+      if (extIndex >= extensions.length || found) return;
+
+      const ext = extensions[extIndex];
+      const src = `${base}.${ext}`;
+
+      const img = new Image();
+      img.src = src;
+
+      img.onload = () => {
+        if (!found) {
+          found = true;
+          media.push({ key: `img${i}`, type: 'image', src });
+          this.media = [...media]; // reactive update
+        }
+      };
+
+      img.onerror = () => {
+        // only try next extension if not found yet
+        if (!found) tryExt(extIndex + 1);
+      };
+    };
+
+    tryExt(); // start with jpg
+  }
+} ,
   },
   mounted() {
     const { title, desc, category } = this.$route.query;
