@@ -16,20 +16,18 @@ const bookingSchema = new mongoose.Schema({
   name: { type: String, required: true },       // Customer name
   contact: { type: String, required: true },
   address: { type: String, required: true },
-  description: { type: String },                // Problem description
-  date: { type: Date },                         // Preferred service date
-
+  description: { type: String },                
+  date: { type: Date },                         
   status: {
     type: String,
     enum: ['Pending', 'Confirmed', 'Accepted', 'Completed', 'Rejected', 'Cancelled'],
     default: 'Pending'
   },
-   price: {
+  price: {
     type: Number,
-    required: false,  
+    required: false,
     default: 100
   }
-
 }, { timestamps: true });
 
 module.exports = mongoose.model('Booking', bookingSchema);

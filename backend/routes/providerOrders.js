@@ -29,36 +29,35 @@ router.put('/:id/status', authenticateUser, async (req, res) => {
     if (!order) {
       return res.status(404).json({ message: 'Order not found' });
     }
-console.log('🔐 Authenticated Provider ID:', req.user.id);
-console.log('📦 Order Provider ID:', order.providerId?.toString());
+    console.log('🔐 Authenticated Provider ID:', req.user.id);
+    console.log('📦 Order Provider ID:', order.providerId?.toString());
 
-    if (order.providerId?._id?.toString() !== req.user.id)
- {
+    if (order.providerId?._id?.toString() !== req.user.id) {
       return res.status(403).json({ message: 'Not authorized' });
     }
 
     order.status = status;
 
-await Notification.create({
-  userId: order.userId._id,
-  type: status === 'Accepted' ? 'OrderAccepted' : 'OrderRejected',
-  message: `Your order has been ${status.toLowerCase()} by ${order.providerId?.name || 'Provider'}`,
-});
+    await Notification.create({
+      userId: order.userId._id,
+      type: status === 'Accepted' ? 'OrderAccepted' : 'OrderRejected',
+      message: `Your order has been ${status.toLowerCase()} by ${order.providerId?.name || 'Provider'}`,
+    });
 
     await order.save();
 
     //  Emit real-time update if accepted
- if (status === 'Accepted') {
-  global.io.to(order.userId._id.toString()).emit('orderAccepted', {
-    providerName: order.providerId?.name || 'Provider',
-    bookingId: order._id
-  });
-} else if (status === 'Rejected') {
-  global.io.to(order.userId._id.toString()).emit('orderRejected', {
-    providerName: order.providerId?.name || 'Provider',
-    bookingId: order._id
-  });
-}
+    if (status === 'Accepted') {
+      global.io.to(order.userId._id.toString()).emit('orderAccepted', {
+        providerName: order.providerId?.name || 'Provider',
+        bookingId: order._id
+      });
+    } else if (status === 'Rejected') {
+      global.io.to(order.userId._id.toString()).emit('orderRejected', {
+        providerName: order.providerId?.name || 'Provider',
+        bookingId: order._id
+      });
+    }
 
     res.json({ message: 'Order status updated', order });
   } catch (err) {
@@ -67,32 +66,43 @@ await Notification.create({
   }
 });
 
-// GET /api/providers/orders/stats
+
 router.get('/stats', authenticateUser, async (req, res) => {
   try {
-    const providerId = new mongoose.Types.ObjectId(req.user.id);
-
-    const orders = await Booking.find({ providerId });
-    console.log("📦 Total Orders for Provider:", orders.length);
+    // Fetch all orders for this provider (no need to call ObjectId)
+    const orders = await Booking.find({ providerId: req.user.id });
 
     const completed = orders.filter(order => order.status === 'Completed');
-    console.log("✅ Completed Orders:", completed.length);
+    const earnings = completed.reduce((sum, order) => sum + (Number(order.price) || 0), 0);
 
-    const earnings = completed.reduce((total, order) => {
-      return total + (order.price || 0);
-    }, 0);
-    console.log("💰 Earnings:", earnings);
+    const earningsData = Array(12).fill(0);
+
+    completed.forEach(order => {
+      const date = order.createdAt ? new Date(order.createdAt)
+                 : order.date ? new Date(order.date)
+                 : order.updatedAt ? new Date(order.updatedAt)
+                 : null;
+
+      if (date && !isNaN(date.getTime())) {
+        const month = date.getMonth();
+        earningsData[month] += Number(order.price) || 0;
+      }
+    });
+
+    console.log('Monthly earnings array:', earningsData);
 
     res.json({
       total: orders.length,
       completed: completed.length,
-      earnings
+      earnings,
+      earningsData
     });
   } catch (err) {
-    console.error('❌ Error in stats route:', err);
+    console.error('Error fetching stats:', err);
     res.status(500).json({ message: 'Failed to fetch stats' });
   }
 });
+
 
 // GET /api/providers/orders/recent
 router.get('/recent', authenticateUser, async (req, res) => {
@@ -106,6 +116,5 @@ router.get('/recent', authenticateUser, async (req, res) => {
     res.status(500).json({ message: 'Failed to fetch recent orders' });
   }
 });
-
 
 module.exports = router;
