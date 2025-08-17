@@ -521,44 +521,48 @@ export default {
    buildMediaFromTitle() {
   const slug = (this.title || 'service')
     .toLowerCase()
-    .replace(/[\\?%*:|"<>]/g, '-') // removed useless escape
-    .replace(/\s+/g, '-')          // spaces -> dash
-    .replace(/-+/g, '-');           // collapse multiple dashes
+    .replace(/[\\?%*:|"<>]/g, '-')
+    .replace(/\s+/g, '-')
+    .replace(/-+/g, '-');
 
-  const extensions = ['avif','jpg', 'jpeg', 'png', 'webp'];
+  const extensions = ['avif', 'jpg', 'jpeg', 'png', 'webp'];
   const media = [];
 
-   for (let i = 1; i <= 3; i++) {
-    const base = `/images/${slug}${i > 1 ? `-${i}` : ''}`;
+  const checkImage = async (src) => {
+    try {
+      const res = await fetch(src, { method: 'HEAD' });
+      return res.ok;
+    } catch {
+      return false;
+    }
+  };
 
-    let found = false; // track success
+  const loadImages = async () => {
+    for (let i = 1; i <= 3; i++) {
+      const base = `/images/${slug}${i > 1 ? `-${i}` : ''}`;
+      let found = false;
 
-    const tryExt = async (extIndex = 0) => {
-      if (extIndex >= extensions.length || found) return;
-
-      const ext = extensions[extIndex];
-      const src = `${base}.${ext}`;
-
-      const img = new Image();
-      img.src = src;
-
-      img.onload = () => {
-        if (!found) {
-          found = true;
+      for (let ext of extensions) {
+        const src = `${base}.${ext}`;
+        const exists = await checkImage(src);
+        if (exists) {
           media.push({ key: `img${i}`, type: 'image', src });
-          this.media = [...media]; // reactive update
+          found = true;
+          break; // stop checking other extensions
         }
-      };
+      }
 
-      img.onerror = () => {
-        // only try next extension if not found yet
-        if (!found) tryExt(extIndex + 1);
-      };
-    };
+      // fallback if no image found
+      if (!found) {
+        media.push({ key: `img${i}`, type: 'image', src: '/images/default-service.jpg' });
+      }
+    }
 
-    tryExt(); // start with jpg
-  }
-} ,
+    this.media = media; // reactive update
+  };
+
+  loadImages();
+},
   },
   mounted() {
     const { title, desc, category } = this.$route.query;

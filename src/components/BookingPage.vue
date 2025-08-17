@@ -171,7 +171,7 @@ const confirmBooking = async () => {
         name: name.value,
         contact: contact.value,
         address: address.value,
-        total: total.value,
+         price: getSelectedPrice(), 
         coupon: couponCode.value,
         paymentStatus: 'paid'
       },
