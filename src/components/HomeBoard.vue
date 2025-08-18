@@ -7,17 +7,17 @@
         <h1 class="text-xl sm:text-2xl font-bold text-[#0073b1]">SkillLink</h1>
       </div>
 
-      <div class="flex flex-wrap justify-center sm:justify-end items-center gap-3 sm:gap-6 w-full sm:w-auto">
+      <div class="flex flex-wrap justify-center sm:justify-end items-center gap-3 sm:gap-3 w-full sm:w-auto">
         <router-link to="/about"
-          class="text-sm sm:text-lg font-semibold text-gray-600 hover:text-[#0073b1] hover:bg-gray-100  px-3 py-2 rounded-lg transition hover:scale-105">
+          class="text-sm sm:text-lg font-semibold text-gray-600 hover:text-[#0073b1] px-3 py-2 rounded-lg transition hover:scale-105">
           About Us
         </router-link>
         <router-link to="/contact"
-          class="text-sm sm:text-lg font-semibold text-gray-600 hover:text-[#0073b1] hover:bg-gray-100 px-3 py-2 rounded-lg transition hover:scale-105">
+          class="text-sm sm:text-lg font-semibold text-gray-600 hover:text-[#0073b1] px-3 py-2 rounded-lg transition hover:scale-105">
           Contact
         </router-link>
         <router-link :to="{ path: '/help', query: { from: 'homelogged' } }"
-          class="text-sm sm:text-lg font-semibold text-gray-600 hover:text-[#0073b1] hover:bg-gray-100  px-3 py-2 rounded-lg transition hover:scale-105">
+          class="text-sm sm:text-lg font-semibold text-gray-600 hover:text-[#0073b1] px-3 py-2 rounded-lg transition hover:scale-105">
           Help
         </router-link>
         <router-link :to="{ path: '/home', query: { disableBooking: true } }">
@@ -32,6 +32,7 @@
             Book Service
           </button>
         </router-link>
+        
         <router-link to="/login">
           <button class="px-4 py-2 bg-[#0073b1] text-white font-semibold rounded-lg hover:bg-[#005f91] transition">
             Login/Sign Up
