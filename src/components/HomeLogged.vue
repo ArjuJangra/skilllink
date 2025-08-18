@@ -5,7 +5,7 @@
       class="w-full sticky top-0 z-50 backdrop-blur-md bg-gradient-to-r from-white via-[#f1faff] to-[#f5fafe] shadow-md">
       <div class="max-w-[1300px] mx-auto flex flex-wrap justify-between items-center px-4 sm:px-6 py-3 gap-y-2">
         <!-- Logo -->
-        <div class="flex items-center gap-3">
+        <div class="flex items-center gap-3 mx-5">
           <img src="@/assets/skilllogo.png" alt="SkillLink Logo"
             class="w-10 h-10 sm:w-12 sm:h-12 rounded-full transition-transform hover:rotate-12" loading="lazy" />
           <h1 class="text-xl sm:text-2xl font-bold text-[#0073b1]">SkillLink</h1>
@@ -20,13 +20,20 @@
 
           <!-- Book Service Button -->
           <router-link to="/home"
-            class="inline-block px-5 py-2.5 bg-[#0073b1] text-white font-semibold text-sm sm:text-base rounded-lg shadow-md hover:bg-[#005e91] transition duration-200 focus:outline-none focus:ring-2 focus:ring-[#0073b1] focus:ring-offset-2">
-            Book Service
+            class="relative flex items-center gap-2 px-4 py-2 text-gray-600 font-semibold text-sm sm:text-base rounded-lg  hover:text-[#0073b1] transition duration-200 focus:outline-none focus:ring-2 focus:ring-[#0073b1] focus:ring-offset-2">
+            <svg xmlns="http://www.w3.org/2000/svg" width="800px" height="800px" viewBox="0 0 1024 1024" fill="#000000"
+              class="w-6 h-6 fill-current">
+              <path
+                d="M959.018 208.158c0.23-2.721 0.34-5.45 0.34-8.172 0-74.93-60.96-135.89-135.89-135.89-1.54 0-3.036 0.06-6.522 0.213l-611.757-0.043c-1.768-0.085-3.563-0.17-5.424-0.17-74.812 0-135.67 60.84-135.67 135.712l0.188 10.952h-0.306l0.391 594.972-0.162 20.382c0 74.03 60.22 134.25 134.24 134.25 1.668 0 7.007-0.239 7.1-0.239l608.934 0.085c2.985 0.357 6.216 0.468 9.55 0.468 35.815 0 69.514-13.954 94.879-39.302 25.373-25.34 39.344-58.987 39.344-94.794l-0.145-12.015h0.918l-0.008-606.41z m-757.655 693.82l-2.585-0.203c-42.524 0-76.146-34.863-76.537-79.309V332.671H900.79l0.46 485.186-0.885 2.865c-0.535 1.837-0.8 3.58-0.8 5.17 0 40.382-31.555 73.766-71.852 76.002l-10.816 0.621v-0.527l-615.533-0.01zM900.78 274.424H122.3l-0.375-65.934 0.85-2.924c0.52-1.82 0.782-3.63 0.782-5.247 0-42.236 34.727-76.665 78.179-76.809l0.45-0.068 618.177 0.018 2.662 0.203c42.329 0 76.767 34.439 76.767 76.768 0 1.326 0.196 2.687 0.655 4.532l0.332 0.884v68.577z" />
+              <path
+                d="M697.67 471.435c-7.882 0-15.314 3.078-20.918 8.682l-223.43 223.439L346.599 596.84c-5.544-5.603-12.95-8.69-20.842-8.69s-15.323 3.078-20.918 8.665c-5.578 5.518-8.674 12.9-8.7 20.79-0.017 7.908 3.07 15.357 8.69 20.994l127.55 127.558c5.57 5.56 13.01 8.622 20.943 8.622 7.925 0 15.364-3.06 20.934-8.63l244.247-244.247c5.578-5.511 8.674-12.883 8.7-20.783 0.017-7.942-3.079-15.408-8.682-20.986-5.552-5.612-12.958-8.698-20.85-8.698z" />
+            </svg>
+            <span>Book Service</span>
           </router-link>
 
           <!-- Notification Bell -->
           <router-link to="/notifications"
-            class="relative w-10 h-10 flex items-center justify-center rounded-full hover:ring-2 hover:ring-[#0073b1] transition">
+            class="relative w-10 h-10 flex items-center justify-center rounded-full hover:text-[#0073b1] transition duration-200 focus:outline-none focus:ring-2 focus:ring-[#0073b1] focus:ring-offset-2">
             <svg class="w-7 h-7 text-gray-700 hover:text-[#0073b1]" fill="none" stroke="currentColor" stroke-width="2"
               viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
               <path stroke-linecap="round" stroke-linejoin="round"
@@ -200,117 +207,135 @@
     </section>
 
     <!-- Contact Section -->
-    <section class="bg-blue-50 py-12 px-4 text-center">
-      <div class="max-w-[1300px] mx-auto">
+    <section class="bg-blue-50 py-4 px-4">
+      <div class="max-w-4xl mx-auto text-center">
+        <!-- Title -->
         <h3 class="text-2xl font-bold text-gray-800 mb-4">Contact Us</h3>
-        <p class="text-gray-700 text-base sm:text-lg mb-2">📧 Email: <a href="mailto:support@skilllink.in"
-            class="text-[#0073b1] underline">connectteamskilllink@gmail.com</a></p>
-        <p class="text-gray-700 text-base sm:text-lg mb-2">📞 Phone: +91-9876543210</p>
-        <p class="text-gray-700 text-base sm:text-lg mb-4">⏰ Support Hours: 9 AM – 7 PM (Mon to Sat)</p>
+        <p class="text-gray-600 mb-8">
+          Need help? Reach out to our team quickly and easily.
+        </p>
 
+        <!-- Contact Info Row -->
+        <div class="flex flex-col sm:flex-row justify-center gap-6 mb-6">
+          <!-- Email -->
+          <div class="flex items-center gap-2 text-gray-700">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-[#0073b1]" fill="none" viewBox="0 0 24 24"
+              stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M16 12H8m0 0l4-4m0 8l-4-4m12-4v12a2 2 0 01-2 2H6a2 2 0 01-2-2V8a2 2 0 012-2h12a2 2 0 012 2z" />
+            </svg>
+            <a href="mailto:connectteamskilllink@gmail.com" class="hover:underline">
+              connectteamskilllink@gmail.com
+            </a>
+          </div>
+
+          <!-- Phone -->
+          <div class="flex items-center gap-2 text-gray-700">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-[#0073b1]" fill="none" viewBox="0 0 24 24"
+              stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M3 5a2 2 0 012-2h2l1 5-1 1c.5.5 2.5 2.5 3 3l1-1 5 1v2a2 2 0 01-2 2H5a2 2 0 01-2-2V5z" />
+            </svg>
+            <span>+91-9876543210</span>
+          </div>
+
+          <!-- Hours -->
+          <div class="flex items-center gap-2 text-gray-700">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-[#0073b1]" fill="none" viewBox="0 0 24 24"
+              stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <span>Mon – Sat, 9 AM – 7 PM</span>
+          </div>
+        </div>
+
+        <!-- Call to Action -->
         <router-link to="/contact"
-          class="inline-block bg-[#0073b1] text-white px-6 py-2 rounded-lg hover:bg-[#005f91] transition">
-          Send Us a Message
+          class="inline-block bg-[#0073b1] text-white font-semibold px-6 py-2 rounded hover:bg-[#005f91] transition">
+          Send a Message
         </router-link>
       </div>
     </section>
 
     <!-- Footer -->
-    <footer class="bg-[#0073b1] text-white pt-10 pb-6">
-      <div class="max-w-7xl mx-auto px-6 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8">
+    <footer class="bg-[#0073b1] text-white pt-8 pb-2">
+      <div class="max-w-6xl mx-auto px-6 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
 
         <!-- Brand -->
-        <div>
-          <h2 class="text-2xl font-bold mb-3">SkillLink</h2>
+        <div class="flex flex-col gap-4">
+          <h2 class="text-2xl font-bold">SkillLink</h2>
           <p class="text-sm leading-relaxed">
             Connecting skilled professionals with customers quickly, easily, and reliably.
           </p>
+          <!-- Socials -->
+          <div class="flex items-center gap-4">
+            <a href="#" class="hover:text-[#00A8E8] transition-colors">
+              <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                <path
+                  d="M22.46 6c-.77.35-1.6.59-2.46.69a4.26 4.26 0 001.88-2.36 8.5 8.5 0 01-2.7 1.03 4.24 4.24 0 00-7.23 3.86 12.04 12.04 0 01-8.74-4.44 4.24 4.24 0 001.31 5.66 4.22 4.22 0 01-1.92-.53v.05a4.24 4.24 0 003.39 4.15 4.28 4.28 0 01-1.91.07 4.24 4.24 0 003.96 2.95A8.51 8.51 0 012 19.54a12 12 0 006.29 1.84c7.55 0 11.68-6.26 11.68-11.68 0-.18 0-.36-.01-.54A8.34 8.34 0 0024 4.56a8.19 8.19 0 01-2.36.65 4.18 4.18 0 001.84-2.3z" />
+              </svg>
+            </a>
+            <a href="#" class="hover:text-[#00A8E8] transition-colors">
+              <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                <path
+                  d="M22.23 0H1.77C.79 0 0 .77 0 1.72v20.56C0 23.23.79 24 1.77 24h10.96v-9.33H9.69V11h2.99V8.41c0-2.96 1.8-4.57 4.44-4.57 1.26 0 2.34.09 2.66.13v3.08l-1.83.001c-1.44 0-1.72.68-1.72 1.68V11h3.44l-.45 3.67h-2.99V24h5.88c.98 0 1.77-.77 1.77-1.72V1.72C24 .77 23.21 0 22.23 0z" />
+              </svg>
+            </a>
+            <a href="#" class="hover:text-[#00A8E8] transition-colors">
+              <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                <path
+                  d="M12 2.04c-5.52 0-10 4.48-10 10 0 4.42 2.87 8.18 6.84 9.51.5.09.68-.22.68-.48v-1.69c-2.78.61-3.37-1.34-3.37-1.34-.45-1.15-1.11-1.46-1.11-1.46-.91-.62.07-.61.07-.61 1.01.07 1.54 1.04 1.54 1.04.89 1.52 2.34 1.08 2.91.83.09-.65.35-1.08.64-1.33-2.22-.25-4.55-1.11-4.55-4.95 0-1.09.39-1.99 1.03-2.69-.1-.25-.45-1.27.1-2.65 0 0 .84-.27 2.75 1.03A9.57 9.57 0 0112 6.8c.85.004 1.71.115 2.51.337 1.91-1.3 2.75-1.03 2.75-1.03.55 1.38.2 2.4.1 2.65.64.7 1.03 1.6 1.03 2.69 0 3.85-2.34 4.7-4.57 4.95.36.31.68.91.68 1.84v2.73c0 .26.18.57.69.48A10.003 10.003 0 0022 12.04c0-5.52-4.48-10-10-10z" />
+              </svg>
+            </a>
+          </div>
         </div>
 
         <!-- Quick Links -->
-        <div>
-          <h3 class="text-lg font-semibold mb-3">Quick Links</h3>
-          <ul class="space-y-2 text-sm">
-            <router-link to="/about"
-              class="relative flex items-center gap-2 px-3 py-2 text-white  transition font-medium"
-              active-class="text-[#0073b1] font-semibold after:absolute after:left-0 after:right-0 after:-bottom-1 after:h-[2px] after:bg-[#0073b1] after:rounded-full">
-              <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                <path
-                  d="M12 2a10 10 0 1 0 10 10A10.011 10.011 0 0 0 12 2zm0 15a1 1 0 1 1 1-1 1 1 0 0 1-1 1zm1-4h-2V7h2z" />
-              </svg>
-              <span>About</span>
-            </router-link>
-
-            <router-link to="/home"
-              class="relative flex items-center gap-2 px-3 py-2 text-white  transition font-medium"
-              active-class="text-[#0073b1] font-semibold after:absolute after:left-0 after:right-0 after:-bottom-1 after:h-[2px] after:bg-[#0073b1] after:rounded-full">
-              <!-- Icon: Briefcase for Services -->
-              <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M12 7V3m0 0L8 7h8l-4-4zm-6 8h12M6 15v6h12v-6M6 15h12" />
-              </svg>
-              <span>Services</span>
-            </router-link>
-
-            <router-link to="/contact"
-              class="relative flex items-center gap-2 px-3 py-2 text-white hover transition font-medium"
-              active-class="text-[#0073b1] font-semibold after:absolute after:left-0 after:right-0 after:-bottom-1 after:h-[2px] after:bg-[#0073b1] after:rounded-full">
-              <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                <path
-                  d="M21 16.5a17.05 17.05 0 0 1-7.5-7.5l2.2-2.2a1 1 0 0 0 .2-1.1l-2-5A1 1 0 0 0 12 0H7a2 2 0 0 0-2 2 19 19 0 0 0 19 19 2 2 0 0 0 2-2v-5a1 1 0 0 0-.7-.95l-5-2a1 1 0 0 0-1.1.2z" />
-              </svg>
-              <span>Contact</span>
-            </router-link>
-          </ul>
+        <div class="flex flex-col gap-3">
+          <h3 class="text-lg font-semibold">Quick Links</h3>
+          <router-link to="/about" class="hover:text-[#00A8E8] transition">About</router-link>
+          <router-link to="/home" class="hover:text-[#00A8E8] transition">Services</router-link>
+          <router-link to="/faq" class="hover:text-[#00A8E8] transition">FAQ</router-link>
+          <router-link to="/privacy" class="hover:text-[#00A8E8] transition">Privacy Policy</router-link>
         </div>
 
-        <!-- Support -->
-        <div>
-          <h3 class="text-lg font-semibold mb-3">Support</h3>
-          <ul class="space-y-2 text-sm">
-            <li><a href="/faq" class="hover:underline">FAQ</a></li>
-            <li><a href="/privacy" class="hover:underline">Privacy Policy</a></li>
-            <li><a href="/terms" class="hover:underline">Terms & Conditions</a></li>
-            <router-link :to="{ path: '/help', query: { from: 'homelogged' } }"
-              class="px-3 py-2 text-sm sm:text-lg font-bold text-white  rounded-lg transition-all duration-200 hover:scale-105">
-              Help
-            </router-link>
-          </ul>
+        <!-- Support & Help -->
+        <div class="flex flex-col gap-3">
+          <h3 class="text-lg font-semibold">Support</h3>
+          <router-link to="/terms" class="hover:text-[#00A8E8] transition">Terms & Conditions</router-link>
+          <router-link :to="{ path: '/help', query: { from: 'homelogged' } }"
+            class="hover:text-[#00A8E8] transition font-semibold">Help</router-link>
         </div>
 
         <!-- Contact -->
+        <div class="flex flex-col gap-3">
+          <router-link to="/contact" class="text-lg font-semibold hover:text-[#00A8E8] transition">
+            Contact Us
+          </router-link>
 
-        <div>
-          <h3 class="text-lg font-semibold mb-3">Contact Us</h3>
-
-          <div class="flex items-center mb-2 space-x-2">
-            <!-- Location Icon -->
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-white" fill="none" viewBox="0 0 24 24"
+          <div class="flex items-center gap-2">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24"
               stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                d="M12 11c1.656 0 3-1.344 3-3s-1.344-3-3-3-3 1.344-3 3 1.344 3 3 3z" />
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                d="M12 2C8.686 2 6 5.686 6 11c0 5.313 6 11 6 11s6-5.687 6-11c0-5.314-2.686-9-6-9z" />
+                d="M12 11c1.656 0 3-1.344 3-3s-1.344-3-3-3-3 1.344-3 3 1.344 3 3 3zM12 2C8.686 2 6 5.686 6 11c0 5.313 6 11 6 11s6-5.687 6-11c0-5.314-2.686-9-6-9z" />
             </svg>
-            <span class="text-sm">Sector 41, Gurugram, India</span>
+            <span>Sector 41, Gurugram</span>
           </div>
-
-          <div class="flex items-center mb-2 space-x-2">
-            <!-- Email Icon -->
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-white" fill="none" viewBox="0 0 24 24"
+          <div class="flex items-center gap-2">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24"
               stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 12l-4-4-4 4m8 0l-4 4-4-4" />
             </svg>
-            <span class="text-sm"> connectteamskilllink@gmail.com</span>
+            <a href="mailto:connectteamskilllink@gmail.com" class="hover:underline">connectteamskilllink@gmail.com</a>
           </div>
-
-          <div class="flex items-center mb-2 space-x-2">
-            <!-- Phone Icon -->
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-white" fill="none" viewBox="0 0 24 24"
+          <div class="flex items-center gap-2">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24"
               stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                 d="M3 5a2 2 0 012-2h3l2 5-2.5 2.5a11.042 11.042 0 005 5L14 14l5 2v3a2 2 0 01-2 2h-1C7.163 21 3 16.837 3 11V5z" />
             </svg>
-            <span class="text-sm">+91 98765 43210</span>
+            <span>+91 98765 43210</span>
           </div>
         </div>
 
