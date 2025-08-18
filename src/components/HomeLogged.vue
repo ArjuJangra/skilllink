@@ -2,12 +2,12 @@
   <div class="min-h-screen bg-gray-50 flex flex-col">
     <!-- Navbar -->
     <header
-      class="w-full sticky top-0 z-50 backdrop-blur-md bg-gradient-to-r from-white via-[#f1faff] to-[#f5fafe] shadow-md">
-      <div class="max-w-[1300px] mx-auto flex flex-wrap justify-between items-center px-4 sm:px-6 py-3 gap-y-2">
+      class="w-full sticky top-0 z-50 backdrop-blur-md bg-gradient-to-r from-white via-[#f1faff] to-[#f5fafe] shadow-md gap-4 mx-auto">
+      <div class="max-w-[1300px] mx-auto flex flex-wrap justify-between items-center px-2 sm:px-6 py-3">
         <!-- Logo -->
-        <div class="flex items-center gap-3 mx-5">
+        <div class="flex items-center gap-2">
           <img src="@/assets/skilllogo.png" alt="SkillLink Logo"
-            class="w-10 h-10 sm:w-12 sm:h-12 rounded-full transition-transform hover:rotate-12" loading="lazy" />
+            class="w-10 h-10 sm:w-12 sm:h-12 transition-transform hover:rotate-12" loading="lazy" />
           <h1 class="text-xl sm:text-2xl font-bold text-[#0073b1]">SkillLink</h1>
         </div>
 
@@ -60,7 +60,6 @@
         </div>
       </div>
     </header>
-
     <!-- Hero Section -->
     <section class="text-center py-10 px-4 bg-gradient-to-br from-blue-100 to-white">
       <div class="max-w-[1300px] mx-auto">
@@ -73,7 +72,6 @@
         </p>
       </div>
     </section>
-
     <!-- Services Section -->
     <section class="bg-white py-12 px-4">
       <div class="max-w-[1300px] mx-auto">
@@ -87,7 +85,6 @@
         </div>
       </div>
     </section>
-
     <!-- Solved Cases Section -->
     <section class="bg-blue-50 py-12 px-4">
       <div class="max-w-[1300px] mx-auto">
@@ -109,7 +106,6 @@
         </div>
       </div>
     </section>
-
     <!-- About Section -->
     <section class="relative py-20 px-4 bg-gradient-to-br from-[#F0F9FF] via-white to-[#E6F4F9] overflow-hidden">
       <!-- SVG Background -->
@@ -197,7 +193,6 @@
         </p>
       </div>
     </section>
-
     <!-- Service Area Map Section -->
     <section class="py-12 bg-blue-50 px-4">
       <div class="max-w-screen-xl mx-auto text-center">
@@ -205,7 +200,6 @@
         <ServiceMap />
       </div>
     </section>
-
     <!-- Contact Section -->
     <section class="bg-blue-50 py-4 px-4">
       <div class="max-w-4xl mx-auto text-center">
@@ -257,11 +251,9 @@
         </router-link>
       </div>
     </section>
-
     <!-- Footer -->
     <footer class="bg-[#0073b1] text-white pt-8 pb-2">
       <div class="max-w-6xl mx-auto px-6 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
-
         <!-- Brand -->
         <div class="flex flex-col gap-4">
           <h2 class="text-2xl font-bold">SkillLink</h2>
@@ -290,29 +282,26 @@
             </a>
           </div>
         </div>
-
         <!-- Quick Links -->
         <div class="flex flex-col gap-3">
           <h3 class="text-lg font-semibold">Quick Links</h3>
           <router-link to="/about" class="hover:text-[#00A8E8] transition">About</router-link>
           <router-link to="/home" class="hover:text-[#00A8E8] transition">Services</router-link>
-          <router-link to="/faq" class="hover:text-[#00A8E8] transition">FAQ</router-link>
-          <router-link to="/privacy" class="hover:text-[#00A8E8] transition">Privacy Policy</router-link>
+          <router-link to="/help" class="hover:text-[#00A8E8] transition">FAQ</router-link>
+         
         </div>
-
         <!-- Support & Help -->
         <div class="flex flex-col gap-3">
           <h3 class="text-lg font-semibold">Support</h3>
-          <router-link to="/terms" class="hover:text-[#00A8E8] transition">Terms & Conditions</router-link>
-          <router-link :to="{ path: '/help', query: { from: 'homelogged' } }"
-            class="hover:text-[#00A8E8] transition font-semibold">Help</router-link>
-        </div>
-
-        <!-- Contact -->
-        <div class="flex flex-col gap-3">
-          <router-link to="/contact" class="text-lg font-semibold hover:text-[#00A8E8] transition">
+          <router-link to="/contact" class="  hover:text-[#00A8E8] transition">
             Contact Us
           </router-link>
+          <router-link to="/privacy" class="hover:text-[#00A8E8] transition">Privacy Policy</router-link>
+          <router-link to="/terms" class="hover:text-[#00A8E8] transition">Terms & Conditions</router-link>
+        </div>
+        <!-- Contact -->
+        <div class="flex flex-col gap-3">
+          <h3 class="text-lg font-semibold">Reach Us</h3>
 
           <div class="flex items-center gap-2">
             <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24"
@@ -338,9 +327,7 @@
             <span>+91 98765 43210</span>
           </div>
         </div>
-
       </div>
-
       <!-- Bottom -->
       <div class="border-t border-white/20 mt-8 pt-4 text-center text-sm">
         © 2025 SkillLink. All rights reserved.
@@ -355,7 +342,7 @@ import { ref, onMounted } from 'vue';
 import axios from 'axios';
 import ServiceMap from '@/components/ServiceMap.vue';
 
-const user = ref(null);
+ const user = ref(null);
 const unreadCount = ref(0);
 
 const fetchUnreadCount = async () => {

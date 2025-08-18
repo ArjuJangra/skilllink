@@ -1,27 +1,27 @@
 <template>
   <div class="min-h-screen bg-gray-50">
     <!-- Navbar -->
-    <header class="flex flex-wrap justify-between items-center px-4 sm:px-6 py-4 bg-white max-w-7xl mx-auto gap-4">
+    <header class="flex  sticky top-0 z-50 flex-wrap justify-between items-center px-4 sm:px-6 py-4 bg-white max-w-7xl mx-auto gap-4">
       <div class="flex items-center gap-2">
-        <img src="@/assets/skilllogo.png" alt="SkillLink Logo" class="w-10 h-10 sm:w-12 sm:h-12 rounded-full" />
+        <img src="@/assets/skilllogo.png" alt="SkillLink Logo" class="w-10 h-10 sm:w-12 sm:h-12 " />
         <h1 class="text-xl sm:text-2xl font-bold text-[#0073b1]">SkillLink</h1>
       </div>
 
       <div class="flex flex-wrap justify-center sm:justify-end items-center gap-3 sm:gap-6 w-full sm:w-auto">
         <router-link to="/about"
-          class="text-sm sm:text-lg font-semibold text-[#0073b1] hover:bg-gray-100 px-3 py-2 rounded-lg transition hover:scale-105">
+          class="text-sm sm:text-lg font-semibold text-gray-600 hover:text-[#0073b1] hover:bg-gray-100  px-3 py-2 rounded-lg transition hover:scale-105">
           About Us
         </router-link>
         <router-link to="/contact"
-          class="text-sm sm:text-lg font-semibold text-[#0073b1] hover:bg-gray-100 px-3 py-2 rounded-lg transition hover:scale-105">
+          class="text-sm sm:text-lg font-semibold text-gray-600 hover:text-[#0073b1] hover:bg-gray-100 px-3 py-2 rounded-lg transition hover:scale-105">
           Contact
         </router-link>
         <router-link :to="{ path: '/help', query: { from: 'homelogged' } }"
-          class="text-sm sm:text-lg font-semibold text-[#0073b1] hover:bg-gray-100 px-3 py-2 rounded-lg transition hover:scale-105">
+          class="text-sm sm:text-lg font-semibold text-gray-600 hover:text-[#0073b1] hover:bg-gray-100  px-3 py-2 rounded-lg transition hover:scale-105">
           Help
         </router-link>
         <router-link :to="{ path: '/home', query: { disableBooking: true } }">
-          <button class="flex items-center gap-2 px-4 py-2 text-[#0073b1] font-bold rounded-lg hover:ring-1 hover:ring-[#0073b1] transition">
+          <button class="flex items-center gap-2 px-4 py-2 text-gray-600 font-bold rounded-lg hover:ring-1 hover:text-[#0073b1] hover:ring-[#0073b1] transition">
              <svg xmlns="http://www.w3.org/2000/svg" width="800px" height="800px" viewBox="0 0 1024 1024" fill="#000000"
               class="w-6 h-6 fill-current">
               <path
@@ -241,7 +241,6 @@
     <!-- Footer -->
     <footer class="bg-[#0073b1] text-white pt-8 pb-2">
       <div class="max-w-6xl mx-auto px-6 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
-
         <!-- Brand -->
         <div class="flex flex-col gap-4">
           <h2 class="text-2xl font-bold">SkillLink</h2>
@@ -270,29 +269,26 @@
             </a>
           </div>
         </div>
-
         <!-- Quick Links -->
         <div class="flex flex-col gap-3">
           <h3 class="text-lg font-semibold">Quick Links</h3>
           <router-link to="/about" class="hover:text-[#00A8E8] transition">About</router-link>
           <router-link to="/home" class="hover:text-[#00A8E8] transition">Services</router-link>
-          <router-link to="/faq" class="hover:text-[#00A8E8] transition">FAQ</router-link>
-          <router-link to="/privacy" class="hover:text-[#00A8E8] transition">Privacy Policy</router-link>
+          <router-link to="/help" class="hover:text-[#00A8E8] transition">FAQ</router-link>
+         
         </div>
-
         <!-- Support & Help -->
         <div class="flex flex-col gap-3">
           <h3 class="text-lg font-semibold">Support</h3>
-          <router-link to="/terms" class="hover:text-[#00A8E8] transition">Terms & Conditions</router-link>
-          <router-link :to="{ path: '/help', query: { from: 'homelogged' } }"
-            class="hover:text-[#00A8E8] transition font-semibold">Help</router-link>
-        </div>
-
-        <!-- Contact -->
-        <div class="flex flex-col gap-3">
-          <router-link to="/contact" class="text-lg font-semibold hover:text-[#00A8E8] transition">
+          <router-link to="/contact" class="  hover:text-[#00A8E8] transition">
             Contact Us
           </router-link>
+          <router-link to="/privacy" class="hover:text-[#00A8E8] transition">Privacy Policy</router-link>
+          <router-link to="/terms" class="hover:text-[#00A8E8] transition">Terms & Conditions</router-link>
+        </div>
+        <!-- Contact -->
+        <div class="flex flex-col gap-3">
+          <h3 class="text-lg font-semibold">Reach Us</h3>
 
           <div class="flex items-center gap-2">
             <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24"
@@ -318,9 +314,7 @@
             <span>+91 98765 43210</span>
           </div>
         </div>
-
       </div>
-
       <!-- Bottom -->
       <div class="border-t border-white/20 mt-8 pt-4 text-center text-sm">
         © 2025 SkillLink. All rights reserved.

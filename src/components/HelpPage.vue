@@ -7,7 +7,7 @@
           <img src="@/assets/skilllogo.png" alt="SkillLink Logo" class="w-auto h-10" />
           <h1 class="text-2xl font-bold text-[#0073b1]">SkillLink Help Center</h1>
         </div>
-        <router-link :to="backRoute">
+        <router-link to="/homelogged">
           <button class="bg-[#0073b1] text-white px-4 py-2 rounded-lg hover:bg-[#005f91] transition">
             Back to Home
           </button>
@@ -46,15 +46,7 @@
 </template>
 
 <script setup>
-import { reactive, computed } from 'vue'
-import { useRoute } from 'vue-router'
-
-const route = useRoute()
-
-// Determine where to go back based on the query parameter
-const backRoute = computed(() => {
-  return route.query.from === 'homelogged' ? '/homelogged' : '/homeboard'
-})
+import { reactive } from 'vue'
 
 // FAQs
 const faqs = reactive([
