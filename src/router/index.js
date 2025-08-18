@@ -15,6 +15,8 @@ import ProviderAbout from '@/components/ProviderAbout.vue';
 import ProviderContact from '@/components/ProviderContact.vue';
 import ServiceDetails from '@/components/ServiceDetails.vue';
 import AddService from '@/components/AddService.vue';
+import PrivacyPolicy from '@/components/PrivacyPolicy.vue';
+import TermsConditions from '@/components/TermsConditions.vue';
 // import { auth } from '@/stores/auth';
 
 const routes = [
@@ -23,6 +25,8 @@ const routes = [
   { path: '/signup', component: SignupPage },
   { path: '/home', component: HomePage },
   { path: '/homeboard', component: HomeBoard },
+  { path: '/privacy-policy', component: PrivacyPolicy },
+  { path: '/terms-conditions', component: TermsConditions },
   {
     path: '/homelogged',
     component: HomeLogged,
