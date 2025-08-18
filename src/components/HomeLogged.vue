@@ -94,7 +94,7 @@
         <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
           <div v-for="caseItem in solvedCases" :key="caseItem.title"
             class="bg-white rounded-xl shadow-md overflow-hidden flex flex-col">
-            <div class="w-full h-60 bg-gray-100 overflow-hidden">
+            <div class="w-full h-auto bg-gray-100 overflow-hidden">
               <img :src="caseItem.image" :alt="caseItem.title" class="w-full h-full object-cover object-top"
                 loading="lazy" />
             </div>

@@ -25,8 +25,8 @@ const routes = [
   { path: '/signup', component: SignupPage },
   { path: '/home', component: HomePage },
   { path: '/homeboard', component: HomeBoard },
-  { path: '/privacy-policy', component: PrivacyPolicy },
-  { path: '/terms-conditions', component: TermsConditions },
+  { path: '/privacy', component: PrivacyPolicy },
+  { path: '/terms', component: TermsConditions },
   {
     path: '/homelogged',
     component: HomeLogged,

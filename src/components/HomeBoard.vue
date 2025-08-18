@@ -70,7 +70,7 @@
         <h3 class="text-xl sm:text-2xl font-bold text-center text-gray-800 mb-6">Some Cases We've Solved</h3>
         <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
           <div class="bg-white rounded-xl shadow-md overflow-hidden">
-            <img src="@/assets/plumber.jpeg" alt="Plumber" class="w-full h-48 sm:h-60 object-cover" />
+            <img src="@/assets/plumber.jpeg" alt="Plumber" class="w-full h-auto max:h-60 object-cover" />
             <div class="p-4">
               <h4 class="text-lg font-bold text-[#0073b1] mb-2">Leaking Pipe Fixed</h4>
               <p class="text-gray-700 text-sm">"Plumbing emergency solved instantly. Life-saver!" – Rajesh, Delhi</p>
@@ -78,7 +78,7 @@
           </div>
 
           <div class="bg-white rounded-xl shadow-md overflow-hidden">
-            <img src="@/assets/electician.jpg" alt="Electrician" class="w-full h-48 sm:h-60 object-cover" />
+            <img src="@/assets/electician.jpg" alt="Electrician" class="w-full h-auto max:h-60 object-cover" />
             <div class="p-4">
               <h4 class="text-lg font-bold text-[#0073b1] mb-2">Home Wiring Resolved</h4>
               <p class="text-gray-700 text-sm">"Electrician arrived quickly and fixed it all. Great experience!" –
@@ -87,7 +87,7 @@
           </div>
 
           <div class="bg-white rounded-xl shadow-md overflow-hidden">
-            <img src="@/assets/makeup.webp" alt="Makeup Artist" class="w-full h-48 sm:h-60 object-cover" />
+            <img src="@/assets/makeup.webp" alt="Makeup Artist" class="w-full h-auto max:h-60 object-cover" />
             <div class="p-4">
               <h4 class="text-lg font-bold text-[#0073b1] mb-2">Wedding Makeup</h4>
               <p class="text-gray-700 text-sm">"Booked a makeup artist for a wedding — skilled and professional!" –
