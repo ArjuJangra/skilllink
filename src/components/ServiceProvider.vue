@@ -9,23 +9,27 @@
         </div>
 
         <!-- Desktop Navigation -->
-        <nav class="hidden md:flex items-center space-x-4 text-sm lg:text-base">
-          <router-link to="/serviceprovider"
-            class="px-3 py-2 font-semibold text-[#0073b1] rounded-full hover:bg-[#e6f4f9] transition">Home</router-link>
+        <nav class="hidden md:flex items-center space-x-6 text-sm lg:text-base">
+
+          <!-- Orders -->
           <router-link to="/provider/orders"
-            class="px-3 py-2 font-semibold text-[#0073b1] rounded-full hover:bg-[#e6f4f9] transition">Orders</router-link>
-          <router-link to="/provider/policies"
-            class="px-3 py-2 font-semibold text-[#0073b1] rounded-full hover:bg-[#e6f4f9] transition">Policies</router-link>
-          <router-link to="/provider/about"
-            class="px-3 py-2 font-semibold text-[#0073b1] rounded-full hover:bg-[#e6f4f9] transition">About</router-link>
-          <router-link to="/provider/contact"
-            class="px-3 py-2 font-semibold text-[#0073b1] rounded-full hover:bg-[#e6f4f9] transition">Contact</router-link>
+            class="relative flex items-center gap-2 px-3 py-2 text-gray-600 hover:text-[#0073b1] transition font-medium"
+            active-class="text-[#0073b1] font-semibold after:absolute after:left-0 after:right-0 after:-bottom-1 after:h-[2px] after:bg-[#0073b1] after:rounded-full">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+              <path
+                d="M6 2a1 1 0 0 0-1 1v2H3a1 1 0 1 0 0 2h1l1.6 9.59A3 3 0 0 0 8.56 19h6.88a3 3 0 0 0 2.96-2.41L20 7H7V5h10a1 1 0 1 0 0-2H7V3a1 1 0 0 0-1-1zm2.56 15a1 1 0 0 1-.98-.8L6.28 9h11.44l-1.3 7.2a1 1 0 0 1-.98.8H8.56zM9 21a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3zm6 0a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3z" />
+            </svg>
+            <span>Orders</span>
+          </router-link>
+
+          <!-- Profile -->
           <router-link to="/profile">
             <img :src="profileImage" @error="handleImageError"
-              class="w-10 h-10 rounded-full border-2 border-[#0073b1] cursor-pointer" loading="lazy" />
+              class="w-10 h-10 rounded-full border border-gray-300 hover:border-[#0073b1] transition cursor-pointer object-cover"
+              loading="lazy" />
           </router-link>
-        </nav>
 
+        </nav>
         <!-- Mobile Hamburger -->
         <button @click="drawerOpen = !drawerOpen" class="md:hidden p-2 rounded-lg hover:bg-gray-100 focus:outline-none"
           aria-label="Toggle menu">
@@ -128,9 +132,103 @@
     </main>
 
     <!-- Footer -->
-    <footer class="text-center py-6 text-xs sm:text-sm text-gray-500 mt-10">
-      © 2025 SkillLink Provider Portal. All rights reserved.
+    <footer class="mt-12 border-t border-gray-200 bg-gradient-to-b from-gray-50 to-white">
+      <div class="max-w-6xl mx-auto px-6 py-10 grid grid-cols-1 sm:grid-cols-3 gap-6 text-sm text-gray-600">
+
+        <!-- Left side -->
+        <div class="text-center sm:text-left">
+          <h2 class="font-bold text-[#0073b1] text-lg">SkillLink</h2>
+          <p class="mt-2 text-gray-500">Empowering providers with tools to manage services and grow faster.</p>
+          <p class="mt-4 text-xs text-gray-400">© 2025 SkillLink Provider Portal. All rights reserved.</p>
+        </div>
+
+        <!-- Middle: Quick Links -->
+        <div class="text-center">
+          <h3 class="font-semibold text-gray-700 mb-3">Quick Links</h3>
+          <ul class="space-y-2">
+             <!-- Contact -->
+          <router-link to="/provider/contact"
+            class="relative flex items-center gap-2 px-3 py-2 text-gray-600 hover:text-[#0073b1] transition font-medium"
+            active-class="text-[#0073b1] font-semibold after:absolute after:left-0 after:right-0 after:-bottom-1 after:h-[2px] after:bg-[#0073b1] after:rounded-full">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+              <path
+                d="M21 16.5a17.05 17.05 0 0 1-7.5-7.5l2.2-2.2a1 1 0 0 0 .2-1.1l-2-5A1 1 0 0 0 12 0H7a2 2 0 0 0-2 2 19 19 0 0 0 19 19 2 2 0 0 0 2-2v-5a1 1 0 0 0-.7-.95l-5-2a1 1 0 0 0-1.1.2z" />
+            </svg>
+            <span>Contact</span>
+          </router-link>
+            <!-- Policies -->
+          <router-link to="/provider/policies"
+            class="relative flex items-center gap-2 px-3 py-2 text-gray-600 hover:text-[#0073b1] transition font-medium"
+            active-class="text-[#0073b1] font-semibold after:absolute after:left-0 after:right-0 after:-bottom-1 after:h-[2px] after:bg-[#0073b1] after:rounded-full">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M6 2a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6H6zm7 1.5L18.5 9H13V3.5z" />
+            </svg>
+            <span>Policies</span>
+          </router-link>
+
+                      <!-- About -->
+          <router-link to="/provider/about"
+            class="relative flex items-center gap-2 px-3 py-2 text-gray-600 hover:text-[#0073b1] transition font-medium"
+            active-class="text-[#0073b1] font-semibold after:absolute after:left-0 after:right-0 after:-bottom-1 after:h-[2px] after:bg-[#0073b1] after:rounded-full">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+              <path
+                d="M12 2a10 10 0 1 0 10 10A10.011 10.011 0 0 0 12 2zm0 15a1 1 0 1 1 1-1 1 1 0 0 1-1 1zm1-4h-2V7h2z" />
+            </svg>
+            <span>About</span>
+          </router-link>
+
+          </ul>
+        </div>
+
+        <!-- Right side: Social icons -->
+        <div class="text-center sm:text-right">
+          <h3 class="font-semibold text-gray-700 mb-3">Follow Us</h3>
+          <div class="flex justify-center sm:justify-end space-x-4">
+            <!-- LinkedIn -->
+            <a href="https://linkedin.com" target="_blank" rel="noopener"
+              class="hover:text-[#0073b1] transition transform hover:scale-110">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M19 0h-14C2.24 0 0 2.24 0 5.01V19c0 2.76 2.24 5 5 5h14c2.76 
+                     0 5-2.24 5-5V5c0-2.77-2.24-5-5-5zM8.34 19H5.67V9h2.67v10zM7 
+                     7.67c-.86 0-1.56-.7-1.56-1.56S6.14 4.56 7 4.56s1.56.7 
+                     1.56 1.56S7.86 7.67 7 7.67zM20 19h-2.67v-5.2c0-1.24-.02-2.83-1.73-2.83-1.73 
+                     0-2 1.35-2 2.74V19h-2.67V9h2.56v1.37h.04c.36-.68 
+                     1.23-1.39 2.53-1.39 2.7 0 3.2 1.78 3.2 4.09V19z" />
+              </svg>
+            </a>
+
+            <!-- Twitter / X -->
+            <a href="https://x.com" target="_blank" rel="noopener"
+              class="hover:text-[#0073b1] transition transform hover:scale-110">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M18.244 2.25h3.308l-7.227 
+                     8.26L22 21.75h-6.602l-5.154-6.89-5.908 
+                     6.89H1.028l7.73-9.015L2 2.25h6.727l4.713 
+                     6.478L18.244 2.25z" />
+              </svg>
+            </a>
+
+            <!-- GitHub -->
+            <a href="https://github.com" target="_blank" rel="noopener"
+              class="hover:text-[#0073b1] transition transform hover:scale-110">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M12 .5C5.73.5.5 5.73.5 
+                     12c0 5.09 3.29 9.4 7.86 10.94.58.1.79-.25.79-.56v-2.16c-3.2.7-3.88-1.54-3.88-1.54-.53-1.35-1.3-1.7-1.3-1.7-1.06-.73.08-.72.08-.72 
+                     1.17.08 1.79 1.2 1.79 1.2 1.04 1.77 2.73 
+                     1.26 3.39.97.1-.76.41-1.26.75-1.55-2.55-.29-5.23-1.28-5.23-5.7 
+                     0-1.26.45-2.3 1.2-3.11-.12-.3-.52-1.52.12-3.18 
+                     0 0 .98-.31 3.2 1.18a11.1 11.1 0 0 1 5.82 
+                     0c2.22-1.49 3.2-1.18 3.2-1.18.64 1.66.24 2.88.12 
+                     3.18.75.81 1.2 1.85 1.2 3.11 0 4.43-2.68 5.41-5.23 
+                     5.7.42.37.8 1.1.8 2.23v3.3c0 .31.21.67.8.56A10.99 
+                     10.99 0 0 0 23.5 12c0-6.27-5.23-11.5-11.5-11.5z" />
+              </svg>
+            </a>
+          </div>
+        </div>
+      </div>
     </footer>
+
   </div>
 </template>
 
@@ -202,29 +300,29 @@ export default {
     };
 
     const fetchStats = async () => {
-  try {
-    const token = localStorage.getItem('token');
-    const res = await axios.get(`${API_BASE}/api/provider/orders/stats`, {
-      headers: { Authorization: `Bearer ${token}` }
-    });
+      try {
+        const token = localStorage.getItem('token');
+        const res = await axios.get(`${API_BASE}/api/provider/orders/stats`, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
 
-    console.log('Fetched stats raw:', res.data);
+        console.log('Fetched stats raw:', res.data);
 
-    stats.total = res.data.total || 0;
-    stats.completed = res.data.completed || 0;
-    stats.earnings = res.data.earnings || 0;
-    stats.earningsData = Array.isArray(res.data.earningsData)
-      ? res.data.earningsData.map(n => Number(n) || 0)
-      : Array(12).fill(0);
+        stats.total = res.data.total || 0;
+        stats.completed = res.data.completed || 0;
+        stats.earnings = res.data.earnings || 0;
+        stats.earningsData = Array.isArray(res.data.earningsData)
+          ? res.data.earningsData.map(n => Number(n) || 0)
+          : Array(12).fill(0);
 
-    console.log('Processed earningsData:', stats.earningsData);
+        console.log('Processed earningsData:', stats.earningsData);
 
-    await renderEarningsChart();
+        await renderEarningsChart();
 
-  } catch (err) {
-    console.error(err);
-  }
-};
+      } catch (err) {
+        console.error(err);
+      }
+    };
 
 
     const fetchRecentOrders = async () => {
@@ -242,7 +340,7 @@ export default {
       if (!earningsChart.value) return;
       if (chartInstance.value) chartInstance.value.destroy();
 
-      const monthlyData = [...stats.earningsData]; 
+      const monthlyData = [...stats.earningsData];
       console.log("Chart data:", monthlyData);
 
       const ctx = earningsChart.value.getContext('2d');

@@ -8,7 +8,7 @@
           <img :src="skillLogo" alt="SkillLink Logo" class="h-10 w-auto" />
           <span class="text-xl font-bold text-[#0074B7]">SkillLink</span>
         </div>
-        <router-link to="/" class="bg-[#0074B7] text-white px-4 py-2 rounded hover:bg-[#005f91] transition">
+        <router-link to="/homelogged" class="bg-[#0074B7] text-white px-4 py-2 rounded hover:bg-[#005f91] transition">
           Back to Home
         </router-link>
       </div>

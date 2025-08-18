@@ -86,7 +86,7 @@
   </div>
 </template>
 
- <script setup>
+<script setup>
 import { ref, computed, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import axios from 'axios'
@@ -115,7 +115,7 @@ const availableServices = ref([])
 const providers = ref([])
 const location = ref({ latitude: null, longitude: null })
 
-// Static fallback prices (optional, for selection if needed)
+// Static fallback prices
 const servicePrices = {
   Plumber: 199,
   Electrician: 249,
@@ -126,10 +126,8 @@ const servicePrices = {
 }
 
 const getSelectedPrice = () => {
-  // Use `total.value` if already computed
   return total.value || servicePrices[selectedService.value] || 0
 }
-
 
 const hasPrefilledService = computed(() => !!route.query.service)
 const hasPrefilledProvider = computed(() => !!route.query.providerId)
@@ -141,7 +139,7 @@ const isFormValid = () => {
     address.value &&
     selectedService.value &&
     selectedProviderId.value &&
-    total.value > 0 &&
+    getSelectedPrice() > 0 &&
     selectedDate.value &&
     selectedTime.value
   )
@@ -171,7 +169,7 @@ const confirmBooking = async () => {
         name: name.value,
         contact: contact.value,
         address: address.value,
-         price: getSelectedPrice(), 
+        price: getSelectedPrice(),
         coupon: couponCode.value,
         paymentStatus: 'paid'
       },
@@ -179,15 +177,16 @@ const confirmBooking = async () => {
     )
 
     toast.success('✅ Booking confirmed!')
-   router.push({
-  path: '/booking-confirm',
-  query: {
-    service: selectedService.value,
-    providerName: providers.value.find(p => p._id === selectedProviderId.value)?.name || 'Assigned Expert',
-    amount: getSelectedPrice()
-  }
-});
-
+    router.push({
+      path: '/booking-confirm',
+      query: {
+        service: selectedService.value,
+        providerName:
+          providers.value.find(p => p._id === selectedProviderId.value)?.name ||
+          'Assigned Expert',
+        amount: getSelectedPrice()
+      }
+    })
 
     // Reset form
     name.value = ''
@@ -209,23 +208,28 @@ const confirmBooking = async () => {
   }
 }
 
-// Fetch providers based on selected service and location
+// Fetch providers based on selected service and (optional) location
 const fetchProviders = async () => {
-  if (!location.value.latitude || !location.value.longitude) return
+  if (!selectedService.value) return
   const token = localStorage.getItem('token')
   try {
+    const payload = { service: selectedService.value }
+    if (location.value.latitude && location.value.longitude) {
+      payload.latitude = location.value.latitude
+      payload.longitude = location.value.longitude
+    }
+
     const res = await axios.post(
       'http://localhost:5000/api/services/nearby',
-      {
-        latitude: location.value.latitude,
-        longitude: location.value.longitude,
-        service: selectedService.value
-      },
+      payload,
       { headers: { Authorization: `Bearer ${token}` } }
     )
     providers.value = res.data || []
-  } catch {
-    toast.error('Failed to fetch providers')
+    if (!providers.value.length) {
+      toast.warn('No providers found for this service.')
+    }
+  } catch (err) {
+    toast.error(err.response?.data?.message || 'Failed to fetch providers')
   }
 }
 
@@ -293,6 +297,7 @@ onMounted(() => {
   }
 })
 </script>
+
 
 
 

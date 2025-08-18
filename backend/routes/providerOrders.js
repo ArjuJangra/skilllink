@@ -89,8 +89,6 @@ router.get('/stats', authenticateUser, async (req, res) => {
       }
     });
 
-    console.log('Monthly earnings array:', earningsData);
-
     res.json({
       total: orders.length,
       completed: completed.length,
@@ -102,7 +100,6 @@ router.get('/stats', authenticateUser, async (req, res) => {
     res.status(500).json({ message: 'Failed to fetch stats' });
   }
 });
-
 
 // GET /api/providers/orders/recent
 router.get('/recent', authenticateUser, async (req, res) => {

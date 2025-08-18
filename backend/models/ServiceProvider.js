@@ -12,38 +12,30 @@ const serviceProviderSchema = new mongoose.Schema({
     enum: ['user', 'provider'],
     default: 'provider'
   },
+
+  // ✅ Keep only one area
   area: { type: String, required: true },
+
   privacySettings: {
-  showEmail: { type: Boolean, default: false },
-  showPhone: { type: Boolean, default: false }
-},
+    showEmail: { type: Boolean, default: false },
+    showPhone: { type: Boolean, default: false }
+  },
 
   services: {
     type: [String],
     required: true,
     validate: {
       validator: function (val) {
-        return val.length <= 3;
+        return val.length > 0 && val.length <= 3; // ✅ must have at least 1 service
       },
-      message: 'You can select up to 3 services only.'
+      message: 'You must select between 1 and 3 services.'
     }
   },
-  experience: {
-    type: Number,
-    default: 0
-  },
-  area: {
-    type: String,
-    required: true
-  },
-  latitude: {
-    type: Number,
-    required: true
-  },
-  longitude: {
-    type: Number,
-    required: true
-  }
+
+  experience: { type: Number, default: 0 },
+
+  latitude: { type: Number, required: true },
+  longitude: { type: Number, required: true }
 }, {
   collection: 'serviceproviders', // explicit collection name
   timestamps: true

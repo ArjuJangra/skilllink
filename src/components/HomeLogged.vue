@@ -15,20 +15,7 @@
         <div class="flex items-center gap-2 sm:gap-4 flex-wrap">
           <!-- Nav Links -->
           <nav class="hidden sm:flex gap-3 text-gray-700 font-medium text-sm items-center">
-            <router-link to="/about"
-              class="px-3 py-2 text-sm sm:text-lg font-bold text-[#0073b1] hover:bg-gray-100 rounded-lg transition-all duration-200 hover:scale-105">
-              About Us
-            </router-link>
 
-            <router-link to="/contact"
-              class="px-3 py-2 text-sm sm:text-lg font-bold text-[#0073b1] hover:bg-gray-100 rounded-lg transition-all duration-200 hover:scale-105">
-              Contact
-            </router-link>
-
-            <router-link :to="{ path: '/help', query: { from: 'homelogged' } }"
-              class="px-3 py-2 text-sm sm:text-lg font-bold text-[#0073b1] hover:bg-gray-100 rounded-lg transition-all duration-200 hover:scale-105">
-              Help
-            </router-link>
           </nav>
 
           <!-- Book Service Button -->
@@ -229,9 +216,112 @@
     </section>
 
     <!-- Footer -->
-    <footer class="bg-[#0073b1] text-white py-4 text-center text-sm sm:text-base">
-      © 2025 SkillLink. All rights reserved.
+    <footer class="bg-[#0073b1] text-white pt-10 pb-6">
+      <div class="max-w-7xl mx-auto px-6 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8">
+
+        <!-- Brand -->
+        <div>
+          <h2 class="text-2xl font-bold mb-3">SkillLink</h2>
+          <p class="text-sm leading-relaxed">
+            Connecting skilled professionals with customers quickly, easily, and reliably.
+          </p>
+        </div>
+
+        <!-- Quick Links -->
+        <div>
+          <h3 class="text-lg font-semibold mb-3">Quick Links</h3>
+          <ul class="space-y-2 text-sm">
+            <router-link to="/about"
+              class="relative flex items-center gap-2 px-3 py-2 text-white  transition font-medium"
+              active-class="text-[#0073b1] font-semibold after:absolute after:left-0 after:right-0 after:-bottom-1 after:h-[2px] after:bg-[#0073b1] after:rounded-full">
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                <path
+                  d="M12 2a10 10 0 1 0 10 10A10.011 10.011 0 0 0 12 2zm0 15a1 1 0 1 1 1-1 1 1 0 0 1-1 1zm1-4h-2V7h2z" />
+              </svg>
+              <span>About</span>
+            </router-link>
+
+            <router-link to="/home"
+              class="relative flex items-center gap-2 px-3 py-2 text-white  transition font-medium"
+              active-class="text-[#0073b1] font-semibold after:absolute after:left-0 after:right-0 after:-bottom-1 after:h-[2px] after:bg-[#0073b1] after:rounded-full">
+              <!-- Icon: Briefcase for Services -->
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M12 7V3m0 0L8 7h8l-4-4zm-6 8h12M6 15v6h12v-6M6 15h12" />
+              </svg>
+              <span>Services</span>
+            </router-link>
+
+            <router-link to="/contact"
+              class="relative flex items-center gap-2 px-3 py-2 text-white hover transition font-medium"
+              active-class="text-[#0073b1] font-semibold after:absolute after:left-0 after:right-0 after:-bottom-1 after:h-[2px] after:bg-[#0073b1] after:rounded-full">
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                <path
+                  d="M21 16.5a17.05 17.05 0 0 1-7.5-7.5l2.2-2.2a1 1 0 0 0 .2-1.1l-2-5A1 1 0 0 0 12 0H7a2 2 0 0 0-2 2 19 19 0 0 0 19 19 2 2 0 0 0 2-2v-5a1 1 0 0 0-.7-.95l-5-2a1 1 0 0 0-1.1.2z" />
+              </svg>
+              <span>Contact</span>
+            </router-link>
+          </ul>
+        </div>
+
+        <!-- Support -->
+        <div>
+          <h3 class="text-lg font-semibold mb-3">Support</h3>
+          <ul class="space-y-2 text-sm">
+            <li><a href="/faq" class="hover:underline">FAQ</a></li>
+            <li><a href="/privacy" class="hover:underline">Privacy Policy</a></li>
+            <li><a href="/terms" class="hover:underline">Terms & Conditions</a></li>
+            <router-link :to="{ path: '/help', query: { from: 'homelogged' } }"
+              class="px-3 py-2 text-sm sm:text-lg font-bold text-white  rounded-lg transition-all duration-200 hover:scale-105">
+              Help
+            </router-link>
+          </ul>
+        </div>
+
+        <!-- Contact -->
+
+        <div>
+          <h3 class="text-lg font-semibold mb-3">Contact Us</h3>
+
+          <div class="flex items-center mb-2 space-x-2">
+            <!-- Location Icon -->
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-white" fill="none" viewBox="0 0 24 24"
+              stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M12 11c1.656 0 3-1.344 3-3s-1.344-3-3-3-3 1.344-3 3 1.344 3 3 3z" />
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M12 2C8.686 2 6 5.686 6 11c0 5.313 6 11 6 11s6-5.687 6-11c0-5.314-2.686-9-6-9z" />
+            </svg>
+            <span class="text-sm">Sector 41, Gurugram, India</span>
+          </div>
+
+          <div class="flex items-center mb-2 space-x-2">
+            <!-- Email Icon -->
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-white" fill="none" viewBox="0 0 24 24"
+              stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 12l-4-4-4 4m8 0l-4 4-4-4" />
+            </svg>
+            <span class="text-sm"> connectteamskilllink@gmail.com</span>
+          </div>
+
+          <div class="flex items-center mb-2 space-x-2">
+            <!-- Phone Icon -->
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-white" fill="none" viewBox="0 0 24 24"
+              stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M3 5a2 2 0 012-2h3l2 5-2.5 2.5a11.042 11.042 0 005 5L14 14l5 2v3a2 2 0 01-2 2h-1C7.163 21 3 16.837 3 11V5z" />
+            </svg>
+            <span class="text-sm">+91 98765 43210</span>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Bottom -->
+      <div class="border-t border-white/20 mt-8 pt-4 text-center text-sm">
+        © 2025 SkillLink. All rights reserved.
+      </div>
     </footer>
+
   </div>
 </template>
 
@@ -240,7 +330,7 @@ import { ref, onMounted } from 'vue';
 import axios from 'axios';
 import ServiceMap from '@/components/ServiceMap.vue';
 
- const user = ref(null);
+const user = ref(null);
 const unreadCount = ref(0);
 
 const fetchUnreadCount = async () => {

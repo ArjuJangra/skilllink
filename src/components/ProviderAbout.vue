@@ -12,15 +12,45 @@
         <!-- Navigation -->
         <nav class="flex items-center space-x-4 text-sm md:text-base">
           
-          <router-link to="/serviceprovider" class="px-4 py-2 text-l font-bold text-[#0073b1] hover:bg-[#e6f4f9] rounded-full transition duration-200">Home</router-link>
+  <router-link to="/serviceprovider"
+            class="flex items-center gap-2 px-4 py-2 text-gray-600 hover:text-[#0073b1] hover:scale-105 transition-transform duration-200">
+            <!-- Filled Home Icon -->
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M12 3l8 7v10a2 2 0 0 1-2 2h-4a1 1 0 0 1-1-1v-5H11v5a1 1 0 0 1-1 1H6a2 2 0 0 1-2-2V10l8-7z" />
+            </svg>
+            <span class="font-semibold">Home</span>
+          </router-link>
 
-          <router-link to="/provider/orders" class="px-4 py-2 text-l font-bold text-[#0073b1] hover:bg-[#e6f4f9] rounded-full transition duration-200">Orders</router-link>
+         <router-link to="/provider/orders"
+            class="relative flex items-center gap-2 px-3 py-2 text-gray-600 hover:text-[#0073b1] transition font-medium"
+            active-class="text-[#0073b1] font-semibold after:absolute after:left-0 after:right-0 after:-bottom-1 after:h-[2px] after:bg-[#0073b1] after:rounded-full">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+              <path
+                d="M6 2a1 1 0 0 0-1 1v2H3a1 1 0 1 0 0 2h1l1.6 9.59A3 3 0 0 0 8.56 19h6.88a3 3 0 0 0 2.96-2.41L20 7H7V5h10a1 1 0 1 0 0-2H7V3a1 1 0 0 0-1-1zm2.56 15a1 1 0 0 1-.98-.8L6.28 9h11.44l-1.3 7.2a1 1 0 0 1-.98.8H8.56zM9 21a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3zm6 0a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3z" />
+            </svg>
+            <span>Orders</span>
+          </router-link>
 
-          <router-link to="/provider/policies" class="px-4 py-2 text-l font-bold text-[#0073b1] hover:bg-[#e6f4f9] rounded-full transition duration-200">Policies</router-link>
+          <!-- Policies -->
+          <router-link to="/provider/policies"
+            class="relative flex items-center gap-2 px-3 py-2 text-gray-600 hover:text-[#0073b1] transition font-medium"
+            active-class="text-[#0073b1] font-semibold after:absolute after:left-0 after:right-0 after:-bottom-1 after:h-[2px] after:bg-[#0073b1] after:rounded-full">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M6 2a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6H6zm7 1.5L18.5 9H13V3.5z" />
+            </svg>
+            <span>Policies</span>
+          </router-link>
 
-          <router-link to="/provider/about" class="px-4 py-2 text-l font-bold text-[#0073b1] hover:bg-[#e6f4f9] rounded-full transition duration-200">About</router-link>
-
-          <router-link to="/provider/contact" class="px-4 py-2 text-l font-bold text-[#0073b1] hover:bg-[#e6f4f9] rounded-full transition duration-200">Contact</router-link>
+          <!-- Contact -->
+          <router-link to="/provider/contact"
+            class="relative flex items-center gap-2 px-3 py-2 text-gray-600 hover:text-[#0073b1] transition font-medium"
+            active-class="text-[#0073b1] font-semibold after:absolute after:left-0 after:right-0 after:-bottom-1 after:h-[2px] after:bg-[#0073b1] after:rounded-full">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+              <path
+                d="M21 16.5a17.05 17.05 0 0 1-7.5-7.5l2.2-2.2a1 1 0 0 0 .2-1.1l-2-5A1 1 0 0 0 12 0H7a2 2 0 0 0-2 2 19 19 0 0 0 19 19 2 2 0 0 0 2-2v-5a1 1 0 0 0-.7-.95l-5-2a1 1 0 0 0-1.1.2z" />
+            </svg>
+            <span>Contact</span>
+          </router-link>
 
           <!-- Profile Picture -->
           <div class="relative group">
