@@ -8,7 +8,7 @@
         <!-- Header -->
         <div class="text-center mb-6">
           <img src="@/assets/skilllogo.png" alt="SkillLink Logo" class="w-20 h-20 mx-auto mb-4" />
-          <h2 class="text-2xl font-bold text-[#0073b1]">Create Your SkillLink Account</h2>
+          <h2 class="text-2xl font-bold bg-gradient-to-r from-[#3B8D99] to-[#f46675] bg-clip-text text-transparent ">Create Your SkillLink Account</h2>
         </div>
 
         <form @submit.prevent="handleSubmit" class="space-y-5">

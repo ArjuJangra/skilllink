@@ -261,7 +261,7 @@ import axios from 'axios';
 import { useRouter } from 'vue-router';
 import { toast } from 'vue3-toastify';
 import 'vue3-toastify/dist/index.css';
-import { auth } from '@/stores/auth';
+import { auth, logoutUser } from '@/stores/auth';
 
 const router = useRouter();
 
@@ -558,11 +558,11 @@ const changePassword = async () => {
 
 // Logout
 const logout = () => {
-  localStorage.removeItem('user');
-  localStorage.removeItem('token');
-  auth.user = null;
+  logoutUser(); // clears storages, axios headers, resets auth
   user.value = { name: '', email: '', phone: '', bio: '', profilePic: '' };
-  socket.value?.disconnect();
+
+  socket.value?.disconnect?.();
+
   router.push('/homeboard');
 };
 
@@ -622,9 +622,6 @@ onUnmounted(() => {
 });
 
 </script>
-
-
-
 
 <style scoped>
 

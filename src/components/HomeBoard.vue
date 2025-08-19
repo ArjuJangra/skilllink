@@ -1,13 +1,15 @@
-<template>
+ <template>
   <div class="min-h-screen bg-gray-50">
     <!-- Navbar -->
-    <header class="flex  sticky top-0 z-50 flex-wrap justify-between items-center px-4 sm:px-6 py-4 bg-white max-w-7xl mx-auto gap-4">
+    <header class="flex sticky top-0 z-50 justify-between items-center px-4 sm:px-6 py-4 bg-white max-w-7xl mx-auto">
+      <!-- Logo -->
       <div class="flex items-center gap-2">
-        <img src="@/assets/skilllogo.png" alt="SkillLink Logo" class="w-10 h-10 sm:w-12 sm:h-12 " />
+        <img src="@/assets/skilllogo.png" alt="SkillLink Logo" class="w-10 h-10 sm:w-12 sm:h-12" />
         <h1 class="text-xl sm:text-2xl font-bold text-[#0073b1]">SkillLink</h1>
       </div>
 
-      <div class="flex flex-wrap justify-center sm:justify-end items-center gap-3 sm:gap-3 w-full sm:w-auto">
+      <!-- Desktop Nav -->
+      <nav class="hidden sm:flex items-center gap-3">
         <router-link to="/about"
           class="text-sm sm:text-lg font-semibold text-gray-600 hover:text-[#0073b1] px-3 py-2 rounded-lg transition hover:scale-105">
           About Us
@@ -21,8 +23,9 @@
           Help
         </router-link>
         <router-link :to="{ path: '/home', query: { disableBooking: true } }">
-          <button class="flex items-center gap-2 px-4 py-2 text-gray-600 font-bold rounded-lg hover:ring-1 hover:text-[#0073b1] hover:ring-[#0073b1] transition">
-             <svg xmlns="http://www.w3.org/2000/svg" width="800px" height="800px" viewBox="0 0 1024 1024" fill="#000000"
+          <button
+            class="flex items-center gap-2 px-4 py-2 text-gray-600 font-bold rounded-lg hover:ring-1 hover:text-[#0073b1] hover:ring-[#0073b1] transition">
+            <svg xmlns="http://www.w3.org/2000/svg" width="800px" height="800px" viewBox="0 0 1024 1024" fill="#000000"
               class="w-6 h-6 fill-current">
               <path
                 d="M959.018 208.158c0.23-2.721 0.34-5.45 0.34-8.172 0-74.93-60.96-135.89-135.89-135.89-1.54 0-3.036 0.06-6.522 0.213l-611.757-0.043c-1.768-0.085-3.563-0.17-5.424-0.17-74.812 0-135.67 60.84-135.67 135.712l0.188 10.952h-0.306l0.391 594.972-0.162 20.382c0 74.03 60.22 134.25 134.24 134.25 1.668 0 7.007-0.239 7.1-0.239l608.934 0.085c2.985 0.357 6.216 0.468 9.55 0.468 35.815 0 69.514-13.954 94.879-39.302 25.373-25.34 39.344-58.987 39.344-94.794l-0.145-12.015h0.918l-0.008-606.41z m-757.655 693.82l-2.585-0.203c-42.524 0-76.146-34.863-76.537-79.309V332.671H900.79l0.46 485.186-0.885 2.865c-0.535 1.837-0.8 3.58-0.8 5.17 0 40.382-31.555 73.766-71.852 76.002l-10.816 0.621v-0.527l-615.533-0.01zM900.78 274.424H122.3l-0.375-65.934 0.85-2.924c0.52-1.82 0.782-3.63 0.782-5.247 0-42.236 34.727-76.665 78.179-76.809l0.45-0.068 618.177 0.018 2.662 0.203c42.329 0 76.767 34.439 76.767 76.768 0 1.326 0.196 2.687 0.655 4.532l0.332 0.884v68.577z" />
@@ -32,13 +35,115 @@
             Book Service
           </button>
         </router-link>
-        
         <router-link to="/login">
           <button class="px-4 py-2 bg-[#0073b1] text-white font-semibold rounded-lg hover:bg-[#005f91] transition">
             Login/Sign Up
           </button>
         </router-link>
-      </div>
+      </nav>
+
+      <!-- Hamburger Icon -->
+      <button class="sm:hidden flex flex-col gap-1 focus:outline-none" @click="isOpen = !isOpen">
+        <span class="block w-6 h-0.5 bg-gray-800 transition-transform"
+          :class="{ 'rotate-45 translate-y-1.5': isOpen }"></span>
+        <span class="block w-6 h-0.5 bg-gray-800 transition-opacity" :class="{ 'opacity-0': isOpen }"></span>
+        <span class="block w-6 h-0.5 bg-gray-800 transition-transform"
+          :class="{ '-rotate-45 -translate-y-1.5': isOpen }"></span>
+      </button>
+      <!-- Mobile Drawer -->
+<transition
+  enter-active-class="transition-transform duration-300 ease-out"
+  enter-from-class="translate-x-full"
+  enter-to-class="translate-x-0"
+  leave-active-class="transition-transform duration-300 ease-in"
+  leave-from-class="translate-x-0"
+  leave-to-class="translate-x-full"
+>
+  <div v-if="isOpen" class="fixed inset-0 z-50 flex">
+    <!-- Overlay with Fade -->
+    <transition
+      enter-active-class="transition-opacity duration-300 ease-out"
+      enter-from-class="opacity-0"
+      enter-to-class="opacity-100"
+      leave-active-class="transition-opacity duration-300 ease-in"
+      leave-from-class="opacity-100"
+      leave-to-class="opacity-0"
+    >
+      <div
+        v-if="isOpen"
+        class="flex-1 bg-black bg-opacity-40"
+        @click="closeMenu"
+      ></div>
+    </transition>
+
+    <!-- Drawer -->
+    <div
+      class="w-64 h-full bg-white shadow-lg flex flex-col px-6 py-6 space-y-6 relative"
+    >
+      <!-- Close Icon -->
+      <button
+        class="absolute top-4 right-4 text-gray-600 hover:text-[#0073b1] transition"
+        @click="closeMenu"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          class="h-6 w-6"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+          stroke-width="2"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M6 18L18 6M6 6l12 12"
+          />
+        </svg>
+      </button>
+
+      <!-- Nav Items -->
+      <router-link
+        to="/about"
+        class="text-lg font-semibold text-gray-600 hover:text-[#0073b1] transition"
+        @click="closeMenu"
+      >
+        About Us
+      </router-link>
+      <router-link
+        to="/contact"
+        class="text-lg font-semibold text-gray-600 hover:text-[#0073b1] transition"
+        @click="closeMenu"
+      >
+        Contact
+      </router-link>
+      <router-link
+        :to="{ path: '/help', query: { from: 'homelogged' } }"
+        class="text-lg font-semibold text-gray-600 hover:text-[#0073b1] transition"
+        @click="closeMenu"
+      >
+        Help
+      </router-link>
+      <router-link
+        :to="{ path: '/home', query: { disableBooking: true } }"
+        @click="closeMenu"
+      >
+        <button
+          class="flex items-center gap-2 px-4 py-2 text-gray-600 font-bold rounded-lg hover:ring-1 hover:text-[#0073b1] hover:ring-[#0073b1] transition w-full"
+        >
+          Book Service
+        </button>
+      </router-link>
+      <router-link to="/login" @click="closeMenu">
+        <button
+          class="w-full px-4 py-2 bg-[#0073b1] text-white font-semibold rounded-lg hover:bg-[#005f91] transition"
+        >
+          Login/Sign Up
+        </button>
+      </router-link>
+    </div>
+  </div>
+</transition>
+
     </header>
 
     <!-- Hero -->
@@ -276,7 +381,7 @@
           <router-link to="/about" class="hover:text-[#00A8E8] transition">About</router-link>
           <router-link to="/home" class="hover:text-[#00A8E8] transition">Services</router-link>
           <router-link to="/help" class="hover:text-[#00A8E8] transition">FAQ</router-link>
-         
+
         </div>
         <!-- Support & Help -->
         <div class="flex flex-col gap-3">
@@ -325,10 +430,26 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+ import { ref } from 'vue'
 
-const services = ref([
+ const isOpen = ref(false);
+ const closeMenu = () => {
+  isOpen.value = false;
+};
+ const services = ref([
   "Plumber", "Electrician", "Mechanic", "Carpenter",
   "AC Repair", "Painter", "Welder", "Makeup Artist"
 ])
 </script>
+
+<style>
+.slide-enter-active,
+.slide-leave-active {
+  transition: transform 0.3s ease;
+}
+
+.slide-enter-from,
+.slide-leave-to {
+  transform: translateX(100%);
+}
+</style>
