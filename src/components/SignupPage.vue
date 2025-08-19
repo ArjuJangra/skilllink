@@ -68,14 +68,21 @@
             <!-- Services -->
             <div class="relative">
               <label class="block text-sm font-semibold text-gray-700 mb-1">Select up to 3 Services</label>
-              <Multiselect v-model="form.services" :options="availableServices" :multiple="true" :max="3"
+              <Multiselect v-model="form.services" :options="availableServices" :multiple="true" 
+              :max="3"
                 placeholder="Select up to 3 services" class="w-full text-gray-700" :show-labels="false"
-                :allow-empty="true" track-by="" label="" :custom-label="(option) => option" @open="dropdownOpen = true"
-                @close="dropdownOpen = false" />
-              <p v-if="form.services.length >= 3" class="text-sm text-red-500 mt-1">
-                You can only select up to 3 services.
-              </p>
+                :allow-empty="true" track-by="" label="" :custom-label="(option) => option" append-to-body
+                direction="bottom"
+                @open="dropdownOpen = true"
+                @close="dropdownOpen = false"
+                />
+
+
+                <p v-if="form.services.length >= 3" class="text-sm text-red-500 mt-1">
+                  You can only select up to 3 services.
+                </p>
             </div>
+
 
             <!-- Experience -->
             <div>
@@ -151,7 +158,7 @@ import { loginUser } from '@/stores/auth';
 import Multiselect from 'vue-multiselect';
 import 'vue-multiselect/dist/vue-multiselect.min.css';
 
- const router = useRouter();
+const router = useRouter();
 const loading = ref(false);
 const showSplash = ref(false);
 const showPassword = ref(false);
@@ -311,34 +318,17 @@ const handleSubmit = async () => {
 .animate-pulse {
   animation: pulse 1s infinite;
 }
-/* Force dropdown to open downward */
+
+/* Ensure dropdown stays above other elements */
 .multiselect__content {
-  max-height: 200px; /* limit height with scroll */
+  max-height: 200px;
   overflow-y: auto;
-  z-index: 50; /* make sure it overlays other elements */
+  z-index: 50;
 }
 
-.multiselect {
-  border-radius: 0.5rem; /* rounded corners */
-  border: 1px solid #d1d5db; /* light gray border */
-  transition: border 0.2s;
+/* Add little spacing if needed */
+.multiselect__content-wrapper {
+  margin-top: 4px;
+  /* push dropdown slightly downward */
 }
-
-.multiselect:focus-within {
-  border-color: #3b82f6; /* blue on focus */
-  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
-}
-
-.multiselect__tag {
-  background-color: #213a63;
-  color: white;
-  border-radius: 0.375rem;
-  padding: 0 0.5rem;
-}
-
-.multiselect__option--highlight {
-  background-color: #bfdbfe; /* hover color */
-  color: #1e3a8a;
-}
-
 </style>
