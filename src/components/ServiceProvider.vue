@@ -61,7 +61,6 @@
         </div>
       </transition>
     </header>
-
     <!-- Main Content -->
     <main class="max-w-screen-xl mx-auto px-4 pt-28">
       <!-- Dynamic Greeting -->
@@ -130,105 +129,135 @@
         </router-link>
       </section>
     </main>
-
     <!-- Footer -->
-    <footer class="mt-12 border-t border-gray-200 bg-gradient-to-b from-gray-50 to-white">
-      <div class="max-w-6xl mx-auto px-6 py-10 grid grid-cols-1 sm:grid-cols-3 gap-6 text-sm text-gray-600">
-
-        <!-- Left side -->
-        <div class="text-center sm:text-left">
-          <h2 class="font-bold text-[#0073b1] text-lg">SkillLink</h2>
-          <p class="mt-2 text-gray-500">Empowering providers with tools to manage services and grow faster.</p>
-          <p class="mt-4 text-xs text-gray-400">© 2025 SkillLink Provider Portal. All rights reserved.</p>
+    <footer class="bg-[#f9fafb] border-t mt-16">
+      <div class="max-w-6xl mx-auto px-6 py-10 grid grid-cols-1 md:grid-cols-4 gap-8">
+        <!-- Logo & Tagline -->
+        <div>
+          <div class="flex items-center space-x-2 mb-3">
+            <img src="@/assets/skilllogo.png" alt="SkillLink Logo" class="w-10 h-10" />
+            <span class="text-xl font-extrabold text-[#0073b1]">SkillLink</span>
+          </div>
+          <p class="text-sm text-gray-600">
+            Empowering service providers to grow their business and connect with more customers.
+          </p>
         </div>
 
-        <!-- Middle: Quick Links -->
-        <div class="text-center">
-          <h3 class="font-semibold text-gray-700 mb-3">Quick Links</h3>
-          <ul class="space-y-2">
-             <!-- Contact -->
-          <router-link to="/provider/contact"
-            class="relative flex items-center gap-2 px-3 py-2 text-gray-600 hover:text-[#0073b1] transition font-medium"
-            active-class="text-[#0073b1] font-semibold after:absolute after:left-0 after:right-0 after:-bottom-1 after:h-[2px] after:bg-[#0073b1] after:rounded-full">
-            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-              <path
-                d="M21 16.5a17.05 17.05 0 0 1-7.5-7.5l2.2-2.2a1 1 0 0 0 .2-1.1l-2-5A1 1 0 0 0 12 0H7a2 2 0 0 0-2 2 19 19 0 0 0 19 19 2 2 0 0 0 2-2v-5a1 1 0 0 0-.7-.95l-5-2a1 1 0 0 0-1.1.2z" />
-            </svg>
-            <span>Contact</span>
-          </router-link>
-            <!-- Policies -->
-          <router-link to="/provider/policies"
-            class="relative flex items-center gap-2 px-3 py-2 text-gray-600 hover:text-[#0073b1] transition font-medium"
-            active-class="text-[#0073b1] font-semibold after:absolute after:left-0 after:right-0 after:-bottom-1 after:h-[2px] after:bg-[#0073b1] after:rounded-full">
-            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-              <path d="M6 2a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6H6zm7 1.5L18.5 9H13V3.5z" />
-            </svg>
-            <span>Policies</span>
-          </router-link>
+        <!-- Quick Links -->
+        <div>
+          <h3 class="text-sm font-bold text-gray-800 mb-3">Quick Links</h3>
+          <ul class="space-y-2 text-sm text-gray-600">
 
-                      <!-- About -->
-          <router-link to="/provider/about"
-            class="relative flex items-center gap-2 px-3 py-2 text-gray-600 hover:text-[#0073b1] transition font-medium"
-            active-class="text-[#0073b1] font-semibold after:absolute after:left-0 after:right-0 after:-bottom-1 after:h-[2px] after:bg-[#0073b1] after:rounded-full">
-            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-              <path
-                d="M12 2a10 10 0 1 0 10 10A10.011 10.011 0 0 0 12 2zm0 15a1 1 0 1 1 1-1 1 1 0 0 1-1 1zm1-4h-2V7h2z" />
-            </svg>
-            <span>About</span>
-          </router-link>
+            <li>
+              <router-link to="/provider/policies" class="flex items-center gap-2 hover:text-[#0073b1] transition">
+                <!-- Shield/Document Icon -->
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24"
+                  stroke="currentColor" stroke-width="2">
+                  <path stroke-linecap="round" stroke-linejoin="round"
+                    d="M12 3l8 4v6c0 5-3 9-8 10-5-1-8-5-8-10V7l8-4z" />
+                </svg>
+                <span>Policies</span>
+              </router-link>
+            </li>
+
+            <li>
+              <router-link to="/provider/about" class="flex items-center gap-2 hover:text-[#0073b1] transition">
+                <!-- Info Circle Icon -->
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24"
+                  stroke="currentColor" stroke-width="2">
+                  <path stroke-linecap="round" stroke-linejoin="round"
+                    d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <span>About Us</span>
+              </router-link>
+            </li>
+
+            <li>
+              <router-link to="/provider/contact" class="flex items-center gap-2 hover:text-[#0073b1] transition">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
+                  <path
+                    d="M6.62 10.79a15.05 15.05 0 006.59 6.59l2.2-2.2a1 1 0 011.11-.21 11.05 11.05 0 003.47.55 1 1 0 011 1V20a1 1 0 01-1 1C10.42 21 3 13.58 3 5a1 1 0 011-1h3.5a1 1 0 011 1c0 1.2.19 2.38.55 3.47a1 1 0 01-.21 1.11l-2.22 2.21z" />
+                </svg>
+                <span>Contact</span>
+              </router-link>
+            </li>
 
           </ul>
         </div>
 
-        <!-- Right side: Social icons -->
-        <div class="text-center sm:text-right">
-          <h3 class="font-semibold text-gray-700 mb-3">Follow Us</h3>
-          <div class="flex justify-center sm:justify-end space-x-4">
-            <!-- LinkedIn -->
-            <a href="https://linkedin.com" target="_blank" rel="noopener"
-              class="hover:text-[#0073b1] transition transform hover:scale-110">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M19 0h-14C2.24 0 0 2.24 0 5.01V19c0 2.76 2.24 5 5 5h14c2.76 
-                     0 5-2.24 5-5V5c0-2.77-2.24-5-5-5zM8.34 19H5.67V9h2.67v10zM7 
-                     7.67c-.86 0-1.56-.7-1.56-1.56S6.14 4.56 7 4.56s1.56.7 
-                     1.56 1.56S7.86 7.67 7 7.67zM20 19h-2.67v-5.2c0-1.24-.02-2.83-1.73-2.83-1.73 
-                     0-2 1.35-2 2.74V19h-2.67V9h2.56v1.37h.04c.36-.68 
-                     1.23-1.39 2.53-1.39 2.7 0 3.2 1.78 3.2 4.09V19z" />
-              </svg>
-            </a>
+        <!-- Support -->
+        <div>
+          <h3 class="text-sm font-bold text-gray-800 mb-3">Support</h3>
+          <ul class="space-y-2 text-sm text-gray-600">
 
-            <!-- Twitter / X -->
-            <a href="https://x.com" target="_blank" rel="noopener"
-              class="hover:text-[#0073b1] transition transform hover:scale-110">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M18.244 2.25h3.308l-7.227 
-                     8.26L22 21.75h-6.602l-5.154-6.89-5.908 
-                     6.89H1.028l7.73-9.015L2 2.25h6.727l4.713 
-                     6.478L18.244 2.25z" />
-              </svg>
-            </a>
 
-            <!-- GitHub -->
-            <a href="https://github.com" target="_blank" rel="noopener"
-              class="hover:text-[#0073b1] transition transform hover:scale-110">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M12 .5C5.73.5.5 5.73.5 
-                     12c0 5.09 3.29 9.4 7.86 10.94.58.1.79-.25.79-.56v-2.16c-3.2.7-3.88-1.54-3.88-1.54-.53-1.35-1.3-1.7-1.3-1.7-1.06-.73.08-.72.08-.72 
-                     1.17.08 1.79 1.2 1.79 1.2 1.04 1.77 2.73 
-                     1.26 3.39.97.1-.76.41-1.26.75-1.55-2.55-.29-5.23-1.28-5.23-5.7 
-                     0-1.26.45-2.3 1.2-3.11-.12-.3-.52-1.52.12-3.18 
-                     0 0 .98-.31 3.2 1.18a11.1 11.1 0 0 1 5.82 
-                     0c2.22-1.49 3.2-1.18 3.2-1.18.64 1.66.24 2.88.12 
-                     3.18.75.81 1.2 1.85 1.2 3.11 0 4.43-2.68 5.41-5.23 
-                     5.7.42.37.8 1.1.8 2.23v3.3c0 .31.21.67.8.56A10.99 
-                     10.99 0 0 0 23.5 12c0-6.27-5.23-11.5-11.5-11.5z" />
-              </svg>
-            </a>
+            <li>
+              <router-link to="/help" class="flex items-center gap-2 hover:text-[#0073b1] transition">
+                <!-- Help Circle Icon -->
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24"
+                  stroke="currentColor" stroke-width="2">
+                  <path stroke-linecap="round" stroke-linejoin="round"
+                    d="M12 18h.01M12 6a9 9 0 100 18 9 9 0 000-18zm0 4v4" />
+                </svg>
+                <span>Help Center</span>
+              </router-link>
+            </li>
+
+            <li>
+              <a href="mailto:connectteamskilllink@gmail.com"
+                class="flex items-center gap-2 hover:text-[#0073b1] transition">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
+                  <path
+                    d="M2.25 6.75A2.25 2.25 0 0 1 4.5 4.5h15a2.25 2.25 0 0 1 2.25 2.25v10.5A2.25 2.25 0 0 1 19.5 19.5h-15a2.25 2.25 0 0 1-2.25-2.25V6.75zm2.334-.75L12 11.327 19.416 6h-14.832zm15.166 1.635-7.731 5.154a.75.75 0 0 1-.838 0L3.45 7.635v9.615c0 .414.336.75.75.75h15a.75.75 0 0 0 .75-.75V7.635z" />
+                </svg>
+                <span>connectteamskilllink@gmail.com</span>
+              </a>
+            </li>
+
+            <li>
+              <a href="tel:+919876543210" class="flex items-center gap-2 hover:text-[#0073b1] transition">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
+                  <path
+                    d="M6.62 10.79a15.05 15.05 0 006.59 6.59l2.2-2.2a1 1 0 011.11-.21 11.05 11.05 0 003.47.55 1 1 0 011 1V20a1 1 0 01-1 1C10.42 21 3 13.58 3 5a1 1 0 011-1h3.5a1 1 0 011 1c0 1.2.19 2.38.55 3.47a1 1 0 01-.21 1.11l-2.22 2.21z" />
+                </svg>
+                <span>+91 98765 43210</span>
+              </a>
+            </li>
+
+          </ul>
+        </div>
+
+        <!-- Legal & Social -->
+        <div>
+          <h3 class="text-sm font-bold text-gray-800 mb-3">More</h3>
+          <ul class="space-y-2 text-sm text-gray-600">
+            <li><router-link to="/terms" class="hover:text-[#0073b1] flex gap-2"> <svg
+                  xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor"
+                  aria-hidden="true">
+                  <!-- finial + crossbar -->
+                  <path
+                    d="M11 2a1 1 0 0 1 2 0v2h3a1 1 0 1 1 0 2h-1.6l3.86 7A3.75 3.75 0 1 1 14.5 16h-.5V7h-4v9h-.5A3.75 3.75 0 1 1 4.74 13l3.86-7H7A1 1 0 1 1 7 4h4V2zM7.2 9.2 5 13h4L7.2 9.2zm11.8 3.8h-4l2.2-3.8 1.8 3.8z" />
+                  <!-- base -->
+                  <path d="M10 19h4v2h-4z" />
+                </svg> Terms of Service</router-link></li>
+            <li><router-link to="/privacy" class="hover:text-[#0073b1] flex gap-2"> <svg
+                  xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M12 1l9 4v6c0 5-3.6 9.7-9 11-5.4-1.3-9-6-9-11V5l9-4zM7 9v2h10V9H7z" />
+                </svg> <span>Privacy Policy</span> </router-link></li>
+          </ul>
+          <div class="flex space-x-4 mt-4">
+            <a href="#" class="text-gray-500 hover:text-[#0073b1]"><i class="fab fa-facebook-f"></i></a>
+            <a href="#" class="text-gray-500 hover:text-[#0073b1]"><i class="fab fa-twitter"></i></a>
+            <a href="#" class="text-gray-500 hover:text-[#0073b1]"><i class="fab fa-linkedin-in"></i></a>
           </div>
         </div>
       </div>
-    </footer>
 
+      <!-- Bottom Bar -->
+      <div class="border-t text-center text-sm text-gray-500 py-4">
+        © 2025 SkillLink Provider Portal. All rights reserved. Powered by SkillLink
+      </div>
+    </footer>
   </div>
 </template>
 
