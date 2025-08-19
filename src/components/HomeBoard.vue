@@ -441,7 +441,6 @@
       </div>
 
     </footer>
-
   </div>
 </template>
 

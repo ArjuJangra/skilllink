@@ -98,21 +98,33 @@
         <h3 class="text-[#0073b1] font-semibold text-lg sm:text-xl mb-3">Monthly Earnings</h3>
         <canvas ref="earningsChart" class="w-full"></canvas>
       </section>
+       <!-- Recent Orders -->
+<section class="bg-white shadow rounded-2xl p-5 mb-6">
+  <h3 class="text-[#0073b1] font-semibold text-lg sm:text-xl mb-3">Recent Orders</h3>
+  <ul>
+    <li 
+      v-for="order in recentOrders" 
+      :key="order.id"
+      class="flex justify-between items-center py-3 border-b last:border-b-0 hover:bg-gray-50 rounded transition"
+    >
+      <!-- Order name styled -->
+      <span class="font-medium text-gray-800">
+        {{ order.name || order.title || order.serviceName }}
+      </span>
 
-      <!-- Recent Orders -->
-      <section class="bg-white shadow rounded-2xl p-5 mb-6">
-        <h3 class="text-[#0073b1] font-semibold text-lg sm:text-xl mb-3">Recent Orders</h3>
-        <ul>
-          <li v-for="order in recentOrders" :key="order.id"
-            class="flex justify-between items-center py-2 border-b last:border-b-0 hover:bg-gray-50 rounded transition">
-            <span>{{ order.serviceName }}</span>
-            <span :class="statusColor(order.status) + ' px-3 py-1 rounded-full text-sm font-semibold'">{{ order.status
-            }}</span>
-          </li>
-          <li v-if="recentOrders.length === 0" class="text-gray-500 py-2 text-center">No recent orders</li>
-        </ul>
-      </section>
+      <!-- Status badge -->
+      <span 
+        :class="statusColor(order.status) + ' px-3 py-1 rounded-full text-xs sm:text-sm font-semibold uppercase tracking-wide'"
+      >
+        {{ order.status }}
+      </span>
+    </li>
 
+    <li v-if="recentOrders.length === 0" class="text-gray-500 py-2 text-center">
+      No recent orders
+    </li>
+  </ul>
+</section>
       <!-- Quick Actions -->
       <section class="mb-10 flex flex-wrap gap-4 justify-center">
         <router-link to="/provider/orders"
@@ -189,8 +201,6 @@
         <div>
           <h3 class="text-sm font-bold text-gray-800 mb-3">Support</h3>
           <ul class="space-y-2 text-sm text-gray-600">
-
-
             <li>
               <router-link to="/help" class="flex items-center gap-2 hover:text-[#0073b1] transition">
                 <!-- Help Circle Icon -->
@@ -266,7 +276,7 @@ import axios from 'axios';
 import { ref, onMounted, reactive, computed, nextTick } from 'vue';
 import Chart from 'chart.js/auto';
 
-const API_BASE = 'http://localhost:5000';
+ const API_BASE = 'http://localhost:5000';
 
 export default {
   name: 'ServiceProvider',
@@ -401,7 +411,6 @@ export default {
   }
 };
 </script>
-
 
 <style scoped>
 .fade-enter-active,

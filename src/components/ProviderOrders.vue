@@ -69,27 +69,64 @@
         </div>
 
         <!-- Details -->
-        <div class="text-gray-700 text-sm space-y-2">
-          <p><strong>👤 Customer:</strong> {{ order.name }}</p>
-          <p><strong>📞 Contact:</strong> {{ order.contact }}</p>
-          <p><strong>📍 Address:</strong> {{ order.address }}</p>
-          <p v-if="order.description">
-            <strong>📝 Description:</strong> {{ order.description }}
-          </p>
-          <p class="text-xs text-gray-500">
-            ⏰ Placed: {{ formatDate(order.createdAt) }}
-          </p>
-        </div>
+     <div class="text-gray-700 text-sm space-y-3">
+  <!-- Customer -->
+  <p class="flex items-center gap-2">
+    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-[#0073b1]" fill="currentColor" viewBox="0 0 24 24">
+      <path d="M12 12c2.7 0 5-2.3 5-5s-2.3-5-5-5-5 2.3-5 5 2.3 5 5 5zm0 2c-3.3 0-10 1.7-10 5v3h20v-3c0-3.3-6.7-5-10-5z"/>
+    </svg>
+    <strong>Customer:</strong> {{ order.name }}
+  </p>
 
+  <!-- Contact -->
+  <p class="flex items-center gap-2">
+    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-green-600" fill="currentColor" viewBox="0 0 24 24">
+      <path d="M6.62 10.79a15.053 15.053 0 006.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V21c0 
+      .55-.45 1-1 1C10.07 22 2 13.93 2 4c0-.55.45-1 1-1h3.5c.55 
+      0 1 .45 1 1 0 1.24.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/>
+    </svg>
+    <strong>Contact:</strong> {{ order.contact }}
+  </p>
+
+  <!-- Address -->
+  <p class="flex items-center gap-2">
+    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-red-500" fill="currentColor" viewBox="0 0 24 24">
+      <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 
+      9.5c-1.38 0-2.5-1.12-2.5-2.5S10.62 6.5 12 
+      6.5s2.5 1.12 2.5 2.5S13.38 11.5 12 11.5z"/>
+    </svg>
+    <strong>Address:</strong> {{ order.address }}
+  </p>
+
+  <!-- Description -->
+  <p v-if="order.description" class="flex items-center gap-2">
+    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-yellow-600" fill="currentColor" viewBox="0 0 24 24">
+      <path d="M21 6.5l-9-4.5-9 4.5v11l9 4.5 9-4.5v-11zm-9 
+      9l-6-3V9l6 3 6-3v3.5l-6 3z"/>
+    </svg>
+    <strong>Description:</strong> {{ order.description }}
+  </p>
+
+  <!-- Placed Date -->
+  <p class="flex items-center gap-2 text-xs text-gray-500">
+    <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5 text-gray-400" fill="currentColor" viewBox="0 0 24 24">
+      <path d="M19 4h-1V2h-2v2H8V2H6v2H5c-1.11 
+      0-2 .9-2 2v14c0 1.1.89 2 2 
+      2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 
+      16H5V9h14v11z"/>
+    </svg>
+    <span>Placed: {{ formatDate(order.createdAt) }}</span>
+  </p>
+</div>
         <!-- Actions -->
         <div class="mt-4 flex flex-wrap gap-2">
           <button v-if="order.status === 'Pending'" @click="acceptOrder(order._id)"
             class="flex-1 bg-gradient-to-r from-green-500 to-green-600 hover:opacity-90 text-white px-4 py-2 rounded-xl font-semibold shadow-md transition">
-            ✅ Accept
+             Accept
           </button>
           <button v-if="order.status === 'Pending'" @click="rejectOrder(order._id)"
             class="flex-1 bg-gradient-to-r from-red-500 to-red-600 hover:opacity-90 text-white px-4 py-2 rounded-xl font-semibold shadow-md transition">
-            ❌ Reject
+             Reject
           </button>
           <button v-if="order.status === 'Accepted'" @click="completeOrder(order._id)"
             class="flex-1 bg-gradient-to-r from-blue-500 to-blue-600 hover:opacity-90 text-white px-4 py-2 rounded-xl font-semibold shadow-md transition">
