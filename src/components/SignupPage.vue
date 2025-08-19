@@ -55,7 +55,7 @@
                 'border-gray-300': form.password.length >= 6 || form.password.length === 0
               }" />
             <button type="button" @click="showPassword = !showPassword"
-              class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-blue-500 transition">
+              class="absolute right-3 bottom-2 top-10 transform -translate-y-1/2 text-gray-500 hover:text-blue-500 transition">
               {{ showPassword ? 'Hide' : 'Show' }}
             </button>
             <p v-if="form.password.length > 0 && form.password.length < 6" class="text-red-500 text-sm mt-1">
@@ -68,21 +68,11 @@
             <!-- Services -->
             <div class="relative">
               <label class="block text-sm font-semibold text-gray-700 mb-1">Select up to 3 Services</label>
-              <Multiselect v-model="form.services" :options="availableServices" :multiple="true" 
-              :max="3"
+              <Multiselect v-model="form.services" :options="availableServices" :multiple="true" :max="3"
                 placeholder="Select up to 3 services" class="w-full text-gray-700" :show-labels="false"
                 :allow-empty="true" track-by="" label="" :custom-label="(option) => option" append-to-body
-                direction="bottom"
-                @open="dropdownOpen = true"
-                @close="dropdownOpen = false"
-                />
-
-
-                <p v-if="form.services.length >= 3" class="text-sm text-red-500 mt-1">
-                  You can only select up to 3 services.
-                </p>
+                direction="bottom" @open="dropdownOpen = true" @close="dropdownOpen = false" />
             </div>
-
 
             <!-- Experience -->
             <div>
@@ -98,7 +88,7 @@
               <small class="text-gray-500">Helps users find you nearby.</small>
             </div>
 
-            <!-- Optional Geolocation -->
+            <!-- Geolocation -->
             <div class="mt-2">
               <button type="button" @click="getLocation"
                 class="px-3 py-1 text-sm bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition">
@@ -233,16 +223,21 @@ const getLocation = () => {
   );
 };
 
-
 const handleSubmit = async () => {
+  if (!form.role) {
+    toast.error('Please select a role');
+    return;
+  }
+
   try {
     loading.value = true;
+    const endpoint = 'http://localhost:5000/api/auth/signup';
+    // Prepare payload
+    const payload = form.role === 'user'
+      ? { name: form.name, email: form.email, password: form.password, role: form.role }
+      : { ...form };
 
-    let endpoint = form.role === 'user'
-      ? 'http://localhost:5000/api/auth/signup'
-      : 'http://localhost:5000/api/providers/signup';
-
-    const response = await axios.post(endpoint, form);
+    const response = await axios.post(endpoint, form, payload);
 
     loginUser(response.data.token, response.data.user);
 
@@ -251,7 +246,7 @@ const handleSubmit = async () => {
     setTimeout(() => {
       showSplash.value = false;
       router.push(form.role === 'user' ? '/homelogged' : '/serviceprovider');
-      toast.success(`Welcome, ${response.data.user?.name || 'User'}!`, { theme: 'colored', autoClose: 2000 });
+      //toast.success(`Welcome, ${response.data.user?.name || 'User'}!`, { theme: 'colored', autoClose: 2000 });
     }, 1500);
 
   } catch (err) {

@@ -113,7 +113,6 @@ const handleLogin = async () => {
 };
 </script>
 
-
 <style scoped>
 
 /* Fade for overlay */
