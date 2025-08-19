@@ -1,14 +1,17 @@
 <template>
   <div class="min-h-screen flex items-center justify-center bg-gray-100 px-4 py-8 relative">
-    
+
     <!-- Signup Form Card -->
     <transition name="fade">
       <div v-if="!showSplash" class="w-full max-w-md bg-white p-6 md:p-8 rounded-2xl shadow-xl z-10">
-        
+
         <!-- Header -->
         <div class="text-center mb-6">
           <img src="@/assets/skilllogo.png" alt="SkillLink Logo" class="w-20 h-20 mx-auto mb-4" />
-          <h2 class="text-2xl font-bold bg-gradient-to-r from-[#3B8D99] to-[#f46675] bg-clip-text text-transparent ">Create Your SkillLink Account</h2>
+          <h2 class="text-2xl font-bold bg-gradient-to-r from-[#3B8D99] to-[#f46675] bg-clip-text text-transparent">
+            Create Your SkillLink Account
+          </h2>
+          <p class="text-gray-500 text-sm mt-2">Join us and start your journey today</p>
         </div>
 
         <form @submit.prevent="handleSubmit" class="space-y-5">
@@ -22,7 +25,8 @@
                 <span class="text-gray-800">User</span>
               </label>
               <label class="flex items-center space-x-2 cursor-pointer">
-                <input type="radio" value="provider" v-model="form.role" @change="resetFields" class="accent-[#0073b1]" />
+                <input type="radio" value="provider" v-model="form.role" @change="resetFields"
+                  class="accent-[#0073b1]" />
                 <span class="text-gray-800">Service Provider</span>
               </label>
             </div>
@@ -43,47 +47,31 @@
           </div>
 
           <!-- Password -->
-          <div>
+          <div class="relative">
             <label class="block text-sm font-semibold text-gray-700 mb-1">Password</label>
-            <input v-model="form.password" type="password" placeholder="••••••••" required
-              class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 transition"
-              :class="{
+            <input v-model="form.password" :type="showPassword ? 'text' : 'password'" placeholder="••••••••" required
+              class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 pr-12 transition" :class="{
                 'border-red-500': form.password.length > 0 && form.password.length < 6,
                 'border-gray-300': form.password.length >= 6 || form.password.length === 0
-              }"
-            />
+              }" />
+            <button type="button" @click="showPassword = !showPassword"
+              class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-blue-500 transition">
+              {{ showPassword ? 'Hide' : 'Show' }}
+            </button>
             <p v-if="form.password.length > 0 && form.password.length < 6" class="text-red-500 text-sm mt-1">
               Password must be at least 6 characters.
             </p>
           </div>
-
           <!-- Provider Fields -->
           <div v-if="form.role === 'provider'" class="space-y-4">
-            
-            <!-- Area -->
-            <div>
-              <label class="block text-sm font-semibold text-gray-700 mb-1">Area (Location)</label>
-              <input v-model="form.area" type="text" placeholder="e.g., Sector 14, Rohini" required
-                class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 transition" />
-              <small class="text-gray-500">Helps users find you nearby.</small>
-            </div>
 
             <!-- Services -->
-            <div>
+            <div class="relative">
               <label class="block text-sm font-semibold text-gray-700 mb-1">Select up to 3 Services</label>
-              <div class="grid grid-cols-2 gap-2">
-                <label v-for="(option, index) in availableServices" :key="index" class="flex items-center space-x-2 cursor-pointer">
-                  <input
-                    type="checkbox"
-                    :value="option"
-                    :checked="form.services.includes(option)"
-                    @change="toggleService(option)"
-                    :disabled="!form.services.includes(option) && form.services.length >= 3"
-                    class="accent-[#0073b1]"
-                  />
-                  <span class="text-gray-700">{{ option }}</span>
-                </label>
-              </div>
+              <Multiselect v-model="form.services" :options="availableServices" :multiple="true" :max="3"
+                placeholder="Select up to 3 services" class="w-full text-gray-700" :show-labels="false"
+                :allow-empty="true" track-by="" label="" :custom-label="(option) => option" @open="dropdownOpen = true"
+                @close="dropdownOpen = false" />
               <p v-if="form.services.length >= 3" class="text-sm text-red-500 mt-1">
                 You can only select up to 3 services.
               </p>
@@ -94,6 +82,21 @@
               <label class="block text-sm font-semibold text-gray-700 mb-1">Years of Experience</label>
               <input v-model="form.experience" type="number" min="0"
                 class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 transition" />
+            </div>
+            <!-- Area -->
+            <div>
+              <label class="block text-sm font-semibold text-gray-700 mb-1">Area (Location)</label>
+              <input v-model="form.area" type="text" placeholder="e.g., Sector 14, Rohini" required
+                class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 transition" />
+              <small class="text-gray-500">Helps users find you nearby.</small>
+            </div>
+
+            <!-- Optional Geolocation -->
+            <div class="mt-2">
+              <button type="button" @click="getLocation"
+                class="px-3 py-1 text-sm bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition">
+                Use My Current Location
+              </button>
             </div>
 
             <!-- Address -->
@@ -131,8 +134,7 @@
     <!-- Splash Screen -->
     <transition name="overlay-fade">
       <div v-if="showSplash" class="absolute inset-0 flex flex-col items-center justify-center bg-white z-20">
-        <img src="@/assets/skilllogo.png" alt="SkillLink Logo"
-          class="w-32 mb-4 animate-scale-bounce" />
+        <img src="@/assets/skilllogo.png" alt="SkillLink Logo" class="w-32 mb-4 animate-scale-bounce" />
         <p class="text-gray-700 font-medium text-lg animate-pulse">Signing Up...</p>
       </div>
     </transition>
@@ -141,15 +143,18 @@
 </template>
 
 <script setup>
-import { reactive, ref, watch } from 'vue';
+import { reactive, ref } from 'vue';
 import { useRouter } from 'vue-router';
 import axios from 'axios';
 import { toast } from 'vue3-toastify';
 import { loginUser } from '@/stores/auth';
+import Multiselect from 'vue-multiselect';
+import 'vue-multiselect/dist/vue-multiselect.min.css';
 
-const router = useRouter();
+ const router = useRouter();
 const loading = ref(false);
 const showSplash = ref(false);
+const showPassword = ref(false);
 
 const form = reactive({
   name: '',
@@ -160,8 +165,9 @@ const form = reactive({
   experience: '',
   address: '',
   area: '',
-  latitude: '',
-  longitude: ''
+  latitude: null,
+  longitude: null,
+  city: ''
 });
 
 const availableServices = [
@@ -173,14 +179,6 @@ const availableServices = [
   'House Shifting/Packers', 'Tailor', 'Event Decorator', 'Pet Groomer'
 ];
 
-const toggleService = (service) => {
-  if (form.services.includes(service)) {
-    form.services = form.services.filter(s => s !== service);
-  } else if (form.services.length < 3) {
-    form.services.push(service);
-  }
-};
-
 const resetFields = () => {
   form.email = '';
   form.password = '';
@@ -188,21 +186,46 @@ const resetFields = () => {
   form.experience = '';
   form.address = '';
   form.area = '';
+  form.latitude = null;
+  form.longitude = null;
+  form.city = '';
 };
 
-watch(() => form.role, (role) => {
-  if (role === 'provider' && navigator.geolocation) {
-    navigator.geolocation.getCurrentPosition(
-      pos => {
-        form.latitude = pos.coords.latitude;
-        form.longitude = pos.coords.longitude;
-      },
-      () => {
-        toast.error('Enable location access for better results.', { theme: 'colored' });
-      }
-    );
+const getLocation = () => {
+  if (!navigator.geolocation) {
+    toast.error('Geolocation is not supported by your browser.');
+    return;
   }
-});
+
+  navigator.geolocation.getCurrentPosition(
+    async (position) => {
+      form.latitude = position.coords.latitude;
+      form.longitude = position.coords.longitude;
+
+      try {
+        // Use Nominatim API to get human-readable address
+        const res = await axios.get('https://nominatim.openstreetmap.org/reverse', {
+          params: {
+            lat: form.latitude,
+            lon: form.longitude,
+            format: 'json'
+          }
+        });
+        if (res.data && res.data.address) {
+          // Fill the Area field with city/neighborhood
+          form.area = res.data.address.suburb || res.data.address.neighbourhood || res.data.address.city || '';
+          toast.success('Location detected and filled automatically!');
+        }
+      } catch (err) {
+        toast.error('Failed to fetch address from coordinates.');
+      }
+    },
+    () => {
+      toast.error('Enable location access for this feature.');
+    }
+  );
+};
+
 
 const handleSubmit = async () => {
   try {
@@ -212,30 +235,12 @@ const handleSubmit = async () => {
       ? 'http://localhost:5000/api/auth/signup'
       : 'http://localhost:5000/api/providers/signup';
 
-    if (form.role === 'provider') {
-      await new Promise((resolve, reject) => {
-        navigator.geolocation.getCurrentPosition(
-          pos => {
-            form.latitude = pos.coords.latitude;
-            form.longitude = pos.coords.longitude;
-            resolve();
-          },
-          () => {
-            toast.error('Failed to get location. Enable location access.');
-            reject();
-          }
-        );
-      });
-    }
-
     const response = await axios.post(endpoint, form);
 
     loginUser(response.data.token, response.data.user);
 
-    // Show splash
     showSplash.value = true;
 
-    // Delay and redirect
     setTimeout(() => {
       showSplash.value = false;
       router.push(form.role === 'user' ? '/homelogged' : '/serviceprovider');
@@ -252,39 +257,88 @@ const handleSubmit = async () => {
 
 <style scoped>
 /* Fade animation for form */
-.fade-enter-active, .fade-leave-active {
+.fade-enter-active,
+.fade-leave-active {
   transition: opacity 0.5s ease, transform 0.5s ease;
 }
-.fade-enter-from, .fade-leave-to {
+
+.fade-enter-from,
+.fade-leave-to {
   opacity: 0;
   transform: scale(0.95);
 }
 
 /* Splash animations */
 @keyframes scale-bounce {
-  0%, 100% { transform: scale(1); }
-  50% { transform: scale(1.1); }
+
+  0%,
+  100% {
+    transform: scale(1);
+  }
+
+  50% {
+    transform: scale(1.1);
+  }
 }
+
 .animate-scale-bounce {
   animation: scale-bounce 1s infinite;
 }
 
-.overlay-fade-enter-active, .overlay-fade-leave-active {
+.overlay-fade-enter-active,
+.overlay-fade-leave-active {
   transition: opacity 0.4s ease, transform 0.4s ease;
 }
-.overlay-fade-enter-from, .overlay-fade-leave-to {
+
+.overlay-fade-enter-from,
+.overlay-fade-leave-to {
   opacity: 0;
   transform: scale(0.95);
 }
 
 @keyframes pulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.5; }
+
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.5;
+  }
 }
+
 .animate-pulse {
   animation: pulse 1s infinite;
 }
+/* Force dropdown to open downward */
+.multiselect__content {
+  max-height: 200px; /* limit height with scroll */
+  overflow-y: auto;
+  z-index: 50; /* make sure it overlays other elements */
+}
+
+.multiselect {
+  border-radius: 0.5rem; /* rounded corners */
+  border: 1px solid #d1d5db; /* light gray border */
+  transition: border 0.2s;
+}
+
+.multiselect:focus-within {
+  border-color: #3b82f6; /* blue on focus */
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+}
+
+.multiselect__tag {
+  background-color: #213a63;
+  color: white;
+  border-radius: 0.375rem;
+  padding: 0 0.5rem;
+}
+
+.multiselect__option--highlight {
+  background-color: #bfdbfe; /* hover color */
+  color: #1e3a8a;
+}
+
 </style>
-
-
-
