@@ -1,5 +1,6 @@
 
 module.exports = {
+  publicPath: '/',
   chainWebpack: config => {
     config.plugin('define').tap(definitions => {
       Object.assign(definitions[0], {
