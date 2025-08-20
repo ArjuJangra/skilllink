@@ -20,6 +20,11 @@
                 d="M6 2a1 1 0 0 0-1 1v2H3a1 1 0 1 0 0 2h1l1.6 9.59A3 3 0 0 0 8.56 19h6.88a3 3 0 0 0 2.96-2.41L20 7H7V5h10a1 1 0 1 0 0-2H7V3a1 1 0 0 0-1-1zm2.56 15a1 1 0 0 1-.98-.8L6.28 9h11.44l-1.3 7.2a1 1 0 0 1-.98.8H8.56zM9 21a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3zm6 0a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3z" />
             </svg>
             <span>Orders</span>
+            <!-- Notification Badge -->
+            <span v-if="newOrdersCount > 0"
+              class="absolute top-0 right-0 -mt-1 -mr-2 bg-red-600 text-white text-xs font-bold w-5 h-5 flex items-center justify-center rounded-full">
+              {{ newOrdersCount }}
+            </span>
           </router-link>
 
           <!-- Profile -->
@@ -98,33 +103,29 @@
         <h3 class="text-[#0073b1] font-semibold text-lg sm:text-xl mb-3">Monthly Earnings</h3>
         <canvas ref="earningsChart" class="w-full"></canvas>
       </section>
-       <!-- Recent Orders -->
-<section class="bg-white shadow rounded-2xl p-5 mb-6">
-  <h3 class="text-[#0073b1] font-semibold text-lg sm:text-xl mb-3">Recent Orders</h3>
-  <ul>
-    <li 
-      v-for="order in recentOrders" 
-      :key="order.id"
-      class="flex justify-between items-center py-3 border-b last:border-b-0 hover:bg-gray-50 rounded transition"
-    >
-      <!-- Order name styled -->
-      <span class="font-medium text-gray-800">
-        {{ order.name || order.title || order.serviceName }}
-      </span>
+      <!-- Recent Orders -->
+      <section class="bg-white shadow rounded-2xl p-5 mb-6">
+        <h3 class="text-[#0073b1] font-semibold text-lg sm:text-xl mb-3">Recent Orders</h3>
+        <ul>
+          <li v-for="order in recentOrders" :key="order.id"
+            class="flex justify-between items-center py-3 border-b last:border-b-0 hover:bg-gray-50 rounded transition">
+            <!-- Order name styled -->
+            <span class="font-medium text-gray-800">
+              {{ order.name || order.title || order.serviceName }}
+            </span>
 
-      <!-- Status badge -->
-      <span 
-        :class="statusColor(order.status) + ' px-3 py-1 rounded-full text-xs sm:text-sm font-semibold uppercase tracking-wide'"
-      >
-        {{ order.status }}
-      </span>
-    </li>
+            <!-- Status badge -->
+            <span
+              :class="statusColor(order.status) + ' px-3 py-1 rounded-full text-xs sm:text-sm font-semibold uppercase tracking-wide'">
+              {{ order.status }}
+            </span>
+          </li>
 
-    <li v-if="recentOrders.length === 0" class="text-gray-500 py-2 text-center">
-      No recent orders
-    </li>
-  </ul>
-</section>
+          <li v-if="recentOrders.length === 0" class="text-gray-500 py-2 text-center">
+            No recent orders
+          </li>
+        </ul>
+      </section>
       <!-- Quick Actions -->
       <section class="mb-10 flex flex-wrap gap-4 justify-center">
         <router-link to="/provider/orders"
@@ -276,7 +277,7 @@ import axios from 'axios';
 import { ref, onMounted, reactive, computed, nextTick } from 'vue';
 import Chart from 'chart.js/auto';
 
- const API_BASE = 'http://localhost:5000';
+const API_BASE = 'http://localhost:5000';
 
 export default {
   name: 'ServiceProvider',
@@ -285,6 +286,7 @@ export default {
     const provider = ref(null);
     const stats = reactive({ total: 0, completed: 0, earnings: 0, earningsData: [] });
     const recentOrders = ref([]);
+    const newOrdersCount = ref(0);
     const profileCompletion = ref(0);
     const defaultPic = require('@/assets/user.png');
     const earningsChart = ref(null);
@@ -338,23 +340,31 @@ export default {
       }
     };
 
+    const fetchNewOrdersCount = async () => {
+      try {
+        const token = localStorage.getItem('token');
+        const res = await axios.get(`${API_BASE}/api/bookings/provider-orders`, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        // Count orders which are not completed
+        newOrdersCount.value = res.data.filter(order => order.status !== 'Completed').length;
+      } catch (err) {
+        console.error('Error fetching new orders count:', err);
+      }
+    };
+
     const fetchStats = async () => {
       try {
         const token = localStorage.getItem('token');
         const res = await axios.get(`${API_BASE}/api/provider/orders/stats`, {
           headers: { Authorization: `Bearer ${token}` }
         });
-
-        console.log('Fetched stats raw:', res.data);
-
         stats.total = res.data.total || 0;
         stats.completed = res.data.completed || 0;
         stats.earnings = res.data.earnings || 0;
         stats.earningsData = Array.isArray(res.data.earningsData)
           ? res.data.earningsData.map(n => Number(n) || 0)
           : Array(12).fill(0);
-
-        console.log('Processed earningsData:', stats.earningsData);
 
         await renderEarningsChart();
 
@@ -380,7 +390,6 @@ export default {
       if (chartInstance.value) chartInstance.value.destroy();
 
       const monthlyData = [...stats.earningsData];
-      console.log("Chart data:", monthlyData);
 
       const ctx = earningsChart.value.getContext('2d');
       chartInstance.value = new Chart(ctx, {
@@ -405,9 +414,11 @@ export default {
       await fetchProviderProfile();
       await fetchStats();
       await fetchRecentOrders();
+      await fetchNewOrdersCount();
+      setInterval(fetchNewOrdersCount, 60000);
     });
 
-    return { drawerOpen, provider, stats, recentOrders, profileCompletion, profileImage, greeting, statsCards, handleImageError, statusColor, earningsChart };
+    return { drawerOpen, provider, stats, recentOrders, profileCompletion, profileImage, greeting, statsCards, handleImageError, statusColor, earningsChart, newOrdersCount };
   }
 };
 </script>

@@ -298,10 +298,6 @@
                       class="text-sm px-3 py-1 bg-blue-500 hover:bg-blue-600 text-white rounded-md transition">
                       View Details
                     </button>
-                    <button v-if="item.status === 'Completed'" @click="rebookService(item.serviceId)"
-                      class="text-sm px-3 py-1 bg-green-500 hover:bg-green-600 text-white rounded-md transition">
-                      Rebook
-                    </button>
                   </div>
                 </div>
               </div>
@@ -499,12 +495,6 @@ const viewDetails = (id) => {
   // Navigate to service details page
   router.push({ name: 'ServiceDetails', params: { id } });
 };
-
-const rebookService = (serviceId) => {
-  // Navigate to service details for rebooking
-  router.push({ name: 'ServiceDetails', params: { id: serviceId, rebook: true } });
-};
-
 
 // --- Utils ---
 const apiGet = (url) => axios.get(url, { headers: { Authorization: `Bearer ${getToken()}` } });
