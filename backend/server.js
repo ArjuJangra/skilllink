@@ -17,10 +17,26 @@ dotenv.config();
 const app = express();
 const server = http.createServer(app);
 
+// ===== Allowed Origins =====
+const allowedOrigins = [
+  'http://localhost:8080',
+  'http://localhost:5173',
+  process.env.CLIENT_ORIGIN, // your Vercel frontend
+];
+
 // ===== Setup Socket.IO =====
 const io = new Server(server, {
   cors: {
-    origin: ['http://localhost:8080', 'http://localhost:5173'],
+    origin: (origin, callback) => {
+      if (!origin) return callback(null, true); // allow Postman/curl
+      if (
+        allowedOrigins.includes(origin) ||
+        /\.vercel\.app$/.test(origin) // allow Vercel previews
+      ) {
+        return callback(null, true);
+      }
+      return callback(new Error('Not allowed by WS CORS'));
+    },
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
     credentials: true
   },
@@ -37,11 +53,25 @@ mongoose.connect(process.env.MONGO_URI)
 app.use(express.json());
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 app.use(cors({
-  origin: ['http://localhost:8080', 'http://localhost:5173'],
+  origin: (origin, callback) => {
+    if (!origin) return callback(null, true);
+    if (
+      allowedOrigins.includes(origin) ||
+      /\.vercel\.app$/.test(origin)
+    ) {
+      return callback(null, true);
+    }
+    return callback(new Error('Not allowed by CORS'));
+  },
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
   credentials: true,
   allowedHeaders: ['Content-Type', 'Authorization']
 }));
+
+// ===== Health Check =====
+app.get('/health', (_req, res) => {
+  res.status(200).json({ ok: true });
+});
 
 // ===== Routes =====
 app.use('/api/auth', require('./routes/auth'));
@@ -49,7 +79,7 @@ app.use('/api/user', require('./routes/userRoutes'));
 app.use('/api/address', require('./routes/addressRoutes'));
 app.use('/api/services', require('./routes/serviceRoutes'));
 app.use('/api/bookings', bookingRoutes);
-app.use('/api/providers',providerRoutes);
+app.use('/api/providers', providerRoutes);
 app.use('/api/contact', contactRoutes);
 app.use('/api/provider/orders', providerOrdersRoutes);
 app.use('/api/notifications', notificationRoutes);
@@ -98,7 +128,7 @@ io.on('connection', (socket) => {
 
 // ===== Start Server =====
 const PORT = process.env.PORT || 5000;
-server.listen(PORT, () => {
+server.listen(PORT, '0.0.0.0', () => {
   console.log(`🚀 Server running on port ${PORT}`);
 });
 
