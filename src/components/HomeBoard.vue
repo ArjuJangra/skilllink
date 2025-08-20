@@ -1,14 +1,15 @@
 <template>
   <div class="min-h-screen bg-gray-50">
-    <!-- Navbar -->
-    <header class="flex sticky top-0 z-50 justify-between items-center px-4 sm:px-6 py-4 bg-white max-w-7xl mx-auto">
-      <!-- Logo -->
-      <div class="flex items-center gap-2">
-        <img src="@/assets/skilllogo.png" alt="SkillLink Logo" class="w-10 h-10 sm:w-12 sm:h-12" />
-        <h1 class="text-xl sm:text-2xl font-bold text-[#0073b1]">SkillLink</h1>
-      </div>
+    <!-- Header -->
+    <header class="sticky top-0 z-50 px-4 bg-white shadow-md w-full">
+      <div class="max-w-7xl mx-auto  py-3 flex items-center justify-between">
 
-      <!-- Desktop Nav -->
+        <!-- Logo -->
+        <div class="flex items-center space-x-2">
+          <img src="@/assets/skilllogo.png" alt="SkillLink Logo" class="w-10 h-10 sm:w-12 sm:h-12" />
+          <h1 class="text-xl sm:text-2xl font-bold text-[#0073b1]">SkillLink</h1>
+        </div>
+        <!-- Desktop Nav -->
       <nav class="hidden sm:flex items-center gap-3">
         <router-link to="/about"
           class="text-sm sm:text-lg font-semibold text-gray-600 hover:text-[#0073b1] px-3 py-2 rounded-lg transition hover:scale-105">
@@ -41,9 +42,10 @@
           </button>
         </router-link>
       </nav>
+      </div>
 
       <!-- Hamburger Icon -->
-      <button  class="sm:hidden flex flex-col gap-1 focus:outline-none" @click="isOpen = !isOpen">
+      <button class="sm:hidden flex flex-col gap-1 focus:outline-none" @click="isOpen = !isOpen">
         <span class="block w-6 h-0.5 bg-gray-800 transition-transform"
           :class="{ 'rotate-45 translate-y-1.5': isOpen }"></span>
         <span class="block w-6 h-0.5 bg-gray-800 transition-opacity" :class="{ 'opacity-0': isOpen }"></span>

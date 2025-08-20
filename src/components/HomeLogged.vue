@@ -1,17 +1,15 @@
 <template>
   <div class="min-h-screen bg-gray-50">
        <!-- Navbar -->
-    <header
-      class="flex w-full sticky top-0 z-50 justify-between backdrop-blur-md bg-gradient-to-r from-white via-[#f1faff] to-[#f5fafe] shadow-md gap-4 mx-auto px-4 sm:px-6 py-4">
-      
-        <!-- Logo -->
+    <header class="sticky top-0 z-50 backdrop-blur-md bg-gradient-to-r from-white via-[#f1faff] to-[#f5fafe] shadow-md w-full">
+      <div class="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
+     <!-- Logo -->
         <div class="flex items-center gap-2">
           <img src="@/assets/skilllogo.png" alt="SkillLink Logo"
             class="w-10 h-10 sm:w-12 sm:h-12 transition-transform hover:rotate-12" loading="lazy" />
           <h1 class="text-xl sm:text-2xl font-bold text-[#0073b1]">SkillLink</h1>
         </div>
-
-        <!-- Navigation & Actions -->
+         <!-- Navigation bar -->
         <div class="flex items-center gap-2 sm:gap-4 flex-wrap">
           <!-- Nav Links -->
           <nav class="hidden sm:flex gap-3 text-gray-700 font-medium text-sm items-center">
@@ -58,6 +56,7 @@
               loading="lazy" />
           </router-link>
         </div>
+      </div>
     </header>
 
     <!-- Hero Section -->
