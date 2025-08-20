@@ -241,7 +241,7 @@
       </div>
     </section>
     <!-- Footer -->
-    <footer class="bg-[#f9fafb] text-gray-600 border-t mt-4">
+    <footer class="bg-[#ecf0f4] text-gray-600 border-t">
       <div class="max-w-6xl mx-auto px-6 py-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8">
 
         <!-- Logo & Tagline -->

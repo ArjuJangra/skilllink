@@ -1,11 +1,11 @@
 <template>
   <!-- Authenticated Dashboard Wrapper -->
   <div v-if="isAuthenticated" class="min-h-screen bg-gradient-to-b from-[#F0F9FF] to-white py-8 px-4">
-    <div class="max-w-5xl mx-auto bg-white rounded-3xl shadow-xl p-6">
+    <div class="max-w-5xl mx-auto bg-gradient from-[#F0F9FF] via-white to-[#E6F4F9] rounded-3xl shadow-xl p-6">
 
       <!-- User Profile Card -->
       <div v-if="user"
-        class="bg-white p-6 rounded-3xl shadow-sm hover:shadow-md transition-all duration-300 max-w-2xl mx-auto">
+        class="bg-gradient-to-br from-white via-[#f1faff] to-[#f5fafe] p-6 rounded-3xl shadow-sm hover:shadow-md transition-all duration-300 max-w-2xl mx-auto">
 
         <!-- Profile Section -->
         <div class="flex flex-col sm:flex-row items-center gap-6">
@@ -133,7 +133,7 @@
       </div>
 
       <!-- Navigation Tabs -->
-      <div class="flex flex-wrap items-center gap-2 border-b border-gray-200 pb-3 mb-6 mt-2">
+      <div class="flex flex-wrap items-center gap-2 bg-gradient-to-br from-[#f1faff]  via-[#f1faff] to-[#f5fafe] border-b border-gray-200 pb-3 mb-2 mt-2">
         <button v-for="tab in tabs" :key="tab" @click="activeTab = tab" :class="[
           ' px-5 py-2 font-medium transition-all duration-200 rounded-t-lg border-b-2',
           activeTab === tab
@@ -147,7 +147,7 @@
       <div v-if="isLoading" class="text-center text-[#007EA7] font-semibold py-8">Loading...</div>
 
       <!-- Content -->
-      <div v-else>
+      <div v-else class="bg-gradient-to-br from-white via-[#f1faff] to-[#f5fafe]">
         <transition name="fade-slide " mode="out-in">
           <div :key="activeTab" class="w-full bg-white rounded-2xl shadow-md p-6 transition-all">
             <!-- Bookings Tab -->
@@ -309,8 +309,6 @@
                 <button @click="router.push('/services')" class="btn-blue mt-3">Explore Services</button>
               </div>
             </div>
-
-
             <!-- Address Tab -->
             <div v-else-if="activeTab === 'address'" class="space-y-6">
               <div class="flex items-center justify-between">
@@ -629,7 +627,6 @@ onMounted(() => {
 });
 onUnmounted(() => socket.value?.disconnect());
 </script>
-
 
 <style scoped>
 @media (max-width: 640px) {
