@@ -34,10 +34,10 @@ L.Icon.Default.mergeOptions({
 
 // Example category icons
 const categoryIcons = {
-  electrician: L.icon({ iconUrl: '/icons/electrician.png', iconSize: [35, 35] }),
-  plumber: L.icon({ iconUrl: '/icons/plumber.png', iconSize: [35, 35] }),
+  electrician: L.icon({ iconUrl: '/images/electrician.jpg', iconSize: [35, 35] }),
+  plumber: L.icon({ iconUrl: '/images/plumber.jpeg', iconSize: [35, 35] }),
   appliance: L.icon({ iconUrl: '/icons/appliance.png', iconSize: [35, 35] }),
-  default: L.icon({ iconUrl: '/icons/default.png', iconSize: [35, 35] }),
+  default: L.icon({ iconUrl: '/images/default-user.png', iconSize: [35, 35] }),
 }
 
 onMounted(async () => {

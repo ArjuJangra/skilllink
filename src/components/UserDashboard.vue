@@ -9,19 +9,20 @@
 
         <!-- Profile Section -->
         <div class="flex flex-col sm:flex-row items-center gap-6">
-
           <!-- Profile Picture with Edit Button -->
           <div class="relative">
             <img :src="user.profilePic ? `http://localhost:5000/uploads/${user.profilePic}` : userImg"
-              class="w-28 h-28 sm:w-32 sm:h-32 rounded-full border-4 border-[#00A8E8] object-cover shadow-md" />
+              class="w-20 h-20 sm:w-32 sm:h-32 rounded-full border-4 border-[#00A8E8] object-cover shadow-md" />
             <label
               class="absolute bottom-1 right-1 bg-[#00A8E8] text-white rounded-full p-2 cursor-pointer hover:bg-[#007EA7] transition"
               title="Upload Photo">
               <input type="file" class="hidden" @change="handleProfileImageChange" />
+              <!-- Camera icon inline -->
               <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="currentColor">
                 <path
-                  d="M12 5c-3.86 0-7 3.14-7 7 0 3.31 2.69 6 6 6 3.86 0 7-3.14 7-7 0-3.31-2.69-6-6-6zm0-2c4.97 0 9 4.03 9 9s-4.03 9-9 9-9-4.03-9-9 4.03-9 9-9z" />
+                  d="M21 7h-3.17l-1.84-2H7.01L5.17 7H2a2 2 0 00-2 2v10a2 2 0 002 2h19a2 2 0 002-2V9a2 2 0 00-2-2zm-9 12a5 5 0 110-10 5 5 0 010 10zm0-8a3 3 0 100 6 3 3 0 000-6z" />
               </svg>
+
             </label>
           </div>
 
@@ -69,6 +70,7 @@
         </div>
 
         <!-- Edit Profile Modal -->
+        <!-- Edit Profile Modal -->
         <transition name="fade">
           <div v-if="showEditProfileForm"
             class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-40 z-50">
@@ -77,15 +79,35 @@
               <!-- Header -->
               <div class="flex justify-between items-center mb-4">
                 <h3 class="text-lg font-semibold text-gray-800">Edit Profile</h3>
-                <button @click="showEditProfileForm = false" class="text-gray-400 hover:text-gray-600">✕</button>
+                <button @click="showEditProfileForm = false" class="text-gray-400 hover:text-gray-600">
+                  ✕
+                </button>
               </div>
 
               <!-- Form -->
               <div class="space-y-4">
-                <div v-for="(field, key) in editableFields" :key="key">
-                  <label class="block text-sm font-medium text-gray-600 mb-1">{{ field.label }}</label>
-                  <input v-model="user[key]" :type="field.type || 'text'"
-                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#00A8E8] focus:outline-none shadow-sm" />
+                <div>
+                  <label class="block text-sm font-medium text-gray-600 mb-1">Name</label>
+                  <input v-model="editForm.name" type="text" class="w-full px-4 py-2 border border-gray-300 rounded-lg 
+                   focus:ring-2 focus:ring-[#00A8E8] focus:outline-none shadow-sm" />
+                </div>
+
+                <div>
+                  <label class="block text-sm font-medium text-gray-600 mb-1">Email</label>
+                  <input v-model="editForm.email" type="email" class="w-full px-4 py-2 border border-gray-300 rounded-lg 
+                   focus:ring-2 focus:ring-[#00A8E8] focus:outline-none shadow-sm" />
+                </div>
+
+                <div>
+                  <label class="block text-sm font-medium text-gray-600 mb-1">Phone</label>
+                  <input v-model="editForm.phone" type="tel" class="w-full px-4 py-2 border border-gray-300 rounded-lg 
+                   focus:ring-2 focus:ring-[#00A8E8] focus:outline-none shadow-sm" />
+                </div>
+
+                <div>
+                  <label class="block text-sm font-medium text-gray-600 mb-1">Bio</label>
+                  <textarea v-model="editForm.bio" class="w-full px-4 py-2 border border-gray-300 rounded-lg 
+                   focus:ring-2 focus:ring-[#00A8E8] focus:outline-none shadow-sm"></textarea>
                 </div>
               </div>
 
@@ -107,10 +129,11 @@
             </div>
           </div>
         </transition>
+
       </div>
 
       <!-- Navigation Tabs -->
-      <div class="flex flex-wrap items-center gap-2 border-b border-gray-200 pb-3 mb-6">
+      <div class="flex flex-wrap items-center gap-2 border-b border-gray-200 pb-3 mb-6 mt-2">
         <button v-for="tab in tabs" :key="tab" @click="activeTab = tab" :class="[
           ' px-5 py-2 font-medium transition-all duration-200 rounded-t-lg border-b-2',
           activeTab === tab
@@ -126,7 +149,7 @@
       <!-- Content -->
       <div v-else>
         <transition name="fade-slide " mode="out-in">
-          <div :key="activeTab"  class="w-full bg-white rounded-2xl shadow-md p-6 transition-all">
+          <div :key="activeTab" class="w-full bg-white rounded-2xl shadow-md p-6 transition-all">
             <!-- Bookings Tab -->
             <div v-if="activeTab === 'bookings'" class="space-y-6">
               <h3 class="text-xl font-semibold text-[#007EA7]">My Bookings</h3>
@@ -149,14 +172,30 @@
                     <p class="text-sm text-gray-500">Contact: {{ booking.contact }}</p>
                     <p class="text-sm text-gray-500">Address: {{ booking.address }}</p>
                     <p class="text-xs text-gray-400">Booked: {{ new Date(booking.createdAt).toLocaleString() }}</p>
-                    <div class="mt-2">
-                      <span v-if="booking.status === 'Completed'"
-                        class="text-green-600 font-medium text-sm">Completed</span>
-                      <button v-else @click="markAsCompleted(booking._id)"
-                        class="text-sm px-3 py-1 bg-blue-500 hover:bg-blue-600 text-white rounded">
-                        Mark as Completed
-                      </button>
+                    <div class="mt-2 flex gap-2">
+                      <!-- Completed -->
+                      <span v-if="booking.status === 'Completed'" class="text-green-600 font-medium text-sm">
+                        Completed
+                      </span>
+
+                      <!-- Rejected -->
+                      <span v-else-if="booking.status === 'Rejected'" class="text-red-600 font-medium text-sm">
+                        Rejected
+                      </span>
+
+                      <!-- Action buttons -->
+                      <template v-else>
+                        <button @click="markAsCompleted(booking._id)"
+                          class="text-sm px-3 py-1 bg-blue-500 hover:bg-blue-600 text-white rounded">
+                          Mark as Completed
+                        </button>
+                        <button @click="rejectBooking(booking._id)"
+                          class="text-sm px-3 py-1 bg-red-500 hover:bg-red-600 text-white rounded">
+                          Reject
+                        </button>
+                      </template>
                     </div>
+
                   </template>
                   <div class="absolute top-2 right-2 flex gap-2 text-sm">
                     <button @click="startEdit(booking)" class="text-blue-500 hover:text-blue-700"><i
@@ -168,28 +207,114 @@
               </div>
               <p v-else class="text-gray-500">No bookings found.</p>
             </div>
+
             <!-- History Tab -->
             <div v-else-if="activeTab === 'history'" class="space-y-6">
               <h3 class="text-xl font-semibold text-[#007EA7]">Previous Services</h3>
-              <div v-if="history.length" class="grid md:grid-cols-2 gap-4">
+              <!-- Above the history grid -->
+              <div class="flex justify-between items-center mb-4">
+
+                <button @click="showClearHistoryConfirm = true"
+                  class="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 transition">
+                  Clear History
+                </button>
+              </div>
+
+              <!-- Inline confirmation banner -->
+              <div v-if="showClearHistoryConfirm"
+                class="bg-yellow-100 border-l-4 border-yellow-400 text-yellow-700 p-4 mb-4 flex justify-between items-center rounded">
+                <span>Are you sure you want to clear all history? This cannot be undone.</span>
+                <div class="flex gap-2">
+                  <button @click="confirmClearHistory"
+                    class="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600 transition">
+                    Yes
+                  </button>
+                  <button @click="showClearHistoryConfirm = false"
+                    class="px-3 py-1 bg-gray-300 text-gray-700 rounded hover:bg-gray-400 transition">
+                    No
+                  </button>
+                </div>
+              </div>
+
+              <!-- Grid of History Cards -->
+              <div v-if="history.length" class="grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 <div v-for="item in history" :key="item._id"
-                  class="bg-white border border-gray-200 rounded-xl shadow-sm hover:shadow-md p-4 transition">
-                  <div class="flex justify-between items-start">
-                    <div class="space-y-1">
-                      <h4 class="text-lg text-[#007EA7] font-bold">{{ item.service }}</h4>
+                  class="bg-white border border-gray-200 rounded-2xl shadow-sm hover:shadow-lg transform hover:scale-105 transition-all p-5 flex flex-col justify-between">
+
+                  <!-- Top Section: Service & Status -->
+                  <div class="flex justify-between items-start mb-3">
+                    <div>
+                      <h4 class="text-lg font-bold text-[#007EA7]">{{ item.service }}</h4>
                       <p class="text-gray-500 text-sm">{{ formatDate(item.date) }}</p>
                     </div>
-                    <span :class="[
-                      'text-sm font-semibold px-3 py-1 rounded-full',
-                      item.status === 'Completed' ? 'bg-green-100 text-green-700'
-                        : item.status === 'Pending' ? 'bg-yellow-100 text-yellow-700'
-                          : 'bg-gray-100 text-gray-600'
-                    ]">{{ item.status }}</span>
+
+                    <!-- Status Badge with Icon -->
+                    <span class="flex items-center gap-1 text-sm font-semibold px-3 py-1 rounded-full" :class="item.status === 'Completed' ? 'bg-green-100 text-green-700'
+                      : item.status === 'Rejected' ? 'bg-red-100 text-red-700'
+                        : 'bg-yellow-100 text-yellow-700'">
+                      <svg v-if="item.status === 'Completed'" xmlns="http://www.w3.org/2000/svg" class="h-4 w-4"
+                        fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7" />
+                      </svg>
+                      <svg v-else-if="item.status === 'Rejected'" xmlns="http://www.w3.org/2000/svg" class="h-4 w-4"
+                        fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3"
+                          d="M6 18L18 6M6 6l12 12" />
+                      </svg>
+                      <svg v-else xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 animate-spin" fill="none"
+                        viewBox="0 0 24 24" stroke="currentColor">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4">
+                        </circle>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"></path>
+                      </svg>
+                      {{ item.status }}
+                    </span>
+                  </div>
+
+                  <!-- Optional Description -->
+                  <p v-if="item.description" class="text-gray-600 text-sm mb-2 line-clamp-3">{{ item.description }}</p>
+
+                  <!-- Optional Provider Info -->
+                  <div v-if="item.provider" class="flex items-center gap-2 mb-2">
+                    <img :src="item.provider.avatar || userImg" class="w-8 h-8 rounded-full object-cover"
+                      alt="provider" />
+                    <span class="text-gray-700 text-sm">{{ item.provider.name }}</span>
+                  </div>
+
+                  <!-- Bottom Section: Booked Date & Time -->
+                  <div class="flex justify-between items-center mt-auto text-xs text-gray-400">
+                    <span>
+                      Booked on:
+                      {{ isValidDate(item.createdAt) ? relativeDate(item.createdAt) : 'N/A' }}
+                    </span>
+                    <span>
+                      {{ isValidDate(item.createdAt) ? formatTime(item.createdAt) : '' }}
+                    </span>
+                  </div>
+
+                  <!-- Action Buttons -->
+                  <div class="mt-3 flex gap-2">
+                    <button @click="viewDetails(item._id)"
+                      class="text-sm px-3 py-1 bg-blue-500 hover:bg-blue-600 text-white rounded-md transition">
+                      View Details
+                    </button>
+                    <button v-if="item.status === 'Completed'" @click="rebookService(item.serviceId)"
+                      class="text-sm px-3 py-1 bg-green-500 hover:bg-green-600 text-white rounded-md transition">
+                      Rebook
+                    </button>
                   </div>
                 </div>
               </div>
-              <p v-else class="text-gray-500">No service history available.</p>
+
+              <!-- Empty State -->
+              <div v-else class="flex flex-col items-center justify-center py-10 text-gray-500">
+                <img src="/assets/empty-history.svg" class="w-32 h-32 mb-4" alt="No history" />
+                <p>No service history available.</p>
+                <button @click="router.push('/services')" class="btn-blue mt-3">Explore Services</button>
+              </div>
             </div>
+
+
             <!-- Address Tab -->
             <div v-else-if="activeTab === 'address'" class="space-y-6">
               <div class="flex items-center justify-between">
@@ -319,379 +444,202 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted, watch } from 'vue';
+import { ref, reactive, onMounted, onUnmounted, watch } from 'vue';
 import { io } from 'socket.io-client';
 import axios from 'axios';
 import { useRouter } from 'vue-router';
 import { toast } from 'vue3-toastify';
 import 'vue3-toastify/dist/index.css';
 import { auth, logoutUser } from '@/stores/auth';
+import dayjs from 'dayjs';
+import relativeTime from 'dayjs/plugin/relativeTime';
+dayjs.extend(relativeTime);
 
 const router = useRouter();
+const getToken = () => localStorage.getItem('token');
 
-const isAuthenticated = ref(false);
-const isLoading = ref(true);
-const loading = ref(false);
-const showLogoutModal = ref(false);
-const showEditProfileForm = ref(false);
-const previewImage = ref(null);
+// --- State ---
+const isAuthenticated = ref(false), isLoading = ref(true), loading = ref(false);
+const showLogoutModal = ref(false), showEditProfileForm = ref(false), previewImage = ref(null);
 const tabs = ['bookings', 'history', 'address', 'settings'];
 const activeTab = ref(localStorage.getItem("activeTab") || "bookings");
 const userImg = ref('/images/default-user.png');
 const user = ref({ name: '', email: '', phone: '', bio: '', profilePic: '' });
 const socket = ref(null);
-const bookings = ref([]);
-const editingId = ref(null);
-const editableBooking = ref({ service: '', name: '', contact: '', address: '' });
-
-const history = ref([]);
-const showAddressForm = ref(false);
-const savedAddresses = ref(JSON.parse(localStorage.getItem('addresses')) || []);
-const newAddress = ref({ pincode: '', city: '', address: '' });
-
-const showPasswordForm = ref(false);
-const isChangingPassword = ref(false);
-const passwordForm = ref({ current: '', new: '', confirm: '' });
-
-const notificationSettings = ref({ email: true, sms: false, push: true });
-const isSavingNotifications = ref(false);
-const showNotificationPreferences = ref(false);
-
-const formatTab = (tab) => tab.charAt(0).toUpperCase() + tab.slice(1).replace('-', ' ');
-
-const editableFields = {
-  name: { label: 'Full Name' },
-  email: { label: 'Email', type: 'email' },
-  phone: { label: 'Phone', type: 'tel' },
-};
-
-const syncActiveTabFromHash = () => {
-  const hash = window.location.hash.replace('#', '');
-  if (tabs.includes(hash)) activeTab.value = hash;
-};
-
-watch(activeTab, (val) => {
-  localStorage.setItem("activeTab", val);
+const bookings = ref([]), history = ref([]);
+const editingId = ref(null), editableBooking = ref({
+  name: { label: 'Name', type: 'text', value: '' },
+  contact: { label: 'Contact', type: 'tel', value: '' },
+  address: { label: 'Email', type: 'email', value: '' },
 });
 
-const formatDate = (dateString) => {
-  const options = { year: 'numeric', month: 'short', day: 'numeric' }
-  return new Date(dateString).toLocaleDateString(undefined, options)
-}
+const showClearHistoryConfirm = ref(false);
 
-// Get user profile
+const savedAddresses = ref(JSON.parse(localStorage.getItem('addresses')) || []);
+const newAddress = reactive({ pincode: '', city: '', address: '' });
+const showAddressForm = ref(false);
+const passwordForm = reactive({ current: '', new: '', confirm: '' });
+const showPasswordForm = ref(false), isChangingPassword = ref(false);
+const notificationSettings = reactive({ email: true, sms: false, push: true });
+const isSavingNotifications = ref(false), showNotificationPreferences = ref(false);
+
+const editForm = reactive({
+  name: '',
+  email: '',
+  phone: '',
+});
+watch(showEditProfileForm, (val) => {
+  if (val) {
+    editForm.name = user.value.name || '';
+    editForm.email = user.value.email || '';
+    editForm.phone = user.value.phone || '';
+  }
+});
+const viewDetails = (id) => {
+  // Navigate to service details page
+  router.push({ name: 'ServiceDetails', params: { id } });
+};
+
+const rebookService = (serviceId) => {
+  // Navigate to service details for rebooking
+  router.push({ name: 'ServiceDetails', params: { id: serviceId, rebook: true } });
+};
+
+
+// --- Utils ---
+const apiGet = (url) => axios.get(url, { headers: { Authorization: `Bearer ${getToken()}` } });
+const apiPut = (url, data = {}) => axios.put(url, data, { headers: { Authorization: `Bearer ${getToken()}` } });
+const apiPost = (url, data) => axios.post(url, data, { headers: { Authorization: `Bearer ${getToken()}` } });
+const apiDelete = (url) => axios.delete(url, { headers: { Authorization: `Bearer ${getToken()}` } });
+
+const formatTab = (tab) => tab.charAt(0).toUpperCase() + tab.slice(1).replace('-', ' ');
+const formatDate = (date) => new Date(date).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' });
+const syncActiveTabFromHash = () => { const h = window.location.hash.replace('#', ''); if (tabs.includes(h)) activeTab.value = h; };
+watch(activeTab, (val) => localStorage.setItem("activeTab", val));
+
+// --- Date Utilities for History Tab ---
+const isValidDate = (date) => date && !isNaN(new Date(date).getTime());
+const formatTime = (date) => isValidDate(date) ? dayjs(date).format('hh:mm A') : '';
+const relativeDate = (date) => isValidDate(date) ? dayjs(date).fromNow() : 'N/A';
+
+// --- Profile ---
 const getUserProfile = async () => {
-  const token = localStorage.getItem('token');
   try {
-    const res = await axios.get('http://localhost:5000/api/user/profile', {
-      headers: { Authorization: `Bearer ${token}` },
-    });
-    user.value = res.data;
-    auth.user = res.data;
-    localStorage.setItem("user", JSON.stringify(res.data));
-  } catch (err) {
-    toast.error("Failed to load user data");
-  }
+    const { data } = await apiGet('http://localhost:5000/api/user/profile');
+    user.value = data; auth.user = data; localStorage.setItem("user", JSON.stringify(data));
+  } catch { toast.error("Failed to load user data"); }
 };
 
-// Upload profile image
-const handleProfileImageChange = async (event) => {
-  const file = event.target.files[0];
-  if (!file || !file.type.startsWith('image/')) {
-    toast.error("Please select a valid image file.");
-    return;
-  }
-
+const handleProfileImageChange = async (e) => {
+  const file = e.target.files[0]; if (!file?.type.startsWith('image/')) return toast.error("Please select an image.");
   previewImage.value = URL.createObjectURL(file);
-  const formData = new FormData();
-  formData.append('profilePic', file);
-
+  const formData = new FormData(); formData.append('profilePic', file);
   try {
-    const token = localStorage.getItem('token');
-    const res = await axios.put('http://localhost:5000/api/user/profile/picture', formData, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-        'Content-Type': 'multipart/form-data',
-      },
-    });
-
-    const timestampedProfilePic = `${res.data.profilePic}?t=${Date.now()}`;
-    user.value.profilePic = timestampedProfilePic;
-    auth.user.profilePic = timestampedProfilePic;
-
-    const existingUser = JSON.parse(localStorage.getItem("user"));
-    if (existingUser) {
-      existingUser.profilePic = timestampedProfilePic;
-      localStorage.setItem("user", JSON.stringify(existingUser));
-    }
-
+    const { data } = await apiPut('http://localhost:5000/api/user/profile/picture', formData);
+    const pic = `${data.profilePic}?t=${Date.now()}`; user.value.profilePic = pic; auth.user.profilePic = pic;
+    let existing = JSON.parse(localStorage.getItem("user")); if (existing) { existing.profilePic = pic; localStorage.setItem("user", JSON.stringify(existing)); }
     toast.success("Profile picture updated!");
-  } catch (error) {
-    toast.error("Failed to upload profile picture.");
-  }
+  } catch { toast.error("Failed to upload profile picture."); }
 };
 
- const updateUserProfile = async () => {
-  if (!user.value.name || !user.value.email) {
-    toast.error("Name and email are required.");
-    return;
+const updateUserProfile = async () => {
+  if (!editForm.name || !editForm.email) {
+    return toast.error("Name and email are required.");
   }
 
   loading.value = true;
-
   try {
-    const token = localStorage.getItem('token');
-    const { name, phone, bio, address } = user.value; // include any other editable fields
-    const res = await axios.put(
-      'http://localhost:5000/api/user/profile',
-      { name, phone, bio, address },
-      {
-        headers: { Authorization: `Bearer ${token}` },
-      }
+    const { data } = await apiPut(
+      "http://localhost:5000/api/user/profile",
+      { ...editForm }
     );
-
-    toast.success(res.data.message || "Profile updated successfully!");
-    showEditProfileForm.value = false; // close toast form
+    user.value = { ...user.value, ...editForm };
+    toast.success(data.message || "Profile updated successfully!");
+    showEditProfileForm.value = false;
   } catch (err) {
-    console.error("Profile update error:", err);
     toast.error(err.response?.data?.message || "Failed to update profile.");
   } finally {
     loading.value = false;
   }
 };
-// Bookings
-const fetchBookings = async () => {
-  try {
-    const token = localStorage.getItem('token');
-    const res = await axios.get('http://localhost:5000/api/bookings', {
-      headers: { Authorization: `Bearer ${token}` },
-    });
-    bookings.value = res.data;
-  } catch {
-    toast.error("Failed to load bookings");
-  }
-};
 
-const startEdit = (booking) => {
-  editingId.value = booking._id;
-  editableBooking.value = { ...booking };
-};
+// --- Bookings ---
+const fetchBookings = async () => { try { bookings.value = (await apiGet('http://localhost:5000/api/bookings')).data; } catch { toast.error("Failed to load bookings"); } };
+const fetchHistory = async () => { try { history.value = (await apiGet('http://localhost:5000/api/bookings/history')).data; } catch { toast.error("Failed to load service history."); } };
 
-const cancelEdit = () => {
-  editingId.value = null;
-  editableBooking.value = { service: '', name: '', contact: '', address: '' };
-};
+const startEdit = (b) => { editingId.value = b._id; editableBooking.value = { ...b }; };
+const cancelEdit = () => { editingId.value = null; editableBooking.value = { service: '', name: '', contact: '', address: '' }; };
 
 const saveEdit = async (id) => {
   try {
-    const res = await axios.put(`http://localhost:5000/api/bookings/${id}`, editableBooking.value, {
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem('token')}`,
-      },
-    });
-    const index = bookings.value.findIndex(b => b._id === id);
-    if (index !== -1) bookings.value[index] = res.data;
-    editingId.value = null;
-  } catch {
-    toast.error('Update failed');
-  }
+    const { data } = await apiPut(`http://localhost:5000/api/bookings/${id}`, editableBooking.value);
+    const idx = bookings.value.findIndex(b => b._id === id); if (idx !== -1) bookings.value[idx] = data; editingId.value = null;
+  } catch { toast.error('Update failed'); }
 };
 
-const markAsCompleted = async (bookingId) => {
+const moveToHistory = (b) => {
+  history.value.push({ service: b.service, date: new Date(b.updatedAt).toLocaleDateString(), status: b.status });
+  bookings.value = bookings.value.filter(x => x._id !== b._id);
+};
+
+const markAsCompleted = async (id) => {
   try {
-    const res = await axios.put(
-      `http://localhost:5000/api/bookings/mark-completed/${bookingId}`,
-      {},
-      {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('token')}`,
-        },
-      }
-    );
-    const updatedBooking = res.data.booking;
-
-    history.value.push({
-      service: updatedBooking.service,
-      date: new Date(updatedBooking.updatedAt).toLocaleDateString(),
-      status: updatedBooking.status,
-    });
-
-    bookings.value = bookings.value.filter(b => b._id !== bookingId);
-    toast.success("Booking marked as completed");
-  } catch {
-    toast.error("Failed to update booking status");
-  }
+    const { data } = await apiPut(`http://localhost:5000/api/bookings/mark-completed/${id}`);
+    moveToHistory(data.booking); toast.success("Booking marked as completed");
+  } catch { toast.error("Failed to update booking"); }
 };
 
-const deleteBooking = async (bookingId) => {
-  try {
-    await axios.delete(`http://localhost:5000/api/bookings/${bookingId}`, {
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem('token')}`,
-      },
-    });
-    bookings.value = bookings.value.filter(b => b._id !== bookingId);
-    toast.success('Booking deleted successfully');
-  } catch {
-    toast.error('Failed to delete booking');
-  }
+const deleteBooking = async (id) => {
+  try { await apiDelete(`http://localhost:5000/api/bookings/${id}`); bookings.value = bookings.value.filter(b => b._id !== id); toast.success('Booking deleted'); }
+  catch { toast.error('Failed to delete booking'); }
 };
 
-const fetchHistory = async () => {
-  try {
-    const token = localStorage.getItem('token');
-    const res = await axios.get('http://localhost:5000/api/bookings/history', {
-      headers: { Authorization: `Bearer ${token}` },
-    });
-    history.value = res.data;
-  } catch {
-    toast.error("Failed to load service history.");
-  }
-};
+// --- Notifications ---
+const fetchNotificationSettings = async () => { try { Object.assign(notificationSettings, (await apiGet('http://localhost:5000/api/user/notifications')).data); } catch { toast.error("Failed to load notification settings."); } };
+const updateNotificationSettings = async () => { isSavingNotifications.value = true; try { const { data } = await apiPut('http://localhost:5000/api/user/notifications', notificationSettings); toast.success(data.message || "Preferences updated."); } catch { toast.error("Could not update notifications."); } finally { isSavingNotifications.value = false; } };
 
-// Notifications
-const fetchNotificationSettings = async () => {
-  try {
-    const token = localStorage.getItem('token');
-    const res = await axios.get('http://localhost:5000/api/user/notifications', {
-      headers: { Authorization: `Bearer ${token}` },
-    });
-    notificationSettings.value = res.data;
-  } catch {
-    toast.error("Failed to load notification settings.");
-  }
-};
-
-const updateNotificationSettings = async () => {
-  isSavingNotifications.value = true;
-  try {
-    const token = localStorage.getItem('token');
-    const res = await axios.put(
-      'http://localhost:5000/api/user/notifications',
-      notificationSettings.value,
-      {
-        headers: { Authorization: `Bearer ${token}` },
-      }
-    );
-    toast.success(res.data.message || "Notification preferences updated.");
-  } catch {
-    toast.error("Could not update notification settings.");
-  } finally {
-    isSavingNotifications.value = false;
-  }
-};
-
-// Address
+// --- Address ---
 const saveAddress = () => {
-  const { pincode, city, address } = newAddress.value;
-  if (pincode && city && address) {
-    savedAddresses.value.push({ ...newAddress.value });
+  if (newAddress.pincode && newAddress.city && newAddress.address) {
+    savedAddresses.value.push({ ...newAddress });
     localStorage.setItem('addresses', JSON.stringify(savedAddresses.value));
-    newAddress.value = { pincode: '', city: '', address: '' };
-    showAddressForm.value = false;
-  } else {
-    toast.error('Please fill in all fields.');
-  }
+    Object.assign(newAddress, { pincode: '', city: '', address: '' }); showAddressForm.value = false;
+  } else toast.error('Please fill in all fields.');
 };
+const deleteAddress = (i) => { savedAddresses.value.splice(i, 1); localStorage.setItem('addresses', JSON.stringify(savedAddresses.value)); toast.success("Address deleted."); };
 
-const deleteAddress = (index) => {
-  savedAddresses.value.splice(index, 1);
-  localStorage.setItem('addresses', JSON.stringify(savedAddresses.value));
-  toast.success("Address deleted.");
-};
-
-// Password
+// --- Password ---
 const changePassword = async () => {
-  const { current, new: newPass, confirm } = passwordForm.value;
-  if (!current || !newPass || !confirm) return toast.error("All fields required");
-  if (newPass !== confirm) return toast.error("Passwords do not match");
-
+  if (!passwordForm.current || !passwordForm.new || !passwordForm.confirm) return toast.error("All fields required");
+  if (passwordForm.new !== passwordForm.confirm) return toast.error("Passwords do not match");
   isChangingPassword.value = true;
   try {
-    const token = localStorage.getItem('token');
-    const res = await axios.post('http://localhost:5000/api/user/change-password', {
-      currentPassword: current,
-      newPassword: newPass,
-    }, {
-      headers: { Authorization: `Bearer ${token}` },
-    });
-
-    toast.success(res.data.message || "Password updated!");
-    showPasswordForm.value = false;
-    passwordForm.value = { current: '', new: '', confirm: '' };
-  } catch (err) {
-    toast.error(err.response?.data?.message || "Error changing password");
-  } finally {
-    isChangingPassword.value = false;
-  }
+    const { data } = await apiPost('http://localhost:5000/api/user/change-password', { currentPassword: passwordForm.current, newPassword: passwordForm.new });
+    toast.success(data.message || "Password updated!"); showPasswordForm.value = false; Object.assign(passwordForm, { current: '', new: '', confirm: '' });
+  } catch (err) { toast.error(err.response?.data?.message || "Error changing password"); }
+  finally { isChangingPassword.value = false; }
 };
 
-// Logout
-const logout = () => {
-  logoutUser(); // clears storages, axios headers, resets auth
-  user.value = { name: '', email: '', phone: '', bio: '', profilePic: '' };
+// --- Logout ---
+const logout = () => { logoutUser(); user.value = { name: '', email: '', phone: '', bio: '', profilePic: '' }; socket.value?.disconnect?.(); router.push('/homeboard'); };
+const confirmLogout = () => { logout(); showLogoutModal.value = false; };
 
-  socket.value?.disconnect?.();
-
-  router.push('/homeboard');
-};
-
-const confirmLogout = () => {
-  logout();
-  showLogoutModal.value = false;
-};
-
-// Initial Load
+// --- Lifecycle ---
 onMounted(() => {
-  const token = localStorage.getItem('token');
-  if (!token) {
-    toast.error("Please login first");
-    router.push('/login');
-    return;
-  }
-
-  const localUser = JSON.parse(localStorage.getItem('user'));
-  if (localUser?.role === 'provider') {
-    router.push('/provider/profile');
-    return;
-  }
-
-  isAuthenticated.value = true;
-  syncActiveTabFromHash();
-
-  Promise.all([
-    getUserProfile(),
-    fetchBookings(),
-    fetchHistory(),
-    fetchNotificationSettings(),
-  ]).then(() => {
-    socket.value = io('http://localhost:5000', {
-      auth: { token },
-      withCredentials: true,
-      transports: ['websocket'],
-    });
-
+  const token = getToken();
+  if (!token) return (toast.error("Please login first"), router.push('/login'));
+  const localUser = JSON.parse(localStorage.getItem('user')); if (localUser?.role === 'provider') return router.push('/provider/profile');
+  isAuthenticated.value = true; syncActiveTabFromHash();
+  Promise.all([getUserProfile(), fetchBookings(), fetchHistory(), fetchNotificationSettings()]).then(() => {
+    socket.value = io('http://localhost:5000', { auth: { token }, withCredentials: true, transports: ['websocket'] });
     socket.value.emit('join', user.value._id);
-
-    socket.value.on('orderAccepted', (data) => {
-      toast.info(`✅ Your order has been accepted by ${data.providerName}`);
-      fetchBookings();
-    });
-
-    socket.value.on('orderRejected', (data) => {
-      toast.info(`❌ Your booking was rejected by ${data.providerName}`);
-      fetchBookings();
-    });
-  }).finally(() => {
-    isLoading.value = false;
-  });
+    socket.value.on('orderAccepted', d => (toast.info(`✅ Accepted by ${d.providerName}`), fetchBookings()));
+    socket.value.on('orderRejected', d => (toast.info(`❌ Rejected by ${d.providerName}`), fetchBookings()));
+  }).finally(() => isLoading.value = false);
 });
-
-onUnmounted(() => {
-  socket.value?.disconnect();
-});
-
+onUnmounted(() => socket.value?.disconnect());
 </script>
+
 
 <style scoped>
 @media (max-width: 640px) {
@@ -701,8 +649,11 @@ onUnmounted(() => {
   }
 }
 
+/* Animations */
 .fade-zoom-enter-active,
-.fade-zoom-leave-active {
+.fade-zoom-leave-active,
+.fade-tab-enter-active,
+.fade-tab-leave-active {
   transition: all 0.3s ease;
 }
 
@@ -712,94 +663,80 @@ onUnmounted(() => {
   transform: scale(0.9);
 }
 
+.fade-tab-enter-from,
+.fade-tab-leave-to {
+  opacity: 0;
+}
+
+/* Inputs */
 .input-edit {
   width: 100%;
   border: 1px solid #d1d5db;
   /* gray-300 */
   border-radius: 0.375rem;
-  /* rounded-md */
   padding: 0.5rem;
-  /* p-2 */
   outline: none;
   transition: box-shadow 0.2s;
 }
 
 .input-edit:focus {
-  outline: none;
   box-shadow: 0 0 0 2px #00A8E8;
   border-color: #00A8E8;
 }
 
-.btn-blue {
+/* Buttons */
+.btn-blue,
+.btn-green,
+.btn-gray,
+.btn-red {
   padding: 0.5rem 1rem;
-  background-color: #007EA7;
-  color: #fff;
   border-radius: 0.375rem;
+  color: #fff;
   transition: background-color 0.2s;
+}
+
+.btn-green,
+.btn-gray {
+  padding: 0.25rem 0.75rem;
+}
+
+/* smaller btns */
+.btn-gray {
+  color: #1f2937;
+}
+
+/* gray text */
+
+/* Variants */
+.btn-blue {
+  background: #007EA7;
 }
 
 .btn-blue:hover {
-  background-color: #005f78;
+  background: #005f78;
 }
 
 .btn-green {
-  padding: 0.25rem 0.75rem;
-  /* px-3 py-1 */
-  background-color: #22c55e;
-  /* bg-green-500 */
-  color: #fff;
-  /* text-white */
-  border-radius: 0.375rem;
-  /* rounded */
-  transition: background-color 0.2s;
+  background: #22c55e;
 }
 
 .btn-green:hover {
-  background-color: #16a34a;
-  /* bg-green-600 */
+  background: #16a34a;
 }
 
 .btn-gray {
-  padding: 0.25rem 0.75rem;
-  /* px-3 py-1 */
-  background-color: #d1d5db;
-  /* bg-gray-300 */
-  color: #1f2937;
-  /* text-gray-800 */
-  border-radius: 0.375rem;
-  /* rounded */
-  transition: background-color 0.2s;
+  background: #d1d5db;
 }
 
 .btn-gray:hover {
-  background-color: #9ca3af;
-  /* bg-gray-400 */
+  background: #9ca3af;
 }
 
 .btn-red {
-  padding: 0.5rem 1rem;
-  /* px-4 py-2 */
-  background-color: #ef4444;
-  /* bg-red-500 */
-  color: #fff;
-  /* text-white */
-  border-radius: 0.375rem;
-  /* rounded */
-  transition: background-color 0.2s;
+  background: #ef4444;
 }
 
 .btn-red:hover {
-  background-color: #dc2626;
-  /* bg-red-600 */
-}
-
-.fade-tab-enter-active,
-.fade-tab-leave-active {
-  transition: opacity 0.20s ease;
-}
-
-.fade-tab-enter-from,
-.fade-tab-leave-to {
-  opacity: 0;
+  background: #dc2626;
 }
 </style>
