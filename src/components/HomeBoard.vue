@@ -43,7 +43,7 @@
       </nav>
 
       <!-- Hamburger Icon -->
-      <button class="sm:hidden flex flex-col gap-1 focus:outline-none" @click="isOpen = !isOpen">
+      <button  class="sm:hidden flex flex-col gap-1 focus:outline-none" @click="isOpen = !isOpen">
         <span class="block w-6 h-0.5 bg-gray-800 transition-transform"
           :class="{ 'rotate-45 translate-y-1.5': isOpen }"></span>
         <span class="block w-6 h-0.5 bg-gray-800 transition-opacity" :class="{ 'opacity-0': isOpen }"></span>

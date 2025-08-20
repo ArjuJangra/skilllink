@@ -1,9 +1,9 @@
 <template>
-  <div class="min-h-screen bg-gray-50 flex flex-col">
-    <!-- Navbar -->
+  <div class="min-h-screen bg-gray-50">
+       <!-- Navbar -->
     <header
-      class="w-full sticky top-0 z-50 backdrop-blur-md bg-gradient-to-r from-white via-[#f1faff] to-[#f5fafe] shadow-md gap-4 mx-auto">
-      <div class="max-w-[1300px] mx-auto flex flex-wrap justify-between items-center px-2 sm:px-6 py-3">
+      class="flex w-full sticky top-0 z-50 justify-between backdrop-blur-md bg-gradient-to-r from-white via-[#f1faff] to-[#f5fafe] shadow-md gap-4 mx-auto px-4 sm:px-6 py-4">
+      
         <!-- Logo -->
         <div class="flex items-center gap-2">
           <img src="@/assets/skilllogo.png" alt="SkillLink Logo"
@@ -15,14 +15,14 @@
         <div class="flex items-center gap-2 sm:gap-4 flex-wrap">
           <!-- Nav Links -->
           <nav class="hidden sm:flex gap-3 text-gray-700 font-medium text-sm items-center">
-
+            <!-- Add nav links here -->
           </nav>
 
           <!-- Book Service Button -->
           <router-link to="/home"
-            class="relative flex items-center gap-2 px-4 py-2 text-gray-600 font-semibold text-sm sm:text-base rounded-lg  hover:text-[#0073b1] transition duration-200 focus:outline-none focus:ring-2 focus:ring-[#0073b1] focus:ring-offset-2">
+            class="relative flex items-center gap-2 px-3 sm:px-4 py-2 text-gray-600 font-semibold text-sm sm:text-base rounded-lg hover:text-[#0073b1] transition duration-200 focus:outline-none focus:ring-2 focus:ring-[#0073b1] focus:ring-offset-2">
             <svg xmlns="http://www.w3.org/2000/svg" width="800px" height="800px" viewBox="0 0 1024 1024" fill="#000000"
-              class="w-6 h-6 fill-current">
+              class="w-5 sm:w-6 h-5 sm:h-6 fill-current">
               <path
                 d="M959.018 208.158c0.23-2.721 0.34-5.45 0.34-8.172 0-74.93-60.96-135.89-135.89-135.89-1.54 0-3.036 0.06-6.522 0.213l-611.757-0.043c-1.768-0.085-3.563-0.17-5.424-0.17-74.812 0-135.67 60.84-135.67 135.712l0.188 10.952h-0.306l0.391 594.972-0.162 20.382c0 74.03 60.22 134.25 134.24 134.25 1.668 0 7.007-0.239 7.1-0.239l608.934 0.085c2.985 0.357 6.216 0.468 9.55 0.468 35.815 0 69.514-13.954 94.879-39.302 25.373-25.34 39.344-58.987 39.344-94.794l-0.145-12.015h0.918l-0.008-606.41z m-757.655 693.82l-2.585-0.203c-42.524 0-76.146-34.863-76.537-79.309V332.671H900.79l0.46 485.186-0.885 2.865c-0.535 1.837-0.8 3.58-0.8 5.17 0 40.382-31.555 73.766-71.852 76.002l-10.816 0.621v-0.527l-615.533-0.01zM900.78 274.424H122.3l-0.375-65.934 0.85-2.924c0.52-1.82 0.782-3.63 0.782-5.247 0-42.236 34.727-76.665 78.179-76.809l0.45-0.068 618.177 0.018 2.662 0.203c42.329 0 76.767 34.439 76.767 76.768 0 1.326 0.196 2.687 0.655 4.532l0.332 0.884v68.577z" />
               <path
@@ -58,33 +58,23 @@
               loading="lazy" />
           </router-link>
         </div>
-      </div>
     </header>
+
     <!-- Hero Section -->
     <section class="text-center py-10 px-4 bg-gradient-to-br from-blue-100 to-white">
       <div class="max-w-[1300px] mx-auto">
         <h2
-          class="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-[#3B8D99] to-[#f46675] bg-clip-text text-transparent mb-4">
+          class="text-2xl sm:text-3xl md:text-4xl font-bold bg-gradient-to-r from-[#3B8D99] to-[#f46675] bg-clip-text text-transparent mb-4">
           Connecting You to Trusted Local Experts
         </h2>
-        <p class="text-gray-600 text-base sm:text-lg max-w-2xl mx-auto">
+        <p class="text-gray-600 text-base sm:text-lg md:text-xl max-w-2xl mx-auto">
           Book skilled professionals like plumbers, electricians, makeup artists, and more — all in one platform.
         </p>
       </div>
     </section>
-    <!-- Services Section -->
-    <section class="bg-white py-12 px-4">
-      <div class="max-w-[1300px] mx-auto">
-        <h3 class="text-2xl font-bold text-gray-800 mb-6 text-center">Services We Provide</h3>
-        <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 sm:gap-6">
-          <router-link v-for="service in services" :key="service"
-            :to="{ path: '/booking', query: { service: service } }"
-            class="bg-[#0073b1] text-white p-4 rounded-lg shadow text-center font-semibold transform hover:scale-105 hover:shadow-lg transition duration-300">
-            {{ service }}
-          </router-link>
-        </div>
-      </div>
-    </section>
+
+   <!-- Services Section --> <section class="bg-white py-12 px-4"> <div class="max-w-[1300px] mx-auto"> <h3 class="text-2xl font-bold text-gray-800 mb-6 text-center">Services We Provide</h3> <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 sm:gap-6"> <router-link v-for="service in services" :key="service" :to="{ path: '/booking', query: { service: service } }" class="bg-[#0073b1] text-white p-4 rounded-lg shadow text-center font-semibold transform hover:scale-105 hover:shadow-lg transition duration-300"> {{ service }} </router-link> </div> </div> </section>
+
     <!-- Solved Cases Section -->
     <section class="bg-blue-50 py-12 px-4">
       <div class="max-w-[1300px] mx-auto">
