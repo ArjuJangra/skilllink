@@ -128,7 +128,7 @@
 
 <script setup>
 import { ref, onMounted, onUnmounted, computed } from 'vue';
-import API from '@api';
+import API from '@/api';
 import { isToday, isYesterday, isThisWeek, parseISO, differenceInCalendarDays } from 'date-fns';
 
 const notifications = ref([]);

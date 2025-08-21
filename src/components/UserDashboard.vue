@@ -441,7 +441,7 @@
 <script setup>
 import { ref, reactive, onMounted, onUnmounted, watch } from 'vue';
 import { io } from 'socket.io-client';
-import API from '@api';
+import API from '@/api';
 import { useRouter } from 'vue-router';
 import { toast } from 'vue3-toastify';
 import 'vue3-toastify/dist/index.css';

@@ -273,7 +273,7 @@
 </template>
 
 <script>
-import API from '@api';
+import API from '@/api';
 import { ref, onMounted, reactive, computed, nextTick } from 'vue';
 import Chart from 'chart.js/auto';
 const API_BASE = API.defaults.baseURL;
