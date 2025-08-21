@@ -181,7 +181,7 @@ const handleSubmit = async () => {
   const toastId = toast.loading('Sending your message...')
 
   try {
-    await API.post('/api/contact', {
+    await API.post('/contact', {
       name: form.name,
       email: form.email,
       message: form.message

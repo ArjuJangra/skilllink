@@ -63,7 +63,7 @@ const handleSubmit = async () => {
 
   try {
     const token = localStorage.getItem('token');
-    const res = await API.post('/api/provider/services', service, {  // <-- Use API instead of axios directly
+    const res = await API.post('/provider/services', service, {  // <-- Use API instead of axios directly
       headers: { Authorization: `Bearer ${token}` },
     });
 

@@ -157,7 +157,7 @@ const confirmBooking = async () => {
 
   try {
     await API.post(
-      '/api/bookings',
+      '/bookings',
       {
         service: selectedService.value,
         providerId: selectedProviderId.value,
@@ -220,7 +220,7 @@ const fetchProviders = async () => {
     }
 
     const res = await API.post(
-      '/api/services/nearby',
+      '/services/nearby',
       payload,
       { headers: { Authorization: `Bearer ${token}` } }
     )
@@ -238,7 +238,7 @@ const loadNearbyServices = async (latitude, longitude) => {
   const token = localStorage.getItem('token')
   try {
     const res = await API.post(
-      '/api/services/nearby',
+      '/services/nearby',
       { latitude, longitude, service: null },
       { headers: { Authorization: `Bearer ${token}` } }
     )

@@ -143,6 +143,7 @@
 import { reactive, ref } from 'vue';
 import { useRouter } from 'vue-router';
 import API from '@/api';
+import axios from 'axios';
 import { toast } from 'vue3-toastify';
 import { loginUser } from '@/stores/auth';
 import Multiselect from 'vue-multiselect';
@@ -201,7 +202,8 @@ const getLocation = () => {
 
       try {
         // Use Nominatim API to get human-readable address
-        const res = await API.get('https://nominatim.openstreetmap.org/reverse', {
+
+        const res = await axios.get('https://nominatim.openstreetmap.org/reverse', {
           params: {
             lat: form.latitude,
             lon: form.longitude,
@@ -231,13 +233,13 @@ const handleSubmit = async () => {
 
   try {
     loading.value = true;
-    const endpoint = '/api/auth/signup';
+    const endpoint = '/auth/signup';
     // Prepare payload
     const payload = form.role === 'user'
       ? { name: form.name, email: form.email, password: form.password, role: form.role }
       : { ...form };
 
-    const response = await API.post(endpoint, form, payload);
+    const response = await API.post(endpoint, payload);
 
     loginUser(response.data.token, response.data.user);
 

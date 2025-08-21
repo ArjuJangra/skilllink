@@ -63,7 +63,7 @@ onMounted(async () => {
 
   try {
     const token = localStorage.getItem('token')
-    const res = await API.get('/api/services/locations', {
+    const res = await API.get('/services/locations', {
       headers: { Authorization: `Bearer ${token}` }
     })
 

@@ -163,7 +163,7 @@ export default {
     async fetchUserProfile() {
       try {
         const token = localStorage.getItem('token');
-        const response = await API.get('/api/providers/profile', {
+        const response = await API.get('/providers/profile', {
           headers: {
             Authorization: `Bearer ${token}`
           }

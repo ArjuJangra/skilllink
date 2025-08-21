@@ -151,7 +151,7 @@ const message = ref('')
 const fetchProviderProfile = async () => {
   try {
     const token = localStorage.getItem('token')
-    const res = await API.get('/api/providers/profile', {
+    const res = await API.get('/providers/profile', {
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -173,7 +173,7 @@ const sendMessage = async () => {
   }
 
   try {
-    const res = await API.post('/api/contact/provider/contact', {
+    const res = await API.post('/contact/provider/contact', {
       name: name.value,
       email: email.value,
       message: message.value,

@@ -133,7 +133,8 @@
       </div>
 
       <!-- Navigation Tabs -->
-      <div class="flex flex-wrap items-center gap-2 bg-gradient-to-br from-[#f1faff]  via-[#f1faff] to-[#f5fafe] border-b border-gray-200 pb-3 mb-2 mt-2">
+      <div
+        class="flex flex-wrap items-center gap-2 bg-gradient-to-br from-[#f1faff]  via-[#f1faff] to-[#f5fafe] border-b border-gray-200 pb-3 mb-2 mt-2">
         <button v-for="tab in tabs" :key="tab" @click="activeTab = tab" :class="[
           ' px-5 py-2 font-medium transition-all duration-200 rounded-t-lg border-b-2',
           activeTab === tab
@@ -440,7 +441,7 @@
 <script setup>
 import { ref, reactive, onMounted, onUnmounted, watch } from 'vue';
 import { io } from 'socket.io-client';
-import API from '@/api';
+import API from '@api';
 import { useRouter } from 'vue-router';
 import { toast } from 'vue3-toastify';
 import 'vue3-toastify/dist/index.css';
@@ -509,7 +510,7 @@ const relativeDate = (date) => isValidDate(date) ? dayjs(date).fromNow() : 'N/A'
 // --- Profile ---
 const getUserProfile = async () => {
   try {
-    const { data } = await API.get('/api/user/profile');
+    const { data } = await API.get('/user/profile');
     user.value = data; auth.user = data; localStorage.setItem("user", JSON.stringify(data));
   } catch { toast.error("Failed to load user data"); }
 };
@@ -519,7 +520,7 @@ const handleProfileImageChange = async (e) => {
   previewImage.value = URL.createObjectURL(file);
   const formData = new FormData(); formData.append('profilePic', file);
   try {
-    const { data } = await API.put('/api/user/profile/picture', formData);
+    const { data } = await API.put('/user/profile/picture', formData);
     const pic = `${data.profilePic}?t=${Date.now()}`; user.value.profilePic = pic; auth.user.profilePic = pic;
     let existing = JSON.parse(localStorage.getItem("user")); if (existing) { existing.profilePic = pic; localStorage.setItem("user", JSON.stringify(existing)); }
     toast.success("Profile picture updated!");
@@ -534,7 +535,7 @@ const updateUserProfile = async () => {
   loading.value = true;
   try {
     const { data } = await API.put(
-      "/api/user/profile",
+      "/user/profile",
       { ...editForm }
     );
     user.value = { ...user.value, ...editForm };
@@ -548,15 +549,15 @@ const updateUserProfile = async () => {
 };
 
 // --- Bookings ---
-const fetchBookings = async () => { try { bookings.value = (await API.get('/api/bookings')).data; } catch { toast.error("Failed to load bookings"); } };
-const fetchHistory = async () => { try { history.value = (await API.get('/api/bookings/history')).data; } catch { toast.error("Failed to load service history."); } };
+const fetchBookings = async () => { try { bookings.value = (await API.get('/bookings')).data; } catch { toast.error("Failed to load bookings"); } };
+const fetchHistory = async () => { try { history.value = (await API.get('/bookings/history')).data; } catch { toast.error("Failed to load service history."); } };
 
 const startEdit = (b) => { editingId.value = b._id; editableBooking.value = { ...b }; };
 const cancelEdit = () => { editingId.value = null; editableBooking.value = { service: '', name: '', contact: '', address: '' }; };
 
 const saveEdit = async (id) => {
   try {
-    const { data } = await API.put(`/api/bookings/${id}`, editableBooking.value);
+    const { data } = await API.put(`/bookings/${id}`, editableBooking.value);
     const idx = bookings.value.findIndex(b => b._id === id); if (idx !== -1) bookings.value[idx] = data; editingId.value = null;
   } catch { toast.error('Update failed'); }
 };
@@ -568,19 +569,20 @@ const moveToHistory = (b) => {
 
 const markAsCompleted = async (id) => {
   try {
-    const { data } = await API.put(`/api/bookings/mark-completed/${id}`);
+    const { data } = await API.put(`/bookings/mark-completed/${id}`);
     moveToHistory(data.booking); toast.success("Booking marked as completed");
   } catch { toast.error("Failed to update booking"); }
 };
 
 const deleteBooking = async (id) => {
-  try { await API.delete(`/api/bookings/${id}`); bookings.value = bookings.value.filter(b => b._id !== id); toast.success('Booking deleted'); }
+  try { await API.delete(`/bookings/${id}`); bookings.value = bookings.value.filter(b => b._id !== id); toast.success('Booking deleted'); }
   catch { toast.error('Failed to delete booking'); }
 };
 
 // --- Notifications ---
-const fetchNotificationSettings = async () => { try { Object.assign(notificationSettings, (await API.get('/api/user/notifications')).data); } catch { toast.error("Failed to load notification settings."); } };
-const updateNotificationSettings = async () => { isSavingNotifications.value = true; try { const { data } = await API.put('/api/user/notifications', notificationSettings); toast.success(data.message || "Preferences updated."); } catch { toast.error("Could not update notifications."); } finally { isSavingNotifications.value = false; } };
+const fetchNotificationSettings = async () => { try { Object.assign(notificationSettings, (await API.get('/user/notifications')).data); } catch { toast.error("Failed to load notification settings."); } };
+
+const updateNotificationSettings = async () => { isSavingNotifications.value = true; try { const { data } = await API.put('/user/notifications', notificationSettings); toast.success(data.message || "Preferences updated."); } catch { toast.error("Could not update notifications."); } finally { isSavingNotifications.value = false; } };
 
 // --- Address ---
 const saveAddress = () => {
@@ -590,7 +592,7 @@ const saveAddress = () => {
     Object.assign(newAddress, { pincode: '', city: '', address: '' }); showAddressForm.value = false;
   } else toast.error('Please fill in all fields.');
 };
-const deleteAddress = (i) => { savedAddresses.value.splice(i, 1); localStorage.setItem('addresses', JSON.stringify(savedAddresses.value)); toast.success("Address deleted."); };
+ const deleteAddress = (i) => { savedAddresses.value.splice(i, 1); localStorage.setItem('addresses', JSON.stringify(savedAddresses.value)); toast.success("Address deleted."); };
 
 // --- Password ---
 const changePassword = async () => {
@@ -598,14 +600,14 @@ const changePassword = async () => {
   if (passwordForm.new !== passwordForm.confirm) return toast.error("Passwords do not match");
   isChangingPassword.value = true;
   try {
-    const { data } = await API.post('/api/user/change-password', { currentPassword: passwordForm.current, newPassword: passwordForm.new });
+    const { data } = await API.post('/user/change-password', { currentPassword: passwordForm.current, newPassword: passwordForm.new });
     toast.success(data.message || "Password updated!"); showPasswordForm.value = false; Object.assign(passwordForm, { current: '', new: '', confirm: '' });
   } catch (err) { toast.error(err.response?.data?.message || "Error changing password"); }
   finally { isChangingPassword.value = false; }
 };
 
 // --- Logout ---
-const logout = () => { logoutUser(); user.value = { name: '', email: '', phone: '', bio: '', profilePic: '' }; socket.value?.disconnect?.(); router.push('/homeboard'); };
+ const logout = () => { logoutUser(); user.value = { name: '', email: '', phone: '', bio: '', profilePic: '' }; socket.value?.disconnect?.(); router.push('/homeboard'); };
 const confirmLogout = () => { logout(); showLogoutModal.value = false; };
 
 // --- Lifecycle ---

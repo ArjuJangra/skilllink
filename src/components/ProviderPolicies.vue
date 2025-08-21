@@ -139,7 +139,7 @@ const router = useRouter()
  const fetchProviderProfile = async () => {
   try {
     const token = localStorage.getItem('token')
-    const res = await API.get('/api/providers/profile', {
+    const res = await API.get('/providers/profile', {
       headers: {
         Authorization: `Bearer ${token}`
       }

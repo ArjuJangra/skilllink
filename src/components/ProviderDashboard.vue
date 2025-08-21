@@ -505,7 +505,7 @@ const updateProfile = async () => {
     formData.append('area', editForm.area)
     if (selectedFile.value) formData.append('profilePic', selectedFile.value)
 
-     const res = await API.put(`/api/providers/profile/update/${provider.value._id}`, formData, {
+     const res = await API.put(`/providers/profile/update/${provider.value._id}`, formData, {
       headers: { 'Content-Type': 'multipart/form-data' }
     });
 
@@ -529,7 +529,7 @@ const updateLocation = async () => {
   try {
     const token = localStorage.getItem('token')
     const res = await API.put(
-      `/api/providers/profile/update/${providerId}`,
+      `/providers/profile/update/${providerId}`,
       { area: editForm.area },
       { headers: { Authorization: `Bearer ${token}` } }
     )
@@ -547,7 +547,7 @@ const changePassword = async () => {
   if (passwordForm.newPassword !== passwordForm.confirmPassword) return toast.error('New passwords do not match')
   passwordSubmitting.value = true
   try {
-    await API.put('/api/providers/change-password', {
+    await API.put('/providers/change-password', {
       currentPassword: passwordForm.currentPassword,
       newPassword: passwordForm.newPassword
     });
@@ -579,7 +579,7 @@ const autoUpdateNotificationPrefs = async () => {
   try {
     const token = localStorage.getItem('token')
     await API.put(
-      '/api/providers/notification-preferences',
+      '/providers/notification-preferences',
       notificationPrefs,
       { headers: { Authorization: `Bearer ${token}` } }
     )
@@ -599,7 +599,7 @@ const autoUpdateAvailability = async () => {
     if (!providerId) return toast.error('Provider ID missing')
     const token = localStorage.getItem('token')
     await API.put(
-      `/api/providers/availability/${providerId}`,
+      `/providers/availability/${providerId}`,
       availability,
       { headers: { Authorization: `Bearer ${token}` } }
     )
@@ -616,7 +616,7 @@ const updateLanguagePref = async () => {
   languageSubmitting.value = true
   try {
     const token = localStorage.getItem('token')
-    await API.put(`/api/providers/language`, { language: languagePref.value }, { headers: { Authorization: `Bearer ${token}` } })
+    await API.put(`/providers/language`, { language: languagePref.value }, { headers: { Authorization: `Bearer ${token}` } })
     toast.success('Language preference updated')
   } catch {
     toast.error('Failed to update language preference')
@@ -630,7 +630,7 @@ const updatePrivacySettings = async () => {
   privacySubmitting.value = true
   try {
     const token = localStorage.getItem('token')
-    await API.post(`/api/providers/privacy`, privacySettings, { headers: { Authorization: `Bearer ${token}` } })
+    await API.post(`/providers/privacy`, privacySettings, { headers: { Authorization: `Bearer ${token}` } })
     toast.success('Privacy settings updated')
   } catch {
     toast.error('Failed to update privacy settings')
@@ -650,7 +650,7 @@ const toggleTwoFactor = () => {
 // Deactivate account
 const deactivateAccount = async () => {
   try {
-    await API.delete('/api/providers/deactivate');
+    await API.delete('/providers/deactivate');
     toast.success('Account deactivated successfully');
     localStorage.clear();
     router.push('/login');

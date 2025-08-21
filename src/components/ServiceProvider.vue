@@ -273,11 +273,11 @@
 </template>
 
 <script>
-import API from '@/api';
+import API from '@api';
 import { ref, onMounted, reactive, computed, nextTick } from 'vue';
 import Chart from 'chart.js/auto';
+const API_BASE = API.defaults.baseURL;
 
-const API_BASE = 'http://localhost:5000';
 
 export default {
   name: 'ServiceProvider',
@@ -327,7 +327,7 @@ export default {
     const fetchProviderProfile = async () => {
       try {
         const token = localStorage.getItem('token');
-        const res = await API.get(`/api/providers/profile`, { headers: { Authorization: `Bearer ${token}` } });
+        const res = await API.get(`/providers/profile`, { headers: { Authorization: `Bearer ${token}` } });
         provider.value = res.data;
         let completed = 0;
         if (provider.value.name) completed += 25;
@@ -343,7 +343,7 @@ export default {
     const fetchNewOrdersCount = async () => {
       try {
         const token = localStorage.getItem('token');
-        const res = await API.get(`/api/bookings/provider-orders`, {
+        const res = await API.get(`/bookings/provider-orders`, {
           headers: { Authorization: `Bearer ${token}` }
         });
         // Count orders which are not completed
@@ -356,7 +356,7 @@ export default {
     const fetchStats = async () => {
       try {
         const token = localStorage.getItem('token');
-        const res = await API.get(`/api/provider/orders/stats`, {
+        const res = await API.get(`/provider/orders/stats`, {
           headers: { Authorization: `Bearer ${token}` }
         });
         stats.total = res.data.total || 0;
@@ -377,7 +377,7 @@ export default {
     const fetchRecentOrders = async () => {
       try {
         const token = localStorage.getItem('token');
-        const res = await API.get(`/api/provider/orders/recent`, { headers: { Authorization: `Bearer ${token}` } });
+        const res = await API.get(`/provider/orders/recent`, { headers: { Authorization: `Bearer ${token}` } });
         recentOrders.value = res.data;
       } catch (err) {
         console.error(err);

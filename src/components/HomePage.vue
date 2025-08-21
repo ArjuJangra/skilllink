@@ -129,7 +129,7 @@ onMounted(() => {
       auth.user = storedUser;
       auth.token = storedToken;
       auth.isLoggedIn = true;
-      if (storedUser.profilePic) profilePicUrl.value = `http://localhost:5000/uploads/${storedUser.profilePic}?t=${Date.now()}`;
+      if (storedUser.profilePic) profilePicUrl.value = `/uploads/${storedUser.profilePic}?t=${Date.now()}`;
     } catch {
       auth.user = null;
       auth.token = null;
@@ -142,7 +142,7 @@ onMounted(() => {
 
 watch(() => auth.user, (newUser) => {
   if (newUser?.profilePic) {
-    profilePicUrl.value = `http://localhost:5000/uploads/${newUser.profilePic}?t=${Date.now()}`;
+    profilePicUrl.value = `/uploads/${newUser.profilePic}?t=${Date.now()}`;
   } else profilePicUrl.value = '';
 }, { immediate: true, deep: true });
 

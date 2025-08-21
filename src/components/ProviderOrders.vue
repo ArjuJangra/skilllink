@@ -283,7 +283,7 @@ const statusFilter = ref('')
 const fetchOrders = async () => {
   try {
     const token = localStorage.getItem('token')
-    const res = await API.get('/api/provider/orders', {
+    const res = await API.get('/provider/orders', {
       headers: { Authorization: `Bearer ${token}` },
     })
     allOrders.value = res.data
@@ -298,7 +298,7 @@ const updateOrderStatus = async (id, status) => {
   try {
     const token = localStorage.getItem('token')
     await API.put(
-      `/api/provider/orders/${id}/status`,
+      `/provider/orders/${id}/status`,
       { status },
       { headers: { Authorization: `Bearer ${token}` } }
     )
