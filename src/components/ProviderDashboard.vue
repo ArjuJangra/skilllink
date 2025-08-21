@@ -455,18 +455,17 @@ const twoFactorEnabled = ref(false)
 const isGoogleLinked = ref(false)
 const isFacebookLinked = ref(false)
 
-// Computed properties
+// Computed
 const profileImage = computed(() => {
   if (provider.value?.profilePic) {
-    return `${API.defaults.baseURL}/uploads/providers/${provider.value.profilePic}`
+    return `${API.defaults.baseURL}/uploads/providers/${provider.value.profilePic}`;
   }
-  return require('@/assets/user.png')
-})
+  return require('@/assets/user.png');
+});
 
-const lastLoginFormatted = computed(() => {
-  if (!provider.value?.lastLogin) return 'Not available'
-  return dayjs(provider.value.lastLogin).format('MMM D, YYYY h:mm A')
-})
+const lastLoginFormatted = computed(() =>
+  provider.value?.lastLogin ? dayjs(provider.value.lastLogin).format('MMM D, YYYY h:mm A') : 'Not available'
+);
 
 const isOnline = computed(() => {
   if (!props.lastActive) return false
@@ -498,7 +497,6 @@ const handleFileChange = (e) => {
 const updateProfile = async () => {
   const providerId = provider.value._id || provider.value.id
   if (!providerId) return toast.error('Provider ID is missing')
-
   isSubmitting.value = true
   try {
     const formData = new FormData()
@@ -507,12 +505,9 @@ const updateProfile = async () => {
     formData.append('area', editForm.area)
     if (selectedFile.value) formData.append('profilePic', selectedFile.value)
 
-    const token = localStorage.getItem('token')
-    const res = await API.put(
-      `/api/providers/profile/update/${providerId}`,
-      formData,
-      { headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'multipart/form-data' } }
-    )
+     const res = await API.put(`/api/providers/profile/update/${provider.value._id}`, formData, {
+      headers: { 'Content-Type': 'multipart/form-data' }
+    });
 
     const updated = res.data.provider || res.data
     toast.success('Profile updated successfully')
@@ -547,26 +542,16 @@ const updateLocation = async () => {
   }
 }
 
-// Logout
-const handleLogout = () => {
-  auth.logoutUser?.()
-  localStorage.removeItem('user')
-  localStorage.removeItem('token')
-  toast.success('Logged out successfully')
-  router.push('/login')
-}
-
 // Change password
 const changePassword = async () => {
   if (passwordForm.newPassword !== passwordForm.confirmPassword) return toast.error('New passwords do not match')
   passwordSubmitting.value = true
   try {
-    const token = localStorage.getItem('token')
-    await API.put(
-      '/api/providers/change-password',
-      { currentPassword: passwordForm.currentPassword, newPassword: passwordForm.newPassword },
-      { headers: { Authorization: `Bearer ${token}` } }
-    )
+    await API.put('/api/providers/change-password', {
+      currentPassword: passwordForm.currentPassword,
+      newPassword: passwordForm.newPassword
+    });
+
     toast.success('Password changed successfully')
     showChangePasswordModal.value = false
     passwordForm.currentPassword = ''
@@ -578,6 +563,15 @@ const changePassword = async () => {
     passwordSubmitting.value = false
   }
 }
+
+// Logout
+const handleLogout = () => {
+  auth.logoutUser?.();
+  localStorage.clear();
+  toast.success('Logged out successfully');
+  router.push('/login');
+};
+
 
 // Notification prefs update
 const autoUpdateNotificationPrefs = async () => {
@@ -656,16 +650,16 @@ const toggleTwoFactor = () => {
 // Deactivate account
 const deactivateAccount = async () => {
   try {
-    const token = localStorage.getItem('token')
-    await API.delete(`/api/providers/deactivate`, { headers: { Authorization: `Bearer ${token}` } })
-    toast.success('Account deactivated successfully')
-    localStorage.clear()
-    router.push('/login')
+    await API.delete('/api/providers/deactivate');
+    toast.success('Account deactivated successfully');
+    localStorage.clear();
+    router.push('/login');
   } catch {
-    toast.error('Failed to deactivate account')
+    toast.error('Failed to deactivate account');
+  } finally {
+    showDeactivateModal.value = false;
   }
-  showDeactivateModal.value = false
-}
+};
 
 // Connected accounts
 function toggleGoogleLink() { isGoogleLinked.value = !isGoogleLinked.value }
@@ -674,13 +668,12 @@ function toggleFacebookLink() { isFacebookLinked.value = !isFacebookLinked.value
 // On mount: fetch provider
 onMounted(async () => {
   const storedUser = JSON.parse(localStorage.getItem('user'))
-  const token = localStorage.getItem('token')
   if (storedUser?.role !== 'provider') return router.push('/login')
 
   isAuthenticated.value = true
   loading.value = true
   try {
-    const res = await API.get('/api/providers/profile', { headers: { Authorization: `Bearer ${token}` } })
+     const res = await API.get('/api/providers/profile');
     provider.value = res.data
     localStorage.setItem('user', JSON.stringify(res.data))
 

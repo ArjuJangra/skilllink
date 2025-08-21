@@ -4,7 +4,8 @@
     <header class="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-md shadow-md">
       <div class="max-w-6xl mx-auto px-6 py-4 flex justify-between items-center">
         <div class="flex items-center space-x-2">
-          <img src="@/assets/skilllogo.png" alt="SkillLink Logo" class="w-10 h-10" />
+          <img :src="require('@/assets/skilllogo.png')" alt="SkillLink Logo" class="w-10 h-10" />
+
           <span class="text-xl font-extrabold text-[#0073b1]">SkillLink</span>
         </div>
         <nav class="flex items-center space-x-4 text-sm md:text-base font-medium">
