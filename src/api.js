@@ -2,7 +2,7 @@
 import axios from 'axios';
 
 const API = axios.create({
-  baseURL: 'https://skilllink-7hfa.onrender.com/api', 
+  baseURL: 'https://skilllink-7hfa.onrender.com/', 
 });
 
 
