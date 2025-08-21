@@ -8,9 +8,7 @@ import 'vue3-toastify/dist/index.css';
 import 'aos/dist/aos.css';
 import AOS from 'aos';
 import '@fortawesome/fontawesome-free/css/all.css';
-
 import { initAuth } from './stores/auth';
-
 AOS.init();
 
 const app = createApp(App);
