@@ -128,7 +128,7 @@
 
 <script setup>
 import { ref, onMounted } from 'vue'
-import axios from 'axios'
+import API from '@/api';
 import { useRouter } from 'vue-router'
 import { toast } from 'vue3-toastify'
 import 'vue3-toastify/dist/index.css'
@@ -139,7 +139,7 @@ const router = useRouter()
  const fetchProviderProfile = async () => {
   try {
     const token = localStorage.getItem('token')
-    const res = await axios.get('http://localhost:5000/api/providers/profile', {
+    const res = await API.get('/api/providers/profile', {
       headers: {
         Authorization: `Bearer ${token}`
       }

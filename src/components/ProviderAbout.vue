@@ -133,7 +133,7 @@
 </template>
 
 <script>
-import axios from 'axios';
+import API from '@/api';
 
 export default {
   data() {
@@ -163,7 +163,7 @@ export default {
     async fetchUserProfile() {
       try {
         const token = localStorage.getItem('token');
-        const response = await axios.get('http://localhost:5000/api/providers/profile', {
+        const response = await API.get('/api/providers/profile', {
           headers: {
             Authorization: `Bearer ${token}`
           }

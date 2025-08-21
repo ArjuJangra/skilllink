@@ -138,7 +138,7 @@
 
 <script setup>
 import { ref, onMounted } from 'vue'
-import axios from 'axios'
+import API from '@/api';
 import { toast } from 'vue3-toastify'
 import 'vue3-toastify/dist/index.css'
 
@@ -151,7 +151,7 @@ const message = ref('')
 const fetchProviderProfile = async () => {
   try {
     const token = localStorage.getItem('token')
-    const res = await axios.get('http://localhost:5000/api/providers/profile', {
+    const res = await API.get('/api/providers/profile', {
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -173,7 +173,7 @@ const sendMessage = async () => {
   }
 
   try {
-    const res = await axios.post('http://localhost:5000/api/contact/provider/contact', {
+    const res = await API.post('/api/contact/provider/contact', {
       name: name.value,
       email: email.value,
       message: message.value,

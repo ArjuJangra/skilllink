@@ -386,7 +386,7 @@
 
 <script setup>
 import { ref, onMounted } from 'vue';
-import axios from 'axios';
+import API from '@/api';
 import ServiceMap from '@/components/ServiceMap.vue';
 
 const user = ref(null);
@@ -395,7 +395,7 @@ const unreadCount = ref(0);
 const fetchUnreadCount = async () => {
   try {
     const token = localStorage.getItem('token');
-    const response = await axios.get('http://localhost:5000/api/notifications/unread-count', {
+    const response = await API.get('/api/notifications/unread-count', {
       headers: { Authorization: `Bearer ${token}` }
     });
     unreadCount.value = response.data.count;
@@ -408,7 +408,7 @@ const fetchUserProfile = async () => {
   try {
     const token = localStorage.getItem('token');
     if (!token) return;
-    const { data } = await axios.get('http://localhost:5000/api/user/profile', {
+    const { data } = await API.get('/api/user/profile', {
       headers: { Authorization: `Bearer ${token}` }
     });
     user.value = data;

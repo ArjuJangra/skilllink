@@ -385,7 +385,7 @@
 <script setup>
 import { ref, reactive, computed, onMounted, watch } from 'vue'
 import { useRouter } from 'vue-router'
-import axios from 'axios'
+import API from '@/api';
 import { toast } from 'vue3-toastify'
 import 'vue3-toastify/dist/index.css'
 import dayjs from 'dayjs'
@@ -458,7 +458,7 @@ const isFacebookLinked = ref(false)
 // Computed properties
 const profileImage = computed(() => {
   if (provider.value?.profilePic) {
-    return `http://localhost:5000/uploads/providers/${provider.value.profilePic}`
+    return `${API.defaults.baseURL}/uploads/providers/${provider.value.profilePic}`
   }
   return require('@/assets/user.png')
 })
@@ -508,8 +508,8 @@ const updateProfile = async () => {
     if (selectedFile.value) formData.append('profilePic', selectedFile.value)
 
     const token = localStorage.getItem('token')
-    const res = await axios.put(
-      `http://localhost:5000/api/providers/profile/update/${providerId}`,
+    const res = await API.put(
+      `/api/providers/profile/update/${providerId}`,
       formData,
       { headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'multipart/form-data' } }
     )
@@ -533,8 +533,8 @@ const updateLocation = async () => {
 
   try {
     const token = localStorage.getItem('token')
-    const res = await axios.put(
-      `http://localhost:5000/api/providers/profile/update/${providerId}`,
+    const res = await API.put(
+      `/api/providers/profile/update/${providerId}`,
       { area: editForm.area },
       { headers: { Authorization: `Bearer ${token}` } }
     )
@@ -562,8 +562,8 @@ const changePassword = async () => {
   passwordSubmitting.value = true
   try {
     const token = localStorage.getItem('token')
-    await axios.put(
-      'http://localhost:5000/api/providers/change-password',
+    await API.put(
+      '/api/providers/change-password',
       { currentPassword: passwordForm.currentPassword, newPassword: passwordForm.newPassword },
       { headers: { Authorization: `Bearer ${token}` } }
     )
@@ -584,8 +584,8 @@ const autoUpdateNotificationPrefs = async () => {
   notifSubmitting.value = true
   try {
     const token = localStorage.getItem('token')
-    await axios.put(
-      'http://localhost:5000/api/providers/notification-preferences',
+    await API.put(
+      '/api/providers/notification-preferences',
       notificationPrefs,
       { headers: { Authorization: `Bearer ${token}` } }
     )
@@ -604,8 +604,8 @@ const autoUpdateAvailability = async () => {
     const providerId = provider.value._id || provider.value.id
     if (!providerId) return toast.error('Provider ID missing')
     const token = localStorage.getItem('token')
-    await axios.put(
-      `http://localhost:5000/api/providers/availability/${providerId}`,
+    await API.put(
+      `/api/providers/availability/${providerId}`,
       availability,
       { headers: { Authorization: `Bearer ${token}` } }
     )
@@ -622,7 +622,7 @@ const updateLanguagePref = async () => {
   languageSubmitting.value = true
   try {
     const token = localStorage.getItem('token')
-    await axios.put(`http://localhost:5000/api/providers/language`, { language: languagePref.value }, { headers: { Authorization: `Bearer ${token}` } })
+    await API.put(`/api/providers/language`, { language: languagePref.value }, { headers: { Authorization: `Bearer ${token}` } })
     toast.success('Language preference updated')
   } catch {
     toast.error('Failed to update language preference')
@@ -636,7 +636,7 @@ const updatePrivacySettings = async () => {
   privacySubmitting.value = true
   try {
     const token = localStorage.getItem('token')
-    await axios.post(`http://localhost:5000/api/providers/privacy`, privacySettings, { headers: { Authorization: `Bearer ${token}` } })
+    await API.post(`/api/providers/privacy`, privacySettings, { headers: { Authorization: `Bearer ${token}` } })
     toast.success('Privacy settings updated')
   } catch {
     toast.error('Failed to update privacy settings')
@@ -657,7 +657,7 @@ const toggleTwoFactor = () => {
 const deactivateAccount = async () => {
   try {
     const token = localStorage.getItem('token')
-    await axios.delete(`http://localhost:5000/api/providers/deactivate`, { headers: { Authorization: `Bearer ${token}` } })
+    await API.delete(`/api/providers/deactivate`, { headers: { Authorization: `Bearer ${token}` } })
     toast.success('Account deactivated successfully')
     localStorage.clear()
     router.push('/login')
@@ -680,7 +680,7 @@ onMounted(async () => {
   isAuthenticated.value = true
   loading.value = true
   try {
-    const res = await axios.get('http://localhost:5000/api/providers/profile', { headers: { Authorization: `Bearer ${token}` } })
+    const res = await API.get('/api/providers/profile', { headers: { Authorization: `Bearer ${token}` } })
     provider.value = res.data
     localStorage.setItem('user', JSON.stringify(res.data))
 

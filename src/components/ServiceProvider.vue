@@ -273,7 +273,7 @@
 </template>
 
 <script>
-import axios from 'axios';
+import API from '@/api';
 import { ref, onMounted, reactive, computed, nextTick } from 'vue';
 import Chart from 'chart.js/auto';
 
@@ -327,7 +327,7 @@ export default {
     const fetchProviderProfile = async () => {
       try {
         const token = localStorage.getItem('token');
-        const res = await axios.get(`${API_BASE}/api/providers/profile`, { headers: { Authorization: `Bearer ${token}` } });
+        const res = await API.get(`/api/providers/profile`, { headers: { Authorization: `Bearer ${token}` } });
         provider.value = res.data;
         let completed = 0;
         if (provider.value.name) completed += 25;
@@ -343,7 +343,7 @@ export default {
     const fetchNewOrdersCount = async () => {
       try {
         const token = localStorage.getItem('token');
-        const res = await axios.get(`${API_BASE}/api/bookings/provider-orders`, {
+        const res = await API.get(`/api/bookings/provider-orders`, {
           headers: { Authorization: `Bearer ${token}` }
         });
         // Count orders which are not completed
@@ -356,7 +356,7 @@ export default {
     const fetchStats = async () => {
       try {
         const token = localStorage.getItem('token');
-        const res = await axios.get(`${API_BASE}/api/provider/orders/stats`, {
+        const res = await API.get(`/api/provider/orders/stats`, {
           headers: { Authorization: `Bearer ${token}` }
         });
         stats.total = res.data.total || 0;
@@ -377,7 +377,7 @@ export default {
     const fetchRecentOrders = async () => {
       try {
         const token = localStorage.getItem('token');
-        const res = await axios.get(`${API_BASE}/api/provider/orders/recent`, { headers: { Authorization: `Bearer ${token}` } });
+        const res = await API.get(`/api/provider/orders/recent`, { headers: { Authorization: `Bearer ${token}` } });
         recentOrders.value = res.data;
       } catch (err) {
         console.error(err);

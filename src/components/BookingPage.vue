@@ -89,7 +89,7 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
-import axios from 'axios'
+import API from '@/api';
 import { toast } from 'vue3-toastify'
 import 'vue3-toastify/dist/index.css'
 
@@ -156,8 +156,8 @@ const confirmBooking = async () => {
   const token = localStorage.getItem('token')
 
   try {
-    await axios.post(
-      'http://localhost:5000/api/bookings',
+    await API.post(
+      '/api/bookings',
       {
         service: selectedService.value,
         providerId: selectedProviderId.value,
@@ -219,8 +219,8 @@ const fetchProviders = async () => {
       payload.longitude = location.value.longitude
     }
 
-    const res = await axios.post(
-      'http://localhost:5000/api/services/nearby',
+    const res = await API.post(
+      '/api/services/nearby',
       payload,
       { headers: { Authorization: `Bearer ${token}` } }
     )
@@ -237,8 +237,8 @@ const fetchProviders = async () => {
 const loadNearbyServices = async (latitude, longitude) => {
   const token = localStorage.getItem('token')
   try {
-    const res = await axios.post(
-      'http://localhost:5000/api/services/nearby',
+    const res = await API.post(
+      '/api/services/nearby',
       { latitude, longitude, service: null },
       { headers: { Authorization: `Bearer ${token}` } }
     )

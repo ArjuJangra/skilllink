@@ -128,7 +128,7 @@
 
 <script setup>
 import { ref, onMounted, onUnmounted, computed } from 'vue';
-import axios from 'axios';
+import API from '@/api';
 import { isToday, isYesterday, isThisWeek, parseISO, differenceInCalendarDays } from 'date-fns';
 
 const notifications = ref([]);
@@ -173,7 +173,7 @@ const handleScroll = () => {
 const fetchNotifications = async () => {
   try {
     const token = localStorage.getItem('token');
-    const res = await axios.get('http://localhost:5000/api/notifications', {
+    const res = await API.get('/api/notifications', {
       headers: { Authorization: `Bearer ${token}` }
     });
     notifications.value = res.data;
@@ -223,7 +223,7 @@ const filteredGroups = computed(() => {
 const deleteNotification = async (id) => {
   try {
     const token = localStorage.getItem('token');
-    await axios.delete(`http://localhost:5000/api/notifications/${id}`, {
+    await API.delete(`/api/notifications/${id}`, {
       headers: { Authorization: `Bearer ${token}` }
     });
     notifications.value = notifications.value.filter(note => note._id !== id);
@@ -235,7 +235,7 @@ const deleteNotification = async (id) => {
 const markAllRead = async () => {
   try {
     const token = localStorage.getItem('token');
-    await axios.patch(`http://localhost:5000/api/notifications/mark-all-read`, {}, {
+    await API.patch(`/api/notifications/mark-all-read`, {}, {
       headers: { Authorization: `Bearer ${token}` }
     });
     notifications.value.forEach(note => note.read = true);
@@ -261,7 +261,7 @@ const markAsRead = async (note) => {
   if (note.read) return;
   try {
     const token = localStorage.getItem('token');
-    await axios.patch(`http://localhost:5000/api/notifications/${note._id}/read`, {}, {
+    await API.patch(`/api/notifications/${note._id}/read`, {}, {
       headers: { Authorization: `Bearer ${token}` }
     });
     note.read = true;

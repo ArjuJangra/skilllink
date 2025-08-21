@@ -18,7 +18,7 @@ import 'leaflet-routing-machine'
 import 'leaflet-routing-machine/dist/leaflet-routing-machine.css'
 import 'leaflet.markercluster'
 import 'leaflet.markercluster/dist/MarkerCluster.Default.css'
-import axios from 'axios'
+import API from '@/api';
 
 const loading = ref(true)
 let routingControl = null
@@ -63,7 +63,7 @@ onMounted(async () => {
 
   try {
     const token = localStorage.getItem('token')
-    const res = await axios.get('http://localhost:5000/api/services/locations', {
+    const res = await API.get('/api/services/locations', {
       headers: { Authorization: `Bearer ${token}` }
     })
 

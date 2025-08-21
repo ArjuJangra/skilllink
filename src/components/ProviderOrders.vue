@@ -269,7 +269,7 @@
 
 <script setup>
 import { ref, onMounted, computed } from 'vue'
-import axios from 'axios'
+import API from '@/api';
 import { toast } from 'vue3-toastify'
 import 'vue3-toastify/dist/index.css'
 
@@ -282,7 +282,7 @@ const statusFilter = ref('')
 const fetchOrders = async () => {
   try {
     const token = localStorage.getItem('token')
-    const res = await axios.get('http://localhost:5000/api/provider/orders', {
+    const res = await API.get('/api/provider/orders', {
       headers: { Authorization: `Bearer ${token}` },
     })
     allOrders.value = res.data
@@ -296,8 +296,8 @@ const fetchOrders = async () => {
 const updateOrderStatus = async (id, status) => {
   try {
     const token = localStorage.getItem('token')
-    await axios.put(
-      `http://localhost:5000/api/provider/orders/${id}/status`,
+    await API.put(
+      `/api/provider/orders/${id}/status`,
       { status },
       { headers: { Authorization: `Bearer ${token}` } }
     )

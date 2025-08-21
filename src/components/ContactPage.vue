@@ -127,7 +127,7 @@
 
 <script setup>
 import { reactive, ref } from 'vue'
-import axios from 'axios'
+import API from '@/api';
 import { toast } from 'vue3-toastify'
 
 const form = reactive({
@@ -181,7 +181,7 @@ const handleSubmit = async () => {
   const toastId = toast.loading('Sending your message...')
 
   try {
-    await axios.post('http://localhost:5000/api/contact', {
+    await API.post('/api/contact', {
       name: form.name,
       email: form.email,
       message: form.message

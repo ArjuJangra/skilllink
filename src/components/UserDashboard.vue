@@ -440,7 +440,7 @@
 <script setup>
 import { ref, reactive, onMounted, onUnmounted, watch } from 'vue';
 import { io } from 'socket.io-client';
-import axios from 'axios';
+import API from '@/api';
 import { useRouter } from 'vue-router';
 import { toast } from 'vue3-toastify';
 import 'vue3-toastify/dist/index.css';
@@ -457,7 +457,8 @@ const isAuthenticated = ref(false), isLoading = ref(true), loading = ref(false);
 const showLogoutModal = ref(false), showEditProfileForm = ref(false), previewImage = ref(null);
 const tabs = ['bookings', 'history', 'address', 'settings'];
 const activeTab = ref(localStorage.getItem("activeTab") || "bookings");
-const userImg = ref('/images/default-user.png');
+const userImg = ref(`${API.defaults.baseURL}/uploads/default-user.png`);
+
 const user = ref({ name: '', email: '', phone: '', bio: '', profilePic: '' });
 const socket = ref(null);
 const bookings = ref([]), history = ref([]);
@@ -494,11 +495,6 @@ const viewDetails = (id) => {
   router.push({ name: 'ServiceDetails', params: { id } });
 };
 
-// --- Utils ---
-const apiGet = (url) => axios.get(url, { headers: { Authorization: `Bearer ${getToken()}` } });
-const apiPut = (url, data = {}) => axios.put(url, data, { headers: { Authorization: `Bearer ${getToken()}` } });
-const apiPost = (url, data) => axios.post(url, data, { headers: { Authorization: `Bearer ${getToken()}` } });
-const apiDelete = (url) => axios.delete(url, { headers: { Authorization: `Bearer ${getToken()}` } });
 
 const formatTab = (tab) => tab.charAt(0).toUpperCase() + tab.slice(1).replace('-', ' ');
 const formatDate = (date) => new Date(date).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' });
@@ -513,7 +509,7 @@ const relativeDate = (date) => isValidDate(date) ? dayjs(date).fromNow() : 'N/A'
 // --- Profile ---
 const getUserProfile = async () => {
   try {
-    const { data } = await apiGet('http://localhost:5000/api/user/profile');
+    const { data } = await API.get('/api/user/profile');
     user.value = data; auth.user = data; localStorage.setItem("user", JSON.stringify(data));
   } catch { toast.error("Failed to load user data"); }
 };
@@ -523,7 +519,7 @@ const handleProfileImageChange = async (e) => {
   previewImage.value = URL.createObjectURL(file);
   const formData = new FormData(); formData.append('profilePic', file);
   try {
-    const { data } = await apiPut('http://localhost:5000/api/user/profile/picture', formData);
+    const { data } = await API.put('/api/user/profile/picture', formData);
     const pic = `${data.profilePic}?t=${Date.now()}`; user.value.profilePic = pic; auth.user.profilePic = pic;
     let existing = JSON.parse(localStorage.getItem("user")); if (existing) { existing.profilePic = pic; localStorage.setItem("user", JSON.stringify(existing)); }
     toast.success("Profile picture updated!");
@@ -537,8 +533,8 @@ const updateUserProfile = async () => {
 
   loading.value = true;
   try {
-    const { data } = await apiPut(
-      "http://localhost:5000/api/user/profile",
+    const { data } = await API.put(
+      "/api/user/profile",
       { ...editForm }
     );
     user.value = { ...user.value, ...editForm };
@@ -552,15 +548,15 @@ const updateUserProfile = async () => {
 };
 
 // --- Bookings ---
-const fetchBookings = async () => { try { bookings.value = (await apiGet('http://localhost:5000/api/bookings')).data; } catch { toast.error("Failed to load bookings"); } };
-const fetchHistory = async () => { try { history.value = (await apiGet('http://localhost:5000/api/bookings/history')).data; } catch { toast.error("Failed to load service history."); } };
+const fetchBookings = async () => { try { bookings.value = (await API.get('/api/bookings')).data; } catch { toast.error("Failed to load bookings"); } };
+const fetchHistory = async () => { try { history.value = (await API.get('/api/bookings/history')).data; } catch { toast.error("Failed to load service history."); } };
 
 const startEdit = (b) => { editingId.value = b._id; editableBooking.value = { ...b }; };
 const cancelEdit = () => { editingId.value = null; editableBooking.value = { service: '', name: '', contact: '', address: '' }; };
 
 const saveEdit = async (id) => {
   try {
-    const { data } = await apiPut(`http://localhost:5000/api/bookings/${id}`, editableBooking.value);
+    const { data } = await API.put(`/api/bookings/${id}`, editableBooking.value);
     const idx = bookings.value.findIndex(b => b._id === id); if (idx !== -1) bookings.value[idx] = data; editingId.value = null;
   } catch { toast.error('Update failed'); }
 };
@@ -572,19 +568,19 @@ const moveToHistory = (b) => {
 
 const markAsCompleted = async (id) => {
   try {
-    const { data } = await apiPut(`http://localhost:5000/api/bookings/mark-completed/${id}`);
+    const { data } = await API.put(`/api/bookings/mark-completed/${id}`);
     moveToHistory(data.booking); toast.success("Booking marked as completed");
   } catch { toast.error("Failed to update booking"); }
 };
 
 const deleteBooking = async (id) => {
-  try { await apiDelete(`http://localhost:5000/api/bookings/${id}`); bookings.value = bookings.value.filter(b => b._id !== id); toast.success('Booking deleted'); }
+  try { await API.delete(`/api/bookings/${id}`); bookings.value = bookings.value.filter(b => b._id !== id); toast.success('Booking deleted'); }
   catch { toast.error('Failed to delete booking'); }
 };
 
 // --- Notifications ---
-const fetchNotificationSettings = async () => { try { Object.assign(notificationSettings, (await apiGet('http://localhost:5000/api/user/notifications')).data); } catch { toast.error("Failed to load notification settings."); } };
-const updateNotificationSettings = async () => { isSavingNotifications.value = true; try { const { data } = await apiPut('http://localhost:5000/api/user/notifications', notificationSettings); toast.success(data.message || "Preferences updated."); } catch { toast.error("Could not update notifications."); } finally { isSavingNotifications.value = false; } };
+const fetchNotificationSettings = async () => { try { Object.assign(notificationSettings, (await API.get('/api/user/notifications')).data); } catch { toast.error("Failed to load notification settings."); } };
+const updateNotificationSettings = async () => { isSavingNotifications.value = true; try { const { data } = await API.put('/api/user/notifications', notificationSettings); toast.success(data.message || "Preferences updated."); } catch { toast.error("Could not update notifications."); } finally { isSavingNotifications.value = false; } };
 
 // --- Address ---
 const saveAddress = () => {
@@ -602,7 +598,7 @@ const changePassword = async () => {
   if (passwordForm.new !== passwordForm.confirm) return toast.error("Passwords do not match");
   isChangingPassword.value = true;
   try {
-    const { data } = await apiPost('http://localhost:5000/api/user/change-password', { currentPassword: passwordForm.current, newPassword: passwordForm.new });
+    const { data } = await API.post('/api/user/change-password', { currentPassword: passwordForm.current, newPassword: passwordForm.new });
     toast.success(data.message || "Password updated!"); showPasswordForm.value = false; Object.assign(passwordForm, { current: '', new: '', confirm: '' });
   } catch (err) { toast.error(err.response?.data?.message || "Error changing password"); }
   finally { isChangingPassword.value = false; }
@@ -619,7 +615,7 @@ onMounted(() => {
   const localUser = JSON.parse(localStorage.getItem('user')); if (localUser?.role === 'provider') return router.push('/provider/profile');
   isAuthenticated.value = true; syncActiveTabFromHash();
   Promise.all([getUserProfile(), fetchBookings(), fetchHistory(), fetchNotificationSettings()]).then(() => {
-    socket.value = io('http://localhost:5000', { auth: { token }, withCredentials: true, transports: ['websocket'] });
+    socket.value = io(API.defaults.baseURL, { auth: { token }, withCredentials: true, transports: ['websocket'] });
     socket.value.emit('join', user.value._id);
     socket.value.on('orderAccepted', d => (toast.info(`✅ Accepted by ${d.providerName}`), fetchBookings()));
     socket.value.on('orderRejected', d => (toast.info(`❌ Rejected by ${d.providerName}`), fetchBookings()));
