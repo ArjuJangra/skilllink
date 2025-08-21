@@ -2,9 +2,8 @@
 import axios from 'axios';
 
 const API = axios.create({
-  baseURL: 'https://skilllink-7hfa.onrender.com/', 
+  baseURL: process.env.VUE_APP_API_URL + 'api',  //  append /api once here
 });
-
 
 API.interceptors.request.use(config => {
   const token = localStorage.getItem('token');
