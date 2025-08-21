@@ -1,8 +1,9 @@
 <template>
   <div>
-   
-       <SpeedInsights />
+
+    <SpeedInsights />
     <router-view />
+    <Analytics />
 
 
   </div>
@@ -11,8 +12,8 @@
 <script setup>
 
 import { SpeedInsights } from '@vercel/speed-insights/vue';
+import { Analytics } from '@vercel/analytics/vue';
 
- 
 
 // import LoginPage from './components/LoginPage.vue';
 // import SignupPage from './components/SignupPage.vue';
@@ -26,4 +27,3 @@ import { SpeedInsights } from '@vercel/speed-insights/vue';
 //   }
 // }
 </script>
-
