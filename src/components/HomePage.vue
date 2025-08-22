@@ -110,7 +110,7 @@ import { ref, computed, onMounted, watch } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import { auth } from '@/stores/auth';
 import ServiceCard from '@/components/ServiceCard.vue';
-
+import API from '@/api';
 const router = useRouter();
 const route = useRoute();
 const showMobileSearch = ref(false);
@@ -118,7 +118,7 @@ const searchQuery = ref('');
 const profilePicUrl = ref('');
 const disableBooking = route.query.disableBooking === 'true';
 
-// User profile handling
+// On mounted: load user from localStorage
 onMounted(() => {
   const storedUserRaw = localStorage.getItem('user');
   const storedToken = localStorage.getItem('token');
@@ -129,7 +129,14 @@ onMounted(() => {
       auth.user = storedUser;
       auth.token = storedToken;
       auth.isLoggedIn = true;
-      if (storedUser.profilePic) profilePicUrl.value = `/uploads/${storedUser.profilePic}?t=${Date.now()}`;
+
+      // Use getImageUrl helper
+      if (storedUser.profilePic) {
+        profilePicUrl.value = API.getImageUrl(storedUser.profilePic);
+      } else {
+        profilePicUrl.value = API.getImageUrl('default-user.png');
+      }
+
     } catch {
       auth.user = null;
       auth.token = null;
@@ -139,13 +146,14 @@ onMounted(() => {
     }
   }
 });
-
+// Watch for changes in auth.user
 watch(() => auth.user, (newUser) => {
   if (newUser?.profilePic) {
-    profilePicUrl.value = `/uploads/${newUser.profilePic}?t=${Date.now()}`;
-  } else profilePicUrl.value = '';
+    profilePicUrl.value = API.getImageUrl(newUser.profilePic);
+  } else {
+    profilePicUrl.value = API.getImageUrl('default-user.png');
+  }
 }, { immediate: true, deep: true });
-
 // Navigation methods
 const goToBooking = (serviceTitle) => {
   if (!disableBooking) router.push({ path: '/booking', query: { service: serviceTitle } });

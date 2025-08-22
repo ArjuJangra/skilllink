@@ -1,15 +1,16 @@
 <template>
   <div class="min-h-screen bg-gray-50">
-       <!-- Navbar -->
-    <header class="sticky top-0 z-50 backdrop-blur-md bg-gradient-to-r from-white via-[#f1faff] to-[#f5fafe] shadow-md w-full">
+    <!-- Navbar -->
+    <header
+      class="sticky top-0 z-50 backdrop-blur-md bg-gradient-to-r from-white via-[#f1faff] to-[#f5fafe] shadow-md w-full">
       <div class="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
-     <!-- Logo -->
+        <!-- Logo -->
         <div class="flex items-center gap-2">
           <img src="@/assets/skilllogo.png" alt="SkillLink Logo"
             class="w-10 h-10 sm:w-12 sm:h-12 transition-transform hover:rotate-12" loading="lazy" />
           <h1 class="text-xl sm:text-2xl font-bold text-[#0073b1]">SkillLink</h1>
         </div>
-         <!-- Navigation bar -->
+        <!-- Navigation bar -->
         <div class="flex items-center gap-2 sm:gap-4 flex-wrap">
           <!-- Nav Links -->
           <nav class="hidden sm:flex gap-3 text-gray-700 font-medium text-sm items-center">
@@ -45,16 +46,18 @@
             </span>
           </router-link>
 
-          <!-- Profile Picture -->
           <router-link to="/profile">
-            <img v-if="user && user.profilePic" :src="'${baseURL}/uploads/' + user.profilePic"
-              alt="User Profile"
+            <!-- Profile picture -->
+            <img v-if="user && user.profilePic" :src="API.getImageUrl(user.profilePic)" alt="User Profile"
               class="w-10 h-10 rounded-full object-cover border-2 border-[#0073b1] hover:ring-1 hover:ring-[#0073b1] transition"
               loading="lazy" />
+
+            <!-- Default image -->
             <img v-else src="@/assets/user.png" alt="Default Profile"
               class="w-10 h-10 rounded-full object-cover border-2 border-[#0073b1] hover:ring-2 hover:ring-[#0073b1] transition"
               loading="lazy" />
           </router-link>
+
         </div>
       </div>
     </header>
@@ -72,7 +75,16 @@
       </div>
     </section>
 
-   <!-- Services Section --> <section class="bg-white py-12 px-4"> <div class="max-w-[1300px] mx-auto"> <h3 class="text-2xl font-bold text-gray-800 mb-6 text-center">Services We Provide</h3> <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 sm:gap-6"> <router-link v-for="service in services" :key="service" :to="{ path: '/booking', query: { service: service } }" class="bg-[#0073b1] text-white p-4 rounded-lg shadow text-center font-semibold transform hover:scale-105 hover:shadow-lg transition duration-300"> {{ service }} </router-link> </div> </div> </section>
+    <!-- Services Section -->
+    <section class="bg-white py-12 px-4">
+      <div class="max-w-[1300px] mx-auto">
+        <h3 class="text-2xl font-bold text-gray-800 mb-6 text-center">Services We Provide</h3>
+        <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 sm:gap-6"> <router-link
+            v-for="service in services" :key="service" :to="{ path: '/booking', query: { service: service } }"
+            class="bg-[#0073b1] text-white p-4 rounded-lg shadow text-center font-semibold transform hover:scale-105 hover:shadow-lg transition duration-300">
+            {{ service }} </router-link> </div>
+      </div>
+    </section>
 
     <!-- Solved Cases Section -->
     <section class="bg-blue-50 py-12 px-4">
@@ -389,44 +401,43 @@ import { ref, onMounted } from 'vue';
 import API from '@/api';
 import ServiceMap from '@/components/ServiceMap.vue';
 
+// Reactive state
 const user = ref(null);
 const unreadCount = ref(0);
 
+// Fetch unread notifications
 const fetchUnreadCount = async () => {
   try {
-    const token = localStorage.getItem('token');
-    const response = await API.get('/notifications/unread-count', {
-      headers: { Authorization: `Bearer ${token}` }
-    });
+    const response = await API.get('/notifications/unread-count');
     unreadCount.value = response.data.count;
   } catch (error) {
     console.error('❌ Failed to fetch unread count:', error);
   }
 };
 
+// Fetch logged-in user profile
 const fetchUserProfile = async () => {
   try {
-    const token = localStorage.getItem('token');
-    if (!token) return;
-    const { data } = await API.get('/user/profile', {
-      headers: { Authorization: `Bearer ${token}` }
-    });
+    const { data } = await API.get('/user/profile');
     user.value = data;
   } catch (error) {
-    console.error('Failed to fetch user profile:', error);
+    console.error('❌ Failed to fetch user profile:', error);
   }
 };
 
+// Lifecycle hook
 onMounted(() => {
   fetchUserProfile();
   fetchUnreadCount();
 });
 
+// Services list
 const services = [
   'Plumber', 'Electrician', 'Mechanic', 'Carpenter',
   'AC Repair', 'Painter', 'Welder', 'Makeup Artist'
 ];
 
+// Solved cases (static images)
 const solvedCases = [
   {
     title: 'Leaking Pipe Fixed',
@@ -445,3 +456,4 @@ const solvedCases = [
   }
 ];
 </script>
+

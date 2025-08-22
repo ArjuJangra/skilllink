@@ -11,7 +11,7 @@
         <div class="flex flex-col sm:flex-row items-center gap-6">
           <!-- Profile Picture with Edit Button -->
           <div class="relative">
-            <img :src="user.profilePic ? `${baseURL}uploads/${user.profilePic}` : userImg"
+            <img :src="user.profilePic ? API.getImageUrl(user.profilePic) : userImg"
               class="w-20 h-20 sm:w-32 sm:h-32 rounded-full border-4 border-[#00A8E8] object-cover shadow-md" />
 
             <label
