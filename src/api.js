@@ -3,16 +3,14 @@ import axios from 'axios';
 
 let baseURL;
 
-// If running locally → use local API
 if (window.location.hostname === 'localhost') {
-  baseURL = process.env.VUE_APP_API_URL;
+  baseURL = process.env.VUE_APP_API_URL || "http://localhost:5000";
 } else {
-  // Else → use prod API from environment
   baseURL = process.env.VUE_APP_API_URL_PROD;
 }
 
 const API = axios.create({
-  baseURL: baseURL + 'api',
+  baseURL: `${baseURL}/api`,   // now guaranteed correct
 });
 
 API.interceptors.request.use(config => {
@@ -23,7 +21,10 @@ API.interceptors.request.use(config => {
   return config;
 });
 
+console.log("👉 API Base URL:", `${baseURL}/api`); // Debug log
+
 export default API;
+
 
 
 
