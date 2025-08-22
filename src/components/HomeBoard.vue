@@ -10,8 +10,9 @@
         <h1 class="text-xl sm:text-2xl font-bold text-[#0073b1]">SkillLink</h1>
       </div>
 
-      <!-- Desktop Navigation -->
+      <!-- Desktop Nav-->
       <nav class="hidden sm:flex items-center gap-3">
+        
         <router-link to="/about" class="nav-link  text-sm sm:text-lg font-semibold text-gray-600 hover:text-[#0073b1] px-3 py-2 rounded-lg transition hover:scale-105">About Us</router-link>
         <router-link to="/contact" class="nav-link text-sm sm:text-lg font-semibold text-gray-600 hover:text-[#0073b1] px-3 py-2 rounded-lg transition hover:scale-105">Contact</router-link>
         <router-link :to="{ path: '/help', query: { from: 'homelogged' } }" class="nav-link text-sm sm:text-lg font-semibold text-gray-600 hover:text-[#0073b1] px-3 py-2 rounded-lg transition hover:scale-105">Help</router-link>
@@ -39,7 +40,7 @@
                 enter-from-class="translate-x-full" enter-to-class="translate-x-0"
                 leave-active-class="transition-transform duration-300 ease-in"
                 leave-from-class="translate-x-0" leave-to-class="translate-x-full">
-      <div v-if="isOpen" class="fixed inset-0 z-50 flex">
+      <div v-if="isOpen" class="fixed inset-0 z-50 bg-white flex flex-col">
         <!-- Overlay -->
         <transition enter-active-class="transition-opacity duration-300 ease-out"
                     enter-from-class="opacity-0" enter-to-class="opacity-100"
@@ -57,7 +58,7 @@
             </svg>
           </button>
 
-          <!-- Nav Links -->
+         
           <router-link to="/about" class="text-lg font-semibold text-gray-600 hover:text-[#0073b1]" @click="closeMenu">About Us</router-link>
           <router-link to="/contact" class="text-lg font-semibold text-gray-600 hover:text-[#0073b1]" @click="closeMenu">Contact</router-link>
           <router-link :to="{ path: '/help', query: { from: 'homelogged' } }" class="text-lg font-semibold text-gray-600 hover:text-[#0073b1]" @click="closeMenu">Help</router-link>
@@ -74,7 +75,7 @@
 
     <!-- Hero -->
     <section class="py-10 bg-gradient-to-br from-blue-100 to-white text-center px-4">
-      <h2 class="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-800 mb-4">
+      <h2 class="text-2xl sm:text-3xl md:text-4xl font-bold bg-gradient-to-r from-[#3B8D99] to-[#f46675] bg-clip-text text-transparent mb-4">
         Connecting You to Trusted Local Experts
       </h2>
       <p class="text-gray-600 max-w-2xl mx-auto text-sm sm:text-base">

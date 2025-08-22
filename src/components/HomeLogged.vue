@@ -2,20 +2,18 @@
   <div class="min-h-screen bg-gray-50">
     <!-- Navbar -->
     <header
-      class="sticky top-0 z-50 backdrop-blur-md bg-gradient-to-r from-white via-[#f1faff] to-[#f5fafe] shadow-md w-full">
+      class="sticky top-0 z-50 w-full backdrop-blur-md bg-gradient-to-r from-white via-[#f1faff] to-[#f5fafe] shadow-md">
       <div class="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
+
         <!-- Logo -->
         <div class="flex items-center gap-2">
           <img src="@/assets/skilllogo.png" alt="SkillLink Logo"
             class="w-10 h-10 sm:w-12 sm:h-12 transition-transform hover:rotate-12" loading="lazy" />
           <h1 class="text-xl sm:text-2xl font-bold text-[#0073b1]">SkillLink</h1>
         </div>
-        <!-- Navigation bar -->
-        <div class="flex items-center gap-2 sm:gap-4 flex-wrap">
-          <!-- Nav Links -->
-          <nav class="hidden sm:flex gap-3 text-gray-700 font-medium text-sm items-center">
-            <!-- Add nav links here -->
-          </nav>
+
+        <!-- Desktop Nav -->
+        <nav class="hidden sm:flex items-center gap-4">
 
           <!-- Book Service Button -->
           <router-link to="/home"
@@ -26,9 +24,7 @@
                 d="M959.018 208.158c0.23-2.721 0.34-5.45 0.34-8.172 0-74.93-60.96-135.89-135.89-135.89-1.54 0-3.036 0.06-6.522 0.213l-611.757-0.043c-1.768-0.085-3.563-0.17-5.424-0.17-74.812 0-135.67 60.84-135.67 135.712l0.188 10.952h-0.306l0.391 594.972-0.162 20.382c0 74.03 60.22 134.25 134.24 134.25 1.668 0 7.007-0.239 7.1-0.239l608.934 0.085c2.985 0.357 6.216 0.468 9.55 0.468 35.815 0 69.514-13.954 94.879-39.302 25.373-25.34 39.344-58.987 39.344-94.794l-0.145-12.015h0.918l-0.008-606.41z m-757.655 693.82l-2.585-0.203c-42.524 0-76.146-34.863-76.537-79.309V332.671H900.79l0.46 485.186-0.885 2.865c-0.535 1.837-0.8 3.58-0.8 5.17 0 40.382-31.555 73.766-71.852 76.002l-10.816 0.621v-0.527l-615.533-0.01zM900.78 274.424H122.3l-0.375-65.934 0.85-2.924c0.52-1.82 0.782-3.63 0.782-5.247 0-42.236 34.727-76.665 78.179-76.809l0.45-0.068 618.177 0.018 2.662 0.203c42.329 0 76.767 34.439 76.767 76.768 0 1.326 0.196 2.687 0.655 4.532l0.332 0.884v68.577z" />
               <path
                 d="M697.67 471.435c-7.882 0-15.314 3.078-20.918 8.682l-223.43 223.439L346.599 596.84c-5.544-5.603-12.95-8.69-20.842-8.69s-15.323 3.078-20.918 8.665c-5.578 5.518-8.674 12.9-8.7 20.79-0.017 7.908 3.07 15.357 8.69 20.994l127.55 127.558c5.57 5.56 13.01 8.622 20.943 8.622 7.925 0 15.364-3.06 20.934-8.63l244.247-244.247c5.578-5.511 8.674-12.883 8.7-20.783 0.017-7.942-3.079-15.408-8.682-20.986-5.552-5.612-12.958-8.698-20.85-8.698z" />
-            </svg>
-            <span>Book Service</span>
-          </router-link>
+            </svg> <span>Book Service</span> </router-link>
 
           <!-- Notification Bell -->
           <router-link to="/notifications"
@@ -37,29 +33,69 @@
               viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
               <path stroke-linecap="round" stroke-linejoin="round"
                 d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
-            </svg>
-
-            <!-- 🔴 Badge -->
-            <span v-if="unreadCount > 0"
+            </svg> <!-- 🔴 Badge --> <span v-if="unreadCount > 0"
               class="absolute -top-0.5 -right-0.5 bg-red-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full">
-              {{ unreadCount }}
-            </span>
-          </router-link>
-
+              {{ unreadCount }} </span> </router-link>
+          <!-- Profile -->
           <router-link to="/profile">
-            <!-- Profile picture -->
             <img v-if="user && user.profilePic" :src="API.getImageUrl(user.profilePic)" alt="User Profile"
-              class="w-10 h-10 rounded-full object-cover border-2 border-[#0073b1] hover:ring-1 hover:ring-[#0073b1] transition"
+              class="w-10 h-10 rounded-full object-cover border-2 border-[#0073b1] hover:ring-1 hover:ring-[#0073b1]"
               loading="lazy" />
-
-            <!-- Default image -->
             <img v-else src="@/assets/user.png" alt="Default Profile"
-              class="w-10 h-10 rounded-full object-cover border-2 border-[#0073b1] hover:ring-2 hover:ring-[#0073b1] transition"
+              class="w-10 h-10 rounded-full object-cover border-2 border-[#0073b1] hover:ring-2 hover:ring-[#0073b1]"
               loading="lazy" />
           </router-link>
+        </nav>
 
-        </div>
+        <!-- Mobile Hamburger -->
+        <button class="sm:hidden flex flex-col gap-1 focus:outline-none" @click="isOpen = !isOpen">
+          <span :class="{ 'rotate-45 translate-y-1.5': isOpen }"
+            class="block w-6 h-0.5 bg-gray-800 transition-transform"></span>
+          <span :class="{ 'opacity-0': isOpen }" class="block w-6 h-0.5 bg-gray-800 transition-opacity"></span>
+          <span :class="{ '-rotate-45 -translate-y-1.5': isOpen }"
+            class="block w-6 h-0.5 bg-gray-800 transition-transform"></span>
+        </button>
+
       </div>
+
+
+      <!-- Mobile Drawer -->
+      <transition enter-active-class="transition-transform duration-300 ease-out" enter-from-class="translate-x-full"
+        enter-to-class="translate-x-0" leave-active-class="transition-transform duration-300 ease-in"
+        leave-from-class="translate-x-0" leave-to-class="translate-x-full">
+        <div v-if="isOpen" class="fixed inset-0 z-50 bg-white flex flex-col">
+          <!-- Overlay -->
+          <transition enter-active-class="transition-opacity duration-300 ease-out" enter-from-class="opacity-0"
+            enter-to-class="opacity-100" leave-active-class="transition-opacity duration-300 ease-in"
+            leave-from-class="opacity-100" leave-to-class="opacity-0">
+            <div v-if="isOpen" class="flex-1 bg-black bg-opacity-40" @click="closeMenu"></div>
+          </transition>
+
+          <div class="w-64 h-full bg-white shadow-lg flex flex-col px-6 py-6 space-y-6 relative">
+            <!-- Close Button -->
+            <button class="absolute top-4 right-4 text-gray-600 hover:text-[#0073b1] transition" @click="closeMenu">
+              <!-- Close Icon -->
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
+                stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+
+            <!-- Nav Links -->
+            <router-link to="/about" class="text-lg font-semibold text-gray-600 hover:text-[#0073b1]"
+              @click="closeMenu">About Us</router-link>
+            <router-link to="/contact" class="text-lg font-semibold text-gray-600 hover:text-[#0073b1]"
+              @click="closeMenu">Contact</router-link>
+            <router-link :to="{ path: '/help', query: { from: 'homelogged' } }"
+              class="text-lg font-semibold text-gray-600 hover:text-[#0073b1]" @click="closeMenu">Help</router-link>
+            <router-link to="/notifications" class="text-lg font-semibold text-gray-600 hover:text-[#0073b1]"
+              @click="closeMenu">Notifications</router-link>
+            <router-link to="/profile" class="text-lg font-semibold text-gray-600 hover:text-[#0073b1]"
+              @click="closeMenu">Profile</router-link>
+          </div>
+        </div>
+      </transition>
+
     </header>
 
     <!-- Hero Section -->
@@ -404,7 +440,7 @@ import ServiceMap from '@/components/ServiceMap.vue';
 // Reactive state
 const user = ref(null);
 const unreadCount = ref(0);
-
+const isOpen = ref(false);
 // Fetch unread notifications
 const fetchUnreadCount = async () => {
   try {
@@ -423,6 +459,10 @@ const fetchUserProfile = async () => {
   } catch (error) {
     console.error('❌ Failed to fetch user profile:', error);
   }
+};
+
+const closeMenu = () => {
+  isOpen.value = false;
 };
 
 // Lifecycle hook
@@ -456,4 +496,3 @@ const solvedCases = [
   }
 ];
 </script>
-
