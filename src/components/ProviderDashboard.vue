@@ -673,7 +673,7 @@ onMounted(async () => {
   isAuthenticated.value = true
   loading.value = true
   try {
-     const res = await API.get('/api/providers/profile');
+     const res = await API.get('/providers/profile');
     provider.value = res.data
     localStorage.setItem('user', JSON.stringify(res.data))
 

@@ -4,7 +4,7 @@
     <header class="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-md shadow-md">
       <div class="max-w-6xl mx-auto px-6 py-4 flex justify-between items-center">
         <div class="flex items-center space-x-2">
-          <img :src="skillLogo" alt="SkillLink Logo" class="w-10 h-10" />
+        <img :src="skillLogo" alt="SkillLink Logo" class="w-10 h-10" />
 
           <span class="text-xl font-extrabold text-[#0073b1]">SkillLink</span>
         </div>
@@ -274,14 +274,13 @@
 </template>
 
 <script setup>
-import skillLogo from '@/assets/skilllogo.png'
 import { ref, onMounted, computed } from 'vue'
 import API from '@/api';
 import { toast } from 'vue3-toastify'
 import 'vue3-toastify/dist/index.css'
 // Static assets
 import defaultUser from '@/assets/user.png'
-
+import skillLogo from '@/assets/skilllogo.png'
 // State
 const provider = ref(null)
 const allOrders = ref([])
