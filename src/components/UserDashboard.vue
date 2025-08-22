@@ -11,8 +11,9 @@
         <div class="flex flex-col sm:flex-row items-center gap-6">
           <!-- Profile Picture with Edit Button -->
           <div class="relative">
-            <img :src="user.profilePic ? `http://localhost:5000/uploads/${user.profilePic}` : userImg"
+            <img :src="user.profilePic ? `${baseURL}uploads/${user.profilePic}` : userImg"
               class="w-20 h-20 sm:w-32 sm:h-32 rounded-full border-4 border-[#00A8E8] object-cover shadow-md" />
+
             <label
               class="absolute bottom-1 right-1 bg-[#00A8E8] text-white rounded-full p-2 cursor-pointer hover:bg-[#007EA7] transition"
               title="Upload Photo">
@@ -68,8 +69,6 @@
             Edit
           </button>
         </div>
-
-        <!-- Edit Profile Modal -->
         <!-- Edit Profile Modal -->
         <transition name="fade">
           <div v-if="showEditProfileForm"
@@ -592,7 +591,7 @@ const saveAddress = () => {
     Object.assign(newAddress, { pincode: '', city: '', address: '' }); showAddressForm.value = false;
   } else toast.error('Please fill in all fields.');
 };
- const deleteAddress = (i) => { savedAddresses.value.splice(i, 1); localStorage.setItem('addresses', JSON.stringify(savedAddresses.value)); toast.success("Address deleted."); };
+const deleteAddress = (i) => { savedAddresses.value.splice(i, 1); localStorage.setItem('addresses', JSON.stringify(savedAddresses.value)); toast.success("Address deleted."); };
 
 // --- Password ---
 const changePassword = async () => {
@@ -607,7 +606,7 @@ const changePassword = async () => {
 };
 
 // --- Logout ---
- const logout = () => { logoutUser(); user.value = { name: '', email: '', phone: '', bio: '', profilePic: '' }; socket.value?.disconnect?.(); router.push('/homeboard'); };
+const logout = () => { logoutUser(); user.value = { name: '', email: '', phone: '', bio: '', profilePic: '' }; socket.value?.disconnect?.(); router.push('/homeboard'); };
 const confirmLogout = () => { logout(); showLogoutModal.value = false; };
 
 // --- Lifecycle ---
