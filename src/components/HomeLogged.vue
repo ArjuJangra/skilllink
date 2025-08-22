@@ -47,7 +47,7 @@
 
           <!-- Profile Picture -->
           <router-link to="/profile">
-            <img v-if="user && user.profilePic" :src="'http://localhost:5000/uploads/' + user.profilePic"
+            <img v-if="user && user.profilePic" :src="'${baseURL}/uploads/' + user.profilePic"
               alt="User Profile"
               class="w-10 h-10 rounded-full object-cover border-2 border-[#0073b1] hover:ring-1 hover:ring-[#0073b1] transition"
               loading="lazy" />
