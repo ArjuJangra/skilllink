@@ -1,36 +1,36 @@
 <template>
-  <div class="min-h-screen bg-gradient-to-b from-[#F0F9FF] to-white text-gray-800 pt-24">
+  <div class="min-h-screen bg-[#F0F9FF] text-gray-800 ">
     <!-- Navbar -->
-    <header class="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-md shadow-md">
-      <div class="max-w-6xl mx-auto px-6 py-4 flex justify-between items-center">
+    <header class="fixed top-0 left-0 right-0 z-50 bg-gradient-to-r from-white via-[#f1faff] to-[#f5fafe]  backdrop-blur-md shadow-md">
+      <div class="max-w-6xl mx-auto px-4 py-3 sm:px-6 flex justify-between items-center">
         <div class="flex items-center space-x-2">
          <img :src="skillLogo" alt="SkillLink Logo" class="w-10 h-10" />
 
-          <span class="text-xl font-extrabold text-[#0073b1]">SkillLink</span>
+          <span class="text-xl font-bold text-[#0073b1]">SkillLink</span>
         </div>
-        <nav class="flex items-center space-x-4 text-sm md:text-base font-medium">
+
+        <nav class="flex items-center space-x-6 text-sm md:text-base font-medium">
 
           <router-link to="/serviceprovider"
-            class="flex items-center gap-2 px-4 py-2 text-gray-600 hover:text-[#0073b1] hover:scale-105 transition-transform duration-200">
+            class="flex items-center gap-2 px-3 py-2 text-gray-600 hover:text-[#0073b1] hover:scale-105 transition-transform duration-200">
             <!-- Filled Home Icon -->
             <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
               <path d="M12 3l8 7v10a2 2 0 0 1-2 2h-4a1 1 0 0 1-1-1v-5H11v5a1 1 0 0 1-1 1H6a2 2 0 0 1-2-2V10l8-7z" />
             </svg>
             <span class="font-semibold">Home</span>
           </router-link>
-
-          <router-link to="/profile">
-            <img v-if="provider && provider.profilePic" :src="API.getImageUrl(provider.profilePic)" alt="Provider DP"
-              class="w-10 h-10 rounded-full border-2 border-[#0073b1] object-cover cursor-pointer" />
-            <img v-else :src="defaultUser" alt="Default Provider DP"
-              class="w-10 h-10 rounded-full border-2 border-[#0073b1] cursor-pointer" />
+          <router-link to="/provider/profile">
+            <img :src="profileImage" @error="handleImageError"
+              class="w-10 h-10 rounded-full border border-gray-300 hover:border-[#0073b1] transition cursor-pointer object-cover"
+              loading="lazy" alt="Profile Picture" />
           </router-link>
+         
         </nav>
       </div>
     </header>
 
     <!-- Page Header -->
-    <div class="max-w-6xl mx-auto px-4 py-10 text-center">
+    <div class="max-w-6xl mx-auto pt-24 px-4 py-10 text-center">
       <h1
         class="text-4xl font-extrabold bg-gradient-to-r from-[#3B8D99] to-[#f46675] bg-clip-text text-transparent mb-3">
         My Orders
@@ -166,7 +166,7 @@
           <ul class="space-y-2 text-sm text-gray-600">
 
             <li>
-              <router-link to="/provider/policies" class="flex items-center gap-2 hover:text-[#0073b1] transition">
+              <router-link to="/providerpolicies" class="flex items-center gap-2 hover:text-[#0073b1] transition">
                 <!-- Shield/Document Icon -->
                 <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24"
                   stroke="currentColor" stroke-width="2">
@@ -178,7 +178,7 @@
             </li>
 
             <li>
-              <router-link to="/provider/about" class="flex items-center gap-2 hover:text-[#0073b1] transition">
+              <router-link to="/providerabout" class="flex items-center gap-2 hover:text-[#0073b1] transition">
                 <!-- Info Circle Icon -->
                 <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24"
                   stroke="currentColor" stroke-width="2">
@@ -190,7 +190,7 @@
             </li>
 
             <li>
-              <router-link to="/provider/contact" class="flex items-center gap-2 hover:text-[#0073b1] transition">
+              <router-link to="/providercontact" class="flex items-center gap-2 hover:text-[#0073b1] transition">
                 <!-- Phone Icon -->
                 <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24"
                   stroke="currentColor" stroke-width="2">
@@ -279,18 +279,24 @@ import API from '@/api';
 import { toast } from 'vue3-toastify'
 import 'vue3-toastify/dist/index.css'
 // Static assets
-import defaultUser from '@/assets/user.png'
+
 import skillLogo from '@/assets/skilllogo.png'
+ const defaultPic = require('@/assets/user.png');
 // State
 const provider = ref(null)
 const allOrders = ref([])
 const searchQuery = ref('')
 const statusFilter = ref('')
+  const profileImage = computed(() =>
+      provider.value?.profilePic
+        ? API.getImageUrl(`providers/${provider.value.profilePic}`) // use helper
+        : defaultPic
+    );
 
 // Fetch Orders
 const fetchOrders = async () => {
   try {
-    const res = await API.get('/provider/orders') // interceptor adds token
+    const res = await API.get('/providerorders') // interceptor adds token
     allOrders.value = res.data
   } catch (err) {
     console.error('❌ Failed to fetch orders:', err)
@@ -301,7 +307,7 @@ const fetchOrders = async () => {
 // Update Order Status
 const updateOrderStatus = async (id, status) => {
   try {
-    await API.put(`/provider/orders/${id}/status`, { status })
+    await API.put(`/providerorders/${id}/status`, { status })
     toast.success(`Order ${status.toLowerCase()} successfully`)
     fetchOrders()
   } catch (err) {

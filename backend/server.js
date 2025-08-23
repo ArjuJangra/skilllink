@@ -76,17 +76,8 @@ app.use('/api/services', serviceRoutes);
 app.use('/api/bookings', bookingRoutes);
 app.use('/api/providers', providerRoutes);
 app.use('/api/contact', contactRoutes);
-app.use('/api/provider/orders', providerOrdersRoutes);
+app.use('/api/providerorders', providerOrdersRoutes);
 app.use('/api/notifications', notificationRoutes);
-
-// ===== Serve Vue frontend in production =====
-  const distPath = path.join(__dirname, 'dist');
-  app.use(express.static(distPath));
-
-  // All unmatched routes return index.html
-  app.get('*', (req, res) => {
-    res.sendFile(path.join(distPath, 'index.html'));
-  });
 
 
 // ===== Socket.IO JWT Authentication =====

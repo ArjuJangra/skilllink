@@ -5,6 +5,18 @@ const Notification = require('../models/Notification');
 const authenticateUser = require('../middleware/authMiddleware');
 const mongoose = require('mongoose');
 
+// GET provider orders
+router.get('/providerorders', authenticateUser, async (req, res) => {
+  try {
+    if (req.user.role !== 'provider') return res.status(403).json({ message: 'Access denied' });
+
+    const orders = await Booking.find({ providerId: req.user.id }).sort({ createdAt: -1 });
+    res.json(orders);
+  } catch (err) {
+    console.error('Error fetching provider orders:', err);
+    res.status(500).json({ message: 'Failed to fetch provider orders', error: err.message });
+  }
+});
 // GET all orders assigned to this provider
 router.get('/', authenticateUser, async (req, res) => {
   try {

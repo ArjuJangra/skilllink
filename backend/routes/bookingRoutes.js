@@ -162,17 +162,6 @@ router.get('/history', authenticateUser, async (req, res) => {
   }
 });
 
-// GET provider orders
-router.get('/provider-orders', authenticateUser, async (req, res) => {
-  try {
-    if (req.user.role !== 'provider') return res.status(403).json({ message: 'Access denied' });
 
-    const orders = await Booking.find({ providerId: req.user.id }).sort({ createdAt: -1 });
-    res.json(orders);
-  } catch (err) {
-    console.error('Error fetching provider orders:', err);
-    res.status(500).json({ message: 'Failed to fetch provider orders', error: err.message });
-  }
-});
 
 module.exports = router;

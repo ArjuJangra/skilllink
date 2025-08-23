@@ -4,7 +4,7 @@
     <header class="fixed top-0 left-0 right-0 z-50 bg-gradient-to-r from-white via-[#f1faff] to-[#f5fafe] shadow-md">
       <div class="max-w-6xl mx-auto px-4 sm:px-6 py-3 flex justify-between items-center">
         <div class="flex items-center space-x-2">
-          <img src="@/assets/skilllogo.png" alt="SkillLink Logo" class="w-10 h-10" />
+          <img src="@/assets/skilllogo.png" alt="SkillLink Logo" loading="eager" class="w-10 h-10" />
           <span class="text-xl font-bold text-[#0073b1]">SkillLink</span>
         </div>
 
@@ -12,8 +12,8 @@
         <nav class="hidden md:flex items-center space-x-6 text-sm lg:text-base">
 
           <!-- Orders -->
-          <router-link to="/provider/orders"
-            class="relative flex items-center gap-2 px-3 py-2 text-gray-600 hover:text-[#0073b1] transition font-medium"
+          <router-link to="/providerorders"
+            class="relative flex items-center gap-2 px-3 py-2 text-gray-600 hover:text-[#0073b1] hover:scale-105 transition-transform duration-200 font-medium"
             active-class="text-[#0073b1] font-semibold after:absolute after:left-0 after:right-0 after:-bottom-1 after:h-[2px] after:bg-[#0073b1] after:rounded-full">
             <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
               <path
@@ -28,11 +28,12 @@
           </router-link>
 
           <!-- Profile -->
-          <router-link to="/profile">
+          <router-link to="/provider/profile">
             <img :src="profileImage" @error="handleImageError"
               class="w-10 h-10 rounded-full border border-gray-300 hover:border-[#0073b1] transition cursor-pointer object-cover"
-              loading="lazy" />
+              loading="lazy" alt="Profile Picture" />
           </router-link>
+
 
         </nav>
         <!-- Mobile Hamburger -->
@@ -128,7 +129,7 @@
       </section>
       <!-- Quick Actions -->
       <section class="mb-10 flex flex-wrap gap-4 justify-center">
-        <router-link to="/provider/orders"
+        <router-link to="/providerorders"
           class="bg-[#0073b1] hover:bg-[#005f8d] text-white px-5 py-3 rounded-lg font-semibold transition flex items-center gap-2">
           <span>📄</span> View Orders
         </router-link>
@@ -136,7 +137,7 @@
           class="bg-[#f46675] hover:bg-[#d95563] text-white px-5 py-3 rounded-lg font-semibold transition flex items-center gap-2">
           <span>✏️</span> Update Profile
         </router-link>
-        <router-link to="/provider/add-service"
+        <router-link to="/provideraddservice"
           class="bg-[#3B8D99] hover:bg-[#2f7077] text-white px-5 py-3 rounded-lg font-semibold transition flex items-center gap-2">
           <span>➕</span> Add Service
         </router-link>
@@ -162,7 +163,7 @@
           <ul class="space-y-2 text-sm text-gray-600">
 
             <li>
-              <router-link to="/provider/policies" class="flex items-center gap-2 hover:text-[#0073b1] transition">
+              <router-link to="/providerpolicies" class="flex items-center gap-2 hover:text-[#0073b1] transition">
                 <!-- Shield/Document Icon -->
                 <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24"
                   stroke="currentColor" stroke-width="2">
@@ -174,7 +175,7 @@
             </li>
 
             <li>
-              <router-link to="/provider/about" class="flex items-center gap-2 hover:text-[#0073b1] transition">
+              <router-link to="/providerabout" class="flex items-center gap-2 hover:text-[#0073b1] transition">
                 <!-- Info Circle Icon -->
                 <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24"
                   stroke="currentColor" stroke-width="2">
@@ -186,7 +187,7 @@
             </li>
 
             <li>
-              <router-link to="/provider/contact" class="flex items-center gap-2 hover:text-[#0073b1] transition">
+              <router-link to="/providercontact" class="flex items-center gap-2 hover:text-[#0073b1] transition">
                 <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
                   <path
                     d="M6.62 10.79a15.05 15.05 0 006.59 6.59l2.2-2.2a1 1 0 011.11-.21 11.05 11.05 0 003.47.55 1 1 0 011 1V20a1 1 0 01-1 1C10.42 21 3 13.58 3 5a1 1 0 011-1h3.5a1 1 0 011 1c0 1.2.19 2.38.55 3.47a1 1 0 01-.21 1.11l-2.22 2.21z" />
@@ -276,8 +277,6 @@
 import API from '@/api';
 import { ref, onMounted, reactive, computed, nextTick } from 'vue';
 import Chart from 'chart.js/auto';
-const API_BASE = API.defaults.baseURL;
-
 
 export default {
   name: 'ServiceProvider',
@@ -294,7 +293,7 @@ export default {
 
     const profileImage = computed(() =>
       provider.value?.profilePic
-        ? `${API_BASE}/uploads/providers/${provider.value.profilePic}`
+        ? API.getImageUrl(`providers/${provider.value.profilePic}`) // use helper
         : defaultPic
     );
 
@@ -343,7 +342,7 @@ export default {
     const fetchNewOrdersCount = async () => {
       try {
         const token = localStorage.getItem('token');
-        const res = await API.get(`/bookings/provider-orders`, {
+        const res = await API.get(`/providerorders`, {
           headers: { Authorization: `Bearer ${token}` }
         });
         // Count orders which are not completed
@@ -356,7 +355,7 @@ export default {
     const fetchStats = async () => {
       try {
         const token = localStorage.getItem('token');
-        const res = await API.get(`/provider/orders/stats`, {
+        const res = await API.get(`/providerorders/stats`, {
           headers: { Authorization: `Bearer ${token}` }
         });
         stats.total = res.data.total || 0;
@@ -373,11 +372,10 @@ export default {
       }
     };
 
-
     const fetchRecentOrders = async () => {
       try {
         const token = localStorage.getItem('token');
-        const res = await API.get(`/provider/orders/recent`, { headers: { Authorization: `Bearer ${token}` } });
+        const res = await API.get(`/providerorders/recent`, { headers: { Authorization: `Bearer ${token}` } });
         recentOrders.value = res.data;
       } catch (err) {
         console.error(err);
