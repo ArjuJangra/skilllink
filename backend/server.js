@@ -11,6 +11,10 @@ const providerRoutes = require('./routes/providerRoutes');
 const contactRoutes = require('./routes/contactRoutes');
 const providerOrdersRoutes = require('./routes/providerOrders');
 const notificationRoutes = require('./routes/notificationRoutes');
+const authRoutes = require('./routes/auth');
+const userRoutes = require('./routes/userRoutes');
+const addressRoutes = require('./routes/addressRoutes');
+const serviceRoutes = require('./routes/serviceRoutes');
 
 dotenv.config();
 
@@ -21,24 +25,21 @@ const server = http.createServer(app);
 const allowedOrigins = [
   'http://localhost:8080',
   'http://localhost:5173',
-  process.env.CLIENT_ORIGIN, // your Vercel frontend
+  process.env.CLIENT_ORIGIN,
 ];
 
 // ===== Setup Socket.IO =====
 const io = new Server(server, {
   cors: {
     origin: (origin, callback) => {
-      if (!origin) return callback(null, true); // allow Postman/curl
-      if (
-        allowedOrigins.includes(origin) ||
-        /\.vercel\.app$/.test(origin) // allow Vercel previews
-      ) {
+      if (!origin) return callback(null, true);
+      if (allowedOrigins.includes(origin) || /\.vercel\.app$/.test(origin)) {
         return callback(null, true);
       }
       return callback(new Error('Not allowed by WS CORS'));
     },
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
-    credentials: true
+    credentials: true,
   },
 });
 global.io = io;
@@ -48,24 +49,18 @@ mongoose.connect(process.env.MONGO_URI)
   .then(() => console.log("✅ Connected to MongoDB Atlas"))
   .catch((err) => console.error("❌ MongoDB Atlas connection error:", err));
 
-
 // ===== Middleware =====
 app.use(express.json());
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 app.use(cors({
   origin: (origin, callback) => {
     if (!origin) return callback(null, true);
-    if (
-      allowedOrigins.includes(origin) ||
-      /\.vercel\.app$/.test(origin)
-    ) {
-      return callback(null, true);
-    }
+    if (allowedOrigins.includes(origin) || /\.vercel\.app$/.test(origin)) return callback(null, true);
     return callback(new Error('Not allowed by CORS'));
   },
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
   credentials: true,
-  allowedHeaders: ['Content-Type', 'Authorization']
+  allowedHeaders: ['Content-Type', 'Authorization'],
 }));
 
 // ===== Health Check =====
@@ -73,57 +68,57 @@ app.get('/health', (_req, res) => {
   res.status(200).json({ ok: true });
 });
 
-// ===== Routes =====
-app.use('/api/auth', require('./routes/auth'));
-app.use('/api/user', require('./routes/userRoutes'));
-app.use('/api/address', require('./routes/addressRoutes'));
-app.use('/api/services', require('./routes/serviceRoutes'));
+// ===== API Routes =====
+app.use('/api/auth', authRoutes);
+app.use('/api/user', userRoutes);
+app.use('/api/address', addressRoutes);
+app.use('/api/services', serviceRoutes);
 app.use('/api/bookings', bookingRoutes);
 app.use('/api/providers', providerRoutes);
 app.use('/api/contact', contactRoutes);
 app.use('/api/provider/orders', providerOrdersRoutes);
 app.use('/api/notifications', notificationRoutes);
 
+// ===== Serve Vue frontend in production =====
+  const distPath = path.join(__dirname, 'dist');
+  app.use(express.static(distPath));
+
+  // All unmatched routes return index.html
+  app.get('*', (req, res) => {
+    res.sendFile(path.join(distPath, 'index.html'));
+  });
+
 
 // ===== Socket.IO JWT Authentication =====
 io.use((socket, next) => {
   const token = socket.handshake.auth?.token;
-
-  if (!token) {
-    console.log('❌ Socket.IO: No token provided');
-    return next(new Error('Authentication error'));
-  }
+  if (!token) return next(new Error('Authentication error'));
 
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     socket.user = decoded;
     next();
   } catch (err) {
-    console.log('❌ Socket.IO: Invalid token');
     return next(new Error('Authentication error'));
   }
 });
 
 // ===== Socket.IO Connection Handler =====
 io.on('connection', (socket) => {
-  console.log('🟢 Authenticated client connected:', socket.user?.id || socket.id);
+  console.log('🟢 Client connected:', socket.user?.id || socket.id);
 
   socket.on('join', (userId) => {
     socket.join(userId);
     console.log(`👤 User ${userId} joined their room`);
   });
 
-  socket.on('message', (msg) => {
-    io.emit('newMessage', msg);
-  });
+  socket.on('message', (msg) => io.emit('newMessage', msg));
 
   socket.on('sendMessage', ({ roomId, message }) => {
     io.to(roomId).emit('receiveMessage', message);
   });
 
-  socket.on('disconnect', () => {
-    console.log('🔴 Client disconnected:', socket.id);
-  });
+  socket.on('disconnect', () => console.log('🔴 Client disconnected:', socket.id));
 });
 
 // ===== Start Server =====

@@ -4,20 +4,21 @@ import axios from "axios";
 let baseURL;
 let uploadsBaseURL;
 
-// Set URLs depending on environment
-if (window.location.hostname === "localhost") {
+// Use NODE_ENV to determine environment
+if (process.env.NODE_ENV === "development") {
   baseURL = process.env.VUE_APP_API_URL || "http://localhost:5000";
   uploadsBaseURL = process.env.VUE_APP_UPLOADS_URL || "http://localhost:5000/uploads/";
 } else {
-  baseURL = process.env.VUE_APP_API_URL_PROD;
-  uploadsBaseURL = process.env.VUE_APP_UPLOADS_URL_PROD;
+  baseURL = process.env.VUE_APP_API_URL_PROD || "https://skilllink-7hfa.onrender.com";
+  uploadsBaseURL = process.env.VUE_APP_UPLOADS_URL_PROD || "https://skilllink-7hfa.onrender.com/uploads/";
 }
 
-// Ensure no trailing slash issues
+// Remove trailing slash from baseURL
 if (baseURL.endsWith("/")) baseURL = baseURL.slice(0, -1);
+// Ensure uploadsBaseURL ends with slash
 if (!uploadsBaseURL.endsWith("/")) uploadsBaseURL += "/";
 
-// Axios instance for API
+// Axios instance
 const API = axios.create({
   baseURL: `${baseURL}/api`,
 });
@@ -31,7 +32,7 @@ API.interceptors.request.use((config) => {
   return config;
 });
 
-// Add uploadsBaseURL and helper function
+// Attach uploads helpers
 API.uploadsBaseURL = uploadsBaseURL;
 API.getImageUrl = (filename) => `${uploadsBaseURL}${filename}`;
 
@@ -39,6 +40,7 @@ console.log("👉 API Base URL:", `${baseURL}/api`);
 console.log("👉 Uploads Base URL:", uploadsBaseURL);
 
 export default API;
+
 
 
 
