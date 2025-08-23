@@ -33,7 +33,6 @@
       <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <!-- LEFT: Gallery + Overview -->
         <div class="lg:col-span-2 space-y-6">
-          <!-- HERO: Carousel / Video -->
           <!-- HERO: Image Carousel -->
           <div class="relative rounded-3xl overflow-hidden shadow-[0_8px_30px_rgba(0,0,0,0.12)]">
             <div class="group relative h-[280px] sm:h-[360px] md:h-[420px] bg-gray-100">
