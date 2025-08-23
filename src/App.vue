@@ -5,7 +5,6 @@
     <router-view />
     <Analytics />
 
-
   </div>
 </template>
 

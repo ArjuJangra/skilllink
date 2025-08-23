@@ -36,8 +36,8 @@ API.interceptors.request.use((config) => {
 API.uploadsBaseURL = uploadsBaseURL;
 API.getImageUrl = (filename) => `${uploadsBaseURL}${filename}`;
 
-console.log("👉 API Base URL:", `${baseURL}/api`);
-console.log("👉 Uploads Base URL:", uploadsBaseURL);
+//console.log("👉 API Base URL:", `${baseURL}/api`);
+//console.log("👉 Uploads Base URL:", uploadsBaseURL);
 
 export default API;
 
