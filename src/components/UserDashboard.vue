@@ -675,9 +675,6 @@ onUnmounted(() => socket.value?.disconnect());
 .btn-gray {
   color: #1f2937;
 }
-
-/* gray text */
-
 /* Variants */
 .btn-blue {
   background: #007EA7;
