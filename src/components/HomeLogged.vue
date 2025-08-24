@@ -37,7 +37,7 @@
               class="absolute -top-0.5 -right-0.5 bg-red-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full">
               {{ unreadCount }} </span> </router-link>
           <!-- Profile -->
-          <router-link to="/profile">
+          <router-link to="/dashboard">
             <img v-if="user && user.profilePic" :src="API.getImageUrl(user.profilePic)" alt="User Profile"
               class="w-10 h-10 rounded-full object-cover border-2 border-[#0073b1] hover:ring-1 hover:ring-[#0073b1]"
               loading="lazy" />
