@@ -29,7 +29,6 @@
         </span>
       </div>
 
-
       <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <!-- LEFT: Gallery + Overview -->
         <div class="lg:col-span-2 space-y-6">
@@ -77,7 +76,6 @@
               </button>
             </div>
           </div>
-
 
           <!-- Overview -->
           <div class="bg-white rounded-2xl shadow p-6">
@@ -164,18 +162,25 @@
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <label class="block text-sm text-gray-600 mb-1">Select Date</label>
-                <input type="date" class="input w-full" :min="today" v-model="selectedDate" />
+                <input type="date" class="input w-full" :min="today" :max="maxDate" v-model="selectedDate" />
               </div>
+
               <div>
                 <label class="block text-sm text-gray-600 mb-1">Select Time</label>
-                <select class="input w-full" v-model="selectedTime">
+                <select class="input w-full" v-model="selectedTime" :disabled="!selectedDate">
                   <option disabled value="">Choose a slot</option>
-                  <option v-for="slot in timeSlots" :key="slot" :value="slot">
-                    {{ slot }}
+                  <option v-for="slot in timeSlots" :key="slot" :value="slot" :disabled="isSlotBooked(slot)">
+                    {{ slot }} <span v-if="isSlotBooked(slot)">(Booked)</span>
                   </option>
                 </select>
               </div>
             </div>
+            <!-- Selected slot summary -->
+            <p v-if="selectedDate && selectedTime" class="text-sm text-gray-700 mt-2">
+              You selected: <strong>{{ selectedDate }}</strong> at
+              <strong>{{ selectedTime }}</strong>
+            </p>
+
             <p class="text-xs text-gray-500 mt-2">* Real-time slots can be fetched from your API later.</p>
           </div>
 
@@ -214,21 +219,25 @@
 
           <!-- Reviews -->
           <div class="bg-white rounded-2xl shadow p-6">
-            <div class="flex items-center justify-between mb-4">
+            <div class="flex items-center justify-between mb-4 flex-wrap gap-2">
               <h2 class="text-xl font-bold text-gray-900">Customer Reviews</h2>
-              <div class="text-right">
+              <div class="flex items-center gap-2">
                 <div class="text-2xl font-extrabold text-amber-500">{{ rating.toFixed(1) }} ★</div>
                 <div class="text-xs text-gray-500">Based on {{ reviews.length }} reviews</div>
+                <select v-model="selectedStar" class="input text-sm w-36">
+                  <option value="">All ratings</option>
+                  <option v-for="s in [5, 4, 3, 2, 1]" :key="s">{{ s }}★ only</option>
+                </select>
               </div>
             </div>
-
+          
             <!-- rating bars -->
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
               <div class="space-y-2">
-                <div v-for="star in [5, 4, 3, 2, 1]" :key="'bar-' + star" class="flex items-center gap-3">
+                <div v-for="star in [5, 4, 3, 2, 1]" :key="star" class="flex items-center gap-3">
                   <div class="w-12 text-sm text-gray-600">{{ star }}★</div>
                   <div class="flex-1 h-2 bg-gray-100 rounded-full overflow-hidden">
-                    <div class="h-2 bg-amber-400" :style="{ width: ratingBarWidth(star) + '%' }"></div>
+                    <div class="h-2 bg-amber-400 duration-500" :style="{ width: ratingBarWidth(star) + '%' }"></div>
                   </div>
                   <div class="w-10 text-right text-xs text-gray-500">{{ ratingCounts[star] || 0 }}</div>
                 </div>
@@ -238,32 +247,16 @@
               <div class="p-4 rounded-xl bg-gray-50">
                 <div class="font-semibold text-gray-800 mb-2">What people like</div>
                 <ul class="text-sm text-gray-700 space-y-1">
-                  <li>• On-time service</li>
-                  <li>• Professional & polite</li>
-                  <li>• Good value for money</li>
+                  <li v-for="pro in reviewPros" :key="pro">• {{ pro }}</li>
                 </ul>
               </div>
             </div>
 
             <!-- review list -->
             <div class="space-y-5">
-              <div v-for="r in reviews" :key="r.id" class="p-4 border rounded-xl hover:shadow-sm transition">
-                <div class="flex items-start gap-3">
-                  <img :src="r.userAvatar" @error="e => e.target.src = defaultAvatar"
-                    class="w-10 h-10 rounded-full object-cover" />
-                  <div class="flex-1">
-                    <div class="flex items-center gap-2">
-                      <div class="font-semibold text-gray-800">{{ r.user }}</div>
-                      <div class="text-amber-500 text-sm">{{ '★'.repeat(r.stars) }}</div>
-                      <div class="text-xs text-gray-500">— {{ r.date }}</div>
-                    </div>
-                    <p class="text-gray-700 text-sm mt-1">{{ r.text }}</p>
-                    <img v-if="r.photo" :src="r.photo" class="mt-2 w-full max-w-xs rounded-lg border"
-                      alt="Review proof" />
-                  </div>
-                </div>
-              </div>
+              <ReviewCard v-for="r in filteredReviews" :key="r.id" :review="r" :defaultAvatar="defaultAvatar" />
             </div>
+
           </div>
 
           <!-- Related services -->
@@ -295,7 +288,7 @@
               </div>
               <div class="mt-4 space-y-2 text-sm text-gray-700">
                 <div class="flex justify-between"><span>Tier</span><span class="font-medium">{{ selectedTier.name
-                }}</span></div>
+                    }}</span></div>
                 <div class="flex justify-between"><span>Quantity</span><span class="font-medium">{{ qty }}</span></div>
                 <div class="flex justify-between">
                   <span>Add-ons</span>
@@ -321,7 +314,7 @@
                     class="text-emerald-600">− ₹{{
                       discountAmount }}</span></div>
                 <div class="flex justify-between font-bold text-gray-900 text-base"><span>Total</span><span>₹{{ total
-                }}</span></div>
+                    }}</span></div>
               </div>
 
               <button class="mt-4 btn-primary w-full" :disabled="!canBook" @click="goToBooking">
@@ -353,81 +346,138 @@
 <script>
 export default {
   name: "ServiceDetail",
-  data: () => ({
-    title: "",
-    desc: "",
-    category: "",
-    media: [],
-    currentIndex: 0,
 
-    // pricing
-    tiers: [
-      { name: "Basic", price: 399, points: ["Inspection", "Minor fixes", "30-day support"] },
-      { name: "Standard", price: 699, points: ["Includes Basic", "Material support", "Priority scheduling"] },
-      { name: "Premium", price: 999, points: ["Includes Standard", "Deep service", "90-day support"] },
-    ],
-    selectedTier: { name: "Standard", price: 699, points: [] },
-    addons: [
-      { key: "fast", label: "Fast service (same-day)", price: 99, selected: false },
-      { key: "eco", label: "Eco-friendly materials", price: 49, selected: false },
-      { key: "extra", label: "Extra task (+30 mins)", price: 149, selected: false },
-    ],
-    qty: 1,
-    couponCode: "",
-    couponValid: false,
-    couponMessage: "",
+  // Props go here
+  props: {
+    defaultAvatar: { type: String, default: "/images/default-user.png" },
+  },
 
-    // availability
-    selectedDate: "",
-    selectedTime: "",
-    timeSlots: ["09:00 AM", "10:30 AM", "12:00 PM", "01:00 PM", "03:00 PM", "05:00 PM"],
+  data() {
+    return {
+      title: "",
+      desc: "",
+      category: "",
+      media: [],
+      currentIndex: 0,
 
-    // provider
-    provider: {
-      name: "Rahul Verma",
-      avatar: "/images/provider.png",
-      bio: "Skilled and vetted professional with a passion for quality and punctuality.",
-      years: 6,
-      jobs: 1123,
-    },
-    defaultAvatar: "/images/default-user.png",
+      // Pricing tiers
+      tiers: [
+        { name: "Basic", price: 399, points: ["Inspection", "Minor fixes", "30-day support"] },
+        { name: "Standard", price: 699, points: ["Includes Basic", "Material support", "Priority scheduling"] },
+        { name: "Premium", price: 999, points: ["Includes Standard", "Deep service", "90-day support"] },
+      ],
+      selectedTier: { name: "Standard", price: 699, points: [] },
+      addons: [
+        { key: "fast", label: "Fast service (same-day)", price: 99, selected: false },
+        { key: "eco", label: "Eco-friendly materials", price: 49, selected: false },
+        { key: "extra", label: "Extra task (+30 mins)", price: 149, selected: false },
+      ],
+      qty: 1,
+      couponCode: "",
+      couponValid: false,
+      couponMessage: "",
 
-    // reviews
-    reviews: [
-      { id: 1, user: "Ankita Sharma", userAvatar: "/images/u1.jpg", stars: 5, text: "Professional and quick. Fixed my issue in one visit.", date: "Jun 2025", photo: "/images/review1.jpg" },
-      { id: 2, user: "Sneha Kulkarni", userAvatar: "/images/u2.jpg", stars: 4, text: "On time and polite. Good value.", date: "May 2025" },
-      { id: 3, user: "Rakshita Gupta", userAvatar: "/images/u3.jpg", stars: 5, text: "Great experience! Highly recommend.", date: "Apr 2025" },
-    ],
-    ratingCounts: { 5: 18, 4: 7, 3: 2, 2: 1, 1: 0 },
-    related: [],
-  }),
+      // Availability
+      selectedDate: "",
+      selectedTime: "",
+      timeSlots: ["09:00 AM", "10:30 AM", "12:00 PM", "01:00 PM", "03:00 PM", "05:00 PM"],
+      bookedSlots: {
+        "2025-08-24": ["09:00 AM", "01:00 PM"],
+        "2025-08-25": ["12:00 PM"]
+      },
+
+      // Provider info
+      provider: {
+        name: "Rahul Verma",
+        avatar: "/images/provider.png",
+        bio: "Skilled and vetted professional with a passion for quality and punctuality.",
+        years: 6,
+        jobs: 1123,
+      },
+
+      // Reviews
+      reviews: [
+        { id: 1, user: "Ankita Sharma", userAvatar: "/images/u1.jpg", stars: 5, text: "Professional and quick. Fixed my issue in one visit.", date: "Jun 2025", photo: "/images/review1.jpg" },
+        { id: 2, user: "Sneha Kulkarni", userAvatar: "/images/u2.jpg", stars: 4, text: "On time and polite. Good value.", date: "May 2025" },
+        { id: 3, user: "Rakshita Gupta", userAvatar: "/images/u3.jpg", stars: 5, text: "Great experience! Highly recommend.", date: "Apr 2025" },
+      ],
+      ratingCounts: { 5: 18, 4: 7, 3: 2, 2: 1, 1: 0 },
+
+      related: [],
+    };
+  },
+
   computed: {
-    activeMedia: ({ media, currentIndex }) => media[currentIndex] || {},
-    today: () => new Date().toISOString().slice(0, 10),
-    selectedAddons: ({ addons }) => addons.filter(a => a.selected),
-    subtotal({ selectedTier, selectedAddons, qty }) {
-      return (selectedTier.price + selectedAddons.reduce((s, a) => s + a.price, 0)) * qty;
+    today() {
+      return new Date().toISOString().slice(0, 10);
     },
-    discountAmount({ couponValid, subtotal }) { return couponValid ? Math.round(subtotal * 0.1) : 0; },
-    total({ subtotal, discountAmount }) { return Math.max(0, subtotal - discountAmount); },
-    rating({ ratingCounts }) {
-      const total = Object.values(ratingCounts).reduce((s, n) => s + n, 0) || 1;
-      const weighted = Object.entries(ratingCounts).reduce((s, [k, v]) => s + k * v, 0);
+    maxDate() {
+      const d = new Date();
+      d.setMonth(d.getMonth() + 3);
+      return d.toISOString().slice(0, 10);
+    },
+    activeMedia() {
+      return this.media[this.currentIndex] || {};
+    },
+    selectedAddons() {
+      return this.addons.filter(a => a.selected);
+    },
+    subtotal() {
+      return (this.selectedTier.price + this.selectedAddons.reduce((s, a) => s + a.price, 0)) * this.qty;
+    },
+    discountAmount() {
+      return this.couponValid ? Math.round(this.subtotal * 0.1) : 0;
+    },
+    total() {
+      return Math.max(0, this.subtotal - this.discountAmount);
+    },
+    rating() {
+      const total = Object.values(this.ratingCounts).reduce((s, n) => s + n, 0) || 1;
+      const weighted = Object.entries(this.ratingCounts).reduce((s, [k, v]) => s + k * v, 0);
       return weighted / total;
     },
-    canBook: ({ selectedDate, selectedTime }) => !!(selectedDate && selectedTime),
+    canBook() {
+      return !!(this.selectedDate && this.selectedTime);
+    },
+    filteredReviews() {
+      if (!this.selectedStar) return this.reviews;
+      return this.reviews.filter(r => r.stars === Number(this.selectedStar));
+    },
+    reviewPros() {
+      return ["On-time service", "Professional & polite", "Good value for money"];
+    },
   },
+
   methods: {
-    handleImageError: e => (e.target.src = "/images/default-service.jpg"),
-    nextMedia() { this.currentIndex = (this.currentIndex + 1) % this.media.length; },
-    prevMedia() { this.currentIndex = (this.currentIndex - 1 + this.media.length) % this.media.length; },
-    selectTier(t) { this.selectedTier = t; },
+    handleImageError(e) {
+      e.target.src = this.defaultAvatar;
+    },
+    nextMedia() {
+      this.currentIndex = (this.currentIndex + 1) % this.media.length;
+    },
+    prevMedia() {
+      this.currentIndex = (this.currentIndex - 1 + this.media.length) % this.media.length;
+    },
+    selectTier(t) {
+      this.selectedTier = t;
+    },
     applyCoupon() {
-      if (!this.couponCode) return (this.couponValid = false, this.couponMessage = "Enter a coupon code");
+      if (!this.couponCode) {
+        this.couponValid = false;
+        this.couponMessage = "Enter a coupon code";
+        return;
+      }
       const code = this.couponCode.trim().toUpperCase();
-      if (["WELCOME10", "SAVE10", "NEW10"].includes(code))
-        (this.couponValid = true, this.couponMessage = "Coupon applied ✔ 10% off");
-      else (this.couponValid = false, this.couponMessage = "Invalid coupon");
+      if (["WELCOME10", "SAVE10", "NEW10"].includes(code)) {
+        this.couponValid = true;
+        this.couponMessage = "Coupon applied ✔ 10% off";
+      } else {
+        this.couponValid = false;
+        this.couponMessage = "Invalid coupon";
+      }
+    },
+    isSlotBooked(slot) {
+      return this.bookedSlots[this.selectedDate]?.includes(slot) || false;
     },
     ratingBarWidth(star) {
       const total = Object.values(this.ratingCounts).reduce((s, n) => s + n, 0) || 1;
@@ -453,44 +503,41 @@ export default {
         { title: "Appliance Diagnosis", category: "Home Appliance", desc: "Quick issue identification", image: "/images/related-3.jpg" },
       ];
     },
-   async buildMediaFromTitle() {
-  const slug = (this.title || "service")
-    .toLowerCase()
-    .replace(/[\\?%*:|"<>]/g, "-")
-    .replace(/\s+/g, "-")
-    .replace(/-+/g, "-");
+    async buildMediaFromTitle() {
+      const slug = (this.title || "service")
+        .toLowerCase()
+        .replace(/[\\?%*:|"<>]/g, "-")
+        .replace(/\s+/g, "-")
+        .replace(/-+/g, "-");
 
-  const exts = ["jpg", "webp", "avif", "jpeg", "png"];
-  const media = [];
+      const exts = ["jpg", "webp", "avif", "jpeg", "png"];
+      const media = [];
 
-  // Returns a promise that resolves true if image loads
-  const loadImage = (src) =>
-    new Promise((resolve) => {
-      const img = new Image();
-      img.onload = () => resolve(true);
-      img.onerror = () => resolve(false);
-      img.src = src;
-    });
+      const loadImage = (src) =>
+        new Promise((resolve) => {
+          const img = new Image();
+          img.onload = () => resolve(true);
+          img.onerror = () => resolve(false);
+          img.src = src;
+        });
 
-  for (let i = 1; i <= 3; i++) {
-    const base = `/images/${slug}${i > 1 ? `-${i}` : ""}`;
-    let foundSrc = "/images/default-service.jpg";
-
-    for (const ext of exts) {
-      const src = `${base}.${ext}`;
-      if (await loadImage(src)) {
-        foundSrc = src;
-        break; // stop after first working extension
+      for (let i = 1; i <= 3; i++) {
+        const base = `/images/${slug}${i > 1 ? `-${i}` : ""}`;
+        let foundSrc = "/images/default-service.jpg";
+        for (const ext of exts) {
+          const src = `${base}.${ext}`;
+          if (await loadImage(src)) {
+            foundSrc = src;
+            break;
+          }
+        }
+        media.push({ key: `img${i}`, type: "image", src: foundSrc });
       }
-    }
 
-    media.push({ key: `img${i}`, type: "image", src: foundSrc });
-  }
-
-  this.media = media;
-},
-
+      this.media = media;
+    },
   },
+
   mounted() {
     const { title, desc, category } = this.$route.query;
     Object.assign(this, {
@@ -505,94 +552,197 @@ export default {
 };
 </script>
 
+
 <style scoped>
 /* --- Shared Utilities --- */
-.flex-center { display: inline-flex; align-items: center; justify-content: center; }
-.grid-center { display: grid; place-content: center; }
-.text-sm { font-size: 0.875rem; }
-.text-xs { font-size: 0.75rem; }
-.font-medium { font-weight: 500; }
-.font-semibold { font-weight: 600; }
-.round-sm { border-radius: 0.5rem; }
-.round-md { border-radius: 0.75rem; }
-.round-lg { border-radius: 1rem; }
-.round-full { border-radius: 9999px; }
-.transition { transition: all 0.2s; }
+.flex-center {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.grid-center {
+  display: grid;
+  place-content: center;
+}
+
+.text-sm {
+  font-size: 0.875rem;
+}
+
+.text-xs {
+  font-size: 0.75rem;
+}
+
+.font-medium {
+  font-weight: 500;
+}
+
+.font-semibold {
+  font-weight: 600;
+}
+
+.round-sm {
+  border-radius: 0.5rem;
+}
+
+.round-md {
+  border-radius: 0.75rem;
+}
+
+.round-lg {
+  border-radius: 1rem;
+}
+
+.round-full {
+  border-radius: 9999px;
+}
+
+.transition {
+  transition: all 0.2s;
+}
 
 /* --- Badge --- */
 .badge {
-  display: inline-flex; align-items: center;
-  font-size: 0.75rem; font-weight: 500;
+  display: inline-flex;
+  align-items: center;
+  font-size: 0.75rem;
+  font-weight: 500;
   padding: 0.125rem 0.5rem;
   border-radius: 9999px;
-  background: rgba(255,255,255,0.9);
+  background: rgba(255, 255, 255, 0.9);
   color: #1f2937;
 }
 
 /* --- Card --- */
 .card-soft {
-  border-radius: 0.75rem; padding: 1rem;
+  border-radius: 0.75rem;
+  padding: 1rem;
   border: 1px solid #f3f4f6;
   background: linear-gradient(to bottom right, #f9fafb, #fff);
 }
-.card-title { font-size: 0.875rem; font-weight: 600; color: #1f2937; }
-.card-text { font-size: 0.875rem; color: #4b5563; }
+
+.card-title {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #1f2937;
+}
+
+.card-text {
+  font-size: 0.875rem;
+  color: #4b5563;
+}
 
 /* --- Buttons --- */
-.btn-primary, .btn-secondary {
-  display: inline-flex; align-items: center; justify-content: center;
-  font-weight: 600; color: #fff; cursor: pointer;
+.btn-primary,
+.btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  color: #fff;
+  cursor: pointer;
   transition: background 0.2s, opacity 0.2s;
 }
+
 .btn-primary {
-  border-radius: 0.75rem; padding: 0.75rem 1.25rem;
-  background: #007EA7; box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  border-radius: 0.75rem;
+  padding: 0.75rem 1.25rem;
+  background: #007EA7;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
-.btn-primary:hover { background: #006786; }
-.btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
+
+.btn-primary:hover {
+  background: #006786;
+}
+
+.btn-primary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
 .btn-secondary {
-  border-radius: 0.5rem; padding: 0.5rem 1rem;
-  font-size: 0.875rem; font-weight: 500; background: #111827;
+  border-radius: 0.5rem;
+  padding: 0.5rem 1rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  background: #111827;
 }
-.btn-secondary:hover { opacity: 0.9; }
+
+.btn-secondary:hover {
+  opacity: 0.9;
+}
 
 /* --- Input --- */
 .input {
-  border-radius: 0.5rem; border: 1px solid #d1d5db;
-  padding: 0.5rem 0.75rem; outline: none;
+  border-radius: 0.5rem;
+  border: 1px solid #d1d5db;
+  padding: 0.5rem 0.75rem;
+  outline: none;
   transition: border-color 0.2s, box-shadow 0.2s;
 }
-.input:focus { border-color: #00B4D8; box-shadow: 0 0 0 2px #00B4D833; }
+
+.input:focus {
+  border-color: #00B4D8;
+  box-shadow: 0 0 0 2px #00B4D833;
+}
 
 /* --- Quantity Button --- */
 .qty-btn {
-  width: 2.25rem; height: 2.25rem; border-radius: 0.5rem;
-  border: 1px solid #d1d5db; font-weight: bold; font-size: 1.125rem;
-  display: grid; place-content: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: 0.5rem;
+  border: 1px solid #d1d5db;
+  font-weight: bold;
+  font-size: 1.125rem;
+  display: grid;
+  place-content: center;
   transition: background 0.2s, transform 0.1s;
 }
-.qty-btn:hover { background: #f9fafb; }
-.qty-btn:active { transform: scale(0.95); }
+
+.qty-btn:hover {
+  background: #f9fafb;
+}
+
+.qty-btn:active {
+  transform: scale(0.95);
+}
 
 /* --- Tier Card --- */
 .tier {
-  border-radius: 1rem; border: 1px solid #e5e7eb;
-  padding: 1rem; background: #fff; text-align: left;
+  border-radius: 1rem;
+  border: 1px solid #e5e7eb;
+  padding: 1rem;
+  background: #fff;
+  text-align: left;
   transition: box-shadow 0.2s;
 }
-.tier:hover { box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
+
+.tier:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
 
 /* --- Carousel Button --- */
 .carousel-btn {
-  position: absolute; top: 50%; transform: translateY(-50%);
-  width: 2.25rem; height: 2.25rem;
-  border-radius: 9999px; background: rgba(255,255,255,0.9);
-  display: grid; place-content: center;
-  color: #374151; font-size: 1.25rem;
-  box-shadow: 0 1px 2px rgba(0,0,0,0.05);
-  border: 1px solid #e5e7eb; transition: background 0.2s;
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: 9999px;
+  background: rgba(255, 255, 255, 0.9);
+  display: grid;
+  place-content: center;
+  color: #374151;
+  font-size: 1.25rem;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  border: 1px solid #e5e7eb;
+  transition: background 0.2s;
 }
-.carousel-btn:hover { background: #fff; }
+
+.carousel-btn:hover {
+  background: #fff;
+}
 
 /* --- Line Clamp --- */
 .line-clamp-1 {
@@ -603,5 +753,3 @@ export default {
   overflow: hidden;
 }
 </style>
-
-
