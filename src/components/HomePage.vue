@@ -6,7 +6,7 @@
         <!-- Logo -->
         <div class="flex items-center space-x-2">
           <img src="@/assets/skilllogo.png" alt="SkillLink Logo" class="w-10 h-10" />
-          <h1 class="text-2xl font-bold text-[#007EA7] hidden sm:block">SkillLink</h1>
+          <h1 class="text-2xl font-bold text-[#007EA7] ">SkillLink</h1>
         </div>
 
         <!-- Right Side -->
