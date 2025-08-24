@@ -62,6 +62,7 @@
           <router-link to="/about" class="text-lg font-semibold text-gray-600 hover:text-[#0073b1]" @click="closeMenu">About Us</router-link>
           <router-link to="/contact" class="text-lg font-semibold text-gray-600 hover:text-[#0073b1]" @click="closeMenu">Contact</router-link>
           <router-link :to="{ path: '/help', query: { from: 'homelogged' } }" class="text-lg font-semibold text-gray-600 hover:text-[#0073b1]" @click="closeMenu">Help</router-link>
+          
           <router-link :to="{ path: '/home', query: { disableBooking: true } }" @click="closeMenu">
             <button class="w-full flex items-center gap-2 px-4 py-2 text-gray-600 font-bold rounded-lg hover:ring-1 hover:text-[#0073b1] hover:ring-[#0073b1] transition">Book Service</button>
           </router-link>

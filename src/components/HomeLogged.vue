@@ -58,7 +58,6 @@
 
       </div>
 
-
       <!-- Mobile Drawer -->
       <transition enter-active-class="transition-transform duration-300 ease-out" enter-from-class="translate-x-full"
         enter-to-class="translate-x-0" leave-active-class="transition-transform duration-300 ease-in"
@@ -90,7 +89,7 @@
               class="text-lg font-semibold text-gray-600 hover:text-[#0073b1]" @click="closeMenu">Help</router-link>
             <router-link to="/notifications" class="text-lg font-semibold text-gray-600 hover:text-[#0073b1]"
               @click="closeMenu">Notifications</router-link>
-            <router-link to="/profile" class="text-lg font-semibold text-gray-600 hover:text-[#0073b1]"
+            <router-link to="/dashboard" class="text-lg font-semibold text-gray-600 hover:text-[#0073b1]"
               @click="closeMenu">Profile</router-link>
           </div>
         </div>
