@@ -453,22 +453,43 @@ export default {
         { title: "Appliance Diagnosis", category: "Home Appliance", desc: "Quick issue identification", image: "/images/related-3.jpg" },
       ];
     },
-    async buildMediaFromTitle() {
-      const slug = (this.title || "service").toLowerCase().replace(/[\\?%*:|"<>]/g, "-").replace(/\s+/g, "-").replace(/-+/g, "-");
-      const exts = ["avif", "jpg", "jpeg", "png", "webp"], media = [];
-      const check = src => fetch(src, { method: "HEAD" }).then(r => r.ok).catch(() => false);
+   async buildMediaFromTitle() {
+  const slug = (this.title || "service")
+    .toLowerCase()
+    .replace(/[\\?%*:|"<>]/g, "-")
+    .replace(/\s+/g, "-")
+    .replace(/-+/g, "-");
 
-      for (let i = 1; i <= 3; i++) {
-        const base = `/images/${slug}${i > 1 ? `-${i}` : ""}`;
-        let found = false;
-        for (let ext of exts) {
-          const src = `${base}.${ext}`;
-          if (await check(src)) { media.push({ key: `img${i}`, type: "image", src }); found = true; break; }
-        }
-        if (!found) media.push({ key: `img${i}`, type: "image", src: "/images/default-service.jpg" });
+  const exts = ["jpg", "webp", "avif", "jpeg", "png"];
+  const media = [];
+
+  // Returns a promise that resolves true if image loads
+  const loadImage = (src) =>
+    new Promise((resolve) => {
+      const img = new Image();
+      img.onload = () => resolve(true);
+      img.onerror = () => resolve(false);
+      img.src = src;
+    });
+
+  for (let i = 1; i <= 3; i++) {
+    const base = `/images/${slug}${i > 1 ? `-${i}` : ""}`;
+    let foundSrc = "/images/default-service.jpg";
+
+    for (const ext of exts) {
+      const src = `${base}.${ext}`;
+      if (await loadImage(src)) {
+        foundSrc = src;
+        break; // stop after first working extension
       }
-      this.media = media;
-    },
+    }
+
+    media.push({ key: `img${i}`, type: "image", src: foundSrc });
+  }
+
+  this.media = media;
+},
+
   },
   mounted() {
     const { title, desc, category } = this.$route.query;
