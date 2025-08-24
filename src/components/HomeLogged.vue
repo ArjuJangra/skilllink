@@ -108,7 +108,7 @@
             <!-- Navigation -->
             <div class="flex-1 space-y-3">
               <router-link to="/notifications"
-                class="flex px-3 py-2 rounded-lg text-gray-700 font-medium hover:bg-gray-100 hover:text-[#0073b1] transition"
+                class="flex px-3 gap-2 py-2 rounded-lg text-gray-700 font-medium hover:bg-gray-100 hover:text-[#0073b1] transition"
                 @click="closeMenu">
                 <svg class="w-7 h-7 text-gray-700 hover:text-[#0073b1]" fill="none" stroke="currentColor"
                   stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -117,57 +117,58 @@
                 </svg><span> Notifications</span>
               </router-link>
 
-              <router-link to="/about" class="flex px-3 py-2 rounded-lg text-gray-700 font-medium hover:bg-gray-100 hover:text-[#0073b1] transition">
-            <svg xmlns="http://www.w3.org/2000/svg" class="w-7 h-7" fill="none" viewBox="0 0 24 24"
-              stroke="currentColor" stroke-width="2">
-              <path stroke-linecap="round" stroke-linejoin="round"
-                d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-            </svg>
-            <span>About Us</span>
-          </router-link>
+              <router-link to="/about"
+                class="flex gap-2 px-3 py-2 rounded-lg text-gray-700 font-medium hover:bg-gray-100 hover:text-[#0073b1] transition">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-7 h-7" fill="none" viewBox="0 0 24 24"
+                  stroke="currentColor" stroke-width="2">
+                  <path stroke-linecap="round" stroke-linejoin="round"
+                    d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <span>About Us</span>
+              </router-link>
 
               <router-link to="/contact"
-                class="flex px-3 py-2 rounded-lg text-gray-700 font-medium hover:bg-gray-100 hover:text-[#0073b1] transition"
+                class="flex gap-2 px-3 py-2 rounded-lg text-gray-700 font-medium hover:bg-gray-100 hover:text-[#0073b1] transition"
                 @click="closeMenu">
-                 <svg xmlns="http://www.w3.org/2000/svg" class="w-7 h-7" viewBox="0 0 24 24" fill="currentColor">
-              <path
-                d="M6.62 10.79a15.05 15.05 0 006.59 6.59l2.2-2.2a1 1 0 011.11-.21 11.05 11.05 0 003.47.55 1 1 0 011 1V20a1 1 0 01-1 1C10.42 21 3 13.58 3 5a1 1 0 011-1h3.5a1 1 0 011 1c0 1.2.19 2.38.55 3.47a1 1 0 01-.21 1.11l-2.22 2.21z" />
-            </svg> Contact
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-7 h-7" viewBox="0 0 24 24" fill="currentColor">
+                  <path
+                    d="M6.62 10.79a15.05 15.05 0 006.59 6.59l2.2-2.2a1 1 0 011.11-.21 11.05 11.05 0 003.47.55 1 1 0 011 1V20a1 1 0 01-1 1C10.42 21 3 13.58 3 5a1 1 0 011-1h3.5a1 1 0 011 1c0 1.2.19 2.38.55 3.47a1 1 0 01-.21 1.11l-2.22 2.21z" />
+                </svg> <span> Contact</span>
               </router-link>
 
               <router-link :to="{ path: '/help', query: { from: 'homelogged' } }"
-                class="block px-3 py-2 rounded-lg text-gray-700 font-medium hover:bg-gray-100 hover:text-[#0073b1] transition"
+                class="flex gap-2 px-3 py-2 rounded-lg text-gray-700 font-medium hover:bg-gray-100 hover:text-[#0073b1] transition"
                 @click="closeMenu">
-                ❓ Help
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-7 h-7" viewBox="0 0 24 24" fill="currentcolor">
+                  <path fill-rule="evenodd" clip-rule="evenodd"
+                    d="M12 19.5C16.1421 19.5 19.5 16.1421 19.5 12C19.5 7.85786 16.1421 4.5 12 4.5C7.85786 4.5 4.5 7.85786 4.5 12C4.5 16.1421 7.85786 19.5 12 19.5ZM12 21C16.9706 21 21 16.9706 21 12C21 7.02944 16.9706 3 12 3C7.02944 3 3 7.02944 3 12C3 16.9706 7.02944 21 12 21ZM12.75 15V16.5H11.25V15H12.75ZM10.5 10.4318C10.5 9.66263 11.1497 9 12 9C12.8503 9 13.5 9.66263 13.5 10.4318C13.5 10.739 13.3151 11.1031 12.9076 11.5159C12.5126 11.9161 12.0104 12.2593 11.5928 12.5292L11.25 12.7509V14.25H12.75V13.5623C13.1312 13.303 13.5828 12.9671 13.9752 12.5696C14.4818 12.0564 15 11.3296 15 10.4318C15 8.79103 13.6349 7.5 12 7.5C10.3651 7.5 9 8.79103 9 10.4318H10.5Z"
+                    fill="#080341" />
+                </svg> <span>Help</span>
               </router-link>
             </div>
 
             <!-- Logout -->
-           <div>
-                <button @click="showLogoutModal = true" class="btn-red">Logout</button>
-              </div>
-
-              <!-- Logout Modal -->
-              <transition name="fade-zoom">
-                <div v-if="showLogoutModal"
-                  class="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
-                  <div class="bg-white p-6 rounded-xl shadow-xl w-80">
-                    <h2 class="text-lg font-semibold mb-2">Confirm Logout</h2>
-                    <p class="text-gray-600 mb-4">Are you sure you want to logout?</p>
-                    <div class="flex justify-end space-x-3">
-                      <button @click="showLogoutModal = false" class="btn-gray">Cancel</button>
-                      <button @click="confirmLogout" class="btn-red">Logout</button>
-                    </div>
+            <div>
+              <button @click="showLogoutModal = true" class="btn-red">Logout</button>
+            </div>
+            <!-- Logout Modal -->
+            <transition name="fade-zoom">
+              <div v-if="showLogoutModal"
+                class="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
+                <div class="bg-white p-6 rounded-xl shadow-xl w-80">
+                  <h2 class="text-lg font-semibold mb-2">Confirm Logout</h2>
+                  <p class="text-gray-600 mb-4">Are you sure you want to logout?</p>
+                  <div class="flex justify-end space-x-3">
+                    <button @click="showLogoutModal = false" class="btn-gray">Cancel</button>
+                    <button @click="confirmLogout" class="btn-red">Logout</button>
                   </div>
                 </div>
-              </transition>
+              </div>
+            </transition>
           </div>
-
         </div>
       </transition>
-
     </header>
-
     <!-- Hero Section -->
     <section class="text-center py-10 px-4 bg-gradient-to-br from-blue-100 to-white">
       <div class="max-w-[1300px] mx-auto">
@@ -180,7 +181,6 @@
         </p>
       </div>
     </section>
-
     <!-- Services Section -->
     <section class="bg-white py-12 px-4">
       <div class="max-w-[1300px] mx-auto">
@@ -191,7 +191,6 @@
             {{ service }} </router-link> </div>
       </div>
     </section>
-
     <!-- Solved Cases Section -->
     <section class="bg-blue-50 py-12 px-4">
       <div class="max-w-[1300px] mx-auto">
@@ -498,7 +497,6 @@
       </div>
 
     </footer>
-
   </div>
 </template>
 
@@ -580,11 +578,12 @@ const solvedCases = [
   color: #fff;
   transition: background-color 0.2s;
 }
+
 .btn-red {
   background: #ef4444;
 }
+
 .btn-red:hover {
   background: #dc2626;
 }
-
 </style>
