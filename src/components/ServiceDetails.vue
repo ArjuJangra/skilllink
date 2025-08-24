@@ -351,412 +351,229 @@
 </template>
 
 <script>
- export default {
-  name: 'ServiceDetail',
-  data() {
-    return {
-      title: '',
-      desc: '',
-      category: '',
-      media: [],              // only images now
-      currentIndex: 0,
+export default {
+  name: "ServiceDetail",
+  data: () => ({
+    title: "",
+    desc: "",
+    category: "",
+    media: [],
+    currentIndex: 0,
 
-      // pricing
-      tiers: [
-        { name: 'Basic', price: 399, points: ['Inspection', 'Minor fixes', '30-day support'] },
-        { name: 'Standard', price: 699, points: ['Includes Basic', 'Material support', 'Priority scheduling'] },
-        { name: 'Premium', price: 999, points: ['Includes Standard', 'Deep service', '90-day support'] },
-      ],
-      selectedTier: { name: 'Standard', price: 699, points: [] },
-      addons: [
-        { key: 'fast', label: 'Fast service (same-day)', price: 99, selected: false },
-        { key: 'eco', label: 'Eco-friendly materials', price: 49, selected: false },
-        { key: 'extra', label: 'Extra task (+30 mins)', price: 149, selected: false },
-      ],
-      qty: 1,
-      couponCode: '',
-      couponValid: false,
-      couponMessage: '',
+    // pricing
+    tiers: [
+      { name: "Basic", price: 399, points: ["Inspection", "Minor fixes", "30-day support"] },
+      { name: "Standard", price: 699, points: ["Includes Basic", "Material support", "Priority scheduling"] },
+      { name: "Premium", price: 999, points: ["Includes Standard", "Deep service", "90-day support"] },
+    ],
+    selectedTier: { name: "Standard", price: 699, points: [] },
+    addons: [
+      { key: "fast", label: "Fast service (same-day)", price: 99, selected: false },
+      { key: "eco", label: "Eco-friendly materials", price: 49, selected: false },
+      { key: "extra", label: "Extra task (+30 mins)", price: 149, selected: false },
+    ],
+    qty: 1,
+    couponCode: "",
+    couponValid: false,
+    couponMessage: "",
 
-      // availability
-      selectedDate: '',
-      selectedTime: '',
-      timeSlots: ['09:00 AM', '10:30 AM', '12:00 PM', '01:00 PM', '03:00 PM', '05:00 PM'],
+    // availability
+    selectedDate: "",
+    selectedTime: "",
+    timeSlots: ["09:00 AM", "10:30 AM", "12:00 PM", "01:00 PM", "03:00 PM", "05:00 PM"],
 
-      // provider
-      provider: {
-        name: 'Rahul Verma',
-        avatar: '/images/provider.png',
-        bio: 'Skilled and vetted professional with a passion for quality and punctuality.',
-        years: 6,
-        jobs: 1123,
-      },
-      defaultAvatar: '/images/default-user.png',
+    // provider
+    provider: {
+      name: "Rahul Verma",
+      avatar: "/images/provider.png",
+      bio: "Skilled and vetted professional with a passion for quality and punctuality.",
+      years: 6,
+      jobs: 1123,
+    },
+    defaultAvatar: "/images/default-user.png",
 
-      // reviews
-      reviews: [
-        {
-          id: 1,
-          user: 'Ankita Sharma',
-          userAvatar: '/images/u1.jpg',
-          stars: 5,
-          text: 'Professional and quick. Fixed my issue in one visit.',
-          date: 'Jun 2025',
-          photo: '/images/review1.jpg',
-        },
-        {
-          id: 2,
-          user: 'Sneha Kulkarni',
-          userAvatar: '/images/u2.jpg',
-          stars: 4,
-          text: 'On time and polite. Good value.',
-          date: 'May 2025',
-        },
-        {
-          id: 3,
-          user: 'Rakshita Gupta',
-          userAvatar: '/images/u3.jpg',
-          stars: 5,
-          text: 'Great experience! Highly recommend.',
-          date: 'Apr 2025',
-        },
-      ],
-      ratingCounts: { 5: 18, 4: 7, 3: 2, 2: 1, 1: 0 },
-      related: [],
-    };
-  },
+    // reviews
+    reviews: [
+      { id: 1, user: "Ankita Sharma", userAvatar: "/images/u1.jpg", stars: 5, text: "Professional and quick. Fixed my issue in one visit.", date: "Jun 2025", photo: "/images/review1.jpg" },
+      { id: 2, user: "Sneha Kulkarni", userAvatar: "/images/u2.jpg", stars: 4, text: "On time and polite. Good value.", date: "May 2025" },
+      { id: 3, user: "Rakshita Gupta", userAvatar: "/images/u3.jpg", stars: 5, text: "Great experience! Highly recommend.", date: "Apr 2025" },
+    ],
+    ratingCounts: { 5: 18, 4: 7, 3: 2, 2: 1, 1: 0 },
+    related: [],
+  }),
   computed: {
-    activeMedia() {
-      return this.media[this.currentIndex] || {};
+    activeMedia: ({ media, currentIndex }) => media[currentIndex] || {},
+    today: () => new Date().toISOString().slice(0, 10),
+    selectedAddons: ({ addons }) => addons.filter(a => a.selected),
+    subtotal({ selectedTier, selectedAddons, qty }) {
+      return (selectedTier.price + selectedAddons.reduce((s, a) => s + a.price, 0)) * qty;
     },
-    today() {
-      const d = new Date();
-      const yyyy = d.getFullYear();
-      const mm = String(d.getMonth() + 1).padStart(2, '0');
-      const dd = String(d.getDate()).padStart(2, '0');
-      return `${yyyy}-${mm}-${dd}`;
+    discountAmount({ couponValid, subtotal }) { return couponValid ? Math.round(subtotal * 0.1) : 0; },
+    total({ subtotal, discountAmount }) { return Math.max(0, subtotal - discountAmount); },
+    rating({ ratingCounts }) {
+      const total = Object.values(ratingCounts).reduce((s, n) => s + n, 0) || 1;
+      const weighted = Object.entries(ratingCounts).reduce((s, [k, v]) => s + k * v, 0);
+      return weighted / total;
     },
-    selectedAddons() {
-      return this.addons.filter(a => a.selected);
-    },
-    subtotal() {
-      const addonsSum = this.selectedAddons.reduce((s, a) => s + a.price, 0);
-      return (this.selectedTier.price + addonsSum) * this.qty;
-    },
-    discountAmount() {
-      if (!this.couponValid) return 0;
-      return Math.round(this.subtotal * 0.1);
-    },
-    total() {
-      return Math.max(0, this.subtotal - this.discountAmount);
-    },
-    rating() {
-      const totalReviews = Object.values(this.ratingCounts).reduce((s, n) => s + n, 0) || 1;
-      const weighted =
-        5 * (this.ratingCounts[5] || 0) +
-        4 * (this.ratingCounts[4] || 0) +
-        3 * (this.ratingCounts[3] || 0) +
-        2 * (this.ratingCounts[2] || 0) +
-        1 * (this.ratingCounts[1] || 0);
-      return weighted / totalReviews;
-    },
-    canBook() {
-      return Boolean(this.selectedDate && this.selectedTime);
-    },
+    canBook: ({ selectedDate, selectedTime }) => !!(selectedDate && selectedTime),
   },
   methods: {
-    handleImageError(e) {
-      e.target.src = '/images/default-service.jpg';
-    },
-    nextMedia() {
-      this.currentIndex = (this.currentIndex + 1) >= this.media.length ? 0 : this.currentIndex + 1;
-    },
-    prevMedia() {
-      this.currentIndex = (this.currentIndex - 1) < 0 ? this.media.length - 1 : this.currentIndex - 1;
-    },
-    selectTier(tier) {
-      this.selectedTier = tier;
-    },
+    handleImageError: e => (e.target.src = "/images/default-service.jpg"),
+    nextMedia() { this.currentIndex = (this.currentIndex + 1) % this.media.length; },
+    prevMedia() { this.currentIndex = (this.currentIndex - 1 + this.media.length) % this.media.length; },
+    selectTier(t) { this.selectedTier = t; },
     applyCoupon() {
-      if (!this.couponCode) {
-        this.couponValid = false;
-        this.couponMessage = 'Enter a coupon code';
-        return;
-      }
-      const normalized = this.couponCode.trim().toUpperCase();
-      if (['WELCOME10', 'SAVE10', 'NEW10'].includes(normalized)) {
-        this.couponValid = true;
-        this.couponMessage = 'Coupon applied ✔ 10% off';
-      } else {
-        this.couponValid = false;
-        this.couponMessage = 'Invalid coupon';
-      }
+      if (!this.couponCode) return (this.couponValid = false, this.couponMessage = "Enter a coupon code");
+      const code = this.couponCode.trim().toUpperCase();
+      if (["WELCOME10", "SAVE10", "NEW10"].includes(code))
+        (this.couponValid = true, this.couponMessage = "Coupon applied ✔ 10% off");
+      else (this.couponValid = false, this.couponMessage = "Invalid coupon");
     },
     ratingBarWidth(star) {
       const total = Object.values(this.ratingCounts).reduce((s, n) => s + n, 0) || 1;
       return ((this.ratingCounts[star] || 0) / total) * 100;
     },
-
     goToBooking() {
       const q = new URLSearchParams({
         service: this.title,
-        date: this.selectedDate || '',
-        time: this.selectedTime || '',
+        date: this.selectedDate,
+        time: this.selectedTime,
         tier: this.selectedTier.name,
-        total: String(this.total),
-        qty: String(this.qty),
-        addons: this.selectedAddons.map(a => a.key).join(','),
-        coupon: this.couponValid ? this.couponCode : '',
-      }).toString();
+        total: this.total,
+        qty: this.qty,
+        addons: this.selectedAddons.map(a => a.key).join(","),
+        coupon: this.couponValid ? this.couponCode : "",
+      });
       this.$router.push(`/booking?${q}`);
     },
     buildRelated() {
       this.related = [
-        { title: 'AC Cleaning', category: 'AC Repair', desc: 'Complete cleaning & sanitization', image: '/images/related-1.jpg' },
-        { title: 'Electrical Checkup', category: 'Electrician', desc: 'Home safety audit', image: '/images/related-2.jpg' },
-        { title: 'Appliance Diagnosis', category: 'Home Appliance', desc: 'Quick issue identification', image: '/images/related-3.jpg' },
+        { title: "AC Cleaning", category: "AC Repair", desc: "Complete cleaning & sanitization", image: "/images/related-1.jpg" },
+        { title: "Electrical Checkup", category: "Electrician", desc: "Home safety audit", image: "/images/related-2.jpg" },
+        { title: "Appliance Diagnosis", category: "Home Appliance", desc: "Quick issue identification", image: "/images/related-3.jpg" },
       ];
     },
-   buildMediaFromTitle() {
-  const slug = (this.title || 'service')
-    .toLowerCase()
-    .replace(/[\\?%*:|"<>]/g, '-')
-    .replace(/\s+/g, '-')
-    .replace(/-+/g, '-');
+    async buildMediaFromTitle() {
+      const slug = (this.title || "service").toLowerCase().replace(/[\\?%*:|"<>]/g, "-").replace(/\s+/g, "-").replace(/-+/g, "-");
+      const exts = ["avif", "jpg", "jpeg", "png", "webp"], media = [];
+      const check = src => fetch(src, { method: "HEAD" }).then(r => r.ok).catch(() => false);
 
-  const extensions = ['avif', 'jpg', 'jpeg', 'png', 'webp'];
-  const media = [];
-
-  const checkImage = async (src) => {
-    try {
-      const res = await fetch(src, { method: 'HEAD' });
-      return res.ok;
-    } catch {
-      return false;
-    }
-  };
-
-  const loadImages = async () => {
-    for (let i = 1; i <= 3; i++) {
-      const base = `/images/${slug}${i > 1 ? `-${i}` : ''}`;
-      let found = false;
-
-      for (let ext of extensions) {
-        const src = `${base}.${ext}`;
-        const exists = await checkImage(src);
-        if (exists) {
-          media.push({ key: `img${i}`, type: 'image', src });
-          found = true;
-          break; // stop checking other extensions
+      for (let i = 1; i <= 3; i++) {
+        const base = `/images/${slug}${i > 1 ? `-${i}` : ""}`;
+        let found = false;
+        for (let ext of exts) {
+          const src = `${base}.${ext}`;
+          if (await check(src)) { media.push({ key: `img${i}`, type: "image", src }); found = true; break; }
         }
+        if (!found) media.push({ key: `img${i}`, type: "image", src: "/images/default-service.jpg" });
       }
-
-      // fallback if no image found
-      if (!found) {
-        media.push({ key: `img${i}`, type: 'image', src: '/images/default-service.jpg' });
-      }
-    }
-
-    this.media = media; // reactive update
-  };
-
-  loadImages();
-},
+      this.media = media;
+    },
   },
   mounted() {
     const { title, desc, category } = this.$route.query;
-    this.title = title || 'Service Detail';
-    this.desc = desc || 'High-quality service at your doorstep with verified professionals.';
-    this.category = category || 'General';
-
+    Object.assign(this, {
+      title: title || "Service Detail",
+      desc: desc || "High-quality service at your doorstep with verified professionals.",
+      category: category || "General",
+      selectedTier: this.tiers[1],
+    });
     this.buildMediaFromTitle();
     this.buildRelated();
-
-    this.selectedTier = this.tiers[1]; // Standard
   },
 };
 </script>
 
-
 <style scoped>
+/* --- Shared Utilities --- */
+.flex-center { display: inline-flex; align-items: center; justify-content: center; }
+.grid-center { display: grid; place-content: center; }
+.text-sm { font-size: 0.875rem; }
+.text-xs { font-size: 0.75rem; }
+.font-medium { font-weight: 500; }
+.font-semibold { font-weight: 600; }
+.round-sm { border-radius: 0.5rem; }
+.round-md { border-radius: 0.75rem; }
+.round-lg { border-radius: 1rem; }
+.round-full { border-radius: 9999px; }
+.transition { transition: all 0.2s; }
+
+/* --- Badge --- */
 .badge {
-  display: inline-flex;
-  align-items: center;
-  font-size: 0.75rem;
-  /* text-xs */
-  font-weight: 500;
-  /* font-medium */
-  padding-left: 0.5rem;
-  /* px-2 */
-  padding-right: 0.5rem;
-  padding-top: 0.125rem;
-  /* py-0.5 */
-  padding-bottom: 0.125rem;
+  display: inline-flex; align-items: center;
+  font-size: 0.75rem; font-weight: 500;
+  padding: 0.125rem 0.5rem;
   border-radius: 9999px;
-  /* rounded-full */
-  background-color: rgba(255, 255, 255, 0.9);
-  /* bg-white/90 */
+  background: rgba(255,255,255,0.9);
   color: #1f2937;
-  /* text-gray-800 */
 }
 
-/* Reusable cards */
+/* --- Card --- */
 .card-soft {
-  border-radius: 0.75rem;
-  /* rounded-xl */
-  padding: 1rem;
-  /* p-4 */
-  background: linear-gradient(to bottom right, #f9fafb, #fff);
-  /* bg-gradient-to-br from-gray-50 to-white */
+  border-radius: 0.75rem; padding: 1rem;
   border: 1px solid #f3f4f6;
-  /* border border-gray-100 */
+  background: linear-gradient(to bottom right, #f9fafb, #fff);
 }
+.card-title { font-size: 0.875rem; font-weight: 600; color: #1f2937; }
+.card-text { font-size: 0.875rem; color: #4b5563; }
 
-.card-title {
-  font-size: 0.875rem;
-  /* text-sm */
-  font-weight: 600;
-  /* font-semibold */
-  color: #1f2937;
-  /* text-gray-800 */
-}
-
-.card-text {
-  color: #4b5563;
-  /* text-gray-600 */
-  font-size: 0.875rem;
-  /* text-sm */
-}
-
-/* Buttons & inputs */
-.btn-primary {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 0.75rem;
-  padding-left: 1.25rem;
-  padding-right: 1.25rem;
-  padding-top: 0.75rem;
-  padding-bottom: 0.75rem;
-  background-color: #007EA7;
-  color: #fff;
-  font-weight: 600;
-  box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1);
+/* --- Buttons --- */
+.btn-primary, .btn-secondary {
+  display: inline-flex; align-items: center; justify-content: center;
+  font-weight: 600; color: #fff; cursor: pointer;
   transition: background 0.2s, opacity 0.2s;
 }
-
-.btn-primary:hover {
-  background-color: #006786;
+.btn-primary {
+  border-radius: 0.75rem; padding: 0.75rem 1.25rem;
+  background: #007EA7; box-shadow: 0 1px 3px rgba(0,0,0,0.1);
 }
-
-.btn-primary:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
+.btn-primary:hover { background: #006786; }
+.btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
 .btn-secondary {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 0.5rem;
-  padding-left: 1rem;
-  padding-right: 1rem;
-  padding-top: 0.5rem;
-  padding-bottom: 0.5rem;
-  background-color: #111827;
-  color: #fff;
-  font-size: 0.875rem;
-  font-weight: 500;
-  transition: opacity 0.2s;
+  border-radius: 0.5rem; padding: 0.5rem 1rem;
+  font-size: 0.875rem; font-weight: 500; background: #111827;
 }
+.btn-secondary:hover { opacity: 0.9; }
 
-.btn-secondary:hover {
-  opacity: 0.9;
-}
-
+/* --- Input --- */
 .input {
-  border-radius: 0.5rem;
-  border: 1px solid #d1d5db;
-  padding-left: 0.75rem;
-  padding-right: 0.75rem;
-  padding-top: 0.5rem;
-  padding-bottom: 0.5rem;
-  outline: none;
+  border-radius: 0.5rem; border: 1px solid #d1d5db;
+  padding: 0.5rem 0.75rem; outline: none;
   transition: border-color 0.2s, box-shadow 0.2s;
 }
+.input:focus { border-color: #00B4D8; box-shadow: 0 0 0 2px #00B4D833; }
 
-.input:focus {
-  border-color: #00B4D8;
-  box-shadow: 0 0 0 2px #00B4D833;
-}
-
+/* --- Quantity Button --- */
 .qty-btn {
-  width: 2.25rem;
-  height: 2.25rem;
-  border-radius: 0.5rem;
-  border: 1px solid #d1d5db;
-  font-weight: bold;
-  font-size: 1.125rem;
-  display: grid;
-  place-content: center;
+  width: 2.25rem; height: 2.25rem; border-radius: 0.5rem;
+  border: 1px solid #d1d5db; font-weight: bold; font-size: 1.125rem;
+  display: grid; place-content: center;
   transition: background 0.2s, transform 0.1s;
 }
+.qty-btn:hover { background: #f9fafb; }
+.qty-btn:active { transform: scale(0.95); }
 
-.qty-btn:hover {
-  background: #f9fafb;
-}
-
-.qty-btn:active {
-  transform: scale(0.95);
-}
-
+/* --- Tier Card --- */
 .tier {
-  border-radius: 1rem;
-  border: 1px solid #e5e7eb;
-  padding: 1rem;
-  text-align: left;
+  border-radius: 1rem; border: 1px solid #e5e7eb;
+  padding: 1rem; background: #fff; text-align: left;
   transition: box-shadow 0.2s;
-  background: #fff;
 }
+.tier:hover { box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
 
-.tier:hover {
-  box-shadow: 0 4px 12px 0 rgb(0 0 0 / 0.08);
-}
-
-/* Carousel buttons */
+/* --- Carousel Button --- */
 .carousel-btn {
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  height: 2.25rem;
-  /* h-9 */
-  width: 2.25rem;
-  /* w-9 */
-  border-radius: 9999px;
-  /* rounded-full */
-  background-color: rgba(255, 255, 255, 0.9);
-  /* bg-white/90 */
-  display: grid;
-  /* grid */
-  place-content: center;
-  /* place-content-center */
-  color: #374151;
-  /* text-gray-700 */
-  font-size: 1.25rem;
-  /* text-xl */
-  box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
-  /* shadow */
-  border: 1px solid #e5e7eb;
-  /* border */
-  transition: background 0.2s;
+  position: absolute; top: 50%; transform: translateY(-50%);
+  width: 2.25rem; height: 2.25rem;
+  border-radius: 9999px; background: rgba(255,255,255,0.9);
+  display: grid; place-content: center;
+  color: #374151; font-size: 1.25rem;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+  border: 1px solid #e5e7eb; transition: background 0.2s;
 }
+.carousel-btn:hover { background: #fff; }
 
-.carousel-btn:hover {
-  background-color: #fff;
-  /* hover:bg-white */
-}
-
-/* Utilities */
+/* --- Line Clamp --- */
 .line-clamp-1 {
   display: -webkit-box;
   -webkit-line-clamp: 1;
@@ -765,3 +582,5 @@
   overflow: hidden;
 }
 </style>
+
+

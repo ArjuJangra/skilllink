@@ -506,7 +506,7 @@ import API from '@/api';
 import { useRouter } from 'vue-router';
 import ServiceMap from '@/components/ServiceMap.vue';
 import { logoutUser } from '@/stores/auth';
-const router = useRouter();
+ const router = useRouter();
 // Reactive state
 const user = ref(null);
 const socket = ref(null);
