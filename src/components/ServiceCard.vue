@@ -87,7 +87,7 @@ const goToDetails = () => {
 /* Limit description text to 3 lines */
 .line-clamp-3 {
   display: -webkit-box;
-  display: box; /* Legacy spec for older browsers */
+  display: flex; /* Legacy spec for older browsers */
   -webkit-box-orient: vertical;
   box-orient: vertical; /* Legacy spec */
   -webkit-line-clamp: 3; /* Chrome, Safari, Edge */

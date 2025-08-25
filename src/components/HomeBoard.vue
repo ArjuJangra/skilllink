@@ -1,43 +1,11 @@
 <template>
-  <div class="h-screen bg-[#F6F9FC] overflow-hidden">
-    <!-- Fixed Header -->
+  <div>
     <AppNavbar />
-
-    <!-- Hero Section -->
-    <section class="relative bg-[#F6F9FC] pt-32 pb-16">
-      <div class="max-w-[1120px] mx-auto px-4 grid md:grid-cols-2 gap-12 items-center">
-        <!-- Left Content -->
-        <div>
-          <h1 class="text-4xl font-bold text-gray-900 leading-tight mb-4">
-            Find Trusted Helpers <br />
-            Anytime, Anywhere
-          </h1>
-          <p class="text-gray-600 text-lg mb-6">
-            Connect with skilled professionals near you for quick and reliable services.
-          </p>
-          <div class="flex space-x-4">
-            <button
-              class="bg-[#0073b1] text-white px-6 py-3 rounded-lg shadow-md hover:bg-[#005582] transition"
-            >
-              Get Started
-            </button>
-            <button
-              class="border border-[#0073b1] text-[#0073b1] px-6 py-3 rounded-lg hover:bg-[#0073b1] hover:text-white transition"
-            >
-              Learn More
-            </button>
-          </div>
-        </div>
-
-        <!-- Right Image -->
-        <div class="relative">
-          <img
-            src="https://img.freepik.com/free-vector/online-service-concept-illustration_114360-7969.jpg"
-            alt="Helpers"
-            class="w-full rounded-2xl shadow-lg"
-          />
-        </div>
-      </div>
+    <section class="py-8">
+      <h2 class="text-2xl font-bold text-center">Welcome to SkillLink</h2>
+      <p class="text-center text-gray-600 mt-2">
+        Your one-stop solution for all service needs.
+      </p>
     </section>
 
     <!-- Services Section -->
@@ -110,14 +78,8 @@
   </div>
 </template>
 
-<script>
-import AppNavbar from "./AppNavbar.vue";
+<script setup>
+import { ref } from 'vue'
+import AppNavbar from "@/components/AppNavbar.vue"
 
-
-export default {
-  name: "HomeBoard",
-  components: {
-    AppNavbar,
-  },
-};
 </script>

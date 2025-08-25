@@ -104,7 +104,5 @@ router.get('/privacy', authMiddleware, async (req, res) => {
   }
 });
 
-
-
 module.exports = router;
 

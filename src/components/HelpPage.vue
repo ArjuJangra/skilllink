@@ -1,53 +1,63 @@
 <template>
-  <div class="min-h-screen bg-blue-50 flex flex-col justify-between">
+  <div class="min-h-screen flex flex-col bg-gray-50">
+
     <!-- Header -->
-    <header class="bg-white shadow w-full">
-      <div class="max-w-7xl mx-auto px-6 py-5 flex items-center justify-between">
-        <div class="flex items-center gap-2">
-          <img src="@/assets/skilllogo.png" alt="SkillLink Logo" class="w-auto h-10" />
-          <h1 class="text-2xl font-bold text-[#0073b1]">SkillLink Help Center</h1>
-        </div>
-        <router-link to="/homelogged">
-          <button class="bg-[#0073b1] text-white px-4 py-2 rounded-lg hover:bg-[#005f91] transition">
-            Back to Home
-          </button>
-        </router-link>
-      </div>
+    <header class="bg-white shadow sticky top-0 z-50">
+     <AppNavbar />
     </header>
 
     <!-- Help Section -->
-    <main class="flex-grow px-4 md:px-10 py-8 max-w-5xl mx-auto bg-white rounded-lg shadow mt-6 mb-10">
-      <h2 class="text-3xl font-bold text-[#0073b1] mb-6 text-center">Frequently Asked Questions</h2>
+    <main class="flex-grow px-4 md:px-10 py-10 max-w-5xl mx-auto">
+      <div class="bg-white rounded-xl shadow-lg p-8">
+        <h2 class="text-3xl font-bold text-[#0073b1] mb-8 text-center">
+          Frequently Asked Questions
+        </h2>
 
-      <div v-for="(faq, index) in faqs" :key="index" class="border-b py-4">
-        <button
-          class="w-full flex justify-between items-center text-left focus:outline-none"
-          @click="toggle(index)"
+        <div
+          v-for="(faq, index) in faqs"
+          :key="index"
+          class="border-b py-4"
         >
-          <h3 class="text-lg font-semibold text-gray-800">
-            {{ faq.question }}
-          </h3>
-          <span class="text-xl text-[#0073b1]">
-            {{ faq.open ? '-' : '+' }}
-          </span>
-        </button>
-        <p v-if="faq.open" class="mt-2 text-gray-600 text-sm">
-          {{ faq.answer }}
-        </p>
+          <button
+            class="w-full flex justify-between items-center text-left focus:outline-none group"
+            @click="toggle(index)"
+          >
+            <h3 class="text-lg font-semibold text-gray-800 group-hover:text-[#0073b1] transition">
+              {{ faq.question }}
+            </h3>
+            <span class="text-xl font-bold text-[#0073b1]">
+              {{ faq.open ? '-' : '+' }}
+            </span>
+          </button>
+
+          <!-- Smooth Expand Animation -->
+          <transition name="fade">
+            <p
+              v-if="faq.open"
+              class="mt-3 text-gray-600 text-sm leading-relaxed"
+            >
+              {{ faq.answer }}
+            </p>
+          </transition>
+        </div>
       </div>
     </main>
 
     <!-- Footer -->
-    <footer class="bg-[#0073b1] text-white py-4 text-center">
-      Need more help? Email us at
-      <a href="mailto:support@skilllink.in" class="underline">support@skilllink.in</a>
+    <footer class="bg-[#0073b1] text-white py-6 text-center mt-10">
+      <p class="text-sm">
+        Need more help? Email us at
+        <a href="mailto:connectteamskilllink@gmail.com" class="underline hover:text-gray-200">
+          connectteamskilllink@gmail.com
+        </a>
+      </p>
     </footer>
   </div>
 </template>
 
 <script setup>
 import { reactive } from 'vue'
-
+import AppNavbar from '@/components/AppNavbar.vue'
 // FAQs
 const faqs = reactive([
   {
@@ -86,5 +96,13 @@ function toggle(index) {
 /* Optional smooth toggle */
 p {
   transition: all 0.3s ease-in-out;
+}
+
+.fade-enter-active, .fade-leave-active {
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+.fade-enter-from, .fade-leave-to {
+  opacity: 0;
+  transform: translateY(-5px);
 }
 </style>

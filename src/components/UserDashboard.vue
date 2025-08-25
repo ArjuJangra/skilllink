@@ -1,126 +1,112 @@
 <template>
   <!-- Authenticated Dashboard Wrapper -->
-  <div v-if="isAuthenticated" class="min-h-screen bg-gradient-to-b from-[#F0F9FF] to-white py-8 px-4">
-    <div class="max-w-5xl mx-auto bg-white rounded-3xl shadow-xl p-6">
+  <div v-if="isAuthenticated" class="min-h-screen bg-gradient-to-b from-[#F0F9FF] to-white py-4 px-2 sm:py-8 sm:px-4">
+    <div class="max-w-5xl mx-auto bg-gradient from-[#F0F9FF] via-white to-[#E6F4F9] rounded-3xl shadow-xl p-6">
 
       <!-- User Profile Card -->
       <div v-if="user"
-        class="bg-white p-6 rounded-3xl shadow-sm hover:shadow-md transition-all duration-300 max-w-2xl mx-auto">
+        class="bg-gradient-to-br from-white via-[#f1faff] to-[#f5fafe] p-4 sm:p-6 rounded-3xl shadow-sm hover:shadow-md transition-all duration-300">
 
         <!-- Profile Section -->
-        <div class="flex flex-col sm:flex-row items-center gap-6">
-          <!-- Profile Picture with Edit Button -->
-          <div class="relative">
-            <img :src="user.profilePic ? `http://localhost:5000/uploads/${user.profilePic}` : userImg"
-              class="w-20 h-20 sm:w-32 sm:h-32 rounded-full border-4 border-[#00A8E8] object-cover shadow-md" />
+        <div class="flex items-center gap-4 sm:gap-6 w-full">
+          <!-- Left: Profile Image -->
+          <div class="relative flex-shrink-0">
+            <img :src="user.profilePic ? API.getImageUrl(user.profilePic) : userImg"
+              class="w-16 h-16 sm:w-28 sm:h-28 rounded-full border-4 border-[#00A8E8] object-cover shadow-md" />
+
             <label
-              class="absolute bottom-1 right-1 bg-[#00A8E8] text-white rounded-full p-2 cursor-pointer hover:bg-[#007EA7] transition"
+              class="absolute bottom-0 right-0 bg-[#00A8E8] text-white rounded-full p-2 cursor-pointer hover:bg-[#007EA7] transition"
               title="Upload Photo">
               <input type="file" class="hidden" @change="handleProfileImageChange" />
-              <!-- Camera icon inline -->
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="currentColor">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 sm:h-5 sm:w-5" viewBox="0 0 24 24"
+                fill="currentColor">
                 <path
                   d="M21 7h-3.17l-1.84-2H7.01L5.17 7H2a2 2 0 00-2 2v10a2 2 0 002 2h19a2 2 0 002-2V9a2 2 0 00-2-2zm-9 12a5 5 0 110-10 5 5 0 010 10zm0-8a3 3 0 100 6 3 3 0 000-6z" />
               </svg>
-
             </label>
           </div>
 
-          <!-- User Info -->
-          <div class="flex-1 text-center sm:text-left">
-            <h2
-              class="text-2xl font-bold inline-block bg-gradient-to-r from-[#007EA7] via-[#00B4DB] to-[#4dd0e1] bg-clip-text text-transparent break-words">
+          <!-- Center: Name, Email, Phone -->
+          <div class="flex-1 flex flex-col justify-center overflow-hidden">
+            <h2 class="text-lg sm:text-2xl font-bold text-gray-900 truncate">
               {{ user.name }}
             </h2>
 
-            <div class="mt-2 space-y-1">
-
-              <!-- Email -->
-              <div class="flex items-center justify-center sm:justify-start gap-2 text-gray-600 text-sm">
+            <div class="flex flex-col sm:flex-row sm:items-center sm:gap-4 mt-1 text-sm text-gray-600 overflow-hidden">
+              <div class="flex items-center gap-1 truncate">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="currentColor">
                   <path
                     d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 2-8 5-8-5h16zM4 18V8l8 5 8-5v10H4z" />
                 </svg>
-                <span>{{ user.email }}</span>
+                <span class="truncate max-w-[120px] sm:max-w-full">{{ user.email }}</span>
               </div>
-
-              <!-- Phone -->
-              <div v-if="user.phone"
-                class="flex items-center justify-center sm:justify-start gap-2 text-gray-600 text-sm">
+              <div v-if="user.phone" class="flex items-center gap-1 truncate mt-1 sm:mt-0">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="currentColor">
                   <path
                     d="M6.62 10.79a15.05 15.05 0 006.59 6.59l2.2-2.2a1 1 0 011.1-.2 11.05 11.05 0 003.49.55 1 1 0 011 1v3.46a1 1 0 01-1 1C10.4 21 3 13.6 3 5a1 1 0 011-1h3.46a1 1 0 011 1c0 1.2.18 2.38.55 3.47a1 1 0 01-.2 1.1l-2.19 2.22z" />
                 </svg>
-                <span>{{ user.phone }}</span>
+                <span class="truncate max-w-[120px] sm:max-w-full">{{ user.phone }}</span>
               </div>
             </div>
           </div>
+
+          <!-- Right: Edit Button -->
+          <div class="flex-shrink-0 ml-2">
+            <button @click="showEditProfileForm = true"
+              class="px-3 sm:px-4 py-1 sm:py-2 bg-gradient-to-r from-[#007EA7] to-[#00B4DB] text-white rounded-lg text-sm sm:text-base font-medium shadow-sm transition whitespace-nowrap flex items-center gap-1">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 sm:h-4 sm:w-4" fill="currentColor"
+                viewBox="0 0 24 24">
+                <path
+                  d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zm14.71-9.04a1 1 0 010 1.41l-1.83 1.83-3.75-3.75 1.83-1.83a1 1 0 011.41 0l2.34 2.34z" />
+              </svg>
+              Edit
+            </button>
+          </div>
         </div>
 
-        <!-- Edit Button -->
-        <div class="flex justify-end mt-4">
-          <button @click="showEditProfileForm = true"
-            class="px-4 py-2 bg-gradient-to-r from-[#007EA7] to-[#00B4DB] text-white rounded-lg text-sm font-medium shadow-sm transition flex items-center gap-1">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="currentColor" viewBox="0 0 24 24">
-              <path
-                d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zm14.71-9.04a1 1 0 010 1.41l-1.83 1.83-3.75-3.75 1.83-1.83a1 1 0 011.41 0l2.34 2.34z" />
-            </svg>
-            Edit
-          </button>
-        </div>
-
-        <!-- Edit Profile Modal -->
         <!-- Edit Profile Modal -->
         <transition name="fade">
           <div v-if="showEditProfileForm"
-            class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-40 z-50">
-            <div class="bg-white rounded-2xl shadow-lg w-full max-w-md p-6">
-
+            class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-40 z-50 px-2">
+            <div class="bg-white rounded-2xl shadow-lg w-full max-w-md p-4 sm:p-6">
               <!-- Header -->
-              <div class="flex justify-between items-center mb-4">
-                <h3 class="text-lg font-semibold text-gray-800">Edit Profile</h3>
-                <button @click="showEditProfileForm = false" class="text-gray-400 hover:text-gray-600">
-                  ✕
-                </button>
+              <div class="flex justify-between items-center mb-3 sm:mb-4">
+                <h3 class="text-lg sm:text-lg font-semibold text-gray-800">Edit Profile</h3>
+                <button @click="showEditProfileForm = false" class="text-gray-400 hover:text-gray-600">✕</button>
               </div>
 
               <!-- Form -->
-              <div class="space-y-4">
+              <div class="space-y-3 sm:space-y-4">
                 <div>
-                  <label class="block text-sm font-medium text-gray-600 mb-1">Name</label>
-                  <input v-model="editForm.name" type="text" class="w-full px-4 py-2 border border-gray-300 rounded-lg 
-                   focus:ring-2 focus:ring-[#00A8E8] focus:outline-none shadow-sm" />
+                  <label class="block text-sm sm:text-base font-medium text-gray-600 mb-1">Name</label>
+                  <input v-model="editForm.name" type="text"
+                    class="w-full px-3 py-2 sm:px-4 sm:py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#00A8E8] focus:outline-none shadow-sm" />
                 </div>
 
                 <div>
-                  <label class="block text-sm font-medium text-gray-600 mb-1">Email</label>
-                  <input v-model="editForm.email" type="email" class="w-full px-4 py-2 border border-gray-300 rounded-lg 
-                   focus:ring-2 focus:ring-[#00A8E8] focus:outline-none shadow-sm" />
+                  <label class="block text-sm sm:text-base font-medium text-gray-600 mb-1">Email</label>
+                  <input v-model="editForm.email" type="email"
+                    class="w-full px-3 py-2 sm:px-4 sm:py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#00A8E8] focus:outline-none shadow-sm" />
                 </div>
 
                 <div>
-                  <label class="block text-sm font-medium text-gray-600 mb-1">Phone</label>
-                  <input v-model="editForm.phone" type="tel" class="w-full px-4 py-2 border border-gray-300 rounded-lg 
-                   focus:ring-2 focus:ring-[#00A8E8] focus:outline-none shadow-sm" />
-                </div>
-
-                <div>
-                  <label class="block text-sm font-medium text-gray-600 mb-1">Bio</label>
-                  <textarea v-model="editForm.bio" class="w-full px-4 py-2 border border-gray-300 rounded-lg 
-                   focus:ring-2 focus:ring-[#00A8E8] focus:outline-none shadow-sm"></textarea>
+                  <label class="block text-sm sm:text-base font-medium text-gray-600 mb-1">Phone</label>
+                  <input v-model="editForm.phone" type="tel"
+                    class="w-full px-3 py-2 sm:px-4 sm:py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#00A8E8] focus:outline-none shadow-sm" />
                 </div>
               </div>
 
               <!-- Actions -->
-              <div class="mt-5 flex justify-end gap-2">
+              <div class="mt-4 sm:mt-5 flex justify-end gap-2">
                 <button @click="showEditProfileForm = false"
-                  class="px-4 py-2 bg-gray-200 hover:bg-gray-300 text-gray-700 rounded-lg text-sm font-medium">
+                  class="px-3 sm:px-4 py-1 sm:py-2 bg-gray-200 hover:bg-gray-300 text-gray-700 rounded-lg text-sm sm:text-base font-medium">
                   Cancel
                 </button>
                 <button @click="updateUserProfile"
-                  class="px-4 py-2 bg-[#00A8E8] hover:bg-[#007EA7] text-white rounded-lg text-sm font-medium shadow-sm flex items-center gap-2">
+                  class="px-3 sm:px-4 py-1 sm:py-2 bg-[#00A8E8] hover:bg-[#007EA7] text-white rounded-lg text-sm sm:text-base font-medium shadow-sm flex items-center gap-2">
                   <span>Save</span>
-                  <svg v-if="loading" class="animate-spin h-4 w-4 text-white" fill="none" viewBox="0 0 24 24">
+                  <svg v-if="loading" class="animate-spin h-4 w-4 sm:h-5 sm:w-5 text-white" fill="none"
+                    viewBox="0 0 24 24">
                     <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                     <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"></path>
                   </svg>
@@ -133,9 +119,10 @@
       </div>
 
       <!-- Navigation Tabs -->
-      <div class="flex flex-wrap items-center gap-2 border-b border-gray-200 pb-3 mb-6 mt-2">
+      <div
+        class="flex flex-wrap items-center gap-1 sm:gap-2 bg-gradient-to-br from-[#f1faff]  via-[#f1faff] to-[#f5fafe] border-b border-gray-200 pb-2 sm:pb-3 mb-2 mt-2">
         <button v-for="tab in tabs" :key="tab" @click="activeTab = tab" :class="[
-          ' px-5 py-2 font-medium transition-all duration-200 rounded-t-lg border-b-2',
+          ' px-3 sm:px-5 py-1 sm:py-2 font-medium transition-all duration-200 rounded-t-lg border-b-2 text-sm sm:text-base',
           activeTab === tab
             ? 'text-[#00A8E8] border-[#00A8E8]  shadow-sm'
             : 'text-gray-600 border-transparent hover:text-[#00A8E8] '
@@ -144,12 +131,12 @@
         </button>
       </div>
       <!-- Loading -->
-      <div v-if="isLoading" class="text-center text-[#007EA7] font-semibold py-8">Loading...</div>
+      <div v-if="isLoading" class="text-center text-[#007EA7] font-semibold py-6 sm:py-8">Loading...</div>
 
       <!-- Content -->
-      <div v-else>
+      <div v-else class="bg-gradient-to-br from-white via-[#f1faff] to-[#f5fafe]">
         <transition name="fade-slide " mode="out-in">
-          <div :key="activeTab" class="w-full bg-white rounded-2xl shadow-md p-6 transition-all">
+          <div :key="activeTab" class="w-full bg-white rounded-2xl shadow-md p-4 sm:p-6 transition-all">
             <!-- Bookings Tab -->
             <div v-if="activeTab === 'bookings'" class="space-y-6">
               <h3 class="text-xl font-semibold text-[#007EA7]">My Bookings</h3>
@@ -298,10 +285,6 @@
                       class="text-sm px-3 py-1 bg-blue-500 hover:bg-blue-600 text-white rounded-md transition">
                       View Details
                     </button>
-                    <button v-if="item.status === 'Completed'" @click="rebookService(item.serviceId)"
-                      class="text-sm px-3 py-1 bg-green-500 hover:bg-green-600 text-white rounded-md transition">
-                      Rebook
-                    </button>
                   </div>
                 </div>
               </div>
@@ -313,8 +296,6 @@
                 <button @click="router.push('/services')" class="btn-blue mt-3">Explore Services</button>
               </div>
             </div>
-
-
             <!-- Address Tab -->
             <div v-else-if="activeTab === 'address'" class="space-y-6">
               <div class="flex items-center justify-between">
@@ -440,13 +421,13 @@
   </div>
 
   <!-- Redirect Notice -->
-  <div v-else class="text-center mt-20 text-gray-500">Redirecting to login...</div>
+  <div v-else class="text-center mt-10 sm:mt-20 text-gray-500">Redirecting to login...</div>
 </template>
 
 <script setup>
 import { ref, reactive, onMounted, onUnmounted, watch } from 'vue';
 import { io } from 'socket.io-client';
-import axios from 'axios';
+import API from '@/api';
 import { useRouter } from 'vue-router';
 import { toast } from 'vue3-toastify';
 import 'vue3-toastify/dist/index.css';
@@ -463,7 +444,8 @@ const isAuthenticated = ref(false), isLoading = ref(true), loading = ref(false);
 const showLogoutModal = ref(false), showEditProfileForm = ref(false), previewImage = ref(null);
 const tabs = ['bookings', 'history', 'address', 'settings'];
 const activeTab = ref(localStorage.getItem("activeTab") || "bookings");
-const userImg = ref('/images/default-user.png');
+const userImg = ref(`${API.defaults.baseURL}/uploads/default-user.png`);
+
 const user = ref({ name: '', email: '', phone: '', bio: '', profilePic: '' });
 const socket = ref(null);
 const bookings = ref([]), history = ref([]);
@@ -500,17 +482,6 @@ const viewDetails = (id) => {
   router.push({ name: 'ServiceDetails', params: { id } });
 };
 
-const rebookService = (serviceId) => {
-  // Navigate to service details for rebooking
-  router.push({ name: 'ServiceDetails', params: { id: serviceId, rebook: true } });
-};
-
-
-// --- Utils ---
-const apiGet = (url) => axios.get(url, { headers: { Authorization: `Bearer ${getToken()}` } });
-const apiPut = (url, data = {}) => axios.put(url, data, { headers: { Authorization: `Bearer ${getToken()}` } });
-const apiPost = (url, data) => axios.post(url, data, { headers: { Authorization: `Bearer ${getToken()}` } });
-const apiDelete = (url) => axios.delete(url, { headers: { Authorization: `Bearer ${getToken()}` } });
 
 const formatTab = (tab) => tab.charAt(0).toUpperCase() + tab.slice(1).replace('-', ' ');
 const formatDate = (date) => new Date(date).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' });
@@ -525,7 +496,7 @@ const relativeDate = (date) => isValidDate(date) ? dayjs(date).fromNow() : 'N/A'
 // --- Profile ---
 const getUserProfile = async () => {
   try {
-    const { data } = await apiGet('http://localhost:5000/api/user/profile');
+    const { data } = await API.get('/user/profile');
     user.value = data; auth.user = data; localStorage.setItem("user", JSON.stringify(data));
   } catch { toast.error("Failed to load user data"); }
 };
@@ -535,7 +506,7 @@ const handleProfileImageChange = async (e) => {
   previewImage.value = URL.createObjectURL(file);
   const formData = new FormData(); formData.append('profilePic', file);
   try {
-    const { data } = await apiPut('http://localhost:5000/api/user/profile/picture', formData);
+    const { data } = await API.put('/user/profile/picture', formData);
     const pic = `${data.profilePic}?t=${Date.now()}`; user.value.profilePic = pic; auth.user.profilePic = pic;
     let existing = JSON.parse(localStorage.getItem("user")); if (existing) { existing.profilePic = pic; localStorage.setItem("user", JSON.stringify(existing)); }
     toast.success("Profile picture updated!");
@@ -549,8 +520,8 @@ const updateUserProfile = async () => {
 
   loading.value = true;
   try {
-    const { data } = await apiPut(
-      "http://localhost:5000/api/user/profile",
+    const { data } = await API.put(
+      "/user/profile",
       { ...editForm }
     );
     user.value = { ...user.value, ...editForm };
@@ -564,15 +535,15 @@ const updateUserProfile = async () => {
 };
 
 // --- Bookings ---
-const fetchBookings = async () => { try { bookings.value = (await apiGet('http://localhost:5000/api/bookings')).data; } catch { toast.error("Failed to load bookings"); } };
-const fetchHistory = async () => { try { history.value = (await apiGet('http://localhost:5000/api/bookings/history')).data; } catch { toast.error("Failed to load service history."); } };
+const fetchBookings = async () => { try { bookings.value = (await API.get('/bookings')).data; } catch { toast.error("Failed to load bookings"); } };
+const fetchHistory = async () => { try { history.value = (await API.get('/bookings/history')).data; } catch { toast.error("Failed to load service history."); } };
 
 const startEdit = (b) => { editingId.value = b._id; editableBooking.value = { ...b }; };
 const cancelEdit = () => { editingId.value = null; editableBooking.value = { service: '', name: '', contact: '', address: '' }; };
 
 const saveEdit = async (id) => {
   try {
-    const { data } = await apiPut(`http://localhost:5000/api/bookings/${id}`, editableBooking.value);
+    const { data } = await API.put(`/bookings/${id}`, editableBooking.value);
     const idx = bookings.value.findIndex(b => b._id === id); if (idx !== -1) bookings.value[idx] = data; editingId.value = null;
   } catch { toast.error('Update failed'); }
 };
@@ -584,19 +555,20 @@ const moveToHistory = (b) => {
 
 const markAsCompleted = async (id) => {
   try {
-    const { data } = await apiPut(`http://localhost:5000/api/bookings/mark-completed/${id}`);
+    const { data } = await API.put(`/bookings/mark-completed/${id}`);
     moveToHistory(data.booking); toast.success("Booking marked as completed");
   } catch { toast.error("Failed to update booking"); }
 };
 
 const deleteBooking = async (id) => {
-  try { await apiDelete(`http://localhost:5000/api/bookings/${id}`); bookings.value = bookings.value.filter(b => b._id !== id); toast.success('Booking deleted'); }
+  try { await API.delete(`/bookings/${id}`); bookings.value = bookings.value.filter(b => b._id !== id); toast.success('Booking deleted'); }
   catch { toast.error('Failed to delete booking'); }
 };
 
 // --- Notifications ---
-const fetchNotificationSettings = async () => { try { Object.assign(notificationSettings, (await apiGet('http://localhost:5000/api/user/notifications')).data); } catch { toast.error("Failed to load notification settings."); } };
-const updateNotificationSettings = async () => { isSavingNotifications.value = true; try { const { data } = await apiPut('http://localhost:5000/api/user/notifications', notificationSettings); toast.success(data.message || "Preferences updated."); } catch { toast.error("Could not update notifications."); } finally { isSavingNotifications.value = false; } };
+const fetchNotificationSettings = async () => { try { Object.assign(notificationSettings, (await API.get('/user/notifications')).data); } catch { toast.error("Failed to load notification settings."); } };
+
+const updateNotificationSettings = async () => { isSavingNotifications.value = true; try { const { data } = await API.put('/user/notifications', notificationSettings); toast.success(data.message || "Preferences updated."); } catch { toast.error("Could not update notifications."); } finally { isSavingNotifications.value = false; } };
 
 // --- Address ---
 const saveAddress = () => {
@@ -614,7 +586,7 @@ const changePassword = async () => {
   if (passwordForm.new !== passwordForm.confirm) return toast.error("Passwords do not match");
   isChangingPassword.value = true;
   try {
-    const { data } = await apiPost('http://localhost:5000/api/user/change-password', { currentPassword: passwordForm.current, newPassword: passwordForm.new });
+    const { data } = await API.post('/user/change-password', { currentPassword: passwordForm.current, newPassword: passwordForm.new });
     toast.success(data.message || "Password updated!"); showPasswordForm.value = false; Object.assign(passwordForm, { current: '', new: '', confirm: '' });
   } catch (err) { toast.error(err.response?.data?.message || "Error changing password"); }
   finally { isChangingPassword.value = false; }
@@ -631,7 +603,7 @@ onMounted(() => {
   const localUser = JSON.parse(localStorage.getItem('user')); if (localUser?.role === 'provider') return router.push('/provider/profile');
   isAuthenticated.value = true; syncActiveTabFromHash();
   Promise.all([getUserProfile(), fetchBookings(), fetchHistory(), fetchNotificationSettings()]).then(() => {
-    socket.value = io('http://localhost:5000', { auth: { token }, withCredentials: true, transports: ['websocket'] });
+    socket.value = io(API.defaults.baseURL, { auth: { token }, withCredentials: true, transports: ['websocket'] });
     socket.value.emit('join', user.value._id);
     socket.value.on('orderAccepted', d => (toast.info(`✅ Accepted by ${d.providerName}`), fetchBookings()));
     socket.value.on('orderRejected', d => (toast.info(`❌ Rejected by ${d.providerName}`), fetchBookings()));
@@ -639,7 +611,6 @@ onMounted(() => {
 });
 onUnmounted(() => socket.value?.disconnect());
 </script>
-
 
 <style scoped>
 @media (max-width: 640px) {
@@ -704,9 +675,6 @@ onUnmounted(() => socket.value?.disconnect());
 .btn-gray {
   color: #1f2937;
 }
-
-/* gray text */
-
 /* Variants */
 .btn-blue {
   background: #007EA7;

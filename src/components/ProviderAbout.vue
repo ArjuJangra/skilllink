@@ -21,7 +21,7 @@
             <span class="font-semibold">Home</span>
           </router-link>
 
-         <router-link to="/provider/orders"
+         <router-link to="/providerorders"
             class="relative flex items-center gap-2 px-3 py-2 text-gray-600 hover:text-[#0073b1] transition font-medium"
             active-class="text-[#0073b1] font-semibold after:absolute after:left-0 after:right-0 after:-bottom-1 after:h-[2px] after:bg-[#0073b1] after:rounded-full">
             <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
@@ -32,7 +32,7 @@
           </router-link>
 
           <!-- Policies -->
-          <router-link to="/provider/policies"
+          <router-link to="/providerpolicies"
             class="relative flex items-center gap-2 px-3 py-2 text-gray-600 hover:text-[#0073b1] transition font-medium"
             active-class="text-[#0073b1] font-semibold after:absolute after:left-0 after:right-0 after:-bottom-1 after:h-[2px] after:bg-[#0073b1] after:rounded-full">
             <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
@@ -42,7 +42,7 @@
           </router-link>
 
           <!-- Contact -->
-          <router-link to="/provider/contact"
+          <router-link to="/providercontact"
             class="relative flex items-center gap-2 px-3 py-2 text-gray-600 hover:text-[#0073b1] transition font-medium"
             active-class="text-[#0073b1] font-semibold after:absolute after:left-0 after:right-0 after:-bottom-1 after:h-[2px] after:bg-[#0073b1] after:rounded-full">
             <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
@@ -133,7 +133,7 @@
 </template>
 
 <script>
-import axios from 'axios';
+import API from '@/api';
 
 export default {
   data() {
@@ -163,7 +163,7 @@ export default {
     async fetchUserProfile() {
       try {
         const token = localStorage.getItem('token');
-        const response = await axios.get('http://localhost:5000/api/providers/profile', {
+        const response = await API.get('/providers/profile', {
           headers: {
             Authorization: `Bearer ${token}`
           }

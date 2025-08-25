@@ -1,21 +1,8 @@
 <template>
   <div class="min-h-screen bg-[#F6F9FC]">
-    <!-- Fixed Header -->
-    <header class="w-full bg-white shadow-md fixed top-0 z-50">
-      <div class="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">
-        <div class="flex items-center space-x-2">
-          <img src="@/assets/skilllogo.png" alt="SkillLink Logo" class="h-10 w-auto" />
-          <span class="text-xl font-bold text-[#0074B7]">SkillLink</span>
-        </div>
-        <router-link
-          to="/homelogged"
-          class="bg-[#0074B7] text-white px-4 py-2 rounded hover:bg-[#005f91] transition"
-        >
-          Back to Home
-        </router-link>
-      </div>
-    </header>
-
+      <header class="bg-white shadow sticky top-0 z-50">
+ <AppNavbar />
+     </header>
     <!-- Page Content -->
     <div class="pt-[90px] px-4 py-6 flex items-center justify-center">
       <div class="w-full max-w-6xl bg-white rounded-xl shadow-xl p-6 md:p-10 overflow-y-auto max-h-[95vh]">
@@ -33,42 +20,22 @@
           <form class="space-y-4" @submit.prevent="handleSubmit" novalidate>
             <div>
               <label for="name" class="block text-sm text-gray-700 font-medium">Full Name</label>
-              <input
-                id="name"
-                v-model="form.name"
-                type="text"
-                placeholder="Your name"
-                class="w-full border border-gray-300 px-3 py-2 rounded-md focus:ring-2 focus:ring-[#0074B7]"
-                required
-              />
+              <input id="name" v-model="form.name" type="text" placeholder="Your name"
+                class="w-full border border-gray-300 px-3 py-2 rounded-md focus:ring-2 focus:ring-[#0074B7]" required />
             </div>
             <div>
               <label for="email" class="block text-sm text-gray-700 font-medium">Email</label>
-              <input
-                id="email"
-                v-model="form.email"
-                type="email"
-                placeholder="you@example.com"
-                class="w-full border border-gray-300 px-3 py-2 rounded-md focus:ring-2 focus:ring-[#0074B7]"
-                required
-              />
+              <input id="email" v-model="form.email" type="email" placeholder="you@example.com"
+                class="w-full border border-gray-300 px-3 py-2 rounded-md focus:ring-2 focus:ring-[#0074B7]" required />
             </div>
             <div>
               <label for="message" class="block text-sm text-gray-700 font-medium">Message</label>
-              <textarea
-                id="message"
-                v-model="form.message"
-                rows="3"
-                placeholder="Your message"
+              <textarea id="message" v-model="form.message" rows="3" placeholder="Your message"
                 class="w-full border border-gray-300 px-3 py-2 rounded-md resize-none focus:ring-2 focus:ring-[#0074B7]"
-                required
-              ></textarea>
+                required></textarea>
             </div>
-            <button
-              type="submit"
-              :disabled="loading"
-              class="w-full bg-[#0074B7] text-white py-2 rounded-md font-semibold hover:bg-[#005a91] transition disabled:opacity-50"
-            >
+            <button type="submit" :disabled="loading"
+              class="w-full bg-[#0074B7] text-white py-2 rounded-md font-semibold hover:bg-[#005a91] transition disabled:opacity-50">
               {{ loading ? 'Sending...' : 'Send Message' }}
             </button>
           </form>
@@ -89,25 +56,12 @@
             <!-- FAQs -->
             <div>
               <h2 class="text-lg font-semibold text-[#0074B7] mb-2">FAQs</h2>
-              <div
-                v-for="(faq, index) in faqs"
-                :key="index"
-                class="border border-gray-200 rounded-md mb-2"
-              >
-                <button
-                  @click="toggleFAQ(index)"
-                  :aria-expanded="faq.open.toString()"
-                  class="w-full flex justify-between items-center px-4 py-2 text-left bg-[#F6F9FC] hover:bg-[#E8F1F9] transition cursor-pointer select-none"
-                >
+              <div v-for="(faq, index) in faqs" :key="index" class="border border-gray-200 rounded-md mb-2">
+                <button @click="toggleFAQ(index)" :aria-expanded="faq.open.toString()"
+                  class="w-full flex justify-between items-center px-4 py-2 text-left bg-[#F6F9FC] hover:bg-[#E8F1F9] transition cursor-pointer select-none">
                   <span class="text-sm font-medium text-[#0074B7]">{{ faq.question }}</span>
-                  <svg
-                    :class="{ 'rotate-180': faq.open }"
-                    class="w-4 h-4 text-[#0074B7] transform transition-transform"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="2"
-                    viewBox="0 0 24 24"
-                  >
+                  <svg :class="{ 'rotate-180': faq.open }" class="w-4 h-4 text-[#0074B7] transform transition-transform"
+                    fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
                   </svg>
                 </button>
@@ -127,9 +81,9 @@
 
 <script setup>
 import { reactive, ref } from 'vue'
-import axios from 'axios'
+import API from '@/api';
 import { toast } from 'vue3-toastify'
-
+import AppNavbar from '@/components/AppNavbar.vue'
 const form = reactive({
   name: '',
   email: '',
@@ -181,7 +135,7 @@ const handleSubmit = async () => {
   const toastId = toast.loading('Sending your message...')
 
   try {
-    await axios.post('http://localhost:5000/api/contact', {
+    await API.post('/contact', {
       name: form.name,
       email: form.email,
       message: form.message
@@ -218,6 +172,7 @@ const handleSubmit = async () => {
 .fade-leave-active {
   transition: opacity 0.3s ease;
 }
+
 .fade-enter-from,
 .fade-leave-to {
   opacity: 0;

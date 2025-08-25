@@ -34,7 +34,7 @@ const routes = [
     component: HomeLogged,
     meta: { requiresAuth: true, role: 'user' }
   },
-  { path: '/about', component: AboutPage },
+  { path: '/about', name: "About", component: AboutPage },
   { path: '/contact', component: ContactPage },
   { path: '/help', component: HelpPage },
   {
@@ -45,17 +45,18 @@ const routes = [
 
   // Auth-Protected Routes
   {
-    path: '/profile',
-    redirect: () => {
-      const user = JSON.parse(localStorage.getItem('user'));
-      if (user?.role === 'provider') {
-        return '/provider/profile';
-      } else {
-        return '/dashboard';
-      }
-    },
-    meta: { requiresAuth: true }
+  path: "/profile",
+  beforeEnter: (to, from, next) => {
+    const user = JSON.parse(localStorage.getItem("user"));
+    if (user?.role === "provider") {
+      next("/provider/profile");
+    } else {
+      next("/dashboard");
+    }
   },
+  meta: { requiresAuth: true }
+}
+,
   {
     path: '/provider/profile',
     name: 'ProviderDashboard',
@@ -84,25 +85,25 @@ const routes = [
   },
 
   {
-    path: '/provider/orders',
+    path: '/providerorders',
     name: 'ProviderOrders',
     component: ProviderOrders,
     meta: { requiresAuth: true }
   },
   {
-    path: '/provider/policies',
+    path: '/providerpolicies',
     name: 'ProviderPolicies',
     component: ProviderPolicies,
     meta: { requiresAuth: true }
   },
   {
-    path: '/provider/about',
+    path: '/providerabout',
     name: 'ProviderAbout',
     component: ProviderAbout,
     meta: { requiresAuth: true }
   },
   {
-    path: '/provider/contact',
+    path: '/providercontact',
     name: 'ProviderContact',
     component: ProviderContact,
     meta: { requiresAuth: true }
@@ -121,7 +122,7 @@ const routes = [
   meta: { requiresAuth: true, role: 'user' }
 },
   {
-    path: '/provider/add-service',
+    path: '/provideraddservice',
     name: 'AddService',
     component: AddService,
   }

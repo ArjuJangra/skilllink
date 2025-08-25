@@ -1,13 +1,12 @@
 <template>
   <div class="min-h-screen bg-[#F0F9FF]">
-
     <!-- Header -->
-    <header class="sticky top-0 z-50 bg-white shadow-md w-full">
+    <header class="sticky top-0 z-50 bg-gradient-to-r from-white via-[#f1faff] to-[#f5fafe] shadow-md w-full">
       <div class="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
         <!-- Logo -->
         <div class="flex items-center space-x-2">
           <img src="@/assets/skilllogo.png" alt="SkillLink Logo" class="w-10 h-10" />
-          <h1 class="text-2xl font-bold text-[#007EA7] hidden sm:block">SkillLink</h1>
+          <h1 class="text-2xl font-bold text-[#007EA7] ">SkillLink</h1>
         </div>
 
         <!-- Right Side -->
@@ -111,7 +110,7 @@ import { ref, computed, onMounted, watch } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import { auth } from '@/stores/auth';
 import ServiceCard from '@/components/ServiceCard.vue';
-
+import API from '@/api';
 const router = useRouter();
 const route = useRoute();
 const showMobileSearch = ref(false);
@@ -119,7 +118,7 @@ const searchQuery = ref('');
 const profilePicUrl = ref('');
 const disableBooking = route.query.disableBooking === 'true';
 
-// User profile handling
+// On mounted: load user from localStorage
 onMounted(() => {
   const storedUserRaw = localStorage.getItem('user');
   const storedToken = localStorage.getItem('token');
@@ -130,7 +129,14 @@ onMounted(() => {
       auth.user = storedUser;
       auth.token = storedToken;
       auth.isLoggedIn = true;
-      if (storedUser.profilePic) profilePicUrl.value = `http://localhost:5000/uploads/${storedUser.profilePic}?t=${Date.now()}`;
+
+      // Use getImageUrl helper
+      if (storedUser.profilePic) {
+        profilePicUrl.value = API.getImageUrl(storedUser.profilePic);
+      } else {
+        profilePicUrl.value = API.getImageUrl('default-user.png');
+      }
+
     } catch {
       auth.user = null;
       auth.token = null;
@@ -140,13 +146,14 @@ onMounted(() => {
     }
   }
 });
-
+// Watch for changes in auth.user
 watch(() => auth.user, (newUser) => {
   if (newUser?.profilePic) {
-    profilePicUrl.value = `http://localhost:5000/uploads/${newUser.profilePic}?t=${Date.now()}`;
-  } else profilePicUrl.value = '';
+    profilePicUrl.value = API.getImageUrl(newUser.profilePic);
+  } else {
+    profilePicUrl.value = API.getImageUrl('default-user.png');
+  }
 }, { immediate: true, deep: true });
-
 // Navigation methods
 const goToBooking = (serviceTitle) => {
   if (!disableBooking) router.push({ path: '/booking', query: { service: serviceTitle } });

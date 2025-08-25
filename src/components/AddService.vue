@@ -43,8 +43,7 @@
 
 <script setup>
 import { reactive, ref } from 'vue';
-import axios from 'axios';
-
+import API from '@/api'; 
 
 const service = reactive({
   name: '',
@@ -64,12 +63,13 @@ const handleSubmit = async () => {
 
   try {
     const token = localStorage.getItem('token');
-    const res = await axios.post('http://localhost:5000/api/provider/services', service, {
+    const res = await API.post('/provider/services', service, {  // <-- Use API instead of axios directly
       headers: { Authorization: `Bearer ${token}` },
     });
-    console.log(res.data);
 
+    console.log(res.data);
     successMessage.value = 'Service added successfully!';
+
     // Reset form
     service.name = '';
     service.description = '';
@@ -84,6 +84,7 @@ const handleSubmit = async () => {
   }
 };
 </script>
+
 
 <style scoped>
 /* Optional: fade animation for success/error messages */

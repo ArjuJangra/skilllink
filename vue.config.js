@@ -1,5 +1,8 @@
-
 module.exports = {
+  publicPath: './',
+  devServer: {
+    historyApiFallback: true, // <-- This makes all routes fallback to index.html
+  },
   chainWebpack: config => {
     config.plugin('define').tap(definitions => {
       Object.assign(definitions[0], {

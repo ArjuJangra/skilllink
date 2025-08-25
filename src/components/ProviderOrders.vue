@@ -1,36 +1,36 @@
 <template>
-  <div class="min-h-screen bg-gradient-to-b from-[#F0F9FF] to-white text-gray-800 pt-24">
+  <div class="min-h-screen bg-[#F0F9FF] text-gray-800 ">
     <!-- Navbar -->
-    <header class="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-md shadow-md">
-      <div class="max-w-6xl mx-auto px-6 py-4 flex justify-between items-center">
+    <header class="fixed top-0 left-0 right-0 z-50 bg-gradient-to-r from-white via-[#f1faff] to-[#f5fafe]  backdrop-blur-md shadow-md">
+      <div class="max-w-6xl mx-auto px-4 py-3 sm:px-6 flex justify-between items-center">
         <div class="flex items-center space-x-2">
-          <img src="@/assets/skilllogo.png" alt="SkillLink Logo" class="w-10 h-10" />
-          <span class="text-xl font-extrabold text-[#0073b1]">SkillLink</span>
+         <img :src="skillLogo" alt="SkillLink Logo" class="w-10 h-10" />
+
+          <span class="text-xl font-bold text-[#0073b1]">SkillLink</span>
         </div>
-        <nav class="flex items-center space-x-4 text-sm md:text-base font-medium">
+
+        <nav class="flex items-center space-x-6 text-sm md:text-base font-medium">
 
           <router-link to="/serviceprovider"
-            class="flex items-center gap-2 px-4 py-2 text-gray-600 hover:text-[#0073b1] hover:scale-105 transition-transform duration-200">
+            class="flex items-center gap-2 px-3 py-2 text-gray-600 hover:text-[#0073b1] hover:scale-105 transition-transform duration-200">
             <!-- Filled Home Icon -->
             <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
               <path d="M12 3l8 7v10a2 2 0 0 1-2 2h-4a1 1 0 0 1-1-1v-5H11v5a1 1 0 0 1-1 1H6a2 2 0 0 1-2-2V10l8-7z" />
             </svg>
             <span class="font-semibold">Home</span>
           </router-link>
-          
-          <router-link to="/profile">
-            <img v-if="provider && provider.profilePic"
-              :src="`http://localhost:5000/uploads/providers/${provider.profilePic}`" alt="Provider DP"
-              class="w-10 h-10 rounded-full border-2 border-[#0073b1] object-cover cursor-pointer" />
-            <img v-else src="@/assets/user.png" alt="Default Provider DP"
-              class="w-10 h-10 rounded-full border-2 border-[#0073b1] cursor-pointer" />
+          <router-link to="/provider/profile">
+            <img :src="profileImage" @error="handleImageError"
+              class="w-10 h-10 rounded-full border border-gray-300 hover:border-[#0073b1] transition cursor-pointer object-cover"
+              loading="lazy" alt="Profile Picture" />
           </router-link>
+         
         </nav>
       </div>
     </header>
 
     <!-- Page Header -->
-    <div class="max-w-6xl mx-auto px-4 py-10 text-center">
+    <div class="max-w-6xl mx-auto pt-24 px-4 py-10 text-center">
       <h1
         class="text-4xl font-extrabold bg-gradient-to-r from-[#3B8D99] to-[#f46675] bg-clip-text text-transparent mb-3">
         My Orders
@@ -69,68 +69,74 @@
         </div>
 
         <!-- Details -->
-     <div class="text-gray-700 text-sm space-y-3">
-  <!-- Customer -->
-  <p class="flex items-center gap-2">
-    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-[#0073b1]" fill="currentColor" viewBox="0 0 24 24">
-      <path d="M12 12c2.7 0 5-2.3 5-5s-2.3-5-5-5-5 2.3-5 5 2.3 5 5 5zm0 2c-3.3 0-10 1.7-10 5v3h20v-3c0-3.3-6.7-5-10-5z"/>
-    </svg>
-    <strong>Customer:</strong> {{ order.name }}
-  </p>
+        <div class="text-gray-700 text-sm space-y-3">
+          <!-- Customer -->
+          <p class="flex items-center gap-2">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-[#0073b1]" fill="currentColor"
+              viewBox="0 0 24 24">
+              <path
+                d="M12 12c2.7 0 5-2.3 5-5s-2.3-5-5-5-5 2.3-5 5 2.3 5 5 5zm0 2c-3.3 0-10 1.7-10 5v3h20v-3c0-3.3-6.7-5-10-5z" />
+            </svg>
+            <strong>Customer:</strong> {{ order.name }}
+          </p>
 
-  <!-- Contact -->
-  <p class="flex items-center gap-2">
-    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-green-600" fill="currentColor" viewBox="0 0 24 24">
-      <path d="M6.62 10.79a15.053 15.053 0 006.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V21c0 
+          <!-- Contact -->
+          <p class="flex items-center gap-2">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-green-600" fill="currentColor"
+              viewBox="0 0 24 24">
+              <path d="M6.62 10.79a15.053 15.053 0 006.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V21c0 
       .55-.45 1-1 1C10.07 22 2 13.93 2 4c0-.55.45-1 1-1h3.5c.55 
-      0 1 .45 1 1 0 1.24.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/>
-    </svg>
-    <strong>Contact:</strong> {{ order.contact }}
-  </p>
+      0 1 .45 1 1 0 1.24.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z" />
+            </svg>
+            <strong>Contact:</strong> {{ order.contact }}
+          </p>
 
-  <!-- Address -->
-  <p class="flex items-center gap-2">
-    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-red-500" fill="currentColor" viewBox="0 0 24 24">
-      <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 
+          <!-- Address -->
+          <p class="flex items-center gap-2">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-red-500" fill="currentColor"
+              viewBox="0 0 24 24">
+              <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 
       9.5c-1.38 0-2.5-1.12-2.5-2.5S10.62 6.5 12 
-      6.5s2.5 1.12 2.5 2.5S13.38 11.5 12 11.5z"/>
-    </svg>
-    <strong>Address:</strong> {{ order.address }}
-  </p>
+      6.5s2.5 1.12 2.5 2.5S13.38 11.5 12 11.5z" />
+            </svg>
+            <strong>Address:</strong> {{ order.address }}
+          </p>
 
-  <!-- Description -->
-  <p v-if="order.description" class="flex items-center gap-2">
-    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-yellow-600" fill="currentColor" viewBox="0 0 24 24">
-      <path d="M21 6.5l-9-4.5-9 4.5v11l9 4.5 9-4.5v-11zm-9 
-      9l-6-3V9l6 3 6-3v3.5l-6 3z"/>
-    </svg>
-    <strong>Description:</strong> {{ order.description }}
-  </p>
+          <!-- Description -->
+          <p v-if="order.description" class="flex items-center gap-2">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-yellow-600" fill="currentColor"
+              viewBox="0 0 24 24">
+              <path d="M21 6.5l-9-4.5-9 4.5v11l9 4.5 9-4.5v-11zm-9 
+      9l-6-3V9l6 3 6-3v3.5l-6 3z" />
+            </svg>
+            <strong>Description:</strong> {{ order.description }}
+          </p>
 
-  <!-- Placed Date -->
-  <p class="flex items-center gap-2 text-xs text-gray-500">
-    <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5 text-gray-400" fill="currentColor" viewBox="0 0 24 24">
-      <path d="M19 4h-1V2h-2v2H8V2H6v2H5c-1.11 
+          <!-- Placed Date -->
+          <p class="flex items-center gap-2 text-xs text-gray-500">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5 text-gray-400" fill="currentColor"
+              viewBox="0 0 24 24">
+              <path d="M19 4h-1V2h-2v2H8V2H6v2H5c-1.11 
       0-2 .9-2 2v14c0 1.1.89 2 2 
       2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 
-      16H5V9h14v11z"/>
-    </svg>
-    <span>Placed: {{ formatDate(order.createdAt) }}</span>
-  </p>
-</div>
+      16H5V9h14v11z" />
+            </svg>
+            <span>Placed: {{ formatDate(order.createdAt) }}</span>
+          </p>
+        </div>
         <!-- Actions -->
         <div class="mt-4 flex flex-wrap gap-2">
           <button v-if="order.status === 'Pending'" @click="acceptOrder(order._id)"
             class="flex-1 bg-gradient-to-r from-green-500 to-green-600 hover:opacity-90 text-white px-4 py-2 rounded-xl font-semibold shadow-md transition">
-             Accept
+            Accept
           </button>
           <button v-if="order.status === 'Pending'" @click="rejectOrder(order._id)"
             class="flex-1 bg-gradient-to-r from-red-500 to-red-600 hover:opacity-90 text-white px-4 py-2 rounded-xl font-semibold shadow-md transition">
-             Reject
+            Reject
           </button>
           <button v-if="order.status === 'Accepted'" @click="completeOrder(order._id)"
             class="flex-1 bg-gradient-to-r from-blue-500 to-blue-600 hover:opacity-90 text-white px-4 py-2 rounded-xl font-semibold shadow-md transition">
-            🎉 Mark Completed
+             Mark Completed
           </button>
         </div>
       </div>
@@ -160,7 +166,7 @@
           <ul class="space-y-2 text-sm text-gray-600">
 
             <li>
-              <router-link to="/provider/policies" class="flex items-center gap-2 hover:text-[#0073b1] transition">
+              <router-link to="/providerpolicies" class="flex items-center gap-2 hover:text-[#0073b1] transition">
                 <!-- Shield/Document Icon -->
                 <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24"
                   stroke="currentColor" stroke-width="2">
@@ -172,7 +178,7 @@
             </li>
 
             <li>
-              <router-link to="/provider/about" class="flex items-center gap-2 hover:text-[#0073b1] transition">
+              <router-link to="/providerabout" class="flex items-center gap-2 hover:text-[#0073b1] transition">
                 <!-- Info Circle Icon -->
                 <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24"
                   stroke="currentColor" stroke-width="2">
@@ -184,7 +190,7 @@
             </li>
 
             <li>
-              <router-link to="/provider/contact" class="flex items-center gap-2 hover:text-[#0073b1] transition">
+              <router-link to="/providercontact" class="flex items-center gap-2 hover:text-[#0073b1] transition">
                 <!-- Phone Icon -->
                 <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24"
                   stroke="currentColor" stroke-width="2">
@@ -269,22 +275,28 @@
 
 <script setup>
 import { ref, onMounted, computed } from 'vue'
-import axios from 'axios'
+import API from '@/api';
 import { toast } from 'vue3-toastify'
 import 'vue3-toastify/dist/index.css'
+// Static assets
 
+import skillLogo from '@/assets/skilllogo.png'
+ const defaultPic = require('@/assets/user.png');
+// State
 const provider = ref(null)
 const allOrders = ref([])
 const searchQuery = ref('')
 const statusFilter = ref('')
+  const profileImage = computed(() =>
+      provider.value?.profilePic
+        ? API.getImageUrl(`providers/${provider.value.profilePic}`) // use helper
+        : defaultPic
+    );
 
 // Fetch Orders
 const fetchOrders = async () => {
   try {
-    const token = localStorage.getItem('token')
-    const res = await axios.get('http://localhost:5000/api/provider/orders', {
-      headers: { Authorization: `Bearer ${token}` },
-    })
+    const res = await API.get('/providerorders') // interceptor adds token
     allOrders.value = res.data
   } catch (err) {
     console.error('❌ Failed to fetch orders:', err)
@@ -295,12 +307,7 @@ const fetchOrders = async () => {
 // Update Order Status
 const updateOrderStatus = async (id, status) => {
   try {
-    const token = localStorage.getItem('token')
-    await axios.put(
-      `http://localhost:5000/api/provider/orders/${id}/status`,
-      { status },
-      { headers: { Authorization: `Bearer ${token}` } }
-    )
+    await API.put(`/providerorders/${id}/status`, { status })
     toast.success(`Order ${status.toLowerCase()} successfully`)
     fetchOrders()
   } catch (err) {
@@ -364,7 +371,6 @@ onMounted(() => {
   fetchOrders()
 })
 </script>
-
 
 <style>
 /* Expand/Collapse Animation */

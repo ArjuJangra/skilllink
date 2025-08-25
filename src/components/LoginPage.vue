@@ -15,7 +15,8 @@
             class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-sm transition" />
 
           <div class="relative">
-            <input :type="showPassword ? 'text' : 'password'" v-model="loginForm.password" placeholder="Password" required
+            <input :type="showPassword ? 'text' : 'password'" v-model="loginForm.password" placeholder="Password"
+              required
               class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-sm transition" />
             <button type="button" @click="showPassword = !showPassword"
               class="absolute right-3 top-2 text-gray-500 text-sm focus:outline-none">
@@ -56,8 +57,7 @@
     <!-- Splash Screen -->
     <transition name="overlay-fade">
       <div v-if="showSplash" class="absolute inset-0 flex flex-col items-center justify-center bg-white z-20">
-        <img src="@/assets/skilllogo.png" alt="SkillLink Logo"
-          class="w-32 mb-4 animate-scale-bounce" />
+        <img src="@/assets/skilllogo.png" alt="SkillLink Logo" class="w-32 mb-4 animate-scale-bounce" />
         <p class="text-gray-700 font-medium text-lg animate-pulse">Loading...</p>
       </div>
     </transition>
@@ -66,13 +66,13 @@
 </template>
 
 <script setup>
- import { reactive, ref } from 'vue';
+import { reactive, ref } from 'vue';
 import { useRouter } from 'vue-router';
-import axios from 'axios';
+import API from '@/api';
 import { auth, loginUser } from '@/stores/auth';
 import { toast } from 'vue3-toastify';
 
- const router = useRouter();
+const router = useRouter();
 const loginForm = reactive({ email: '', password: '', role: 'user', remember: false });
 const showPassword = ref(false);
 const loading = ref(false);
@@ -84,12 +84,16 @@ const handleLogin = async () => {
   loading.value = true;
 
   try {
-    const res = await axios.post('http://localhost:5000/api/auth/login', { ...loginForm });
+    const res = await API.post('/auth/login', { ...loginForm });
     const { token, user } = res.data;
 
     loginUser(token, user);
     auth.isLoggedIn = true;
-    auth.user = { ...user, avatar: user.profilePic ? `http://localhost:5000/uploads/${user.profilePic}` : require('@/assets/user.png') };
+    auth.user = {
+      ...user,
+      avatar: user.profilePic ? `${API.defaults.baseURL}/uploads/${user.profilePic}` : require('@/assets/user.png')
+    };
+
 
     localStorage.setItem('token', token);
     localStorage.setItem('userId', user._id);
@@ -114,21 +118,31 @@ const handleLogin = async () => {
 </script>
 
 <style scoped>
-
 /* Fade for overlay */
-.overlay-fade-enter-active, .overlay-fade-leave-active {
+.overlay-fade-enter-active,
+.overlay-fade-leave-active {
   transition: opacity 0.4s ease, transform 0.4s ease;
 }
-.overlay-fade-enter-from, .overlay-fade-leave-to {
+
+.overlay-fade-enter-from,
+.overlay-fade-leave-to {
   opacity: 0;
   transform: scale(0.95);
 }
 
 /* Logo bounce-scale animation */
 @keyframes scale-bounce {
-  0%, 100% { transform: scale(1); }
-  50% { transform: scale(1.1); }
+
+  0%,
+  100% {
+    transform: scale(1);
+  }
+
+  50% {
+    transform: scale(1.1);
+  }
 }
+
 .animate-scale-bounce {
   animation: scale-bounce 1s infinite;
 }
@@ -168,6 +182,7 @@ const handleLogin = async () => {
     opacity: 0;
     transform: translateY(-20px) scale(0.95);
   }
+
   100% {
     opacity: 1;
     transform: translateY(0) scale(1);
@@ -180,6 +195,7 @@ const handleLogin = async () => {
     opacity: 1;
     transform: translateY(0) scale(1);
   }
+
   100% {
     opacity: 0;
     transform: translateY(-20px) scale(0.95);
@@ -190,16 +206,27 @@ const handleLogin = async () => {
 .animate-pulse {
   animation: pulse 1s infinite;
 }
+
 @keyframes pulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.5; }
+
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.5;
+  }
 }
 
-.fade-enter-active, .fade-leave-active {
+.fade-enter-active,
+.fade-leave-active {
   transition: opacity 0.5s ease, transform 0.5s ease;
 }
-.fade-enter-from, .fade-leave-to {
+
+.fade-enter-from,
+.fade-leave-to {
   opacity: 0;
   transform: scale(0.95);
 }
-</style>  
+</style>
