@@ -5,7 +5,6 @@
  <AppNavbar />
      </header>
       
-    
     <!-- Hero -->
     <section class="py-10 bg-gradient-to-br from-blue-100 to-white text-center px-4">
       <h2
