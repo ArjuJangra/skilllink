@@ -1,5 +1,5 @@
 <template>
-  <div class="min-h-screen bg-[#F6F9FC] overflow-hidden">
+  <div class="min-h-screen bg-[#F6F9FC]">
     <header class="bg-white shadow sticky top-0 z-50">
        <AppNavbar />
     </header>
