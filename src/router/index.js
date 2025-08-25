@@ -17,6 +17,7 @@ import ServiceDetails from '@/components/ServiceDetails.vue';
 import AddService from '@/components/AddService.vue';
 import PrivacyPolicy from '@/components/PrivacyPolicy.vue';
 import TermsConditions from '@/components/TermsConditions.vue';
+import AppNavbar from '@/components/AppNavbar.vue';
 // import { auth } from '@/stores/auth';
 
 const routes = [
@@ -27,6 +28,7 @@ const routes = [
   { path: '/homeboard', component: HomeBoard },
   { path: '/privacy', component: PrivacyPolicy },
   { path: '/terms', component: TermsConditions },
+  { path: '/navbar', component: AppNavbar },
   {
     path: '/homelogged',
     component: HomeLogged,
