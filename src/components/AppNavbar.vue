@@ -119,7 +119,6 @@
       </div>
     </transition> 
   </header>
-
    <!--Homelogged Navbar -->
     <header v-else class="sticky top-0 z-50 w-full bg-gradient-to-r from-white via-[#f1faff] to-[#f5fafe] shadow-md">
       <div class="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
