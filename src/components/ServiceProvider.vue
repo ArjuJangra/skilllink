@@ -7,21 +7,7 @@
           <img src="@/assets/skilllogo.png" alt="SkillLink Logo" loading="eager" class="w-10 h-10" />
           <span class="text-xl font-bold text-[#0073b1]">SkillLink</span>
         </div>
-          <!-- Orders -->
-          <router-link to="/providerorders"
-            class="relative flex items-center gap-2 px-3 py-2 text-gray-600 hover:text-[#0073b1] hover:scale-105 transition-transform duration-200 font-medium"
-            active-class="text-[#0073b1] font-semibold after:absolute after:left-0 after:right-0 after:-bottom-1 after:h-[2px] after:bg-[#0073b1] after:rounded-full">
-            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-              <path
-                d="M6 2a1 1 0 0 0-1 1v2H3a1 1 0 1 0 0 2h1l1.6 9.59A3 3 0 0 0 8.56 19h6.88a3 3 0 0 0 2.96-2.41L20 7H7V5h10a1 1 0 1 0 0-2H7V3a1 1 0 0 0-1-1zm2.56 15a1 1 0 0 1-.98-.8L6.28 9h11.44l-1.3 7.2a1 1 0 0 1-.98.8H8.56zM9 21a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3zm6 0a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3z" />
-            </svg>
-            <span>Orders</span>
-            <!-- Notification Badge -->
-            <span v-if="newOrdersCount > 0"
-              class="absolute top-0 right-0 -mt-1 -mr-2 bg-red-600 text-white text-xs font-bold w-5 h-5 flex items-center justify-center rounded-full">
-              {{ newOrdersCount }}
-            </span>
-          </router-link>
+          
         <!-- Desktop Navigation -->
         <nav class="hidden md:flex items-center space-x-6 text-sm lg:text-base">
 

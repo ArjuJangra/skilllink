@@ -32,7 +32,7 @@ const routes = [
     component: HomeLogged,
     meta: { requiresAuth: true, role: 'user' }
   },
-  { path: '/about', component: AboutPage },
+  { path: '/about', name: "About", component: AboutPage },
   { path: '/contact', component: ContactPage },
   { path: '/help', component: HelpPage },
   {

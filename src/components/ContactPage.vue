@@ -1,55 +1,8 @@
 <template>
   <div class="min-h-screen bg-[#F6F9FC]">
-    <!-- Fixed Header -->
-    <header class="w-full bg-white shadow-md fixed top-0 z-50">
-      <div class="max-w-6xl mx-auto py-4 flex items-center justify-between">
-
-        <!-- Logo -->
-        <div class="flex items-center space-x-2">
-          <img src="@/assets/skilllogo.png" alt="SkillLink Logo" class="h-10 w-auto" />
-          <span class="text-xl font-bold text-[#0074B7]">SkillLink</span>
-        </div>
-
-        <!-- Navigation -->
-        <nav class="flex items-center gap-6">
-          <!-- About -->
-          <router-link to="/about"
-            class="flex items-center gap-2 px-3 py-2 rounded-lg text-gray-700 font-medium hover:text-[#00A8E8] transition">
-            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24"
-              stroke="currentColor" stroke-width="2">
-              <path stroke-linecap="round" stroke-linejoin="round"
-                d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-            </svg>
-            <span>About Us</span>
-          </router-link>
-
-          <!-- Policies -->
-          <router-link to="/privacy"
-            class="flex items-center gap-2 text-gray-700 font-medium hover:text-[#00A8E8] transition">
-            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M12 1l9 4v6c0 5-3.6 9.7-9 11-5.4-1.3-9-6-9-11V5l9-4zM7 9v2h10V9H7z" />
-            </svg>
-            <span>Policies</span>
-          </router-link>
-
-          <!-- Help -->
-          <router-link :to="{ path: '/help', query: { from: 'homelogged' } }"
-            class="flex items-center gap-2 text-gray-700 font-medium hover:text-[#0073b1] transition">
-            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
-              <path fill-rule="evenodd" clip-rule="evenodd"
-                d="M12 19.5C16.1421 19.5 19.5 16.1421 19.5 12C19.5 7.85786 16.1421 4.5 12 4.5C7.85786 4.5 4.5 7.85786 4.5 12C4.5 16.1421 7.85786 19.5 12 19.5ZM12 21C16.9706 21 21 16.9706 21 12C21 7.02944 16.9706 3 12 3C7.02944 3 3 7.02944 3 12C3 16.9706 7.02944 21 12 21ZM12.75 15V16.5H11.25V15H12.75ZM10.5 10.4318C10.5 9.66263 11.1497 9 12 9C12.8503 9 13.5 9.66263 13.5 10.4318C13.5 10.739 13.3151 11.1031 12.9076 11.5159C12.5126 11.9161 12.0104 12.2593 11.5928 12.5292L11.25 12.7509V14.25H12.75V13.5623C13.1312 13.303 13.5828 12.9671 13.9752 12.5696C14.4818 12.0564 15 11.3296 15 10.4318C15 8.79103 13.6349 7.5 12 7.5C10.3651 7.5 9 8.79103 9 10.4318H10.5Z" />
-            </svg>
-            <span>Help</span>
-          </router-link>
-
-          <!-- Home -->
-          <router-link to="/homelogged" class="bg-[#0074B7] text-white px-4 py-2 rounded-lg hover:bg-[#005f91] transition">
-            Home
-          </router-link>
-        </nav>
-      </div>
-    </header>
-
+      <header class="bg-white shadow sticky top-0 z-50">
+ <AppNavbar />
+     </header>
     <!-- Page Content -->
     <div class="pt-[90px] px-4 py-6 flex items-center justify-center">
       <div class="w-full max-w-6xl bg-white rounded-xl shadow-xl p-6 md:p-10 overflow-y-auto max-h-[95vh]">
@@ -130,7 +83,7 @@
 import { reactive, ref } from 'vue'
 import API from '@/api';
 import { toast } from 'vue3-toastify'
-
+import AppNavbar from '@/components/AppNavbar.vue'
 const form = reactive({
   name: '',
   email: '',
