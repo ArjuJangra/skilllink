@@ -1,6 +1,5 @@
 <template>
   <div v-if="isAuthenticated" class="min-h-screen bg-gray-50 px-4 py-8 relative">
-
     <!--  Loading spinner overlay -->
     <div v-if="loading" class="fixed inset-0 bg-black bg-opacity-30 flex items-center justify-center z-50">
       <div class="loader"></div>
@@ -53,187 +52,187 @@
         </button>
       </div>
 
-      <!-- Account Settings Section -->
-      <div class="flex flex-col lg:flex-row gap-6">
-        <div class="bg-white rounded-2xl shadow-lg p-6 space-y-6 w-full max-w-lg ">
-          <!-- 🔧 Header -->
-          <h3 class="text-2xl font-bold text-[#007EA7]">Account Settings</h3>
-          <section class="space-y-4">
-            <div>
-              <button @click="showSecuritySection = !showSecuritySection"
-                class="flex justify-between items-center w-full text-left font-semibold text-[#007EA7] hover:text-[#005f7a] transition">
-                <span> Security</span>
+  <!-- Account Settings Section -->
+<div class="flex flex-col lg:flex-row gap-6">
 
-              </button>
+  <!-- Left Column: Settings -->
+  <div class="flex-1 bg-white rounded-2xl shadow-lg p-6 space-y-6">
 
-              <transition name="fade">
-                <div v-if="showSecuritySection" class="mt-3 space-y-3 pl-4">
-                  <button @click="showChangePasswordModal = true"
-                    class="text-[#007EA7] hover:underline font-medium transition">
-                    Change Password
-                  </button>
+    <!-- Header -->
+    <h3 class="text-2xl font-bold text-[#007EA7] mb-4">Account Settings</h3>
 
-                  <label class="flex items-center space-x-2">
-                    <input type="checkbox" v-model="twoFactorEnabled" @change="toggleTwoFactor" />
-                    <span>
-                      Two-Factor Authentication
-                      <strong>({{ twoFactorEnabled ? 'Enabled' : 'Disabled' }})</strong>
-                    </span>
-                  </label>
-                </div>
-              </transition>
-            </div>
+    <section class="space-y-4">
 
-            <div>
-              <button @click="showNotificationPrefs = !showNotificationPrefs"
-                class="flex justify-between items-center w-full text-left font-semibold text-[#007EA7] hover:text-[#005f7a] transition">
-                <span> Notification Preferences</span>
-
-              </button>
-
-              <transition name="fade">
-                <div v-if="showNotificationPrefs" class="mt-3 space-y-2 pl-4">
-                  <label class="flex items-center space-x-2">
-                    <input type="checkbox" v-model="notificationPrefs.email" @change="autoUpdateNotificationPrefs" />
-                    <span>Email Notifications</span>
-                  </label>
-                  <label class="flex items-center space-x-2">
-                    <input type="checkbox" v-model="notificationPrefs.sms" @change="autoUpdateNotificationPrefs" />
-                    <span>SMS Notifications</span>
-                  </label>
-                  <label class="flex items-center space-x-2">
-                    <input type="checkbox" v-model="notificationPrefs.push" @change="autoUpdateNotificationPrefs" />
-                    <span>Push Notifications</span>
-                  </label>
-                </div>
-              </transition>
-            </div>
-
-            <div>
-              <button @click="showLanguagePref = !showLanguagePref"
-                class="flex justify-between items-center w-full text-left font-semibold text-[#007EA7] hover:text-[#005f7a] transition">
-                <span> Language Preferences</span>
-
-              </button>
-
-              <transition name="fade">
-                <select v-if="showLanguagePref" v-model="languagePref" @change="updateLanguagePref"
-                  class="mt-2 w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#007EA7]">
-                  <option value="en">English</option>
-                  <option value="hi">Hindi</option>
-                  <option value="es">Spanish</option>
-                  <option value="fr">French</option>
-                </select>
-              </transition>
-            </div>
-
-            <div>
-              <button @click="showAvailability = !showAvailability"
-                class="flex justify-between items-center w-full text-left font-semibold text-[#007EA7] hover:text-[#005f7a] transition">
-                <span> Availability Scheduling</span>
-              </button>
-
-              <transition name="fade">
-                <div v-if="showAvailability" class="mt-3 flex gap-4">
-                  <label class="flex flex-col text-sm w-full">
-                    Start Time
-                    <input type="time" v-model="availability.start" @change="autoUpdateAvailability"
-                      class="border px-2 py-1 rounded focus:outline-none focus:ring-2 focus:ring-[#007EA7]" />
-                  </label>
-                  <label class="flex flex-col text-sm w-full">
-                    End Time
-                    <input type="time" v-model="availability.end" @change="autoUpdateAvailability"
-                      class="border px-2 py-1 rounded focus:outline-none focus:ring-2 focus:ring-[#007EA7]" />
-                  </label>
-                </div>
-              </transition>
-            </div>
-
-            <div>
-              <button @click="showPrivacySettings = !showPrivacySettings"
-                class="flex justify-between items-center w-full  font-semibold text-[#007EA7] hover:text-[#005f7a] transition">
-                <span> Privacy Settings</span>
-              </button>
-
-              <transition name="fade">
-                <div v-show="showPrivacySettings" class="px-4 py-3 space-y-2 border-t">
-                  <label class="flex items-center space-x-2">
-                    <input type="checkbox" v-model="privacySettings.showEmail" />
-                    <span>Show email on profile</span>
-                  </label>
-                  <label class="flex items-center space-x-2">
-                    <input type="checkbox" v-model="privacySettings.showPhone" />
-                    <span>Show phone number on profile</span>
-                  </label>
-                </div>
-              </transition>
-            </div>
-          </section>
-
-          <section>
-            <button @click="showConnectedAccounts = !showConnectedAccounts"
-              class="flex justify-between items-center w-full text-left font-semibold text-[#007EA7] hover:text-[#005f7a] transition">
-              <span> Connected Accounts</span>
-
-            </button>
-
-            <transition name="fade">
-              <div v-if="showConnectedAccounts" class="mt-3 space-y-3 pl-4">
-                <div class="flex justify-between items-center">
-                  <span>Google</span>
-                  <button @click="toggleGoogleLink"
-                    class="px-3 py-1 rounded bg-[#007EA7] text-white hover:bg-[#005f7a]">
-                    {{ isGoogleLinked ? 'Unlink' : 'Link' }}
-                  </button>
-                </div>
-                <div class="flex justify-between items-center">
-                  <span>Facebook</span>
-                  <button @click="toggleFacebookLink"
-                    class="px-3 py-1 rounded bg-[#007EA7] text-white hover:bg-[#005f7a]">
-                    {{ isFacebookLinked ? 'Unlink' : 'Link' }}
-                  </button>
-                </div>
-              </div>
-            </transition>
-          </section>
-
-          <div class="bg-white rounded-2xl shadow p-6 w-full lg:w-1/3 transition hover:shadow-xl">
-
-            <h3 class="text-xl font-bold mb-3 flex items-center text-[#007EA7]">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2 text-[#007EA7]" fill="none"
-                viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                  d="M12 11c0 1.104-.896 2-2 2s-2-.896-2-2 .896-2 2-2 2 .896 2 2z" />
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                  d="M20.354 15.354A9 9 0 1112 3v0a9 9 0 018.354 12.354z" />
-              </svg>
-              Current Location
-            </h3>
-
-            <p class="text-sm text-gray-700 mb-4">Area: {{ provider?.area || 'Not set' }}</p>
-
-            <button @click="showLocationModal = true"
-              class="px-4 py-2 bg-[#007EA7] text-white rounded-lg shadow hover:bg-[#005f7a] transition">
-              Edit Location
-            </button>
-
+      <!-- Security -->
+      <div class="bg-gray-50 rounded-xl p-4 hover:bg-gray-100 transition">
+        <button @click="showSecuritySection = !showSecuritySection"
+          class="flex justify-between items-center w-full font-semibold text-[#007EA7]">
+          <span class="flex items-center gap-2">Security</span>
+        </button>
+        <transition name="fade">
+          <div v-if="showSecuritySection" class="mt-3 space-y-3 pl-4">
+            <button @click="showChangePasswordModal = true"
+              class="text-[#007EA7] hover:underline font-medium transition">Change Password</button>
+            <label class="flex items-center space-x-2">
+              <input type="checkbox" v-model="twoFactorEnabled" @change="toggleTwoFactor" />
+              <span>Two-Factor Authentication (<strong>{{ twoFactorEnabled ? 'Enabled' : 'Disabled' }}</strong>)</span>
+            </label>
           </div>
-
-          <!--  Logout + Deactivate -->
-          <section class="pt-4 border-t space-y-3">
-            <button @click="showLogoutModal = true"
-              class="w-full bg-red-600 hover:bg-red-700 text-white font-semibold px-4 py-2 rounded-lg transition">
-              Logout
-            </button>
-            <button @click="showDeactivateModal = true"
-              class="w-full bg-red-600 hover:bg-red-700 text-white font-semibold px-4 py-2 rounded-lg transition">
-              Deactivate Account
-            </button>
-          </section>
-
-
-        </div>
+        </transition>
       </div>
+
+      <!-- Notification Preferences -->
+      <div class="bg-gray-50 rounded-xl p-4 hover:bg-gray-100 transition">
+        <button @click="showNotificationPrefs = !showNotificationPrefs"
+          class="flex justify-between items-center w-full font-semibold text-[#007EA7]">
+          <span class="flex items-center gap-2">Notification Preferences</span>
+        </button>
+        <transition name="fade">
+          <div v-if="showNotificationPrefs" class="mt-3 space-y-2 pl-4">
+            <label class="flex items-center space-x-2">
+              <input type="checkbox" v-model="notificationPrefs.email" @change="autoUpdateNotificationPrefs" />
+              <span>Email Notifications</span>
+            </label>
+            <label class="flex items-center space-x-2">
+              <input type="checkbox" v-model="notificationPrefs.sms" @change="autoUpdateNotificationPrefs" />
+              <span>SMS Notifications</span>
+            </label>
+            <label class="flex items-center space-x-2">
+              <input type="checkbox" v-model="notificationPrefs.push" @change="autoUpdateNotificationPrefs" />
+              <span>Push Notifications</span>
+            </label>
+          </div>
+        </transition>
+      </div>
+
+      <!-- Language Preferences -->
+      <div class="bg-gray-50 rounded-xl p-4 hover:bg-gray-100 transition">
+        <button @click="showLanguagePref = !showLanguagePref"
+          class="flex justify-between items-center w-full font-semibold text-[#007EA7]">
+          <span class="flex items-center gap-2">Language Preferences</span>
+        </button>
+        <transition name="fade">
+          <select v-if="showLanguagePref" v-model="languagePref" @change="updateLanguagePref"
+            class="mt-2 w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#007EA7]">
+            <option value="en">English</option>
+            <option value="hi">Hindi</option>
+            <option value="es">Spanish</option>
+            <option value="fr">French</option>
+          </select>
+        </transition>
+      </div>
+      <!-- Availability -->
+      <div class="bg-gray-50 rounded-xl p-4 hover:bg-gray-100 transition">
+        <button @click="showAvailability = !showAvailability"
+          class="flex justify-between items-center w-full font-semibold text-[#007EA7]">
+          <span class="flex items-center gap-2"> Availability Scheduling</span>
+       </button>
+        <transition name="fade">
+          <div v-if="showAvailability" class="mt-3 flex gap-4 pl-4">
+            <label class="flex flex-col text-sm w-full">Start Time
+              <input type="time" v-model="availability.start" @change="autoUpdateAvailability"
+                class="border px-2 py-1 rounded focus:outline-none focus:ring-2 focus:ring-[#007EA7]" />
+            </label>
+            <label class="flex flex-col text-sm w-full">End Time
+              <input type="time" v-model="availability.end" @change="autoUpdateAvailability"
+                class="border px-2 py-1 rounded focus:outline-none focus:ring-2 focus:ring-[#007EA7]" />
+            </label>
+          </div>
+        </transition>
+      </div>
+
+      <!-- Privacy Settings -->
+      <div class="bg-gray-50 rounded-xl p-4 hover:bg-gray-100 transition">
+        <button @click="showPrivacySettings = !showPrivacySettings"
+          class="flex justify-between items-center w-full font-semibold text-[#007EA7]">
+          <span class="flex items-center gap-2"> Privacy Settings
+          </span>
+        </button>
+             <transition
+  enter-active-class="transition-all duration-300 ease-out"
+  enter-from-class="max-h-0 opacity-0"
+  enter-to-class="max-h-96 opacity-100"
+  leave-active-class="transition-all duration-300 ease-in"
+  leave-from-class="max-h-96 opacity-100"
+  leave-to-class="max-h-0 opacity-0"
+>
+          <div v-show="showPrivacySettings" class="mt-3 pl-4 space-y-2">
+            <label class="flex items-center space-x-2">
+              <input type="checkbox" v-model="privacySettings.showEmail" />
+              <span>Show email on profile</span>
+            </label>
+            <label class="flex items-center space-x-2">
+              <input type="checkbox" v-model="privacySettings.showPhone" />
+              <span>Show phone number on profile</span>
+            </label>
+          </div>
+        </transition>
+      </div>
+
+    </section>
+
+    <!-- Connected Accounts -->
+    <section class="bg-gray-50 rounded-xl p-4 hover:bg-gray-100 transition">
+      <button @click="showConnectedAccounts = !showConnectedAccounts"
+        class="flex justify-between items-center w-full font-semibold text-[#007EA7]">
+        <span class="flex items-center gap-2"> Connected Accounts</span></button>
+      <transition
+  enter-active-class="transition-all duration-300 ease-out"
+  enter-from-class="max-h-0 opacity-0"
+  enter-to-class="max-h-96 opacity-100"
+  leave-active-class="transition-all duration-300 ease-in"
+  leave-from-class="max-h-96 opacity-100"
+  leave-to-class="max-h-0 opacity-0"
+>
+        <div v-if="showConnectedAccounts" class="mt-3 space-y-3 pl-4">
+          <div class="flex justify-between items-center">
+            <span>Google</span>
+            <button @click="toggleGoogleLink"
+              class="px-3 py-1 rounded bg-[#007EA7] text-white hover:bg-[#005f7a]">
+              {{ isGoogleLinked ? 'Unlink' : 'Link' }}
+            </button>
+          </div>
+          <div class="flex justify-between items-center">
+            <span>Facebook</span>
+            <button @click="toggleFacebookLink"
+              class="px-3 py-1 rounded bg-[#007EA7] text-white hover:bg-[#005f7a]">
+              {{ isFacebookLinked ? 'Unlink' : 'Link' }}
+            </button>
+          </div>
+        </div>
+      </transition>
+    </section>
+  </div>
+  <!-- Right Column: Location + Logout -->
+  <div class="flex-1 space-y-6">
+    <!-- Location Card -->
+    <div class="bg-white rounded-2xl shadow p-6 hover:shadow-xl transition">
+      <h3 class="text-xl font-bold mb-3 flex items-center text-[#007EA7]">
+        Current Location
+      </h3>
+      <p class="text-sm text-gray-700 mb-4">Area: {{ provider?.area || 'Not set' }}</p>
+      <button @click="showLocationModal = true"
+        class="px-4 py-2 bg-[#007EA7] text-white rounded-lg shadow hover:bg-[#005f7a] transition">
+        Edit Location
+      </button>
+    </div>
+
+    <!-- Logout + Deactivate -->
+    <section class="bg-white rounded-2xl shadow p-6 space-y-3 hover:shadow-xl transition">
+      <button @click="showLogoutModal = true"
+        class="w-full bg-red-600 hover:bg-red-700 text-white font-semibold px-4 py-2 rounded-lg transition">
+        Logout
+      </button>
+      <button @click="showDeactivateModal = true"
+        class="w-full bg-red-600 hover:bg-red-700 text-white font-semibold px-4 py-2 rounded-lg transition">
+        Deactivate Account
+      </button>
+    </section>
+
+  </div>
+
+</div>
+
 
       <!-- Edit Profile Modal -->
       <transition name="modal-fade">
@@ -277,7 +276,6 @@
           </div>
         </div>
       </transition>
-
       <!-- Location Modal -->
       <transition name="modal-fade">
         <div v-if="showLocationModal"
@@ -295,7 +293,6 @@
           </div>
         </div>
       </transition>
-
       <!-- Logout Modal -->
       <transition name="modal-fade">
         <div v-if="showLogoutModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
@@ -314,7 +311,6 @@
           </div>
         </div>
       </transition>
-
       <!-- Change Password Modal -->
       <transition name="modal-fade">
         <div v-if="showChangePasswordModal"
@@ -353,7 +349,6 @@
           </div>
         </div>
       </transition>
-
       <!-- Account Deactivation Modal -->
       <transition name="modal-fade">
         <div v-if="showDeactivateModal"
@@ -375,7 +370,6 @@
           </div>
         </div>
       </transition>
-
     </div>
   </div>
 
