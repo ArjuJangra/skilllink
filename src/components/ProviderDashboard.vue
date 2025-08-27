@@ -432,7 +432,7 @@ const privacySubmitting = ref(false)
 const editForm = reactive({ name: '', email: '', area: '' })
 const selectedFile = ref(null)
 const previewImage = ref('')
-
+const defaultPic = require('@/assets/user.png');
 // Password form
 const passwordForm = reactive({ currentPassword: '', newPassword: '', confirmPassword: '' })
 
@@ -456,12 +456,11 @@ const isGoogleLinked = ref(false)
 const isFacebookLinked = ref(false)
 
 // Computed
-const profileImage = computed(() => {
-  if (provider.value?.profilePic) {
-    return `${API.defaults.baseURL}/uploads/providers/${provider.value.profilePic}`;
-  }
-  return require('@/assets/user.png');
-});
+const profileImage = computed(() =>
+  provider.value?.profilePic
+    ? API.getImageUrl(`providers/${provider.value.profilePic}`)
+    : defaultPic
+);
 
 const lastLoginFormatted = computed(() =>
   provider.value?.lastLogin ? dayjs(provider.value.lastLogin).format('MMM D, YYYY h:mm A') : 'Not available'

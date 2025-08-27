@@ -47,7 +47,7 @@ const routes = [
   beforeEnter: (to, from, next) => {
     const user = JSON.parse(localStorage.getItem("user"));
     if (user?.role === "provider") {
-      next("/provider/profile");
+      next("/providerprofile");
     } else {
       next("/dashboard");
     }
@@ -56,7 +56,7 @@ const routes = [
 }
 ,
   {
-    path: '/provider/profile',
+    path: '/providerprofile',
     name: 'ProviderDashboard',
     component: () => import('@/components/ProviderDashboard.vue'),
     meta: { requiresAuth: true, role: 'provider' }

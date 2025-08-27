@@ -367,6 +367,8 @@ import { useRoute } from "vue-router";
 import { useRouter } from 'vue-router';
 import { auth, logoutUser } from "@/stores/auth";
 import API from "@/api";
+import defaultAvatarFile from '@/assets/user.png';
+const defaultAvatar = defaultAvatarFile;
 const props = defineProps({
   mode: { type: String, default: 'default' },
    showSearch: { type: Boolean, default: false }, // Show search bar
@@ -374,7 +376,6 @@ const props = defineProps({
 });
 const user = ref(null);
 const isOpen = ref(false);
-const defaultAvatar = "/assets/user.png";
 const router = useRouter();
 const socket = ref(null);
 const route = useRoute();

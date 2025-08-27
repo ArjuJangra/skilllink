@@ -34,10 +34,7 @@
           <router-link to="/providerabout"
             class="relative flex items-center gap-2 px-3 py-2 text-gray-600 hover:text-[#0073b1] transition font-medium"
             active-class="text-[#0073b1] font-semibold after:absolute after:left-0 after:right-0 after:-bottom-1 after:h-[2px] after:bg-[#0073b1] after:rounded-full">
-            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-              <path
-                d="M12 2a10 10 0 1 0 10 10A10.011 10.011 0 0 0 12 2zm0 15a1 1 0 1 1 1-1 1 1 0 0 1-1 1zm1-4h-2V7h2z" />
-            </svg>
+           
             <span>About</span>
           </router-link>
 
@@ -45,30 +42,15 @@
           <router-link to="/providercontact"
             class="relative flex items-center gap-2 px-3 py-2 text-gray-600 hover:text-[#0073b1] transition font-medium"
             active-class="text-[#0073b1] font-semibold after:absolute after:left-0 after:right-0 after:-bottom-1 after:h-[2px] after:bg-[#0073b1] after:rounded-full">
-            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-              <path
-                d="M21 16.5a17.05 17.05 0 0 1-7.5-7.5l2.2-2.2a1 1 0 0 0 .2-1.1l-2-5A1 1 0 0 0 12 0H7a2 2 0 0 0-2 2 19 19 0 0 0 19 19 2 2 0 0 0 2-2v-5a1 1 0 0 0-.7-.95l-5-2a1 1 0 0 0-1.1.2z" />
-            </svg>
+          
             <span>Contact</span>
           </router-link>
 
-          <!-- Profile Picture -->
-          <div class="relative group">
-            <router-link to="/profile">
-              <img
-                v-if="provider && provider.profilePic"
-                :src="`http://localhost:5000/uploads/providers/${provider.profilePic}`"
-                alt="Provider DP"
-                class="w-10 h-10 rounded-full object-cover border-2 border-[#0073b1] cursor-pointer"
-              />
-              <img
-                v-else
-                src="@/assets/user.png"
-                alt="Default Provider DP"
-                class="w-10 h-10 rounded-full object-cover border-2 border-[#0073b1] cursor-pointer"
-              />
-            </router-link>
-          </div>
+           <!-- Profile picture -->
+          <router-link to="/providerprofile">
+            <img :src="profileImage" @error="handleImageError"
+              class="w-10 h-10 rounded-full border border-gray-300 object-cover" />
+          </router-link>
         </nav>
       </div>
     </header>
@@ -126,41 +108,35 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import API from '@/api';
 import { useRouter } from 'vue-router'
 import { toast } from 'vue3-toastify'
 import 'vue3-toastify/dist/index.css'
 
+const defaultPic = require('@/assets/user.png')
 const provider = ref(null)
 const router = useRouter()
 
- const fetchProviderProfile = async () => {
-  try {
-    const token = localStorage.getItem('token')
-    const res = await API.get('/providers/profile', {
-      headers: {
-        Authorization: `Bearer ${token}`
-      }
-    })
-    provider.value = res.data
-  } catch (err) {
-    console.error('Failed to fetch provider profile:', err)
-    toast.error('Unable to load provider profile')
-    router.push('/login') // fallback
-  }
-}
-
+// Initialize provider from localStorage
 onMounted(() => {
   const stored = localStorage.getItem('user')
   if (stored && JSON.parse(stored).role === 'provider') {
-    fetchProviderProfile()
+    provider.value = JSON.parse(stored) // <-- assign provider here
   } else {
     toast.error('Unauthorized access')
     router.push('/login')
   }
 })
+
+// Computed profile image
+const profileImage = computed(() =>
+  provider.value?.profilePic
+    ? API.getImageUrl(`providers/${provider.value.profilePic}`)
+    : defaultPic
+)
 </script>
+
 
 
 <style scoped></style>

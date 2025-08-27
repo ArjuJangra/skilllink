@@ -19,7 +19,7 @@
             </svg>
             <span class="font-semibold">Home</span>
           </router-link>
-          <router-link to="/provider/profile">
+          <router-link to="/providerprofile">
             <img :src="profileImage" @error="handleImageError"
               class="w-10 h-10 rounded-full border border-gray-300 hover:border-[#0073b1] transition cursor-pointer object-cover"
               loading="lazy" alt="Profile Picture" />

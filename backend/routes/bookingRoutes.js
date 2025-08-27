@@ -7,7 +7,7 @@ const User = require('../models/User');
 const ServiceProvider = require('../models/ServiceProvider');
 const authenticateUser = require('../middleware/authMiddleware');
 
-// ✅ Test route
+//  Test route
 router.get('/test', (req, res) => res.send('✅ Booking route is working'));
 
 // GET active bookings
@@ -105,18 +105,49 @@ router.put('/mark-completed/:id', authenticateUser, async (req, res) => {
   }
 });
 
+router.delete('/clearhistory', authenticateUser, async (req, res) => {
+  try {
+    console.log("👉 clearhistory user:", req.user);
+
+    await Booking.deleteMany({
+      userId: req.user._id,
+      status: { $in: ['Completed', 'Rejected'] }
+    });
+
+    res.json({ message: 'History cleared successfully' });
+  } catch (err) {
+    console.error('Error clearing history:', err);
+    res.status(500).json({ message: 'Failed to clear history', error: err.message });
+  }
+});
+
 // DELETE booking with ownership check
 router.delete('/:id', authenticateUser, async (req, res) => {
   try {
-    const booking = await Booking.findById(req.params.id);
-    if (!booking) return res.status(404).json({ message: 'Booking not found' });
-    if (booking.userId.toString() !== req.user.id) return res.status(403).json({ message: 'Not authorized' });
+    const bookingId = req.params.id;
 
-    await booking.remove();
+    if (!bookingId.match(/^[0-9a-fA-F]{24}$/)) {
+      // Validate ObjectId format
+      return res.status(400).json({ message: 'Invalid booking ID' });
+    }
+
+    const booking = await Booking.findById(bookingId);
+
+    if (!booking) {
+      return res.status(404).json({ message: 'Booking not found' });
+    }
+
+    // Ensure user owns the booking
+    if (booking.userId.toString() !== req.user.id) {
+      return res.status(403).json({ message: 'Not authorized to delete this booking' });
+    }
+
+    await Booking.deleteOne({ _id: bookingId });
+
     res.json({ message: 'Booking deleted successfully' });
   } catch (err) {
-    console.error('Error deleting booking:', err);
-    res.status(500).json({ message: 'Server error', error: err.message });
+    console.error(`Error deleting booking [ID: ${req.params.id}]:`, err);
+    res.status(500).json({ message: 'Server error while deleting booking', error: err.message });
   }
 });
 
@@ -161,7 +192,5 @@ router.get('/history', authenticateUser, async (req, res) => {
     res.status(500).json({ message: 'Failed to fetch history', error: err.message });
   }
 });
-
-
 
 module.exports = router;
