@@ -1,69 +1,8 @@
 <template>
   <div class="min-h-screen bg-[#F0F9FF]">
-    <!-- Header -->
-    <header class="sticky top-0 z-50 bg-gradient-to-r from-white via-[#f1faff] to-[#f5fafe] shadow-md w-full">
-      <div class="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
-        <!-- Logo -->
-        <div class="flex items-center space-x-2">
-          <img src="@/assets/skilllogo.png" alt="SkillLink Logo" class="w-10 h-10" />
-          <h1 class="text-2xl font-bold text-[#007EA7] ">SkillLink</h1>
-        </div>
+    <header>
+      <AppNavbar :mode="'default'" :showSearch="true" :hideExtras="true"   @search="searchQuery = $event" />
 
-        <!-- Right Side -->
-        <div class="flex items-center space-x-4">
-          <!-- Mobile Search -->
-          <button @click="showMobileSearch = !showMobileSearch" class="sm:hidden text-gray-600 text-xl focus:outline-none">
-            <i class="fas fa-search text-[#007EA7] hover:text-[#005f6b] cursor-pointer" title="Search services"></i>
-          </button>
-
-          <!-- Desktop Search -->
-          <div class="hidden sm:block relative w-72">
-            <span class="absolute inset-y-0 left-0 pl-2 flex items-center text-gray-400">
-              <i class="fas fa-search"></i>
-            </span>
-            <input type="text" v-model="searchQuery" placeholder="Search for services..."
-              class="pl-10 pr-10 py-2 w-full border border-gray-300 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-[#00A8E8] focus:border-[#00A8E8] transition duration-200" />
-            <button v-if="searchQuery" @click="searchQuery = ''"
-              class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-900 transition">
-              <i class="fas fa-times-circle"></i>
-            </button>
-          </div>
-
-          <!-- User Login/Profile -->
-          <template v-if="auth.isLoggedIn">
-            <router-link to="/dashboard" class="group relative inline-block">
-              <img :src="profilePicUrl || require('@/assets/user.png')" alt="User Avatar"
-                class="w-10 h-10 rounded-full object-cover border-2 border-[#0073b1] shadow-sm transition-transform duration-200 group-hover:scale-105 group-hover:shadow-md" />
-            </router-link>
-          </template>
-          <template v-else>
-            <router-link to="/signup" class="hidden sm:block">
-              <button
-                class="px-6 py-2 bg-[#0073b1] text-white font-semibold rounded-lg hover:bg-[#005f91] transition duration-200">
-                Login / Sign Up
-              </button>
-            </router-link>
-            <router-link to="/signup" class="sm:hidden">
-              <i class="fas fa-user-circle text-[#007EA7] text-2xl hover:text-[#005f6b] cursor-pointer" title="Login / Signup"></i>
-            </router-link>
-          </template>
-        </div>
-      </div>
-
-      <!-- Mobile Search Input -->
-      <div v-if="showMobileSearch" class="sm:hidden px-4 pb-3">
-        <div class="relative">
-          <span class="absolute inset-y-0 left-0 pl-2 flex items-center text-gray-400">
-            <i class="fas fa-search"></i>
-          </span>
-          <input type="text" v-model="searchQuery" placeholder="Search..."
-            class="pl-10 pr-10 py-2 w-full border border-gray-300 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-[#00A8E8] focus:border-[#00A8E8] transition duration-200" />
-          <button v-if="searchQuery" @click="searchQuery = ''"
-            class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-900 transition">
-            <i class="fas fa-times-circle"></i>
-          </button>
-        </div>
-      </div>
     </header>
 
     <!-- Services Section -->
@@ -111,9 +50,10 @@ import { useRouter, useRoute } from 'vue-router';
 import { auth } from '@/stores/auth';
 import ServiceCard from '@/components/ServiceCard.vue';
 import API from '@/api';
+import AppNavbar from '@/components/AppNavbar.vue'
+
 const router = useRouter();
 const route = useRoute();
-const showMobileSearch = ref(false);
 const searchQuery = ref('');
 const profilePicUrl = ref('');
 const disableBooking = route.query.disableBooking === 'true';
