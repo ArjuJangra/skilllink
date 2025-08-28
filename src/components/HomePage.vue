@@ -2,7 +2,6 @@
   <div class="min-h-screen bg-[#F0F9FF]">
     <header>
       <AppNavbar :mode="'default'" :showSearch="true" :hideExtras="true"   @search="searchQuery = $event" />
-
     </header>
 
     <!-- Services Section -->

@@ -19,8 +19,8 @@ router.post('/signup', providerSignup);
 // Provider login
 router.post('/login', providerLogin);
 
-router.put('/profile/update/:id', uploadProviderPic.single('profilePic'), updateProviderProfile);
-router.get('/profile', authMiddleware, getProviderProfile);
+router.put('/providerprofile/update/:id', uploadProviderPic.single('profilePic'), updateProviderProfile);
+router.get('/providerprofile', authMiddleware, getProviderProfile);
 
 // Get providers by service (and area)
 router.post('/by-service', async (req, res) => {

@@ -27,105 +27,47 @@ const routes = [
   { path: '/homeboard', component: HomeBoard },
   { path: '/privacy', component: PrivacyPolicy },
   { path: '/terms', component: TermsConditions },
-  {
-    path: '/homelogged',
-    component: HomeLogged,
-    meta: { requiresAuth: true, role: 'user' }
-  },
   { path: '/about', name: "About", component: AboutPage },
   { path: '/contact', component: ContactPage },
   { path: '/help', component: HelpPage },
+  { path: '/homelogged', component: HomeLogged, meta: { requiresAuth: true, role: 'user' } },
   {
-    path: '/ServiceProvider',
-    component: ServiceProvider,
-    meta: { requiresAuth: true, role: 'provider' }
-  },
+    path: '/ServiceProvider', component: ServiceProvider, meta: { requiresAuth: true, role: 'provider' }  },
 
   // Auth-Protected Routes
   {
-  path: "/profile",
-  beforeEnter: (to, from, next) => {
-    const user = JSON.parse(localStorage.getItem("user"));
-    if (user?.role === "provider") {
-      next("/providerprofile");
-    } else {
-      next("/dashboard");
-    }
+    path: "/profile",
+    beforeEnter: (to, from, next) => {
+      const user = JSON.parse(localStorage.getItem("user"));
+      if (!user) return next("/login");
+      if (user?.role === "provider") {
+        next("/providerprofile");
+      } else {
+        next("/dashboard");
+      }
+    },
+    meta: { requiresAuth: true }
   },
-  meta: { requiresAuth: true }
-}
-,
   {
-    path: '/providerprofile',
-    name: 'ProviderDashboard',
-    component: () => import('@/components/ProviderDashboard.vue'),
-    meta: { requiresAuth: true, role: 'provider' }
-  },
+    path: '/providerprofile',  name: 'ProviderProfile',  component: () => import('@/components/ProviderDashboard.vue'),
+    meta: { requiresAuth: true, role: 'provider' }  },
+    {  path: '/providerorders',  name: 'ProviderOrders',  component: ProviderOrders,  meta: { requiresAuth: true ,role: 'provider' } } ,
+    {  path: '/providerpolicies', name: 'ProviderPolicies', component: ProviderPolicies, meta: { requiresAuth: true ,role: 'provider' } },
+    {  path: '/providerabout',   name: 'ProviderAbout',   component: ProviderAbout,   meta: { requiresAuth: true  ,role: 'provider'} },
+    {  path: '/providercontact',  name: 'ProviderContact',  component: ProviderContact,  meta: { requiresAuth: true  ,role: 'provider'}},
 
-  {
-    path: '/dashboard',
-    name: 'Dashboard',
-    component: () => import('@/components/UserDashboard.vue'),
-    meta: { requiresAuth: true }
-  },
-  {
-    path: '/booking',
-    name: 'Booking',
-    component: () => import('@/components/BookingPage.vue'),
-    meta: { requiresAuth: true }
-  },
+    //UserRoutes
 
-  {
-    path: '/booking-confirm',
-    name: 'BookingConfirm',
-    component: () => import('@/components/BookingConfirm.vue'),
-    meta: { requiresAuth: true }
-  },
-
-  {
-    path: '/providerorders',
-    name: 'ProviderOrders',
-    component: ProviderOrders,
-    meta: { requiresAuth: true }
-  },
-  {
-    path: '/providerpolicies',
-    name: 'ProviderPolicies',
-    component: ProviderPolicies,
-    meta: { requiresAuth: true }
-  },
-  {
-    path: '/providerabout',
-    name: 'ProviderAbout',
-    component: ProviderAbout,
-    meta: { requiresAuth: true }
-  },
-  {
-    path: '/providercontact',
-    name: 'ProviderContact',
-    component: ProviderContact,
-    meta: { requiresAuth: true }
-  },
-  {
-    path: '/notifications',
-    name: 'Notifications',
+  {  path: '/dashboard', name: 'Dashboard', component: () => import('@/components/UserDashboard.vue'),  meta: { requiresAuth: true }  },
+  {    path: '/booking',    name: 'Booking',    component: () => import('@/components/BookingPage.vue'),    meta: { requiresAuth: true }  },
+  {    path: '/booking-confirm',    name: 'BookingConfirm',    component: () => import('@/components/BookingConfirm.vue'),    meta: { requiresAuth: true }  },
+  { path: '/notifications', name: 'Notifications',
     component: () => import('@/components/NotificationHistory.vue'),
-    meta: { requiresAuth: true }
-  },
-
-{
-  path: '/service-details',
-  name: 'ServiceDetails',
+    meta: { requiresAuth: true }  },
+{  path: '/service-details',  name: 'ServiceDetails',
   component: ServiceDetails,
-  meta: { requiresAuth: true, role: 'user' }
-},
-  {
-    path: '/provideraddservice',
-    name: 'AddService',
-    component: AddService,
-  }
-
-
+  meta: { requiresAuth: true, role: 'user' }},
+  {  path: '/provideraddservice',  name: 'AddService',  component: AddService, }
 ];
 
 const router = createRouter({

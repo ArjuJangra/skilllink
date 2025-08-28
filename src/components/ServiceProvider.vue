@@ -105,7 +105,7 @@
           class="bg-[#0073b1] hover:bg-[#005f8d] text-white px-5 py-3 rounded-lg font-semibold transition flex items-center gap-2">
           <span>📄</span> View Orders
         </router-link>
-        <router-link to="/provider/profile"
+        <router-link to="/providerprofile"
           class="bg-[#f46675] hover:bg-[#d95563] text-white px-5 py-3 rounded-lg font-semibold transition flex items-center gap-2">
           <span>✏️</span> Update Profile
         </router-link>
@@ -236,7 +236,7 @@ export default {
 
     const fetchProviderProfile = async () => {
       try {
-        const res = await API.get(`/providers/profile`, { headers: { Authorization: `Bearer ${token}` } });
+        const res = await API.get(`/providers/providerprofile`, { headers: { Authorization: `Bearer ${token}` } });
         provider.value = res.data;
         let completed = 0;
         if (provider.value.name) completed += 25;

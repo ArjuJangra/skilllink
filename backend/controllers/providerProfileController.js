@@ -156,17 +156,20 @@ async function updateProviderProfile(req, res) {
 // Get Provider Profile
 const getProviderProfile = async (req, res) => {
   try {
-    if (!req.user) {
+    if (!req.user || !req.user.id) {
       return res.status(401).json({ message: 'Unauthorized' });
     }
 
-    // Return the already authenticated provider (excluding password)
-    res.json(req.user);
+    const provider = await ServiceProvider.findById(req.user.id).select('-password');
+    if (!provider) return res.status(404).json({ message: 'Provider not found' });
+
+    res.json(provider);
   } catch (err) {
     console.error('Error fetching provider profile:', err);
     res.status(500).json({ message: 'Server error' });
   }
 };
+
 
 module.exports = {
   providerSignup,

@@ -498,7 +498,7 @@ const updateProfile = async () => {
     formData.append('area', editForm.area)
     if (selectedFile.value) formData.append('profilePic', selectedFile.value)
 
-     const res = await API.put(`/providers/profile/update/${provider.value._id}`, formData, {
+     const res = await API.put(`/providers/providersprofile/update/${provider.value._id}`, formData, {
       headers: { 'Content-Type': 'multipart/form-data' }
     });
 
@@ -522,7 +522,7 @@ const updateLocation = async () => {
   try {
     const token = localStorage.getItem('token')
     const res = await API.put(
-      `/providers/profile/update/${providerId}`,
+      `/providersprofile/update/${providerId}`,
       { area: editForm.area },
       { headers: { Authorization: `Bearer ${token}` } }
     )
@@ -666,7 +666,7 @@ onMounted(async () => {
   isAuthenticated.value = true
   loading.value = true
   try {
-     const res = await API.get('/providers/profile');
+     const res = await API.get('/providers/providerprofile');
     provider.value = res.data
     localStorage.setItem('user', JSON.stringify(res.data))
 

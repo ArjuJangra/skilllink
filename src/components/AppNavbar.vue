@@ -95,6 +95,7 @@
         </template>
 
         <template v-else>
+
           <div class="flex items-center gap-3 ml-auto">
             <!-- Notification Bell -->
             <router-link to="/notifications"
@@ -189,7 +190,6 @@
       </div>
     </transition>
   </header>
-
   <!--Homelogged Navbar -->
   <header v-else class="sticky top-0 z-50 w-full bg-gradient-to-r from-white via-[#f1faff] to-[#f5fafe] shadow-md">
     <div class="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
@@ -362,41 +362,41 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted,watch } from "vue";
-import { useRoute } from "vue-router";
-import { useRouter } from 'vue-router';
+import { ref, computed, onMounted, watch } from "vue";
+import { useRoute, useRouter } from "vue-router";
 import { auth, logoutUser } from "@/stores/auth";
 import API from "@/api";
 import defaultAvatarFile from '@/assets/user.png';
+
 const defaultAvatar = defaultAvatarFile;
+
 const props = defineProps({
   mode: { type: String, default: 'default' },
-   showSearch: { type: Boolean, default: false }, // Show search bar
-  hideExtras: { type: Boolean, default: false }  // 'default' or 'homelogged'
+  showSearch: { type: Boolean, default: false },
+  hideExtras: { type: Boolean, default: false }
 });
+
 const user = ref(null);
 const isOpen = ref(false);
 const router = useRouter();
-const socket = ref(null);
 const route = useRoute();
-const showLogoutModal = ref(false)
-const closeMenu = () => { isOpen.value = false; }
+const showLogoutModal = ref(false);
 const unreadCount = ref(0);
+const searchQuery = ref("");
 
 const emit = defineEmits(["search"]);
 
-const searchQuery = ref("");
-
-// Whenever searchQuery changes, emit it upwards
 watch(searchQuery, (newVal) => {
   emit("search", newVal);
 });
 
-// Fallback for API.getImageUrl
+const closeMenu = () => { isOpen.value = false; };
 const getImageUrl = (path) => API?.getImageUrl ? API.getImageUrl(path) : path;
 
-// Fetch logged-in user profile
+// Fetch logged-in user profile only if logged in
 const fetchUserProfile = async () => {
+  if (!auth.isLoggedIn) return;
+
   try {
     const { data } = await API.get('/user/profile');
     user.value = data;
@@ -404,16 +404,27 @@ const fetchUserProfile = async () => {
     console.error('❌ Failed to fetch user profile:', error);
   }
 };
-// Determine which button to show
+
+// Determine which button to show in navbar
 const showButton = computed(() => {
-  const homePages = ["/about", "/contact", "/help"];
-  if (homePages.includes(route.path)) return "home";
-  if (!auth?.isLoggedIn) return "login";
-  return "profile";
+  if (!auth.isLoggedIn) return "login"; // Not logged in → show login/signup button
+
+  const homePages = ["/about", "/contact", "/help", "/homeboard"];
+  if (homePages.includes(route.path)) return "home"; // Logged-in on home/about/help → show Home
+  return "profile"; // Logged-in elsewhere → show profile
 });
-// --- Logout ---
-const logout = () => { logoutUser(); user.value = { name: '', email: '', phone: '', bio: '', profilePic: '' }; socket.value?.disconnect?.(); router.push('/homeboard'); };
-const confirmLogout = () => { logout(); showLogoutModal.value = false; };
+
+// Logout functions
+const logout = () => {
+  logoutUser();
+  user.value = null;
+  router.push('/homeboard');
+};
+const confirmLogout = () => {
+  logout();
+  showLogoutModal.value = false;
+};
+
 onMounted(() => {
   fetchUserProfile();
 });
