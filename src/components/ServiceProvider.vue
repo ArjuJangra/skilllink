@@ -221,9 +221,7 @@ export default {
       { title: 'Earnings', value: stats.earnings, color: 'text-yellow-600' },
       { title: 'Profile Completion', value: profileCompletion.value, color: 'text-[#0073b1]' },
     ]);
-
     const handleImageError = (e) => (e.target.src = defaultPic);
-
     const statusMap = {
       Pending: 'bg-yellow-100 text-yellow-800',
       Accepted: 'bg-blue-100 text-blue-800',
@@ -231,7 +229,6 @@ export default {
       Rejected: 'bg-red-100 text-red-800',
     };
     const statusColor = (status) => statusMap[status] || 'bg-gray-100 text-gray-800';
-
     const token = localStorage.getItem('token');
 
     const fetchProviderProfile = async () => {
@@ -248,7 +245,6 @@ export default {
         console.error(err);
       }
     };
-
     const fetchNewOrdersCount = async () => {
       try {
         const res = await API.get(`/providerorders`, { headers: { Authorization: `Bearer ${token}` } });

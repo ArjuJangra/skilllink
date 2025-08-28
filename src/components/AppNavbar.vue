@@ -396,7 +396,6 @@ const getImageUrl = (path) => API?.getImageUrl ? API.getImageUrl(path) : path;
 // Fetch logged-in user profile only if logged in
 const fetchUserProfile = async () => {
   if (!auth.isLoggedIn) return;
-
   try {
     const { data } = await API.get('/user/profile');
     user.value = data;
@@ -405,13 +404,24 @@ const fetchUserProfile = async () => {
   }
 };
 
-// Determine which button to show in navbar
+/**
+ * 🔑 Navbar button logic:
+ * - `/about`, `/contact`, `/help`, `/policy` → always show Home
+ * - `/homeboard` → show Login if logged out, Profile if logged in
+ * - Else → show Profile if logged in, Login if logged out
+ */
 const showButton = computed(() => {
-  if (!auth.isLoggedIn) return "login"; // Not logged in → show login/signup button
+  const homePages = ["/about", "/contact", "/help", "/policy"];
 
-  const homePages = ["/about", "/contact", "/help", "/homeboard"];
-  if (homePages.includes(route.path)) return "home"; // Logged-in on home/about/help → show Home
-  return "profile"; // Logged-in elsewhere → show profile
+  if (homePages.includes(route.path)) {
+    return "home"; // Always Home
+  }
+
+  if (route.path === "/homeboard") {
+    return auth.isLoggedIn ? "profile" : "login";
+  }
+
+  return auth.isLoggedIn ? "profile" : "login";
 });
 
 // Logout functions
@@ -429,6 +439,7 @@ onMounted(() => {
   fetchUserProfile();
 });
 </script>
+
 
 <style scoped>
 .drawer-link {
