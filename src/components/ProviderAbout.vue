@@ -142,7 +142,7 @@ export default {
     async fetchUserProfile() {
       try {
         const token = localStorage.getItem('token');
-        const res = await API.get('/providers/profile', { headers: { Authorization: `Bearer ${token}` } });
+        const res = await API.get('/providers/providerprofile', { headers: { Authorization: `Bearer ${token}` } });
         this.provider = res.data;
       } catch (err) {
         console.error('Failed to fetch profile:', err);

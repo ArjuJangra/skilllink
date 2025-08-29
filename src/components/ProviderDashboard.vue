@@ -498,7 +498,7 @@ const updateProfile = async () => {
     formData.append('area', editForm.area)
     if (selectedFile.value) formData.append('profilePic', selectedFile.value)
 
-     const res = await API.put(`/providers/providersprofile/update/${provider.value._id}`, formData, {
+     const res = await API.put(`/providers/providerprofile/update/${provider.value._id}`, formData, {
       headers: { 'Content-Type': 'multipart/form-data' }
     });
 
