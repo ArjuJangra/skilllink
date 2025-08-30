@@ -233,7 +233,10 @@ const handleSubmit = async () => {
 
   try {
     loading.value = true;
-    const endpoint = '/auth/signup';
+    const endpoint = form.role === 'user'
+  ? '/auth/signup'               // normal user signup
+  : '/providers/signup';         // provider signup
+
     // Prepare payload
     const payload = form.role === 'user'
       ? { name: form.name, email: form.email, password: form.password, role: form.role }
