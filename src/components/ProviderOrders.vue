@@ -1,10 +1,11 @@
 <template>
   <div class="min-h-screen bg-[#F0F9FF] text-gray-800 ">
     <!-- Navbar -->
-    <header class="fixed top-0 left-0 right-0 z-50 bg-gradient-to-r from-white via-[#f1faff] to-[#f5fafe]  backdrop-blur-md shadow-md">
+    <header
+      class="fixed top-0 left-0 right-0 z-50 bg-gradient-to-r from-white via-[#f1faff] to-[#f5fafe]  backdrop-blur-md shadow-md">
       <div class="max-w-6xl mx-auto px-4 py-3 sm:px-6 flex justify-between items-center">
         <div class="flex items-center space-x-2">
-         <img :src="skillLogo" alt="SkillLink Logo" class="w-10 h-10" />
+          <img :src="skillLogo" alt="SkillLink Logo" class="w-10 h-10" />
 
           <span class="text-xl font-bold text-[#0073b1]">SkillLink</span>
         </div>
@@ -24,7 +25,7 @@
               class="w-10 h-10 rounded-full border border-gray-300 hover:border-[#0073b1] transition cursor-pointer object-cover"
               loading="lazy" alt="Profile Picture" />
           </router-link>
-         
+
         </nav>
       </div>
     </header>
@@ -32,9 +33,14 @@
     <!-- Page Header -->
     <div class="max-w-6xl mx-auto pt-24 px-4 py-10 text-center">
       <h1
-        class="text-4xl font-extrabold bg-gradient-to-r from-[#3B8D99] to-[#f46675] bg-clip-text text-transparent mb-3">
-        My Orders
-      </h1>
+  class="text-4xl font-extrabold 
+         bg-gradient-to-r from-[#3B8D99] to-[#f46675] 
+         bg-clip-text text-transparent 
+         leading-[1.2] pb-1">
+  My Orders
+</h1>
+
+
       <p class="text-gray-600 text-sm">Track and manage your service orders with ease.</p>
 
       <!-- Search & Filter -->
@@ -136,7 +142,7 @@
           </button>
           <button v-if="order.status === 'Accepted'" @click="completeOrder(order._id)"
             class="flex-1 bg-gradient-to-r from-blue-500 to-blue-600 hover:opacity-90 text-white px-4 py-2 rounded-xl font-semibold shadow-md transition">
-             Mark Completed
+            Mark Completed
           </button>
         </div>
       </div>
@@ -281,17 +287,17 @@ import 'vue3-toastify/dist/index.css'
 // Static assets
 
 import skillLogo from '@/assets/skilllogo.png'
- const defaultPic = require('@/assets/user.png');
+const defaultPic = require('@/assets/user.png');
 // State
 const provider = ref(null)
 const allOrders = ref([])
 const searchQuery = ref('')
 const statusFilter = ref('')
-  const profileImage = computed(() =>
-      provider.value?.profilePic
-        ? API.getImageUrl(`providers/${provider.value.profilePic}`) // use helper
-        : defaultPic
-    );
+const profileImage = computed(() =>
+  provider.value?.profilePic
+    ? API.getImageUrl(`providers/${provider.value.profilePic}`) // use helper
+    : defaultPic
+);
 
 // Fetch Orders
 const fetchOrders = async () => {
