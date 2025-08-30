@@ -3,7 +3,7 @@ const ServiceProvider = require('../models/ServiceProvider');
 
 exports.getNearbyServices = async (req, res) => {
   console.log('📥 Incoming request:', req.body);
-  const { latitude, longitude, service, maxDistance = 200000 } = req.body;
+  const { latitude, longitude, service, maxDistance = 50000 } = req.body;
 
   try {
     let providers = await ServiceProvider.find({

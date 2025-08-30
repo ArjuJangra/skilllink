@@ -84,37 +84,51 @@ const handleLogin = async () => {
   loading.value = true;
 
   try {
-    const res = await API.post('/auth/login', { ...loginForm });
+    // Only send email & password
+    const res = await API.post('/auth/login', {
+      email: loginForm.email,
+      password: loginForm.password,
+    });
+
     const { token, user } = res.data;
 
+    // Save token and user info
     loginUser(token, user);
     auth.isLoggedIn = true;
     auth.user = {
       ...user,
-      avatar: user.profilePic ? `${API.defaults.baseURL}/uploads/${user.profilePic}` : require('@/assets/user.png')
+      avatar: user.profilePic
+        ? `${API.defaults.baseURL}/uploads/${user.profilePic}`
+        : require('@/assets/user.png'),
     };
-
 
     localStorage.setItem('token', token);
     localStorage.setItem('userId', user._id);
     localStorage.setItem('user', JSON.stringify(user));
 
-    // Show splash after clicking login
+    // Show splash screen
     showSplash.value = true;
 
-    // Hide login card and show splash for 1.5s, then redirect
+    // Redirect after 1.5s
     setTimeout(() => {
       showSplash.value = false;
-      router.push(user.role === 'provider' ? '/ServiceProvider' : '/homelogged');
+      // Use role from backend user object for routing
+      if (user.role === 'provider') {
+        router.push('/ServiceProvider');
+      } else {
+        router.push('/homelogged');
+      }
     }, 1500);
 
   } catch (err) {
+    // Show error toast
     errorMessage.value = err.response?.data?.message || 'Login failed.';
     toast.error(`❌ ${errorMessage.value}`, { className: 'toast-custom toast-error', autoClose: 3000 });
   } finally {
     loading.value = false;
   }
 };
+
 </script>
 
 <style scoped>
