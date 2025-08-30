@@ -77,19 +77,18 @@ async function providerSignup(req, res) {
   }
 }
 
-// Provider Login
 async function providerLogin(req, res) {
   const { email, password } = req.body;
 
   try {
     const provider = await ServiceProvider.findOne({ email });
     if (!provider) {
-      return res.status(400).json({ message: 'Invalid credentials' });
+      return res.status(401).json({ message: 'Invalid email or password' });
     }
 
     const isMatch = await bcrypt.compare(password, provider.password);
     if (!isMatch) {
-      return res.status(400).json({ message: 'Invalid credentials' });
+      return res.status(401).json({ message: 'Invalid email or password' });
     }
 
     const token = generateToken(provider._id, 'provider');

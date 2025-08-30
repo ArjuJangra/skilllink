@@ -88,6 +88,7 @@ const handleLogin = async () => {
     const res = await API.post('/auth/login', {
       email: loginForm.email,
       password: loginForm.password,
+      role: loginForm.role
     });
 
     const { token, user } = res.data;
