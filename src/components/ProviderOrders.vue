@@ -40,7 +40,6 @@
   My Orders
 </h1>
 
-
       <p class="text-gray-600 text-sm">Track and manage your service orders with ease.</p>
 
       <!-- Search & Filter -->
@@ -195,18 +194,6 @@
               </router-link>
             </li>
 
-            <li>
-              <router-link to="/providercontact" class="flex items-center gap-2 hover:text-[#0073b1] transition">
-                <!-- Phone Icon -->
-                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24"
-                  stroke="currentColor" stroke-width="2">
-                  <path stroke-linecap="round" stroke-linejoin="round"
-                    d="M3 5a2 2 0 012-2h2.28a1 1 0 01.95.684l1.518 4.552a1 1 0 01-.27 1.043l-1.2 1.2a16.001 16.001 0 006.586 6.586l1.2-1.2a1 1 0 011.043-.27l4.552 1.518A1 1 0 0121 19.72V22a2 2 0 01-2 2h-1C9.163 24 3 17.837 3 10V5z" />
-                </svg>
-                <span>Contact</span>
-              </router-link>
-            </li>
-
           </ul>
         </div>
 
@@ -217,37 +204,36 @@
             <li>
               <a href="mailto:connectteamskilllink@gmail.com"
                 class="flex items-center gap-2 hover:text-[#0073b1] transition">
-                <!-- Mail Icon -->
-                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24"
-                  stroke="currentColor" stroke-width="2">
-                  <path stroke-linecap="round" stroke-linejoin="round"
-                    d="M16 12H8m12 0c0 4.418-3.582 8-8 8s-8-3.582-8-8 3.582-8 8-8 8 3.582 8 8z" />
-                  <path stroke-linecap="round" stroke-linejoin="round" d="M22 6l-10 7L2 6" />
-                </svg>
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
+              <path
+                d="M2.25 6.75A2.25 2.25 0 0 1 4.5 4.5h15a2.25 2.25 0 0 1 2.25 2.25v10.5A2.25 2.25 0 0 1 19.5 19.5h-15a2.25 2.25 0 0 1-2.25-2.25V6.75zm2.334-.75L12 11.327 19.416 6h-14.832zm15.166 1.635-7.731 5.154a.75.75 0 0 1-.838 0L3.45 7.635v9.615c0 .414.336.75.75.75h15a.75.75 0 0 0 .75-.75V7.635z" />
+            </svg>
                 <span>connectteamskilllink@gmail.com</span>
               </a>
             </li>
 
             <li>
               <a href="tel:+919876543210" class="flex items-center gap-2 hover:text-[#0073b1] transition">
-                <!-- Phone Icon -->
-                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24"
-                  stroke="currentColor" stroke-width="2">
-                  <path stroke-linecap="round" stroke-linejoin="round"
-                    d="M3 5a2 2 0 012-2h2.28a1 1 0 01.95.684l1.52 4.552a1 1 0 01-.27 1.043l-1.2 1.2a16 16 0 006.586 6.586l1.2-1.2a1 1 0 011.043-.27l4.552 1.52a1 1 0 01.684.95V19a2 2 0 01-2 2h-1C9.163 21 3 14.837 3 7V5z" />
-                </svg>
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
+              <path
+                d="M6.62 10.79a15.05 15.05 0 006.59 6.59l2.2-2.2a1 1 0 011.11-.21 11.05 11.05 0 003.47.55 1 1 0 011 1V20a1 1 0 01-1 1C10.42 21 3 13.58 3 5a1 1 0 011-1h3.5a1 1 0 011 1c0 1.2.19 2.38.55 3.47a1 1 0 01-.21 1.11l-2.22 2.21z" />
+            </svg>
                 <span>+91 98765 43210</span>
               </a>
             </li>
 
             <li>
               <router-link to="/help" class="flex items-center gap-2 hover:text-[#0073b1] transition">
-                <!-- Help Circle Icon -->
-                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24"
-                  stroke="currentColor" stroke-width="2">
-                  <path stroke-linecap="round" stroke-linejoin="round"
-                    d="M12 18h.01M12 6a9 9 0 100 18 9 9 0 000-18zm0 4v4" />
-                </svg>
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" xmlns:xlink="http://www.w3.org/1999/xlink"
+              fill="currentcolor" version="1.1" id="Layer_1" viewBox="0 0 24 24" >
+              <g>
+                <path
+                  d="M12,2C6.5,2,2,6.5,2,12s4.5,10,10,10s10-4.5,10-10S17.5,2,12,2z M12,20c-4.5,0-8-3.5-8-8s3.5-8,8-8s8,3.5,8,8   S16.5,20,12,20z" />
+              </g>
+              <rect x="11" y="15" width="2" height="2" />
+              <path
+                d="M13,14h-2c0-2.6,2-2.1,2-4.2c0-0.4-0.2-1.3-1.1-1.3c-0.3,0-1,0.5-1,1.5H9c0,0-0.4-3,2.9-3C14.5,7,15,8.9,15,9.8  C15,12.1,13,12.3,13,14z" />
+            </svg>
                 <span>Help Center</span>
               </router-link>
             </li>

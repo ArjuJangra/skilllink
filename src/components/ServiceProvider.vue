@@ -175,8 +175,8 @@
         <div>
           <h3 class="text-sm font-bold text-gray-800 mb-3">More</h3>
           <ul class="space-y-2 text-sm text-gray-600">
-            <li><router-link to="/terms" class="hover:text-[#0073b1] flex gap-2">Terms of Service</router-link></li>
-            <li><router-link to="/privacy" class="hover:text-[#0073b1] flex gap-2">Privacy Policy</router-link></li>
+            <li><router-link to="/terms" class="hover:text-[#0073b1] flex gap-2">⚖️ Terms of Service</router-link></li>
+            <li><router-link to="/privacy" class="hover:text-[#0073b1] flex gap-2">🔒 Privacy Policy</router-link></li>
           </ul>
           <div class="flex space-x-4 mt-4"> <a href="#" class="text-gray-500 hover:text-[#0073b1]"><i class="fab fa-facebook-f"></i></a> <a href="#" class="text-gray-500 hover:text-[#0073b1]"><i class="fab fa-twitter"></i></a> <a href="#" class="text-gray-500 hover:text-[#0073b1]"><i class="fab fa-linkedin-in"></i></a> </div>
         </div>
