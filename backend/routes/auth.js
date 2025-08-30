@@ -72,12 +72,8 @@ router.post('/signup', async (req, res) => {
 router.post('/login', async (req, res) => {
   try {
     const { email, password, role } = req.body;
-
-    console.log('➡️ Login attempt:', email, '| Role:', role);
-
     let user;
 
-    // Check role and query appropriate model
     if (role === 'provider') {
       user = await ServiceProvider.findOne({ email });
     } else {
@@ -85,21 +81,12 @@ router.post('/login', async (req, res) => {
     }
 
     if (!user) {
-      console.log('❌ User not found');
-      return res.status(401).json({ error: 'User not found' });
+      return res.status(401).json({ message: 'User not found' });
     }
 
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
-      console.log('❌ Invalid password');
-      return res.status(401).json({ error: 'Invalid password' });
-    }
-
-    console.log('✅ Password matched');
-
-    if (!process.env.JWT_SECRET) {
-      console.error('❌ JWT_SECRET missing in .env');
-      return res.status(500).json({ error: 'Server configuration error' });
+      return res.status(401).json({ message: 'Invalid credentials' });
     }
 
     const token = jwt.sign({ id: user._id, role: user.role }, process.env.JWT_SECRET, {
@@ -121,9 +108,10 @@ router.post('/login', async (req, res) => {
     });
   } catch (err) {
     console.error('❌ Login error:', err);
-    res.status(500).json({ error: 'Login failed. Try again later' });
+    res.status(500).json({ message: 'Login failed. Try again later' });
   }
 });
+
 
 router.get('/check', authenticateUser, (req, res) => {
   res.json({ user: req.user });
