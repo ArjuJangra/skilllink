@@ -2,64 +2,72 @@ const express = require('express');
 const router = express.Router();
 const User = require('../models/User');
 const ServiceProvider = require('../models/ServiceProvider');
-const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
 const authenticateUser = require('../middleware/authMiddleware');
-
-// SIGNUP POST /api/auth/signup
+// ---------------------- SIGNUP ----------------------
 router.post('/signup', async (req, res) => {
-  const { name, email, password, role, services, experience, address } = req.body;
-
   try {
-    // 1. Check for existing user
-    const existingUser = await User.findOne({ email });
-    if (existingUser) {
-      return res.status(409).json({ message: 'User already exists' });
-    }
-
-    // 2. Basic required fields check
+    const { name, email, password, role, services, experience, address, latitude, longitude } = req.body;
     if (!name || !email || !password || !role) {
-      return res.status(400).json({ message: 'All fields are required' });
+      return res.status(400).json({ message: 'Name, email, password, and role are required.' });
     }
 
-    // 3. If provider, ensure provider-specific fields are present
-    if (role === 'provider') {
-      if (!services || services.length === 0 || !experience || !address) {
-        return res.status(400).json({ message: 'All provider fields are required' });
-      }
+    const normalizedEmail = email.toLowerCase().trim();
+
+    // Check if email already exists in User or ServiceProvider
+    const existingUser = await User.findOne({ email: normalizedEmail });
+    const existingProvider = await ServiceProvider.findOne({ email: normalizedEmail });
+
+    if (existingUser || existingProvider) {
+      return res.status(409).json({ message: 'Email already registered.' });
     }
-    
-    // 4. Hash the password
+
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // 5. Create the user
-    const newUser = new User({
-      name,
-      email,
-      password: hashedPassword,
-      role,
-      ...(role === 'provider' && {
+    let newAccount;
+    if (role === 'provider') {
+      // Validate provider-specific fields
+      if (!services || !Array.isArray(services) || services.length === 0 || !experience || !address || !latitude || !longitude) {
+        return res.status(400).json({ message: 'All provider fields are required.' });
+      }
+
+      newAccount = new ServiceProvider({
+        name,
+        email: normalizedEmail,
+        password: hashedPassword,
+        role: 'provider',
         services,
         experience,
-        address
-      })
-    });
+        address,
+        latitude,
+        longitude,
+      });
 
-    await newUser.save();
+    } else {
+      newAccount = new User({
+        name,
+        email: normalizedEmail,
+        password: hashedPassword,
+        role: 'user',
+      });
+    }
 
-    // 6. Sign JWT token
-    const token = jwt.sign({ id: newUser._id }, process.env.JWT_SECRET, { expiresIn: '1d' });
+    await newAccount.save();
+
+    const token = jwt.sign({ id: newAccount._id, role: newAccount.role }, process.env.JWT_SECRET, { expiresIn: '1d' });
 
     res.status(201).json({
       token,
       user: {
-        name: newUser.name,
-        email: newUser.email,
-        role: newUser.role,
-        services: newUser.services,
-        experience: newUser.experience,
-        address: newUser.address
-      }
+        _id: newAccount._id,
+        name: newAccount.name,
+        email: newAccount.email,
+        role: newAccount.role,
+        services: newAccount.services || [],
+        experience: newAccount.experience || 0,
+        address: newAccount.address || '',
+      },
     });
 
   } catch (err) {
@@ -68,50 +76,58 @@ router.post('/signup', async (req, res) => {
   }
 });
 
-// LOGIN POST /api/auth/login
+// ---------------------- LOGIN ----------------------
 router.post('/login', async (req, res) => {
   try {
     const { email, password, role } = req.body;
-    let user;
+    if (!email || !password || !role) {
+      return res.status(400).json({ message: 'Email, password, and role are required.' });
+    }
+
+    const normalizedEmail = email.toLowerCase().trim();
+    let account;
 
     if (role === 'provider') {
-      user = await ServiceProvider.findOne({ email });
+      account = await ServiceProvider.findOne({ email: normalizedEmail });
     } else {
-      user = await User.findOne({ email });
+      account = await User.findOne({ email: normalizedEmail });
     }
 
-    if (!user) {
-      return res.status(401).json({ message: 'User not found' });
+    console.log('🔹 Attempting login with:', { email: normalizedEmail, role });
+    console.log('🔹 Account found:', account);
+
+    if (!account) {
+      return res.status(401).json({ message: 'Invalid email or password' });
     }
 
-    const isMatch = await bcrypt.compare(password, user.password);
+    const isMatch = await bcrypt.compare(password, account.password);
+    console.log('🔹 Password match:', isMatch);
+
     if (!isMatch) {
-      return res.status(401).json({ message: 'Invalid credentials' });
+      return res.status(401).json({ message: 'Invalid email or password' });
     }
 
-    const token = jwt.sign({ id: user._id, role: user.role }, process.env.JWT_SECRET, {
-      expiresIn: '1d',
-    });
+    const token = jwt.sign({ id: account._id, role: account.role }, process.env.JWT_SECRET, { expiresIn: '1d' });
 
     res.status(200).json({
       message: 'Login successful',
       token,
       user: {
-        _id: user._id,
-        name: user.name,
-        email: user.email,
-        role: user.role,
-        services: user.services,
-        experience: user.experience,
-        address: user.address,
+        _id: account._id,
+        name: account.name,
+        email: account.email,
+        role: account.role,
+        services: account.services || [],
+        experience: account.experience || 0,
+        address: account.address || '',
       },
     });
+
   } catch (err) {
-    console.error('❌ Login error:', err);
-    res.status(500).json({ message: 'Login failed. Try again later' });
+    console.error('Login error:', err);
+    res.status(500).json({ message: 'Login failed. Try again later', error: err.message });
   }
 });
-
 
 router.get('/check', authenticateUser, (req, res) => {
   res.json({ user: req.user });

@@ -18,7 +18,7 @@ async function providerSignup(req, res) {
       contact,
       services,
       experience,
-        area  
+      area
     } = req.body;
 
     let profilePic = null;
@@ -35,7 +35,9 @@ async function providerSignup(req, res) {
       return res.status(400).json({ message: 'You can only select up to 3 services.' });
     }
 
-    const existingProvider = await ServiceProvider.findOne({ email });
+    const normalizedEmail = email.toLowerCase().trim();
+    const existingProvider = await ServiceProvider.findOne({ email: normalizedEmail });
+
     if (existingProvider) {
       return res.status(400).json({ message: 'Provider already exists' });
     }
@@ -55,7 +57,7 @@ async function providerSignup(req, res) {
       experience,
       profilePic,
       role: 'provider',
-        area  
+      area
     });
 
     const token = generateToken(provider._id, 'provider');
@@ -76,24 +78,40 @@ async function providerSignup(req, res) {
     res.status(500).json({ message: 'Server error', error: error.message });
   }
 }
-
+// Provider Login
 async function providerLogin(req, res) {
-  const { email, password } = req.body;
-
   try {
-    const provider = await ServiceProvider.findOne({ email });
+    const { email, password } = req.body;
+
+    if (!email || !password) {
+      return res.status(400).json({ message: 'Email and password are required.' });
+    }
+
+    const normalizedEmail = email.toLowerCase().trim();
+
+    // Use regex to ignore case and spaces
+    const provider = await ServiceProvider.findOne({
+      email: { $regex: new RegExp(`^${normalizedEmail}$`, 'i') },
+      role: 'provider'
+    });
+
+    console.log("Login payload:", req.body);
+    console.log("Found provider:", provider);
+
     if (!provider) {
       return res.status(401).json({ message: 'Invalid email or password' });
     }
 
     const isMatch = await bcrypt.compare(password, provider.password);
+    console.log("Password match:", isMatch);
+
     if (!isMatch) {
       return res.status(401).json({ message: 'Invalid email or password' });
     }
 
     const token = generateToken(provider._id, 'provider');
 
-    res.json({
+    res.status(200).json({
       token,
       user: {
         id: provider._id,
@@ -103,12 +121,12 @@ async function providerLogin(req, res) {
         role: provider.role,
       },
     });
+
   } catch (err) {
     console.error('Provider Login Error:', err);
     res.status(500).json({ message: 'Server error', error: err.message });
   }
 }
-
 // Update Provider Profile
 async function updateProviderProfile(req, res) {
   try {
@@ -151,7 +169,6 @@ async function updateProviderProfile(req, res) {
     return res.status(500).json({ message: 'Failed to update provider', error: error.message });
   }
 }
-
 // Get Provider Profile
 const getProviderProfile = async (req, res) => {
   try {

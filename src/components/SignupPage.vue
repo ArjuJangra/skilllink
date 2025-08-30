@@ -239,8 +239,20 @@ const handleSubmit = async () => {
 
     // Prepare payload
     const payload = form.role === 'user'
-      ? { name: form.name, email: form.email, password: form.password, role: form.role }
-      : { ...form };
+  ? { name: form.name, email: form.email, password: form.password, role: form.role }
+  : {
+      name: form.name,
+      email: form.email,
+      password: form.password,
+      latitude: form.latitude,
+      longitude: form.longitude,
+      address: form.address,
+      services: form.services,
+      experience: form.experience,
+      area: form.area,
+      role: 'provider'
+    };
+
 
     const response = await API.post(endpoint, payload);
 
