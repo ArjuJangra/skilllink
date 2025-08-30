@@ -105,22 +105,6 @@
         </transition>
       </div>
 
-      <!-- Language Preferences -->
-      <div class="bg-gray-50 rounded-xl p-4 hover:bg-gray-100 transition">
-        <button @click="showLanguagePref = !showLanguagePref"
-          class="flex justify-between items-center w-full font-semibold text-[#007EA7]">
-          <span class="flex items-center gap-2">Language Preferences</span>
-        </button>
-        <transition name="fade">
-          <select v-if="showLanguagePref" v-model="languagePref" @change="updateLanguagePref"
-            class="mt-2 w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#007EA7]">
-            <option value="en">English</option>
-            <option value="hi">Hindi</option>
-            <option value="es">Spanish</option>
-            <option value="fr">French</option>
-          </select>
-        </transition>
-      </div>
       <!-- Availability -->
       <div class="bg-gray-50 rounded-xl p-4 hover:bg-gray-100 transition">
         <button @click="showAvailability = !showAvailability"
@@ -170,38 +154,6 @@
       </div>
 
     </section>
-
-    <!-- Connected Accounts -->
-    <section class="bg-gray-50 rounded-xl p-4 hover:bg-gray-100 transition">
-      <button @click="showConnectedAccounts = !showConnectedAccounts"
-        class="flex justify-between items-center w-full font-semibold text-[#007EA7]">
-        <span class="flex items-center gap-2"> Connected Accounts</span></button>
-      <transition
-  enter-active-class="transition-all duration-300 ease-out"
-  enter-from-class="max-h-0 opacity-0"
-  enter-to-class="max-h-96 opacity-100"
-  leave-active-class="transition-all duration-300 ease-in"
-  leave-from-class="max-h-96 opacity-100"
-  leave-to-class="max-h-0 opacity-0"
->
-        <div v-if="showConnectedAccounts" class="mt-3 space-y-3 pl-4">
-          <div class="flex justify-between items-center">
-            <span>Google</span>
-            <button @click="toggleGoogleLink"
-              class="px-3 py-1 rounded bg-[#007EA7] text-white hover:bg-[#005f7a]">
-              {{ isGoogleLinked ? 'Unlink' : 'Link' }}
-            </button>
-          </div>
-          <div class="flex justify-between items-center">
-            <span>Facebook</span>
-            <button @click="toggleFacebookLink"
-              class="px-3 py-1 rounded bg-[#007EA7] text-white hover:bg-[#005f7a]">
-              {{ isFacebookLinked ? 'Unlink' : 'Link' }}
-            </button>
-          </div>
-        </div>
-      </transition>
-    </section>
   </div>
   <!-- Right Column: Location + Logout -->
   <div class="flex-1 space-y-6">
@@ -232,8 +184,6 @@
   </div>
 
 </div>
-
-
       <!-- Edit Profile Modal -->
       <transition name="modal-fade">
         <div v-if="showEditProfileForm"
@@ -410,16 +360,13 @@ const showChangePasswordModal = ref(false)
 const showDeactivateModal = ref(false)
 const showNotificationPrefs = ref(false)
 const showAvailability = ref(false)
-const showLanguagePref = ref(false)
 const showPrivacySettings = ref(false)
-const showConnectedAccounts = ref(false)
 
 // Form states
 const isSubmitting = ref(false)
 const passwordSubmitting = ref(false)
 const notifSubmitting = ref(false)
 const availabilitySubmitting = ref(false)
-const languageSubmitting = ref(false)
 const privacySubmitting = ref(false)
 
 // Profile form
@@ -436,18 +383,12 @@ const notificationPrefs = reactive({ email: false, sms: false, push: false })
 // Availability scheduling
 const availability = reactive({ start: '', end: '' })
 
-// Language preference
-const languagePref = ref('en')
 
 // Privacy settings
 const privacySettings = reactive({ showEmail: false, showPhone: false })
 
 // Two-factor auth
 const twoFactorEnabled = ref(false)
-
-// Connected accounts
-const isGoogleLinked = ref(false)
-const isFacebookLinked = ref(false)
 
 // Computed
 const profileImage = computed(() =>
@@ -604,20 +545,6 @@ const autoUpdateAvailability = async () => {
   }
 }
 
-// Language
-const updateLanguagePref = async () => {
-  languageSubmitting.value = true
-  try {
-    const token = localStorage.getItem('token')
-    await API.put(`/providers/language`, { language: languagePref.value }, { headers: { Authorization: `Bearer ${token}` } })
-    toast.success('Language preference updated')
-  } catch {
-    toast.error('Failed to update language preference')
-  } finally {
-    languageSubmitting.value = false
-  }
-}
-
 // Privacy settings
 const updatePrivacySettings = async () => {
   privacySubmitting.value = true
@@ -654,10 +581,6 @@ const deactivateAccount = async () => {
   }
 };
 
-// Connected accounts
-function toggleGoogleLink() { isGoogleLinked.value = !isGoogleLinked.value }
-function toggleFacebookLink() { isFacebookLinked.value = !isFacebookLinked.value }
-
 // On mount: fetch provider
 onMounted(async () => {
   const storedUser = JSON.parse(localStorage.getItem('user'))
@@ -676,7 +599,6 @@ onMounted(async () => {
     notificationPrefs.push = res.data.notificationPrefs?.push ?? true
     availability.start = res.data.availability?.start ?? '09:00'
     availability.end = res.data.availability?.end ?? '17:00'
-    languagePref.value = res.data.languagePref ?? 'en'
     privacySettings.showEmail = res.data.privacySettings?.showEmail ?? true
     privacySettings.showPhone = res.data.privacySettings?.showPhone ?? false
     twoFactorEnabled.value = res.data.twoFactorEnabled ?? false
