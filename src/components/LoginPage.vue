@@ -8,8 +8,9 @@
           <img src="@/assets/skilllogo.png" alt="SkillLink Logo" class="w-24" />
         </div>
 
-        <h2 class="text-center text-2xl font-bold text-[#0073b1] mb-6">Welcome Back to SkillLink</h2>
+        <h2 class="text-center text-2xl font-bold bg-gradient-to-r from-[#3B8D99] to-[#f46675] bg-clip-text text-transparent mb-6">Welcome Back to SkillLink</h2>
 
+        <!-- Login Form -->
         <form @submit.prevent="handleLogin" class="space-y-4">
           <input v-model="loginForm.email" type="email" placeholder="Email" required
             class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-sm transition" />
@@ -51,6 +52,7 @@
             <router-link to="/signup" class="text-[#0073b1] font-medium hover:underline">Sign up</router-link>
           </p>
         </form>
+
       </div>
     </transition>
 
@@ -66,25 +68,27 @@
 </template>
 
 <script setup>
-import { reactive, ref } from 'vue';
+
+ import { reactive, ref } from 'vue';
 import { useRouter } from 'vue-router';
 import API from '@/api';
 import { auth, loginUser } from '@/stores/auth';
 import { toast } from 'vue3-toastify';
+//import jwt_decode from 'jwt-decode';
 
 const router = useRouter();
 const loginForm = reactive({ email: '', password: '', role: 'user', remember: false });
 const showPassword = ref(false);
 const loading = ref(false);
 const errorMessage = ref('');
-const showSplash = ref(false); // splash triggered on login
+const showSplash = ref(false);
 
+// Normal Email/Password Login
 const handleLogin = async () => {
   errorMessage.value = '';
   loading.value = true;
 
   try {
-    // Only send email & password
     const res = await API.post('/auth/login', {
       email: loginForm.email,
       password: loginForm.password,
@@ -93,7 +97,6 @@ const handleLogin = async () => {
 
     const { token, user } = res.data;
 
-    // Save token and user info
     loginUser(token, user);
     auth.isLoggedIn = true;
     auth.user = {
@@ -107,32 +110,26 @@ const handleLogin = async () => {
     localStorage.setItem('userId', user._id);
     localStorage.setItem('user', JSON.stringify(user));
 
-    // Show splash screen
     showSplash.value = true;
-
-    // Redirect after 1.5s
     setTimeout(() => {
       showSplash.value = false;
-      // Use role from backend user object for routing
-      if (user.role === 'provider') {
-        router.push('/ServiceProvider');
-      } else {
-        router.push('/homelogged');
-      }
+      router.push(user.role === 'provider' ? '/ServiceProvider' : '/homelogged');
     }, 1500);
 
   } catch (err) {
-    // Show error toast
     errorMessage.value = err.response?.data?.message || 'Login failed.';
-    toast.error(`❌ ${errorMessage.value}`, { className: 'toast-custom toast-error', autoClose: 3000 });
+    toast.error(`❌ ${errorMessage.value}`, { autoClose: 3000 });
   } finally {
     loading.value = false;
   }
 };
 
+
 </script>
 
 <style scoped>
+/* Removed invalid JavaScript from CSS block */
+
 /* Fade for overlay */
 .overlay-fade-enter-active,
 .overlay-fade-leave-active {

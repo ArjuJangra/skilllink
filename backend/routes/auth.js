@@ -5,6 +5,7 @@ const ServiceProvider = require('../models/ServiceProvider');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const authenticateUser = require('../middleware/authMiddleware');
+
 // ---------------------- SIGNUP ----------------------
 router.post('/signup', async (req, res) => {
   try {
