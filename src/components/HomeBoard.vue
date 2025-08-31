@@ -263,10 +263,17 @@
 
           <router-link to="/terms" class="flex items-center gap-2 hover:text-[#00A8E8] transition"
             aria-label="Terms and Conditions">
-            <img class="w-4 h-4" src="https://img.icons8.com/material-outlined/24/terms-and-conditions.png"
-              alt="terms-and-conditions" stroke="currentColor" />
-            <span> Terms & Conditions</span>
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24"
+              stroke="currentColor" stroke-width="2">
+              <!-- Document outline -->
+              <path stroke-linecap="round" stroke-linejoin="round"
+                d="M6 2h9l5 5v13a2 2 0 01-2 2H6a2 2 0 01-2-2V4a2 2 0 012-2z" />
+              <!-- Text lines inside -->
+              <path stroke-linecap="round" stroke-linejoin="round" d="M9 8h6M9 12h6M9 16h4" />
+            </svg>
+            <span>Terms & Conditions</span>
           </router-link>
+
           <router-link to="/contact" class="flex items-center gap-2 hover:text-[#00A8E8] transition"
             aria-label="Contact Us">
             <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24"
@@ -295,7 +302,7 @@
               <path
                 d="M6.62 10.79a15.05 15.05 0 006.59 6.59l2.2-2.2a1 1 0 011.11-.21 11.05 11.05 0 003.47.55 1 1 0 011 1V20a1 1 0 01-1 1C10.42 21 3 13.58 3 5a1 1 0 011-1h3.5a1 1 0 011 1c0 1.2.19 2.38.55 3.47a1 1 0 01-.21 1.11l-2.22 2.21z" />
             </svg>
-            <a href="tel:+919876543210" class="hover:underline">+91 98765 43210</a>
+            <a href="tel:+919876543210" class="hover:underline hover:text-[#00A8E8]">+91 98765 43210</a>
           </div>
           <!-- Socials -->
           <div class="flex items-center gap-4 pt-2">

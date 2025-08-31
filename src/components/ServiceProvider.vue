@@ -171,8 +171,15 @@
         <div>
           <h3 class="text-sm font-bold text-gray-800 mb-3">More</h3>
           <ul class="space-y-2 text-sm text-gray-600">
-            <li><router-link to="/terms" class="hover:text-[#0073b1] flex gap-2">⚖️ Terms of Service</router-link></li>
-            <li><router-link to="/privacy" class="hover:text-[#0073b1] flex gap-2">🔒 Privacy Policy</router-link></li>
+            <li><router-link to="/terms" class="hover:text-[#0073b1] flex gap-2"> <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24"
+              stroke="currentColor" stroke-width="2">
+              <!-- Document outline -->
+              <path stroke-linecap="round" stroke-linejoin="round"
+                d="M6 2h9l5 5v13a2 2 0 01-2 2H6a2 2 0 01-2-2V4a2 2 0 012-2z" />
+              <!-- Text lines inside -->
+              <path stroke-linecap="round" stroke-linejoin="round" d="M9 8h6M9 12h6M9 16h4" />
+            </svg> Terms of Service</router-link></li>
+            <li><router-link to="/privacy" class="hover:text-[#0073b1] flex gap-2"> <img class="w-4 h-4" src="https://img.icons8.com/ios/50/user-shield.png" alt="user-shield" /> Privacy</router-link></li>
           </ul>
           <div class="flex space-x-4 mt-4"> <a href="#" class="text-gray-500 hover:text-[#0073b1]"><i class="fab fa-facebook-f"></i></a> <a href="#" class="text-gray-500 hover:text-[#0073b1]"><i class="fab fa-twitter"></i></a> <a href="#" class="text-gray-500 hover:text-[#0073b1]"><i class="fab fa-linkedin-in"></i></a> </div>
         </div>
