@@ -8,6 +8,10 @@
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
+    "@capacitor/android": "^7.4.3",
+    "@capacitor/cli": "^7.4.3",
+    "@capacitor/core": "^7.4.3",
+    "@capacitor/ios": "^7.4.3",
     "@fortawesome/fontawesome-free": "^7.0.0",
     "@react-oauth/google": "^0.12.2",
     "@vercel/analytics": "^1.5.0",

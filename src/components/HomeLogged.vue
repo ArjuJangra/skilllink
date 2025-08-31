@@ -152,10 +152,9 @@
         <div class="flex flex-col sm:flex-row justify-center gap-6 mb-6">
           <!-- Email -->
           <div class="flex items-center gap-2 text-gray-700">
-            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-[#0073b1]" fill="none" viewBox="0 0 24 24"
-              stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                d="M16 12H8m0 0l4-4m0 8l-4-4m12-4v12a2 2 0 01-2 2H6a2 2 0 01-2-2V8a2 2 0 012-2h12a2 2 0 012 2z" />
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
+              <path
+                d="M2.25 6.75A2.25 2.25 0 0 1 4.5 4.5h15a2.25 2.25 0 0 1 2.25 2.25v10.5A2.25 2.25 0 0 1 19.5 19.5h-15a2.25 2.25 0 0 1-2.25-2.25V6.75zm2.334-.75L12 11.327 19.416 6h-14.832zm15.166 1.635-7.731 5.154a.75.75 0 0 1-.838 0L3.45 7.635v9.615c0 .414.336.75.75.75h15a.75.75 0 0 0 .75-.75V7.635z" />
             </svg>
             <a href="mailto:connectteamskilllink@gmail.com" class="hover:underline">
               connectteamskilllink@gmail.com
@@ -163,17 +162,16 @@
           </div>
           <!-- Phone -->
           <div class="flex items-center gap-2 text-gray-700">
-            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-[#0073b1]" fill="none" viewBox="0 0 24 24"
-              stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                d="M3 5a2 2 0 012-2h2l1 5-1 1c.5.5 2.5 2.5 3 3l1-1 5 1v2a2 2 0 01-2 2H5a2 2 0 01-2-2V5z" />
+           <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
+              <path
+                d="M6.62 10.79a15.05 15.05 0 006.59 6.59l2.2-2.2a1 1 0 011.11-.21 11.05 11.05 0 003.47.55 1 1 0 011 1V20a1 1 0 01-1 1C10.42 21 3 13.58 3 5a1 1 0 011-1h3.5a1 1 0 011 1c0 1.2.19 2.38.55 3.47a1 1 0 01-.21 1.11l-2.22 2.21z" />
             </svg>
             <span>+91-9876543210</span>
           </div>
 
           <!-- Hours -->
           <div class="flex items-center gap-2 text-gray-700">
-            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-[#0073b1]" fill="none" viewBox="0 0 24 24"
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 " fill="none" viewBox="0 0 24 24"
               stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                 d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
