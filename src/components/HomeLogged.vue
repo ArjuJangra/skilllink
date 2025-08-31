@@ -4,7 +4,7 @@
 <AppNavbar mode="homelogged" />
      </header>
     <!-- Hero Section -->
-    <section class="text-center py-10 px-4 bg-gradient-to-br from-blue-100 to-white">
+    <section class="text-center py-10 px-4 bg-gradient-to-br from-blue-50 via-gray-50 to-blue-50">
       <div class="max-w-[1300px] mx-auto">
         <h2
           class="text-2xl sm:text-3xl md:text-4xl font-bold bg-gradient-to-r from-[#3B8D99] to-[#f46675] bg-clip-text text-transparent mb-4">
@@ -16,9 +16,9 @@
       </div>
     </section>
     <!-- Services Section -->
-    <section class="bg-white py-12 px-4">
+    <section class="bg-gradient-to-lr from-blue-50 via-gray-50 to-blue-50 py-12 px-4">
       <div class="max-w-[1300px] mx-auto">
-        <h3 class="text-2xl font-bold text-gray-800 mb-6 text-center">Services We Provide</h3>
+        <h3 class="text-2xl font-bold text-[#0073b1] mb-6 text-center">Services We Provide</h3>
         <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 sm:gap-6"> <router-link
             v-for="service in services" :key="service" :to="{ path: '/booking', query: { service: service } }"
             class="bg-[#0073b1] text-white p-4 rounded-lg shadow text-center font-semibold transform hover:scale-105 hover:shadow-lg transition duration-300">
@@ -26,9 +26,9 @@
       </div>
     </section>
     <!-- Solved Cases Section -->
-    <section class="bg-blue-50 py-12 px-4">
+    <section class="bg-gradient-to-r from-blue-50 via-gray-50 to-blue-50 py-12 px-4">
       <div class="max-w-[1300px] mx-auto">
-        <h3 class="text-2xl font-bold text-gray-800 mb-6 text-center">
+        <h3 class="text-2xl font-bold text-[#0073b1] mb-6 text-center">
           Some Cases We've Solved
         </h3>
         <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
@@ -47,7 +47,7 @@
       </div>
     </section>
     <!-- About Section -->
-    <section class="relative py-20 px-4 bg-gradient-to-br from-[#F0F9FF] via-white to-[#E6F4F9] overflow-hidden">
+    <section class="relative py-12 px-4 bg-gradient-to-lr from-[#F0F9FF] via-white to-[#E6F4F9] overflow-hidden">
       <!-- SVG Background -->
       <div class="absolute inset-0 z-0 pointer-events-none">
         <svg class="absolute top-0 left-0 opacity-20 w-[600px]" viewBox="0 0 600 600" fill="none">
@@ -59,14 +59,14 @@
       </div>
 
       <div class="relative z-10 max-w-screen-xl mx-auto text-center" data-aos="fade-up">
-        <h3 class="text-4xl font-extrabold text-[#0073b1] mb-6">About SkillLink</h3>
+        <h3 class="text-4xl font-bold text-[#0073b1] mb-6">About SkillLink</h3>
         <p class="max-w-3xl mx-auto text-gray-700 leading-relaxed text-lg sm:text-xl mb-10">
           SkillLink is your trusted platform to connect with skilled professionals across a wide range of services.
           Whether it's urgent home repairs or lifestyle services — we bring verified experts right to your doorstep.
         </p>
 
         <!-- Services Grid -->
-        <div class="bg-white shadow-xl rounded-xl p-8 mt-6" data-aos="fade-up" data-aos-delay="100">
+        <div class="bg-gray-50 shadow-xl rounded-xl p-8 mt-6" data-aos="fade-up" data-aos-delay="100">
           <h4 class="text-2xl font-semibold text-[#0073b1] mb-6">Our Available Services</h4>
           <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 text-left text-gray-800 text-base">
             <ul class="space-y-3">
@@ -134,7 +134,7 @@
       </div>
     </section>
     <!-- Service Area Map Section -->
-    <section class="py-12 bg-blue-50 px-4">
+    <section class="py-12 bg-gradient-to-r from-blue-50 via-gray-50 to-blue-50 px-4">
       <div class="max-w-screen-xl mx-auto text-center">
         <h2 class="text-2xl font-bold mb-6 text-gray-800">Service Coverage Area</h2>
         <ServiceMap />
@@ -187,7 +187,7 @@
       </div>
     </section>
     <!-- Footer -->
-    <footer class="bg-[#ecf0f4] text-gray-600 border-t">
+    <footer class="bg-gray-100 text-gray-700 border-t">
       <div class="max-w-6xl mx-auto px-6 py-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8">
 
         <!-- Logo & Tagline -->
@@ -199,8 +199,92 @@
           <p class="text-sm leading-relaxed">
             Connecting skilled professionals with customers quickly, easily, and reliably.
           </p>
+        </div>
 
-          <!-- Socials -->
+        <!-- Quick Links -->
+        <div class="space-y-3">
+          <h3 class="text-base font-bold text-gray-800">Quick Links</h3>
+          <router-link to="/about" class="flex items-center gap-2 hover:text-[#00A8E8] transition">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24"
+              stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round"
+                d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <span>About Us</span>
+          </router-link>
+          <router-link to="/home" class="flex items-center gap-2 hover:text-[#00A8E8] transition">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+              <path
+                d="M4 4h4v4H4V4zm6 0h4v4h-4V4zm6 0h4v4h-4V4zM4 10h4v4H4v-4zm6 0h4v4h-4v-4zm6 0h4v4h-4v-4zM4 16h4v4H4v-4zm6 0h4v4h-4v-4zm6 0h4v4h-4v-4z" />
+            </svg>
+            <span>Services</span>
+          </router-link>
+           <router-link to="/help" class="flex items-center gap-2 hover:text-[#00A8E8] transition" aria-label="FAQ">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" xmlns:xlink="http://www.w3.org/1999/xlink"
+              fill="currentcolor" version="1.1" id="Layer_1" viewBox="0 0 24 24">
+              <g>
+                <path
+                  d="M12,2C6.5,2,2,6.5,2,12s4.5,10,10,10s10-4.5,10-10S17.5,2,12,2z M12,20c-4.5,0-8-3.5-8-8s3.5-8,8-8s8,3.5,8,8   S16.5,20,12,20z" />
+              </g>
+              <rect x="11" y="15" width="2" height="2" />
+              <path
+                d="M13,14h-2c0-2.6,2-2.1,2-4.2c0-0.4-0.2-1.3-1.1-1.3c-0.3,0-1,0.5-1,1.5H9c0,0-0.4-3,2.9-3C14.5,7,15,8.9,15,9.8  C15,12.1,13,12.3,13,14z" />
+            </svg>
+            <span>Help</span>
+          </router-link>
+        </div>
+
+        <!-- Support -->
+        <div class="space-y-3 flex flex-col">
+          <h3 class="text-base font-bold text-gray-800">Support</h3>
+          <router-link to="/privacy" class="flex items-center gap-2 hover:text-[#00A8E8] transition"
+            aria-label="Privacy Policy">
+            <img class="w-4 h-4" src="https://img.icons8.com/ios/50/user-shield.png" alt="user-shield" />
+            <span>Privacy Policy</span>
+          </router-link>
+         <router-link to="/terms" class="flex items-center gap-2 hover:text-[#00A8E8] transition"
+            aria-label="Terms and Conditions">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24"
+              stroke="currentColor" stroke-width="2">
+              <!-- Document outline -->
+              <path stroke-linecap="round" stroke-linejoin="round"
+                d="M6 2h9l5 5v13a2 2 0 01-2 2H6a2 2 0 01-2-2V4a2 2 0 012-2z" />
+              <!-- Text lines inside -->
+              <path stroke-linecap="round" stroke-linejoin="round" d="M9 8h6M9 12h6M9 16h4" />
+            </svg>
+            <span>Terms & Conditions</span>
+          </router-link>
+           <router-link to="/contact" class="flex items-center gap-2 hover:text-[#00A8E8] transition"
+            aria-label="Contact Us">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24"
+              stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round"
+                d="M8 10h8M8 14h6M21 12c0 4.418-4.03 8-9 8a9.957 9.957 0 01-4.916-1.332L3 20l1.332-4.084A9.957 9.957 0 013 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+            </svg>
+            <span>Contact Us</span>
+          </router-link>
+        </div>
+
+        <!-- Reach Us -->
+        <div class="space-y-3">
+          <h3 class="text-base font-bold text-gray-800">Reach Us</h3>
+          <div class="flex items-center gap-2">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24"
+              stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M12 11c1.656 0 3-1.344 3-3s-1.344-3-3-3-3 1.344-3 3 1.344 3 3 3zM12 2C8.686 2 6 5.686 6 11c0 5.313 6 11 6 11s6-5.687 6-11c0-5.314-2.686-9-6-9z" />
+            </svg>
+            <span>Sector 41, Gurugram</span>
+          </div>
+          <div class="flex items-center gap-2">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
+              <path
+                d="M6.62 10.79a15.05 15.05 0 006.59 6.59l2.2-2.2a1 1 0 011.11-.21 11.05 11.05 0 003.47.55 1 1 0 011 1V20a1 1 0 01-1 1C10.42 21 3 13.58 3 5a1 1 0 011-1h3.5a1 1 0 011 1c0 1.2.19 2.38.55 3.47a1 1 0 01-.21 1.11l-2.22 2.21z" />
+            </svg>
+
+             <a href="tel:+919876543210" class="hover:underline hover:text-[#00A8E8]">+91 98765 43210</a>
+          </div>
+           <!-- Socials -->
           <div class="flex items-center gap-4 pt-2">
             <a href="#" class="hover:text-[#00A8E8] transition-colors">
               <!-- Twitter -->
@@ -223,95 +307,6 @@
                   d="M12 2.04c-5.52 0-10 4.48-10 10 0 4.42 2.87 8.18 6.84 9.51.5.09.68-.22.68-.48v-1.69c-2.78.61-3.37-1.34-3.37-1.34-.45-1.15-1.11-1.46-1.11-1.46-.91-.62.07-.61.07-.61 1.01.07 1.54 1.04 1.54 1.04.89 1.52 2.34 1.08 2.91.83.09-.65.35-1.08.64-1.33-2.22-.25-4.55-1.11-4.55-4.95 0-1.09.39-1.99 1.03-2.69-.1-.25-.45-1.27.1-2.65 0 0 .84-.27 2.75 1.03A9.57 9.57 0 0112 6.8c.85 0 1.71.11 2.51.34 1.91-1.3 2.75-1.03 2.75-1.03.55 1.38.2 2.4.1 2.65.64.7 1.03 1.6 1.03 2.69 0 3.85-2.34 4.7-4.57 4.95.36.31.68.91.68 1.84v2.73c0 .26.18.57.69.48A10 10 0 0022 12.04c0-5.52-4.48-10-10-10z" />
               </svg>
             </a>
-          </div>
-        </div>
-
-        <!-- Quick Links -->
-        <div class="space-y-3">
-          <h3 class="text-base font-bold text-gray-800">Quick Links</h3>
-          <router-link to="/about" class="flex items-center gap-2 hover:text-[#00A8E8] transition">
-            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24"
-              stroke="currentColor" stroke-width="2">
-              <path stroke-linecap="round" stroke-linejoin="round"
-                d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-            </svg>
-            <span>About Us</span>
-          </router-link>
-          <router-link to="/home" class="flex items-center gap-2 hover:text-[#00A8E8] transition">
-            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
-              <path
-                d="M4 4h4v4H4V4zm6 0h4v4h-4V4zm6 0h4v4h-4V4zM4 10h4v4H4v-4zm6 0h4v4h-4v-4zm6 0h4v4h-4v-4zM4 16h4v4H4v-4zm6 0h4v4h-4v-4zm6 0h4v4h-4v-4z" />
-            </svg>
-            <span>Services</span>
-          </router-link>
-          <router-link to="/help" class="flex items-center gap-2 hover:text-[#00A8E8] transition">
-            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24"
-              stroke="currentColor" stroke-width="2">
-              <path stroke-linecap="round" stroke-linejoin="round"
-                d="M12 18h.01M12 6a9 9 0 100 18 9 9 0 000-18zm0 4v4" />
-            </svg>
-            <span>FAQ</span>
-          </router-link>
-        </div>
-
-        <!-- Support -->
-        <div class="space-y-3 flex flex-col">
-          <h3 class="text-base font-bold text-gray-800">Support</h3>
-
-          <!-- Contact Us -->
-          <router-link to="/contact" class="flex items-center gap-2 hover:text-[#00A8E8] transition">
-            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
-              <path
-                d="M2.25 6.75A2.25 2.25 0 0 1 4.5 4.5h15a2.25 2.25 0 0 1 2.25 2.25v10.5A2.25 2.25 0 0 1 19.5 19.5h-15a2.25 2.25 0 0 1-2.25-2.25V6.75zm2.334-.75L12 11.327 19.416 6h-14.832zm15.166 1.635-7.731 5.154a.75.75 0 0 1-.838 0L3.45 7.635v9.615c0 .414.336.75.75.75h15a.75.75 0 0 0 .75-.75V7.635z" />
-            </svg>
-            <span>Contact Us</span>
-          </router-link>
-        <!-- Privacy Policy -->
-          <router-link to="/privacy" class="flex items-center gap-2 hover:text-[#00A8E8] transition">
-            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M12 1l9 4v6c0 5-3.6 9.7-9 11-5.4-1.3-9-6-9-11V5l9-4zM7 9v2h10V9H7z" />
-            </svg>
-            <span>Privacy Policy</span>
-          </router-link>
-          <!-- Terms & Conditions -->
-          <router-link to="/terms" class="flex items-center gap-2 hover:text-[#00A8E8] transition">
-            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor"
-              aria-hidden="true">
-              <!-- finial + crossbar -->
-              <path
-                d="M11 2a1 1 0 0 1 2 0v2h3a1 1 0 1 1 0 2h-1.6l3.86 7A3.75 3.75 0 1 1 14.5 16h-.5V7h-4v9h-.5A3.75 3.75 0 1 1 4.74 13l3.86-7H7A1 1 0 1 1 7 4h4V2zM7.2 9.2 5 13h4L7.2 9.2zm11.8 3.8h-4l2.2-3.8 1.8 3.8z" />
-              <!-- base -->
-              <path d="M10 19h4v2h-4z" />
-            </svg>
-            <span>Terms & Conditions</span>
-          </router-link>
-        </div>
-
-        <!-- Reach Us -->
-        <div class="space-y-3">
-          <h3 class="text-base font-bold text-gray-800">Reach Us</h3>
-          <div class="flex items-center gap-2">
-            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24"
-              stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                d="M12 11c1.656 0 3-1.344 3-3s-1.344-3-3-3-3 1.344-3 3 1.344 3 3 3zM12 2C8.686 2 6 5.686 6 11c0 5.313 6 11 6 11s6-5.687 6-11c0-5.314-2.686-9-6-9z" />
-            </svg>
-            <span>Sector 41, Gurugram</span>
-          </div>
-          <div class="flex items-center gap-2">
-            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
-              <path
-                d="M2.25 6.75A2.25 2.25 0 0 1 4.5 4.5h15a2.25 2.25 0 0 1 2.25 2.25v10.5A2.25 2.25 0 0 1 19.5 19.5h-15a2.25 2.25 0 0 1-2.25-2.25V6.75zm2.334-.75L12 11.327 19.416 6h-14.832zm15.166 1.635-7.731 5.154a.75.75 0 0 1-.838 0L3.45 7.635v9.615c0 .414.336.75.75.75h15a.75.75 0 0 0 .75-.75V7.635z" />
-            </svg>
-            <a href="mailto:connectteamskilllink@gmail.com" class="hover:underline">connectteamskilllink@gmail.com</a>
-          </div>
-          <div class="flex items-center gap-2">
-            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
-              <path
-                d="M6.62 10.79a15.05 15.05 0 006.59 6.59l2.2-2.2a1 1 0 011.11-.21 11.05 11.05 0 003.47.55 1 1 0 011 1V20a1 1 0 01-1 1C10.42 21 3 13.58 3 5a1 1 0 011-1h3.5a1 1 0 011 1c0 1.2.19 2.38.55 3.47a1 1 0 01-.21 1.11l-2.22 2.21z" />
-            </svg>
-
-            <span>+91 98765 43210</span>
           </div>
         </div>
       </div>

@@ -28,6 +28,16 @@
           </button>
         </router-link>
       </div>
+      <!-- Mobile: Search icon only -->
+      <div class="sm:hidden flex justify-end flex-1 gap-2">
+        <button @click="showMobileSearch = !showMobileSearch" class="text-gray-600 hover:text-gray-900 p-2">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"
+            stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round"
+              d="M21 21l-4.35-4.35M16.65 16.65A7.5 7.5 0 1110.5 3a7.5 7.5 0 016.15 13.65z" />
+          </svg>
+        </button>
+      </div>
 
       <!-- Desktop Nav -->
       <nav class="hidden sm:flex items-center gap-3">
@@ -60,14 +70,26 @@
         <!-- Search bar -->
         <template v-if="props.showSearch">
           <div class="relative w-72">
-            <span class="absolute inset-y-0 left-0 pl-2 flex items-center text-gray-400">
-              <i class="fas fa-search"></i>
+            <!-- Search icon -->
+            <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-400">
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24"
+                stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round"
+                  d="M21 21l-4.35-4.35M16.65 16.65A7.5 7.5 0 1110.5 3a7.5 7.5 0 016.15 13.65z" />
+              </svg>
             </span>
+
+            <!-- Input -->
             <input type="text" v-model="searchQuery" placeholder="Search services..."
-              class="pl-10 pr-10 py-2 w-full border border-gray-300 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-[#00A8E8] focus:border-[#00A8E8]" />
+              class="pl-10 pr-12 py-2 w-full rounded-full border border-gray-300 shadow-sm focus:outline-none focus:ring-2 focus:ring-[#00A8E8] focus:border-[#00A8E8] transition duration-200 hover:shadow-md" />
+
+            <!-- Clear button -->
             <button v-if="searchQuery" @click="searchQuery = ''"
-              class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-900 transition">
-              <i class="fas fa-times-circle"></i>
+              class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-900 transition duration-200">
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24"
+                stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+              </svg>
             </button>
           </div>
         </template>
@@ -75,7 +97,8 @@
         <!-- Home / Login / Profile -->
         <template v-if="showButton === 'home'">
           <router-link :to="auth?.isLoggedIn ? '/homelogged' : '/homeboard'" class="ml-auto">
-            <button class="bg-[#0073b1] flex gap-1 items-center text-white px-4 py-2 rounded-lg hover:bg-[#005f91] transition">
+            <button
+              class="bg-[#0073b1] flex gap-1 items-center text-white px-4 py-2 rounded-lg hover:bg-[#005f91] transition">
               <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
                 <path d="M12 3l8 7v10a2 2 0 0 1-2 2h-4a1 1 0 0 1-1-1v-5H11v5a1 1 0 0 1-1 1H6a2 2 0 0 1-2-2V10l8-7z" />
               </svg>
@@ -133,7 +156,8 @@
     <!-- Mobile Drawer -->
     <transition name="slide" enter-active-class="transition-transform duration-300 ease-out"
       enter-from-class="translate-x-full" enter-to-class="translate-x-0"
-      leave-active-class="transition-transform duration-300 ease-in" leave-from-class="translate-x-0" leave-to-class="translate-x-full">
+      leave-active-class="transition-transform duration-300 ease-in" leave-from-class="translate-x-0"
+      leave-to-class="translate-x-full">
       <div v-if="isOpen" class="fixed inset-0 z-40 flex justify-end">
         <div class="flex-1 bg-black bg-opacity-40" @click="closeMenu"></div>
         <div class="w-72 h-full bg-white shadow-xl flex flex-col px-6 py-8 space-y-6 pt-12">
@@ -154,32 +178,73 @@
             </router-link>
           </template>
           <template v-else>
-            <div class="flex items-center gap-3">
-              <!-- Profile -->
-              <router-link to="/dashboard">
-                <img :src="user && user.profilePic ? getImageUrl(user.profilePic) : defaultAvatar"
-                  @error="e => e.target.src = defaultAvatar" alt="User Profile"
-                  class="w-10 h-10 rounded-full object-cover border-2 border-[#0073b1] hover:ring-1 hover:ring-[#0073b1]"
-                  loading="lazy" />
-              </router-link>
-              <button @click="() => { logout(); closeMenu(); }"
-                class="w-full px-4 py-2 text-gray-600 font-semibold rounded-lg hover:ring-1 hover:text-[#0073b1] hover:ring-[#0073b1] transition duration-200">
-                Logout
-              </button>
+            <div class="flex flex-col gap-4 p-4 bg-white rounded-2xl shadow-md border border-gray-100">
+              <!-- Profile Section -->
+              <div class="flex items-center gap-4">
+                <router-link to="/dashboard">
+                  <img :src="user && user.profilePic ? getImageUrl(user.profilePic) : defaultAvatar"
+                    @error="e => e.target.src = defaultAvatar" alt="User Profile"
+                    class="w-10 h-10 rounded-full object-cover border-2 border-[#0073b1] hover:ring-1 hover:ring-[#0073b1]"
+                    loading="lazy" />
+                </router-link>
+                <div>
+                  <p class="text-gray-800 font-semibold">{{ user?.name || 'Welcome!' }}</p>
+                  <router-link to="/dashboard" class="text-sm text-[#0073b1] hover:underline" @click="closeMenu">
+                    View Dashboard
+                  </router-link>
+                </div>
+              </div>
+              <hr class="border-gray-200 my-4" />
+              <!-- Navigation -->
+              <div class="flex-1 space-y-3">
+                <router-link to="/notifications"
+                  class="flex px-3 gap-2 py-2 rounded-lg text-gray-700 font-medium hover:bg-gray-100 hover:text-[#0073b1] transition"
+                  @click="closeMenu">
+                  <svg class="w-7 h-7 text-gray-700 hover:text-[#0073b1]" fill="none" stroke="currentColor"
+                    stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                      d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+                  </svg><span> Notifications</span>
+                </router-link>
+
+                <router-link to="/about"
+                  class="flex gap-2 px-3 py-2 rounded-lg text-gray-700 font-medium hover:bg-gray-100 hover:text-[#0073b1] transition">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="w-7 h-7" fill="none" viewBox="0 0 24 24"
+                    stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                      d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                  <span>About Us</span>
+                </router-link>
+
+                <router-link to="/contact"
+                  class="flex gap-2 px-3 py-2 rounded-lg text-gray-700 font-medium hover:bg-gray-100 hover:text-[#0073b1] transition"
+                  @click="closeMenu">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="w-7 h-7" viewBox="0 0 24 24" fill="currentColor">
+                    <path
+                      d="M6.62 10.79a15.05 15.05 0 006.59 6.59l2.2-2.2a1 1 0 011.11-.21 11.05 11.05 0 003.47.55 1 1 0 011 1V20a1 1 0 01-1 1C10.42 21 3 13.58 3 5a1 1 0 011-1h3.5a1 1 0 011 1c0 1.2.19 2.38.55 3.47a1 1 0 01-.21 1.11l-2.22 2.21z" />
+                  </svg> <span> Contact</span>
+                </router-link>
+
+                <router-link :to="{ path: '/help', query: { from: 'homelogged' } }"
+                  class="flex gap-2 px-3 py-2 rounded-lg text-gray-700 font-medium hover:bg-gray-100 hover:text-[#0073b1] transition"
+                  @click="closeMenu">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="w-7 h-7" viewBox="0 0 24 24" fill="currentcolor">
+                    <path fill-rule="evenodd" clip-rule="evenodd"
+                      d="M12 19.5C16.1421 19.5 19.5 16.1421 19.5 12C19.5 7.85786 16.1421 4.5 12 4.5C7.85786 4.5 4.5 7.85786 4.5 12C4.5 16.1421 7.85786 19.5 12 19.5ZM12 21C16.9706 21 21 16.9706 21 12C21 7.02944 16.9706 3 12 3C7.02944 3 3 7.02944 3 12C3 16.9706 7.02944 21 12 21ZM12.75 15V16.5H11.25V15H12.75ZM10.5 10.4318C10.5 9.66263 11.1497 9 12 9C12.8503 9 13.5 9.66263 13.5 10.4318C13.5 10.739 13.3151 11.1031 12.9076 11.5159C12.5126 11.9161 12.0104 12.2593 11.5928 12.5292L11.25 12.7509V14.25H12.75V13.5623C13.1312 13.303 13.5828 12.9671 13.9752 12.5696C14.4818 12.0564 15 11.3296 15 10.4318C15 8.79103 13.6349 7.5 12 7.5C10.3651 7.5 9 8.79103 9 10.4318H10.5Z"
+                      fill="#080341" />
+                  </svg> <span>Help</span>
+                </router-link>
+              </div>
             </div>
           </template>
 
-          <hr class="border-gray-200 my-4" />
           <template v-if="!props.hideExtras">
             <router-link to="/about" class="drawer-link" @click="closeMenu">About Us</router-link>
             <router-link to="/contact" class="drawer-link" @click="closeMenu">Contact</router-link>
             <router-link :to="{ path: '/help', query: { from: 'homelogged' } }" class="drawer-link"
               @click="closeMenu">Help</router-link>
           </template>
-          <template v-if="props.showSearch">
-            <input type="text" v-model="searchQuery" placeholder="Search services..." class="drawer-search" />
-          </template>
-
         </div>
       </div>
     </transition>
@@ -209,7 +274,6 @@
           </button>
         </router-link>
       </div>
-
       <!-- Desktop Nav -->
       <nav class="hidden sm:flex items-center gap-4">
 
@@ -271,7 +335,7 @@
           <div v-if="isOpen" class="flex-1 bg-black bg-opacity-40" @click="closeMenu"></div>
         </transition>
 
-        <div class="w-72 h-full bg-white shadow-xl flex flex-col px-6 py-6">
+        <div class="w-72 h-full bg-white shadow-xl flex flex-col px-6 py-8 space-y-6 pt-12">
 
           <!-- Profile Section -->
           <div class="flex items-center gap-4">
@@ -291,7 +355,6 @@
           </div>
 
           <hr class="border-gray-200 my-6" />
-
           <!-- Navigation -->
           <div class="flex-1 space-y-3">
             <router-link to="/notifications"
