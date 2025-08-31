@@ -222,10 +222,10 @@
           <h3 class="text-base font-bold text-gray-800">Quick Links</h3>
           <router-link to="/about" class="flex items-center gap-2 hover:text-[#00A8E8] transition"
             aria-label="About Us">
-            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24"
-              stroke="currentColor" stroke-width="2">
-              <path stroke-linecap="round" stroke-linejoin="round"
-                d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" class="w-4 h-4" viewBox="0 0 50 50">
+              <path
+                d="M 25 2 C 12.309295 2 2 12.309295 2 25 C 2 37.690705 12.309295 48 25 48 C 37.690705 48 48 37.690705 48 25 C 48 12.309295 37.690705 2 25 2 z M 25 4 C 36.609824 4 46 13.390176 46 25 C 46 36.609824 36.609824 46 25 46 C 13.390176 46 4 36.609824 4 25 C 4 13.390176 13.390176 4 25 4 z M 25 11 A 3 3 0 0 0 22 14 A 3 3 0 0 0 25 17 A 3 3 0 0 0 28 14 A 3 3 0 0 0 25 11 z M 21 21 L 21 23 L 22 23 L 23 23 L 23 36 L 22 36 L 21 36 L 21 38 L 22 38 L 23 38 L 27 38 L 28 38 L 29 38 L 29 36 L 28 36 L 27 36 L 27 21 L 26 21 L 22 21 L 21 21 z">
+              </path>
             </svg>
             <span>About Us</span>
           </router-link>
@@ -239,7 +239,7 @@
           </router-link>
           <router-link to="/help" class="flex items-center gap-2 hover:text-[#00A8E8] transition" aria-label="FAQ">
             <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" xmlns:xlink="http://www.w3.org/1999/xlink"
-              fill="currentcolor" version="1.1" id="Layer_1" viewBox="0 0 24 24" >
+              fill="currentcolor" version="1.1" id="Layer_1" viewBox="0 0 24 24">
               <g>
                 <path
                   d="M12,2C6.5,2,2,6.5,2,12s4.5,10,10,10s10-4.5,10-10S17.5,2,12,2z M12,20c-4.5,0-8-3.5-8-8s3.5-8,8-8s8,3.5,8,8   S16.5,20,12,20z" />
@@ -255,37 +255,35 @@
         <!-- Support -->
         <div class="space-y-3 flex flex-col">
           <h3 class="text-base font-bold text-gray-800">Support</h3>
+          <router-link to="/privacy" class="flex items-center gap-2 hover:text-[#00A8E8] transition"
+            aria-label="Privacy Policy">
+            <img class="w-4 h-4" src="https://img.icons8.com/ios/50/user-shield.png" alt="user-shield" />
+            <span>Privacy Policy</span>
+          </router-link>
+
+          <router-link to="/terms" class="flex items-center gap-2 hover:text-[#00A8E8] transition"
+            aria-label="Terms and Conditions">
+            <img class="w-4 h-4" src="https://img.icons8.com/material-outlined/24/terms-and-conditions.png"
+              alt="terms-and-conditions" stroke="currentColor" />
+            <span> Terms & Conditions</span>
+          </router-link>
           <router-link to="/contact" class="flex items-center gap-2 hover:text-[#00A8E8] transition"
             aria-label="Contact Us">
-            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
-              <path
-                d="M2.25 6.75A2.25 2.25 0 0 1 4.5 4.5h15a2.25 2.25 0 0 1 2.25 2.25v10.5A2.25 2.25 0 0 1 19.5 19.5h-15a2.25 2.25 0 0 1-2.25-2.25V6.75zm2.334-.75L12 11.327 19.416 6h-14.832zm15.166 1.635-7.731 5.154a.75.75 0 0 1-.838 0L3.45 7.635v9.615c0 .414.336.75.75.75h15a.75.75 0 0 0 .75-.75V7.635z" />
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24"
+              stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round"
+                d="M8 10h8M8 14h6M21 12c0 4.418-4.03 8-9 8a9.957 9.957 0 01-4.916-1.332L3 20l1.332-4.084A9.957 9.957 0 013 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
             </svg>
             <span>Contact Us</span>
           </router-link>
-          <router-link to="/privacy" class="flex items-center gap-2 hover:text-[#00A8E8] transition"
-            aria-label="Privacy Policy">
-            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M12 1l9 4v6c0 5-3.6 9.7-9 11-5.4-1.3-9-6-9-11V5l9-4zM7 9v2h10V9H7z" />
-            </svg>
-            <span>Privacy Policy</span>
-          </router-link>
-          <router-link to="/terms" class="flex items-center gap-2 hover:text-[#00A8E8] transition"
-            aria-label="Terms and Conditions">
-            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
-              <path
-                d="M11 2a1 1 0 0 1 2 0v2h3a1 1 0 1 1 0 2h-1.6l3.86 7A3.75 3.75 0 1 1 14.5 16h-.5V7h-4v9h-.5A3.75 3.75 0 1 1 4.74 13l3.86-7H7A1 1 0 1 1 7 4h4V2zM7.2 9.2 5 13h4L7.2 9.2zm11.8 3.8h-4l2.2-3.8 1.8 3.8z" />
-              <path d="M10 19h4v2h-4z" />
-            </svg>
-            <span>Terms & Conditions</span>
-          </router-link>
+
         </div>
 
         <!-- Reach Us -->
         <div class="space-y-3">
           <h3 class="text-base font-bold text-gray-800">Reach Us</h3>
           <div class="flex items-center gap-2">
-            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24"
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24"
               stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                 d="M12 11c1.656 0 3-1.344 3-3s-1.344-3-3-3-3 1.344-3 3 1.344 3 3 3zM12 2C8.686 2 6 5.686 6 11c0 5.313 6 11 6 11s6-5.687 6-11c0-5.314-2.686-9-6-9z" />
@@ -293,7 +291,7 @@
             <span>Sector 41, Gurugram</span>
           </div>
           <div class="flex items-center gap-2">
-            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
               <path
                 d="M6.62 10.79a15.05 15.05 0 006.59 6.59l2.2-2.2a1 1 0 011.11-.21 11.05 11.05 0 003.47.55 1 1 0 011 1V20a1 1 0 01-1 1C10.42 21 3 13.58 3 5a1 1 0 011-1h3.5a1 1 0 011 1c0 1.2.19 2.38.55 3.47a1 1 0 01-.21 1.11l-2.22 2.21z" />
             </svg>
@@ -341,7 +339,7 @@
 import { ref } from 'vue'
 import AppNavbar from "@/components/AppNavbar.vue"
 
- const services = ref([
+const services = ref([
   "Plumber", "Electrician", "Mechanic", "Carpenter",
   "AC Repair", "Painter", "Welder", "Makeup Artist"
 ])

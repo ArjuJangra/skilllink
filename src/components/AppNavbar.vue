@@ -75,8 +75,7 @@
         <!-- Home / Login / Profile -->
         <template v-if="showButton === 'home'">
           <router-link :to="auth?.isLoggedIn ? '/homelogged' : '/homeboard'" class="ml-auto">
-            <button
-              class="bg-[#0073b1] flex gap-1 items-center text-white px-4 py-2 rounded-lg hover:bg-[#005f91] transition">
+            <button class="bg-[#0073b1] flex gap-1 items-center text-white px-4 py-2 rounded-lg hover:bg-[#005f91] transition">
               <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
                 <path d="M12 3l8 7v10a2 2 0 0 1-2 2h-4a1 1 0 0 1-1-1v-5H11v5a1 1 0 0 1-1 1H6a2 2 0 0 1-2-2V10l8-7z" />
               </svg>
@@ -95,7 +94,6 @@
         </template>
 
         <template v-else>
-
           <div class="flex items-center gap-3 ml-auto">
             <!-- Notification Bell -->
             <router-link to="/notifications"
@@ -111,10 +109,12 @@
               </span>
             </router-link>
 
-            <!-- Profile Avatar -->
+            <!-- Profile -->
             <router-link to="/dashboard">
-              <img :src="auth.user?.profilePic ? getImageUrl(auth.user.profilePic) : defaultAvatar" alt="User Profile"
-                class="w-10 h-10 rounded-full object-cover border-2 border-[#0073b1] hover:ring-1 hover:ring-[#0073b1]" />
+              <img :src="user && user.profilePic ? getImageUrl(user.profilePic) : defaultAvatar"
+                @error="e => e.target.src = defaultAvatar" alt="User Profile"
+                class="w-10 h-10 rounded-full object-cover border-2 border-[#0073b1] hover:ring-1 hover:ring-[#0073b1]"
+                loading="lazy" />
             </router-link>
           </div>
         </template>
@@ -133,16 +133,11 @@
     <!-- Mobile Drawer -->
     <transition name="slide" enter-active-class="transition-transform duration-300 ease-out"
       enter-from-class="translate-x-full" enter-to-class="translate-x-0"
-      leave-active-class="transition-transform duration-300 ease-in" leave-from-class="translate-x-0"
-      leave-to-class="translate-x-full">
-
+      leave-active-class="transition-transform duration-300 ease-in" leave-from-class="translate-x-0" leave-to-class="translate-x-full">
       <div v-if="isOpen" class="fixed inset-0 z-40 flex justify-end">
-
         <div class="flex-1 bg-black bg-opacity-40" @click="closeMenu"></div>
         <div class="w-72 h-full bg-white shadow-xl flex flex-col px-6 py-8 space-y-6 pt-12">
-
           <template v-if="showButton === 'login'">
-
             <router-link to="/login" @click="closeMenu">
               <button
                 class="w-full px-4 py-2 bg-[#0073b1] text-white font-semibold rounded-lg hover:bg-[#005f91] transition duration-200">
@@ -150,7 +145,6 @@
               </button>
             </router-link>
           </template>
-
           <template v-else-if="showButton === 'home'">
             <router-link :to="auth?.isLoggedIn ? '/homelogged' : '/homeboard'" @click="closeMenu">
               <button
@@ -159,14 +153,14 @@
               </button>
             </router-link>
           </template>
-
           <template v-else>
-
             <div class="flex items-center gap-3">
-
-              <router-link to="/dashboard" @click="closeMenu">
-                <img :src="auth.user?.profilePic ? getImageUrl(auth.user.profilePic) : defaultAvatar" alt="Profile"
-                  class="w-12 h-12 rounded-full border-2 border-[#0073b1]" />
+              <!-- Profile -->
+              <router-link to="/dashboard">
+                <img :src="user && user.profilePic ? getImageUrl(user.profilePic) : defaultAvatar"
+                  @error="e => e.target.src = defaultAvatar" alt="User Profile"
+                  class="w-10 h-10 rounded-full object-cover border-2 border-[#0073b1] hover:ring-1 hover:ring-[#0073b1]"
+                  loading="lazy" />
               </router-link>
               <button @click="() => { logout(); closeMenu(); }"
                 class="w-full px-4 py-2 text-gray-600 font-semibold rounded-lg hover:ring-1 hover:text-[#0073b1] hover:ring-[#0073b1] transition duration-200">
@@ -239,22 +233,21 @@
               d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
           </svg>
           <!-- 🔴 Badge -->
-         <span v-if="unreadCount > 0"
-  class="absolute -top-0.5 -right-0.5 bg-red-600 text-white text-[11px] font-bold min-w-[18px] h-[18px] flex items-center justify-center rounded-full shadow-md animate-pulse">
-  {{ unreadCount }}
-</span>
+          <span v-if="unreadCount > 0"
+            class="absolute -top-0.5 -right-0.5 bg-red-600 text-white text-[11px] font-bold min-w-[18px] h-[18px] flex items-center justify-center rounded-full shadow-md animate-pulse">
+            {{ unreadCount }}
+          </span>
 
-         </router-link>
+        </router-link>
 
         <!-- Profile -->
         <router-link to="/dashboard">
-          <img v-if="user && user.profilePic" :src="API.getImageUrl(user.profilePic)" alt="User Profile"
+          <img :src="user && user.profilePic ? getImageUrl(user.profilePic) : defaultAvatar"
+            @error="e => e.target.src = defaultAvatar" alt="User Profile"
             class="w-10 h-10 rounded-full object-cover border-2 border-[#0073b1] hover:ring-1 hover:ring-[#0073b1]"
             loading="lazy" />
-          <img v-else src="@/assets/user.png" alt="Default Profile"
-            class="w-10 h-10 rounded-full object-cover border-2 border-[#0073b1] hover:ring-2 hover:ring-[#0073b1]"
-            loading="lazy" />
         </router-link>
+
       </nav>
       <!-- Mobile Hamburger -->
       <button class="sm:hidden relative z-50 flex flex-col gap-1 focus:outline-none" @click="isOpen = !isOpen">
@@ -282,14 +275,13 @@
 
           <!-- Profile Section -->
           <div class="flex items-center gap-4">
-            <router-link to="/dashboard" @click="closeMenu">
-              <img v-if="user && user.profilePic" :src="API.getImageUrl(user.profilePic)" alt="User Profile"
-                class="w-14 h-14 rounded-full object-cover border-2 border-[#0073b1] hover:ring-2 hover:ring-[#0073b1] transition"
-                loading="lazy" />
-              <img v-else src="@/assets/user.png" alt="Default Profile"
-                class="w-14 h-14 rounded-full object-cover border-2 border-[#0073b1] hover:ring-2 hover:ring-[#0073b1] transition"
+            <router-link to="/dashboard">
+              <img :src="user && user.profilePic ? getImageUrl(user.profilePic) : defaultAvatar"
+                @error="e => e.target.src = defaultAvatar" alt="User Profile"
+                class="w-10 h-10 rounded-full object-cover border-2 border-[#0073b1] hover:ring-1 hover:ring-[#0073b1]"
                 loading="lazy" />
             </router-link>
+
             <div>
               <p class="text-gray-800 font-semibold">{{ user?.name || 'Welcome!' }}</p>
               <router-link to="/dashboard" class="text-sm text-[#0073b1] hover:underline" @click="closeMenu">
@@ -373,7 +365,7 @@ import { auth, logoutUser } from "@/stores/auth";
 import API from "@/api";
 import defaultAvatarFile from '@/assets/user.png';
 
- const defaultAvatar = defaultAvatarFile;
+const defaultAvatar = defaultAvatarFile;
 
 const props = defineProps({
   mode: { type: String, default: 'default' },

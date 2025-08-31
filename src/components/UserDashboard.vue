@@ -10,8 +10,13 @@
         <div class="flex items-center gap-4 sm:gap-6 w-full">
           <!-- Left: Profile Image -->
           <div class="relative flex-shrink-0">
-            <img :src="user.profilePic ? API.getImageUrl(user.profilePic) : userImg"
-              class="w-16 h-16 sm:w-28 sm:h-28 rounded-full border-4 border-[#00A8E8] object-cover shadow-md" />
+            <img
+  :src="user.profilePic ? API.getImageUrl(user.profilePic) : userImg"
+  @error="e => e.target.src = userImg"
+  class="w-16 h-16 sm:w-28 sm:h-28 rounded-full border-4 border-[#00A8E8] object-cover shadow-md"
+  alt="Profile Picture"
+/>
+
 
             <label
               class="absolute bottom-0 right-0 bg-[#00A8E8] text-white rounded-full p-2 cursor-pointer hover:bg-[#007EA7] transition"
@@ -427,6 +432,8 @@ import { auth, logoutUser } from '@/stores/auth';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 dayjs.extend(relativeTime);
+import userImg from '@/assets/user.png';
+
 
 const router = useRouter();
 const getToken = () => localStorage.getItem('token');
@@ -436,7 +443,6 @@ const isAuthenticated = ref(false), isLoading = ref(true), loading = ref(false);
 const showLogoutModal = ref(false), showEditProfileForm = ref(false), previewImage = ref(null);
 const tabs = ['bookings', 'history', 'address', 'settings'];
 const activeTab = ref(localStorage.getItem("activeTab") || "bookings");
-const userImg = ref(`${API.defaults.baseURL}/uploads/default-user.png`);
 const user = ref({ name: '', email: '', phone: '', bio: '', profilePic: '' });
 const socket = ref(null);
 const bookings = ref([]), history = ref([]);
