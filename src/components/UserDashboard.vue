@@ -202,29 +202,6 @@
             <div v-else-if="activeTab === 'history'" class="space-y-6">
               <h3 class="text-xl font-semibold text-[#007EA7]">Previous Services</h3>
 
-              <!-- Clear History Button -->
-              <div class="flex justify-end mb-4">
-                <button @click="showClearHistoryConfirm = true"
-                  class="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 transition">
-                  Clear History
-                </button>
-              </div>
-
-              <!-- Inline confirmation -->
-              <div v-if="showClearHistoryConfirm"
-                class="bg-yellow-100 border-l-4 border-yellow-400 text-yellow-700 p-4 mb-4 flex justify-between items-center rounded">
-                <span>Are you sure you want to clear all history? This cannot be undone.</span>
-                <div class="flex gap-2">
-                  <button @click="confirmClearHistory"
-                    class="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600 transition">
-                    Yes
-                  </button>
-                  <button @click="showClearHistoryConfirm = false"
-                    class="px-3 py-1 bg-gray-300 text-gray-700 rounded hover:bg-gray-400 transition">
-                    No
-                  </button>
-                </div>
-              </div>
 
               <!-- Grid of History Cards -->
               <div v-if="history.length" class="grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -441,7 +418,6 @@ const user = ref({ name: '', email: '', phone: '', bio: '', profilePic: '' });
 const socket = ref(null);
 const bookings = ref([]), history = ref([]);
 const editingId = ref(null), editableBooking = ref({ name: '', contact: '', address: '', service: '' });
-const showClearHistoryConfirm = ref(false);
 const savedAddresses = ref(JSON.parse(localStorage.getItem('addresses')) || []);
 const newAddress = reactive({ pincode: '', city: '', address: '' });
 const showAddressForm = ref(false);
@@ -482,21 +458,6 @@ const updateUserProfile = async () => {
 // --- Bookings ---
 const fetchBookings = async () => { try { bookings.value = (await API.get('/bookings')).data; } catch { toast.error("Failed to load bookings"); } };
 const fetchHistory = async () => { try { history.value = (await API.get('/bookings/history')).data; } catch { toast.error("Failed to load service history."); } };
-
-const confirmClearHistory = async () => {
-  try {
-    await API.delete('/bookings/clearhistory', {
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem("token")}`, // ✅ send token
-      },
-    });
-    history.value = [];
-    console.log("✅ History cleared");
-  } catch (err) {
-    console.error("❌ Failed to clear history:", err.response?.data || err);
-  }
-};
-
 
 const startEdit = b => { editingId.value = b._id; editableBooking.value = { ...b }; };
 const cancelEdit = () => { editingId.value = null; editableBooking.value = { service: '', name: '', contact: '', address: '' }; };

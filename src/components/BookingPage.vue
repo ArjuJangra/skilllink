@@ -6,7 +6,10 @@
       <div class="flex justify-center mb-2">
         <img src="@/assets/skilllogo.png" alt="SkillLink Logo" class="w-20 h-20" />
       </div>
-      <h2 class="text-3xl sm:text-3xl font-bold bg-gradient-to-r from-[#3B8D99] to-[#f46675] bg-clip-text text-transparent text-center mb-6">Your Expert is a Click Away</h2>
+      <h2
+        class="text-3xl sm:text-3xl font-bold bg-gradient-to-r from-[#3B8D99] to-[#f46675] bg-clip-text text-transparent text-center mb-6">
+        Your Expert is a Click Away</h2>
+
       <!-- Service Selection -->
       <div v-if="!hasPrefilledService">
         <label class="block text-gray-700 font-medium mb-2">Select a Service</label>
@@ -36,20 +39,13 @@
       </div>
       <!-- Personal Details -->
       <div class="flex flex-col gap-4">
-        <!-- Name -->
         <input type="text" v-model="name" placeholder="Your Name"
           class="w-full border rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#00A8E8]" />
-
-        <!-- Contact -->
         <input type="tel" v-model="contact" placeholder="Contact Number"
           class="w-full border rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#00A8E8]" />
-
-        <!-- Address -->
         <textarea v-model="address" placeholder="Address" rows="2"
           class="w-full border rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#00A8E8]"></textarea>
       </div>
-
-
       <!-- Payment Method -->
       <div>
         <label class="block text-gray-700 font-medium mb-2">Payment Method</label>
@@ -82,8 +78,8 @@
         <p><strong>Provider:</strong> {{providers.find(p => p._id === selectedProviderId)?.name || '-'}}</p>
         <p><strong>Price:</strong> ₹{{ getSelectedPrice() }}</p>
         <p><strong>Payment:</strong> {{ paymentMethod === 'cash' ? 'Cash' : 'UPI / Bank' }}</p>
+        <p><strong>Scheduled:</strong> {{ selectedDate }} at {{ selectedTime }}</p>
       </div>
-
       <!-- Confirm Booking -->
       <button :disabled="loading || !isFormValid()" @click="confirmBooking"
         class="w-full bg-[#0289b7] text-white py-3 rounded-xl hover:bg-[#005f6b] disabled:opacity-50 transition">
@@ -116,12 +112,8 @@ const selectedProviderId = ref('')
 const name = ref('')
 const contact = ref('')
 const address = ref('')
-const selectedTier = ref({ name: '', price: 0 })
-const selectedAddons = ref([])
-const qty = ref(1)
 const selectedDate = ref('')
 const selectedTime = ref('')
-const couponCode = ref('')
 const total = ref(0)
 
 const availableServices = ref([])
@@ -149,11 +141,11 @@ const hasPrefilledService = computed(() => !!route.query.service)
 const hasPrefilledProvider = computed(() => !!route.query.providerId)
 
 // Computed selected provider
-const selectedProvider = computed(() => 
+const selectedProvider = computed(() =>
   providers.value.find(p => p._id === selectedProviderId.value) || {}
 )
 
-const isFormValid = () => 
+const isFormValid = () =>
   name.value && contact.value && address.value && selectedService.value && selectedProviderId.value && getSelectedPrice() > 0 && selectedDate.value && selectedTime.value
 
 // Booking
@@ -172,16 +164,12 @@ const confirmBooking = async () => {
       {
         service: selectedService.value,
         providerId: selectedProviderId.value,
-        tier: selectedTier.value.name,
-        addons: selectedAddons.value.map(a => a.key),
-        qty: qty.value,
         date: selectedDate.value,
         time: selectedTime.value,
         name: name.value,
         contact: contact.value,
         address: address.value,
         price: getSelectedPrice(),
-        coupon: couponCode.value,
         paymentMethod: paymentMethod.value,
         paymentStatus: paymentMethod.value === 'cash' ? 'pending' : 'initiated'
       },
@@ -204,12 +192,8 @@ const confirmBooking = async () => {
     address.value = ''
     selectedService.value = ''
     selectedProviderId.value = ''
-    selectedTier.value = { name: '', price: 0 }
-    selectedAddons.value = []
-    qty.value = 1
     selectedDate.value = ''
     selectedTime.value = ''
-    couponCode.value = ''
     total.value = 0
     paymentMethod.value = 'cash'
   } catch (err) {
@@ -252,17 +236,13 @@ const loadNearbyServices = async (latitude, longitude) => {
 
 // Prefill from query params
 onMounted(() => {
-  const { service, providerId, tier, addons, qty: q, date, time, total: t, coupon } = route.query
+  const { service, providerId, date, time, total: t } = route.query
 
   if (service) selectedService.value = service
   if (providerId) selectedProviderId.value = providerId
-  if (tier) selectedTier.value.name = tier
-  if (addons) selectedAddons.value = addons.split(',').map(k => ({ key: k, label: k }))
-  if (q) qty.value = Number(q)
   if (date) selectedDate.value = date
   if (time) selectedTime.value = time
   if (t) total.value = Number(t)
-  if (coupon) couponCode.value = coupon
 
   if (navigator.geolocation) {
     navigator.geolocation.getCurrentPosition(
@@ -284,4 +264,3 @@ onMounted(() => {
   }
 })
 </script>
-

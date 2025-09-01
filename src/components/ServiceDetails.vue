@@ -1,28 +1,23 @@
 <template>
   <div class="min-h-screen bg-gradient-to-b from-[#EAF6FF] to-white">
-    <!-- Sticky top gradient bar -->
+
     <div class="sticky top-0 z-30 h-1 w-full bg-gradient-to-r from-[#00B4D8] via-[#48CAE4] to-[#0096C7]"></div>
 
     <div class="max-w-6xl mx-auto px-4 sm:px-6 py-6 lg:py-10">
-      <!-- Header breadcrumbs -->
+      <!-- Header -->
       <div class="text-sm text-gray-500 mb-4 flex items-center gap-2 flex-wrap">
         <!-- Home link -->
         <router-link to="/home"
           class="hover:text-[#007EA7] transition-colors duration-200 font-medium flex items-center gap-1">
           <i class="fas fa-home text-xs"></i> Home
         </router-link>
-
         <!-- Separator -->
         <span class="text-gray-400">/</span>
-
-        <!-- Category (just text) -->
+        <!-- Category  -->
         <span class="capitalize font-medium text-gray-500">
           {{ category || 'Service' }}
         </span>
-
-        <!-- Separator -->
         <span class="text-gray-400">/</span>
-
         <!-- Current service -->
         <span class="text-gray-700 font-semibold line-clamp-1" :title="title || 'Detail'">
           {{ title || 'Detail' }}
@@ -100,22 +95,28 @@
             </div>
           </div>
 
-          <!-- Pricing tiers -->
+          <!-- Package tiers -->
           <div class="bg-white rounded-2xl shadow p-6">
             <div class="flex items-center justify-between mb-4">
               <h2 class="text-xl font-bold text-gray-900">Packages</h2>
               <span class="text-xs text-gray-500">Tap to select</span>
             </div>
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <button v-for="tier in tiers" :key="tier.name" @click="selectTier(tier)" class="tier"
-                :class="selectedTier.name === tier.name ? 'ring-2 ring-[#00B4D8]' : 'hover:shadow-md'">
-                <div class="flex items-center justify-between">
+              <button v-for="tier in tiers" :key="tier.name" @click="selectedTier = tier"
+                class="tier p-5 rounded-xl border transition-transform duration-200 hover:scale-105 focus:outline-none"
+                :class="selectedTier.name === tier.name
+                  ? 'ring-2 ring-[#00B4D8] bg-[#E0F7FF] shadow-lg'
+                  : 'border-gray-200 hover:shadow-md'">
+                <div class="flex items-center justify-between mb-2">
                   <div class="text-lg font-semibold text-gray-800">{{ tier.name }}</div>
                   <div class="text-gray-900 font-bold">₹{{ tier.price }}</div>
                 </div>
-                <ul class="mt-2 space-y-1 text-sm text-gray-600">
+                <ul class="space-y-1 text-sm text-gray-600">
                   <li v-for="p in tier.points" :key="p" class="flex items-start gap-2">
-                    <span class="mt-1">✔</span>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mt-1 text-emerald-500" fill="none"
+                      viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7" />
+                    </svg>
                     <span>{{ p }}</span>
                   </li>
                 </ul>
@@ -124,34 +125,41 @@
 
             <!-- Addons & quantity -->
             <div class="mt-6 grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div class="p-4 rounded-xl bg-gray-50">
+              <div class="p-4 rounded-xl bg-gray-50 space-y-2">
                 <div class="font-semibold text-gray-800 mb-2">Add-ons</div>
-                <label v-for="addon in addons" :key="addon.key" class="flex items-center justify-between py-2">
+                <label v-for="addon in addons" :key="addon.key"
+                  class="flex items-center justify-between p-2 rounded-lg cursor-pointer transition-colors duration-150"
+                  :class="addon.selected ? 'bg-gray-100 border border-[#00B4D8]' : 'hover:bg-gray-100'">
                   <div class="flex items-center gap-3">
-                    <input type="checkbox" v-model="addon.selected" class="accent-[#00B4D8]" />
+                    <input type="checkbox" v-model="addon.selected" class="accent-[#37adf6]" />
                     <span class="text-gray-700">{{ addon.label }}</span>
                   </div>
                   <span class="text-gray-800 font-medium">+ ₹{{ addon.price }}</span>
                 </label>
               </div>
+
               <div class="p-4 rounded-xl bg-gray-50">
                 <div class="font-semibold text-gray-800 mb-2">Quantity</div>
                 <div class="flex items-center gap-3">
-                  <button @click="qty = Math.max(1, qty - 1)" class="qty-btn">−</button>
+                  <button @click="qty = Math.max(1, qty - 1)"
+                    class="w-8 h-8 rounded-lg border text-gray-700 hover:bg-gray-100 transition disabled:opacity-50 disabled:cursor-not-allowed">−</button>
                   <div class="w-12 text-center font-semibold">{{ qty }}</div>
-                  <button @click="qty++" class="qty-btn">+</button>
+                  <button @click="qty++"
+                    class="w-8 h-8 rounded-lg border text-gray-700 hover:bg-gray-100 transition">+</button>
                 </div>
 
                 <div class="mt-4">
                   <label class="block text-sm text-gray-600 mb-1">Coupon</label>
                   <div class="flex gap-2">
-                    <input v-model="couponCode" placeholder="e.g. WELCOME10" class="input" />
-                    <button @click="applyCoupon" class="btn-secondary">Apply</button>
+                    <input v-model="couponCode" placeholder="e.g. WELCOME10" class="input flex-1" />
+                    <button @click="applyCoupon" class="btn-secondary px-4">Apply</button>
                   </div>
-                  <p v-if="couponMessage" class="text-xs mt-1" :class="couponValid ? 'text-green-600' : 'text-red-600'">
+                  <p v-if="couponMessage" class="text-xs mt-1 font-medium"
+                    :class="couponValid ? 'text-green-600' : 'text-red-600'">
                     {{ couponMessage }}
                   </p>
                 </div>
+
               </div>
             </div>
           </div>
@@ -162,16 +170,19 @@
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <label class="block text-sm text-gray-600 mb-1">Select Date</label>
-                <input type="date" class="input w-full" :min="today" :max="maxDate" v-model="selectedDate" />
+                <input type="date" class="input w-full" :min="today" :max="maxDate" v-model="selectedDate"
+                  placeholder="Select a date" />
               </div>
 
               <div>
                 <label class="block text-sm text-gray-600 mb-1">Select Time</label>
                 <select class="input w-full" v-model="selectedTime" :disabled="!selectedDate">
                   <option disabled value="">Choose a slot</option>
-                  <option v-for="slot in timeSlots" :key="slot" :value="slot" :disabled="isSlotBooked(slot)">
-                    {{ slot }} <span v-if="isSlotBooked(slot)">(Booked)</span>
+                  <option v-for="slot in timeSlots" :key="slot" :value="slot" :disabled="isSlotBooked(slot)"
+                    :class="isSlotBooked(slot) ? 'text-gray-400 line-through' : ''">
+                    {{ slot }}
                   </option>
+
                 </select>
               </div>
             </div>
@@ -184,54 +195,30 @@
             <p class="text-xs text-gray-500 mt-2">* Real-time slots can be fetched from your API later.</p>
           </div>
 
-          <!-- Provider card -->
           <div class="bg-white rounded-2xl shadow p-6">
-            <h2 class="text-xl font-bold text-gray-900 mb-4">About the Provider</h2>
-            <div class="flex items-center gap-4">
-              <img :src="provider.avatar" @error="e => e.target.src = defaultAvatar"
-                class="w-16 h-16 rounded-full object-cover border" alt="Provider" />
-              <div class="flex-1">
-                <div class="flex items-center gap-2">
-                  <div class="font-semibold text-gray-900">{{ provider.name }}</div>
-                  <span
-                    class="inline-flex items-center gap-1 text-xs bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded-full">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" viewBox="0 0 24 24" fill="currentColor">
-                      <path fill-rule="evenodd"
-                        d="M12 22C6.477 22 2 17.523 2 12S6.477 2 12 2s10 4.477 10 10-4.477 10-10 10zm-1.293-5.707a1 1 0 011.414 0l5-5a1 1 0 10-1.414-1.414L11 14.586l-2.293-2.293a1 1 0 10-1.414 1.414l3 3z"
-                        clip-rule="evenodd" />
-                    </svg>
-                    Verified
-                  </span>
+            <h2 class="text-xl font-bold text-gray-900 mb-4">Customer Reviews</h2>
 
-
-                </div>
-                <div class="text-sm text-gray-600">{{ provider.bio }}</div>
-                <div class="text-xs text-gray-500 mt-1">
-                  {{ provider.years }} yrs experience • {{ provider.jobs }} jobs completed
-                </div>
-              </div>
-              <div class="text-right">
-                <div class="text-amber-500 font-bold">{{ rating.toFixed(1) }} ★</div>
-                <div class="text-xs text-gray-500">{{ reviews.length }} reviews</div>
-              </div>
+            <!-- Average Rating -->
+            <div class="flex items-center gap-2 mb-4">
+              <div class="text-2xl font-extrabold text-amber-500">{{ rating.toFixed(1) }} ★</div>
+              <div class="text-xs text-gray-500">Based on {{ reviews.length }} reviews</div>
             </div>
-          </div>
 
-          <!-- Reviews -->
-          <div class="bg-white rounded-2xl shadow p-6">
-            <div class="flex items-center justify-between mb-4 flex-wrap gap-2">
-              <h2 class="text-xl font-bold text-gray-900">Customer Reviews</h2>
+            <!-- New Review Form -->
+            <div class="mb-6 p-4 bg-gray-50 rounded-xl space-y-3">
               <div class="flex items-center gap-2">
-                <div class="text-2xl font-extrabold text-amber-500">{{ rating.toFixed(1) }} ★</div>
-                <div class="text-xs text-gray-500">Based on {{ reviews.length }} reviews</div>
-                <select v-model="selectedStar" class="input text-sm w-36">
-                  <option value="">All ratings</option>
-                  <option v-for="s in [5, 4, 3, 2, 1]" :key="s">{{ s }}★ only</option>
-                </select>
+                <input v-model="newReview.user" placeholder="Your Name" class="input w-full" />
+                <input type="file" @change="onFileChange"/> 
               </div>
+              <div class="flex items-center gap-1">
+                <span v-for="n in 5" :key="n" @click="setStarRating(n)" class="cursor-pointer text-amber-400 text-xl">
+                  {{ n <= newReview.stars ? '★' : '☆' }} </span>
+              </div>
+              <textarea v-model="newReview.text" placeholder="Write your review..." class="input w-full"></textarea>
+              <button @click="submitReview" class="btn-primary w-80">Submit Review</button>
             </div>
-          
-            <!-- rating bars -->
+
+            <!-- Rating Bars -->
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
               <div class="space-y-2">
                 <div v-for="star in [5, 4, 3, 2, 1]" :key="star" class="flex items-center gap-3">
@@ -242,8 +229,6 @@
                   <div class="w-10 text-right text-xs text-gray-500">{{ ratingCounts[star] || 0 }}</div>
                 </div>
               </div>
-
-              <!-- quick pros -->
               <div class="p-4 rounded-xl bg-gray-50">
                 <div class="font-semibold text-gray-800 mb-2">What people like</div>
                 <ul class="text-sm text-gray-700 space-y-1">
@@ -252,13 +237,7 @@
               </div>
             </div>
 
-            <!-- review list -->
-            <div class="space-y-5">
-              <ReviewCard v-for="r in filteredReviews" :key="r.id" :review="r" :defaultAvatar="defaultAvatar" />
-            </div>
-
           </div>
-
           <!-- Related services -->
           <div class="bg-white rounded-2xl shadow p-6">
             <h2 class="text-xl font-bold text-gray-900 mb-4">You might also like</h2>
@@ -286,10 +265,18 @@
                 <div class="text-lg font-bold text-gray-900">Your Selection</div>
                 <div class="text-sm text-gray-500 capitalize">{{ category }}</div>
               </div>
+
               <div class="mt-4 space-y-2 text-sm text-gray-700">
-                <div class="flex justify-between"><span>Tier</span><span class="font-medium">{{ selectedTier.name
-                    }}</span></div>
-                <div class="flex justify-between"><span>Quantity</span><span class="font-medium">{{ qty }}</span></div>
+                <div class="flex justify-between">
+                  <span>Tier</span>
+                  <span class="font-medium">
+                    {{ selectedTier.name || "Not selected" }}
+                  </span>
+                </div>
+                <div class="flex justify-between">
+                  <span>Quantity</span>
+                  <span class="font-medium">{{ qty }}</span>
+                </div>
                 <div class="flex justify-between">
                   <span>Add-ons</span>
                   <span class="font-medium">
@@ -297,36 +284,42 @@
                     <template v-else>None</template>
                   </span>
                 </div>
-                <div class="flex justify-between"><span>Date</span><span class="font-medium">{{ selectedDate || `Not
-                    set` }}</span>
-
+                <div class="flex justify-between">
+                  <span>Date</span>
+                  <span class="font-medium">{{ selectedDate || 'Not set' }}</span>
                 </div>
                 <div class="flex justify-between">
                   <span>Time</span>
                   <span class="font-medium">{{ selectedTime || 'Not set' }}</span>
                 </div>
-
               </div>
 
               <div class="border-t mt-4 pt-4 space-y-2 text-sm">
-                <div class="flex justify-between"><span>Subtotal</span><span>₹{{ subtotal }}</span></div>
-                <div class="flex justify-between" v-if="discountAmount > 0"><span>Discount</span><span
-                    class="text-emerald-600">− ₹{{
-                      discountAmount }}</span></div>
-                <div class="flex justify-between font-bold text-gray-900 text-base"><span>Total</span><span>₹{{ total
-                    }}</span></div>
+                <div class="flex justify-between">
+                  <span>Subtotal</span>
+                  <span>₹{{ subtotal }}</span>
+                </div>
+                <div class="flex justify-between" v-if="discountAmount > 0">
+                  <span>Discount</span>
+                  <span class="text-emerald-600">− ₹{{ discountAmount }}</span>
+                </div>
+                <div class="flex justify-between font-bold text-gray-900 text-base">
+                  <span>Total</span>
+                  <span>₹{{ total }}</span>
+                </div>
               </div>
 
               <button class="mt-4 btn-primary w-full" :disabled="!canBook" @click="goToBooking">
-                Book Now — ₹{{ total }}
+                Proceed To Booking — ₹{{ total }}
               </button>
 
-              <p v-if="!canBook" class="text-xs text-red-600 mt-2">Please pick a date & time to continue.</p>
+              <p v-if="!canBook" class="text-xs text-red-600 mt-2">Please pick a package, date & time to continue.</p>
 
               <div class="text-xs text-gray-500 mt-3">No advance charged. Pay after service confirmation.</div>
             </div>
           </div>
         </div>
+
       </div>
     </div>
 
@@ -337,7 +330,7 @@
           <div class="text-xs text-gray-500">Total</div>
           <div class="text-lg font-bold">₹{{ total }}</div>
         </div>
-        <button class="btn-primary" :disabled="!canBook" @click="goToBooking">Book Now</button>
+        <button class="btn-primary" :disabled="!canBook" @click="goToBooking">Proceed to Booking</button>
       </div>
     </div>
   </div>
@@ -347,7 +340,6 @@
 export default {
   name: "ServiceDetail",
 
-  // Props go here
   props: {
     defaultAvatar: { type: String, default: "/images/default-user.png" },
   },
@@ -366,7 +358,7 @@ export default {
         { name: "Standard", price: 699, points: ["Includes Basic", "Material support", "Priority scheduling"] },
         { name: "Premium", price: 999, points: ["Includes Standard", "Deep service", "90-day support"] },
       ],
-      selectedTier: { name: "Standard", price: 699, points: [] },
+      selectedTier: { name: "", price: 0, points: [] },
       addons: [
         { key: "fast", label: "Fast service (same-day)", price: 99, selected: false },
         { key: "eco", label: "Eco-friendly materials", price: 49, selected: false },
@@ -397,24 +389,40 @@ export default {
 
       // Reviews
       reviews: [
-        { id: 1, user: "Ankita Sharma", userAvatar: "/images/u1.jpg", stars: 5, text: "Professional and quick. Fixed my issue in one visit.", date: "Jun 2025", photo: "/images/review1.jpg" },
+        { id: 1, user: "Ankita Sharma", userAvatar: "/images/u1.jpg", stars: 5, text: "Professional and quick. Fixed my issue in one visit.", date: "Jun 2025" },
         { id: 2, user: "Sneha Kulkarni", userAvatar: "/images/u2.jpg", stars: 4, text: "On time and polite. Good value.", date: "May 2025" },
         { id: 3, user: "Rakshita Gupta", userAvatar: "/images/u3.jpg", stars: 5, text: "Great experience! Highly recommend.", date: "Apr 2025" },
       ],
       ratingCounts: { 5: 18, 4: 7, 3: 2, 2: 1, 1: 0 },
 
+      // Reviews UI state
+      selectedStar: "",
+      newReview: {
+        user: "", userAvatar: this.defaultAvatar, stars: 0,
+        text: "", date: "",
+      },
+      reviewMessage: "",
+      reviewSuccess: false,
+      showAllReviews: false,
       related: [],
     };
   },
 
   computed: {
     today() {
-      return new Date().toISOString().slice(0, 10);
+      const now = new Date();
+      const year = now.getFullYear();
+      const month = String(now.getMonth() + 1).padStart(2, '0'); // months are 0-indexed
+      const day = String(now.getDate()).padStart(2, '0');
+      return `${year}-${month}-${day}`;
     },
     maxDate() {
       const d = new Date();
       d.setMonth(d.getMonth() + 3);
-      return d.toISOString().slice(0, 10);
+      const year = d.getFullYear();
+      const month = String(d.getMonth() + 1).padStart(2, '0');
+      const day = String(d.getDate()).padStart(2, '0');
+      return `${year}-${month}-${day}`;
     },
     activeMedia() {
       return this.media[this.currentIndex] || {};
@@ -423,6 +431,7 @@ export default {
       return this.addons.filter(a => a.selected);
     },
     subtotal() {
+      if (!this.selectedTier.name) return 0;
       return (this.selectedTier.price + this.selectedAddons.reduce((s, a) => s + a.price, 0)) * this.qty;
     },
     discountAmount() {
@@ -437,21 +446,31 @@ export default {
       return weighted / total;
     },
     canBook() {
-      return !!(this.selectedDate && this.selectedTime);
+      return !!(this.selectedTier.name && this.selectedDate && this.selectedTime);
     },
     filteredReviews() {
-      if (!this.selectedStar) return this.reviews;
-      return this.reviews.filter(r => r.stars === Number(this.selectedStar));
+      let filtered = this.reviews;
+      if (this.selectedStar) filtered = filtered.filter(r => r.stars === Number(this.selectedStar));
+      if (!this.showAllReviews) filtered = filtered.slice(0, 5);
+      return filtered;
     },
     reviewPros() {
       return ["On-time service", "Professional & polite", "Good value for money"];
     },
+    showAllReviewsBtn() {
+      return !this.showAllReviews && this.reviews.length > 5;
+    }
   },
 
   methods: {
     handleImageError(e) {
       e.target.src = this.defaultAvatar;
     },
+    onFileChange(e) {
+    const file = e.target.files?.[0]; 
+    if (!file) return; 
+    if (this.newReview.userAvatar) URL.revokeObjectURL(this.newReview.userAvatar);
+    this.newReview.userAvatar = URL.createObjectURL(file);},
     nextMedia() {
       this.currentIndex = (this.currentIndex + 1) % this.media.length;
     },
@@ -536,6 +555,42 @@ export default {
 
       this.media = media;
     },
+
+    submitReview() {
+      if (!this.newReview.user || !this.newReview.stars || !this.newReview.text) {
+        alert("Please fill all fields and give a star rating.");
+        return;
+      }
+      const today = new Date();
+      const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+      const month = monthNames[today.getMonth()];
+      const year = today.getFullYear();
+
+      this.newReview.date = `${month} ${year}`;
+
+      // Push new review to reviews array
+      this.reviews.unshift({
+        ...this.newReview,
+        id: Date.now(),
+        userAvatar: this.newReview.userAvatar
+      });
+
+      // Update ratingCounts
+      this.ratingCounts[this.newReview.stars] = (this.ratingCounts[this.newReview.stars] || 0) + 1;
+
+      // Reset newReview
+      this.newReview = { user: "", userAvatar: this.defaultAvatar, stars: 0, text: "", date: "" };
+    },
+
+    setStarRating(value) {
+      this.newReview.stars = value;
+    },
+
+    formatDate(d) {
+      if (!d) return "";
+      const date = new Date(d);
+      return date.toLocaleDateString();
+    },
   },
 
   mounted() {
@@ -544,13 +599,13 @@ export default {
       title: title || "Service Detail",
       desc: desc || "High-quality service at your doorstep with verified professionals.",
       category: category || "General",
-      selectedTier: this.tiers[1],
     });
     this.buildMediaFromTitle();
     this.buildRelated();
   },
 };
 </script>
+
 <style scoped>
 /* --- Shared Utilities --- */
 .flex-center {
@@ -682,7 +737,7 @@ export default {
 
 .input:focus {
   border-color: #00B4D8;
-  box-shadow: 0 0 0 2px #00B4D833;
+  box-shadow: 0 0 0 2px#00B4D833;
 }
 
 /* --- Quantity Button --- */
