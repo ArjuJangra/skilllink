@@ -10,14 +10,10 @@
         <div class="flex items-center gap-4 sm:gap-6 w-full">
           <!-- Left: Profile Image -->
           <div class="relative flex-shrink-0">
-            <img
-  :src="user.profilePic ? API.getImageUrl(user.profilePic) : userImg"
-  @error="e => e.target.src = userImg"
-  class="w-16 h-16 sm:w-28 sm:h-28 rounded-full border-4 border-[#00A8E8] object-cover shadow-md"
-  alt="Profile Picture"
-/>
-
-
+            <img :src="user.profilePic ? API.getImageUrl(user.profilePic) : userImg"
+              @error="e => e.target.src = userImg"
+              class="w-16 h-16 sm:w-28 sm:h-28 rounded-full border-4 border-[#00A8E8] object-cover shadow-md"
+              alt="Profile Picture" />
             <label
               class="absolute bottom-0 right-0 bg-[#00A8E8] text-white rounded-full p-2 cursor-pointer hover:bg-[#007EA7] transition"
               title="Upload Photo">
@@ -146,10 +142,8 @@
                 <div v-for="booking in bookings" :key="booking._id" :class="[
                   'relative bg-white p-5 rounded-xl shadow-md border-l-4 transition transform hover:shadow-xl hover:scale-105',
                   booking.status === 'Pending' ? 'border-yellow-500' :
-                    booking.status === 'Accepted' ? 'border-blue-500' :
-                      booking.status === 'Completed' ? 'border-green-500' :
-                        'border-red-500'
-                ]">
+                  booking.status === 'Accepted' ? 'border-blue-500' :
+                  booking.status === 'Completed' ? 'border-green-500' : 'border-red-500' ]">
 
                   <!-- Status Badge -->
                   <div class="absolute top-2 right-2">
@@ -186,6 +180,7 @@
                     <p class="text-sm text-gray-500">Contact: {{ booking.contact }}</p>
                     <p class="text-sm text-gray-500">Address: {{ booking.address }}</p>
                     <p class="text-xs text-gray-400">Booked: {{ new Date(booking.createdAt).toLocaleString() }}</p>
+                    
                   </template>
 
                   <!-- Action Buttons -->
@@ -203,96 +198,95 @@
               <p v-else class="text-gray-500">No bookings found.</p>
             </div>
 
-           <!-- History Tab -->
-<div v-else-if="activeTab === 'history'" class="space-y-6">
-  <h3 class="text-xl font-semibold text-[#007EA7]">Previous Services</h3>
+            <!-- History Tab -->
+            <div v-else-if="activeTab === 'history'" class="space-y-6">
+              <h3 class="text-xl font-semibold text-[#007EA7]">Previous Services</h3>
 
-  <!-- Clear History Button -->
-  <div class="flex justify-end mb-4">
-    <button @click="showClearHistoryConfirm = true"
-      class="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 transition">
-      Clear History
-    </button>
-  </div>
+              <!-- Clear History Button -->
+              <div class="flex justify-end mb-4">
+                <button @click="showClearHistoryConfirm = true"
+                  class="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 transition">
+                  Clear History
+                </button>
+              </div>
 
-  <!-- Inline confirmation -->
-  <div v-if="showClearHistoryConfirm"
-    class="bg-yellow-100 border-l-4 border-yellow-400 text-yellow-700 p-4 mb-4 flex justify-between items-center rounded">
-    <span>Are you sure you want to clear all history? This cannot be undone.</span>
-    <div class="flex gap-2">
-      <button @click="confirmClearHistory"
-        class="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600 transition">
-        Yes
-      </button>
-      <button @click="showClearHistoryConfirm = false"
-        class="px-3 py-1 bg-gray-300 text-gray-700 rounded hover:bg-gray-400 transition">
-        No
-      </button>
-    </div>
-  </div>
+              <!-- Inline confirmation -->
+              <div v-if="showClearHistoryConfirm"
+                class="bg-yellow-100 border-l-4 border-yellow-400 text-yellow-700 p-4 mb-4 flex justify-between items-center rounded">
+                <span>Are you sure you want to clear all history? This cannot be undone.</span>
+                <div class="flex gap-2">
+                  <button @click="confirmClearHistory"
+                    class="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600 transition">
+                    Yes
+                  </button>
+                  <button @click="showClearHistoryConfirm = false"
+                    class="px-3 py-1 bg-gray-300 text-gray-700 rounded hover:bg-gray-400 transition">
+                    No
+                  </button>
+                </div>
+              </div>
 
-  <!-- Grid of History Cards -->
-  <div v-if="history.length" class="grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-    <div v-for="item in history" :key="item.id"
-      class="bg-white border border-gray-200 rounded-2xl shadow-sm hover:shadow-lg transform hover:scale-105 transition-all p-5 flex flex-col justify-between">
+              <!-- Grid of History Cards -->
+              <div v-if="history.length" class="grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <div v-for="item in history" :key="item.id"
+                  class="bg-white border border-gray-200 rounded-2xl shadow-sm hover:shadow-lg transform hover:scale-105 transition-all p-5 flex flex-col justify-between">
 
-      <!-- Top Section: Service & Status -->
-      <div class="flex justify-between items-start mb-3">
-        <div>
-          <h4 class="text-lg font-bold text-[#007EA7]">{{ item.service }}</h4>
-          <p class="text-gray-500 text-sm">{{ item.date }}</p>
-        </div>
+                  <!-- Top Section: Service & Status -->
+                  <div class="flex justify-between items-start mb-3">
+                    <div>
+                      <h4 class="text-lg font-bold text-[#007EA7]">{{ item.service }}</h4>
+                      <p class="text-gray-500 text-sm">{{ item.date }}</p>
+                    </div>
 
-        <!-- Status Badge with Icon -->
-        <span class="flex items-center gap-1 text-sm font-semibold px-3 py-1 rounded-full" 
-              :class="item.status === 'Completed' ? 'bg-green-100 text-green-700'
-                : item.status === 'Rejected' ? 'bg-red-100 text-red-700'
-                : 'bg-yellow-100 text-yellow-700'">
-          <svg v-if="item.status === 'Completed'" xmlns="http://www.w3.org/2000/svg" class="h-4 w-4"
-            fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7" />
-          </svg>
-          <svg v-else-if="item.status === 'Rejected'" xmlns="http://www.w3.org/2000/svg" class="h-4 w-4"
-            fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3"
-              d="M6 18L18 6M6 6l12 12" />
-          </svg>
-          <svg v-else xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 animate-spin" fill="none"
-            viewBox="0 0 24 24" stroke="currentColor">
-            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4">
-            </circle>
-            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"></path>
-          </svg>
-          {{ item.status }}
-        </span>
-      </div>
+                    <!-- Status Badge with Icon -->
+                    <span class="flex items-center gap-1 text-sm font-semibold px-3 py-1 rounded-full" :class="item.status === 'Completed' ? 'bg-green-100 text-green-700'
+                      : item.status === 'Rejected' ? 'bg-red-100 text-red-700'
+                        : 'bg-yellow-100 text-yellow-700'">
+                      <svg v-if="item.status === 'Completed'" xmlns="http://www.w3.org/2000/svg" class="h-4 w-4"
+                        fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7" />
+                      </svg>
+                      <svg v-else-if="item.status === 'Rejected'" xmlns="http://www.w3.org/2000/svg" class="h-4 w-4"
+                        fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3"
+                          d="M6 18L18 6M6 6l12 12" />
+                      </svg>
+                      <svg v-else xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 animate-spin" fill="none"
+                        viewBox="0 0 24 24" stroke="currentColor">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4">
+                        </circle>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"></path>
+                      </svg>
+                      {{ item.status }}
+                    </span>
+                  </div>
 
-      <!-- Optional Description -->
-      <p v-if="item.description" class="text-gray-600 text-sm mb-2 line-clamp-3">{{ item.description }}</p>
+                  <!-- Optional Description -->
+                  <p v-if="item.description" class="text-gray-600 text-sm mb-2 line-clamp-3">{{ item.description }}</p>
 
-      <!-- Optional Provider Info -->
-      <div v-if="item.provider" class="flex items-center gap-2 mb-2">
-        <img :src="item.provider.avatar || userImg" class="w-8 h-8 rounded-full object-cover"
-          alt="provider" />
-        <span class="text-gray-700 text-sm">{{ item.provider.name }}</span>
-      </div>
+                  <!-- Optional Provider Info -->
+                  <div v-if="item.provider" class="flex items-center gap-2 mb-2">
+                    <img :src="item.provider.avatar || userImg" class="w-8 h-8 rounded-full object-cover"
+                      alt="provider" />
+                    <span class="text-gray-700 text-sm">{{ item.provider.name }}</span>
+                  </div>
 
-      <!-- Bottom Section: Booked Date & Time -->
-      <div class="flex justify-between items-center mt-auto text-xs text-gray-400">
-        <span>Booked {{ isValidDate(item.date) ? relativeDate(item.date) : 'N/A' }}</span>
-        <span>{{ isValidDate(item.date) ? formatTime(item.date) : '' }}</span>
-      </div>
+                  <!-- Bottom Section: Booked Date & Time -->
+                  <div class="flex justify-between items-center mt-auto text-xs text-gray-400">
+                    <span>Booked {{ isValidDate(item.date) ? relativeDate(item.date) : 'N/A' }}</span>
+                    <span>{{ isValidDate(item.date) ? formatTime(item.date) : '' }}</span>
+                  </div>
 
-    </div>
-  </div>
+                </div>
+              </div>
 
-  <!-- Empty State -->
-  <div v-else class="flex flex-col items-center justify-center py-10 text-gray-500">
-    
-    <p>No service history available.</p>
-    <button @click="router.push('/services')" class="btn-blue mt-3">Explore Services</button>
-  </div>
-</div>
+              <!-- Empty State -->
+              <div v-else class="flex flex-col items-center justify-center py-10 text-gray-500">
+
+                <p>No service history available.</p>
+                <button @click="router.push('/services')" class="btn-blue mt-3">Explore Services</button>
+              </div>
+            </div>
             <!-- Address Tab -->
             <div v-else-if="activeTab === 'address'" class="space-y-6">
               <div class="flex items-center justify-between">

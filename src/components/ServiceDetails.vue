@@ -551,8 +551,6 @@ export default {
   },
 };
 </script>
-
-
 <style scoped>
 /* --- Shared Utilities --- */
 .flex-center {

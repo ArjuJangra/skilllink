@@ -375,20 +375,3 @@ const solvedCases = [
   }
 ];
 </script>
-
-<style scoped>
-.btn-red {
-  padding: 0.5rem 1rem;
-  border-radius: 0.375rem;
-  color: #fff;
-  transition: background-color 0.2s;
-}
-
-.btn-red {
-  background: #ef4444;
-}
-
-.btn-red:hover {
-  background: #dc2626;
-}
-</style>

@@ -6,13 +6,7 @@
       <div class="flex justify-center mb-2">
         <img src="@/assets/skilllogo.png" alt="SkillLink Logo" class="w-20 h-20" />
       </div>
-
-      <h2
-        class="text-3xl sm:text-3xl font-bold bg-gradient-to-r from-[#3B8D99] to-[#f46675] bg-clip-text text-transparent text-center mb-6">
-        Your Expert is a Click Away
-      </h2>
-
-
+      <h2 class="text-3xl sm:text-3xl font-bold bg-gradient-to-r from-[#3B8D99] to-[#f46675] bg-clip-text text-transparent text-center mb-6">Your Expert is a Click Away</h2>
       <!-- Service Selection -->
       <div v-if="!hasPrefilledService">
         <label class="block text-gray-700 font-medium mb-2">Select a Service</label>
@@ -116,6 +110,7 @@ const route = useRoute()
 
 const loading = ref(false)
 
+// Form fields
 const selectedService = ref('')
 const selectedProviderId = ref('')
 const name = ref('')
@@ -153,7 +148,13 @@ const getSelectedPrice = () => total.value || servicePrices[selectedService.valu
 const hasPrefilledService = computed(() => !!route.query.service)
 const hasPrefilledProvider = computed(() => !!route.query.providerId)
 
-const isFormValid = () => name.value && contact.value && address.value && selectedService.value && selectedProviderId.value && getSelectedPrice() > 0 && selectedDate.value && selectedTime.value
+// Computed selected provider
+const selectedProvider = computed(() => 
+  providers.value.find(p => p._id === selectedProviderId.value) || {}
+)
+
+const isFormValid = () => 
+  name.value && contact.value && address.value && selectedService.value && selectedProviderId.value && getSelectedPrice() > 0 && selectedDate.value && selectedTime.value
 
 // Booking
 const confirmBooking = async () => {
@@ -191,8 +192,7 @@ const confirmBooking = async () => {
       path: '/booking-confirm',
       query: {
         service: selectedService.value,
-        providerName:
-          providers.value.find(p => p._id === selectedProviderId.value)?.name || 'Assigned Expert',
+        providerName: selectedProvider.value.name || 'Assigned Expert',
         amount: getSelectedPrice(),
         paymentMethod: paymentMethod.value
       }
@@ -250,7 +250,7 @@ const loadNearbyServices = async (latitude, longitude) => {
   }
 }
 
-// Prefill
+// Prefill from query params
 onMounted(() => {
   const { service, providerId, tier, addons, qty: q, date, time, total: t, coupon } = route.query
 
@@ -284,3 +284,4 @@ onMounted(() => {
   }
 })
 </script>
+
