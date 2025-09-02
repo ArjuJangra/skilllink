@@ -80,7 +80,8 @@ router.post(
 
       const savedBooking = await booking.save();
       console.log('✅ Booking saved:', savedBooking);
-
+      // Populate provider info before sending response
+await savedBooking.populate('providerId', '-password -__v');
       res.status(201).json({ message: 'Booking confirmed', booking: savedBooking });
     } catch (err) {
       console.error('❌ Booking error:', err);

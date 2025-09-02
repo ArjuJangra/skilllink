@@ -208,7 +208,7 @@
             <div class="mb-6 p-4 bg-gray-50 rounded-xl space-y-3">
               <div class="flex items-center gap-2">
                 <input v-model="newReview.user" placeholder="Your Name" class="input w-full" />
-                <input type="file" @change="onFileChange"/> 
+                <input type="file" @change="onFileChange" />
               </div>
               <div class="flex items-center gap-1">
                 <span v-for="n in 5" :key="n" @click="setStarRating(n)" class="cursor-pointer text-amber-400 text-xl">
@@ -378,15 +378,6 @@ export default {
         "2025-08-25": ["12:00 PM"]
       },
 
-      // Provider info
-      provider: {
-        name: "Rahul Verma",
-        avatar: "/images/provider.png",
-        bio: "Skilled and vetted professional with a passion for quality and punctuality.",
-        years: 6,
-        jobs: 1123,
-      },
-
       // Reviews
       reviews: [
         { id: 1, user: "Ankita Sharma", userAvatar: "/images/u1.jpg", stars: 5, text: "Professional and quick. Fixed my issue in one visit.", date: "Jun 2025" },
@@ -467,10 +458,11 @@ export default {
       e.target.src = this.defaultAvatar;
     },
     onFileChange(e) {
-    const file = e.target.files?.[0]; 
-    if (!file) return; 
-    if (this.newReview.userAvatar) URL.revokeObjectURL(this.newReview.userAvatar);
-    this.newReview.userAvatar = URL.createObjectURL(file);},
+      const file = e.target.files?.[0];
+      if (!file) return;
+      if (this.newReview.userAvatar) URL.revokeObjectURL(this.newReview.userAvatar);
+      this.newReview.userAvatar = URL.createObjectURL(file);
+    },
     nextMedia() {
       this.currentIndex = (this.currentIndex + 1) % this.media.length;
     },
@@ -512,6 +504,7 @@ export default {
         qty: this.qty,
         addons: this.selectedAddons.map(a => a.key).join(","),
         coupon: this.couponValid ? this.couponCode : "",
+        
       });
       this.$router.push(`/booking?${q}`);
     },

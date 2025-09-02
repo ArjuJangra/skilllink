@@ -47,7 +47,7 @@
             </div>
             <div class="text-sm text-gray-600">{{ provider.bio }}</div>
             <div class="text-xs text-gray-500 mt-1">
-              {{ provider.years }} yrs experience • {{ provider.jobs }} jobs completed
+              {{ provider.years }} yrs experience • {{ provider.orders }} jobs completed
             </div>
           </div>
           <div class="text-right">
@@ -63,12 +63,12 @@
 <script setup>
 import { ref, onMounted } from 'vue';
 import { useRoute } from 'vue-router';
-
-// Import the default provider image
+import API from '@/api'   // Axios instance
 import defaultAvatarFile from '@/assets/default-provider.png';
 //const router = useRouter();
 const route = useRoute();
 const defaultAvatar = defaultAvatarFile;
+const booking = ref(null)
 
 // Booking details from route query
 const serviceName = ref(route.query.service || 'Your Selected Service');
@@ -87,9 +87,23 @@ const provider = ref({
 const reviews = ref(route.query.reviews ? JSON.parse(route.query.reviews) : []);
 const rating = ref(route.query.rating ? Number(route.query.rating) : 0);
 
-onMounted(() => {
-
+onMounted(async () => {
+  try {
+    const bookingId = route.query.bookingId;
+    if (bookingId) {
+      const { data } = await API.get(`/bookings/${bookingId}`, { 
+        headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+      });
+      booking.value = data;
+      serviceName.value = data.service;
+      amount.value = data.price;
+      provider.value = data.providerId; // populated provider
+    }
+  } catch (err) {
+    console.error('Failed to load booking details:', err);
+  }
 });
+
 </script>
 
 <style scoped>

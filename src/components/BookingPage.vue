@@ -8,15 +8,17 @@
       </div>
       <h2
         class="text-3xl sm:text-3xl font-bold bg-gradient-to-r from-[#3B8D99] to-[#f46675] bg-clip-text text-transparent text-center mb-6">
-        Your Expert is a Click Away</h2>
+        Your Expert is a Click Away
+      </h2>
 
       <!-- Service Selection -->
       <div v-if="!hasPrefilledService">
         <label class="block text-gray-700 font-medium mb-2">Select a Service</label>
         <div class="grid grid-cols-2 gap-4">
-          <div v-for="service in availableServices" :key="service" @click="selectedService = service; fetchProviders()"
-            :class="selectedService === service ? 'border-blue-600 bg-blue-50 shadow-lg' : 'border-gray-300 hover:shadow-md'"
-            class="border p-3 rounded-xl text-center cursor-pointer transition">
+          <div v-for="service in availableServices" :key="service" 
+               @click="selectedService = service; fetchProviders()"
+               :class="selectedService === service ? 'border-blue-600 bg-blue-50 shadow-lg' : 'border-gray-300 hover:shadow-md'"
+               class="border p-3 rounded-xl text-center cursor-pointer transition">
             <p class="font-medium">{{ service }}</p>
             <p class="text-sm text-gray-500">₹{{ servicePrices[service] || '---' }}</p>
           </div>
@@ -27,9 +29,10 @@
       <div v-if="!hasPrefilledProvider && providers.length">
         <label class="block text-gray-700 font-medium mb-2">Select Provider</label>
         <div class="flex flex-col gap-3">
-          <div v-for="provider in providers" :key="provider._id" @click="selectedProviderId = provider._id"
-            :class="selectedProviderId === provider._id ? 'border-blue-600 bg-blue-50 shadow-lg' : 'border-gray-300 hover:shadow-md'"
-            class="border p-3 rounded-xl cursor-pointer transition flex justify-between items-center">
+          <div v-for="provider in providers" :key="provider._id" 
+               @click="selectedProviderId = provider._id"
+               :class="selectedProviderId === provider._id ? 'border-blue-600 bg-blue-50 shadow-lg' : 'border-gray-300 hover:shadow-md'"
+               class="border p-3 rounded-xl cursor-pointer transition flex justify-between items-center">
             <div>
               <p class="font-medium">{{ provider.name }}</p>
               <p class="text-sm text-gray-500">{{ provider.address }}</p>
@@ -37,29 +40,31 @@
           </div>
         </div>
       </div>
+
       <!-- Personal Details -->
       <div class="flex flex-col gap-4">
         <input type="text" v-model="name" placeholder="Your Name"
-          class="w-full border rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#00A8E8]" />
+               class="w-full border rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#00A8E8]" />
         <input type="tel" v-model="contact" placeholder="Contact Number"
-          class="w-full border rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#00A8E8]" />
+               class="w-full border rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#00A8E8]" />
         <textarea v-model="address" placeholder="Address" rows="2"
-          class="w-full border rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#00A8E8]"></textarea>
+                  class="w-full border rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#00A8E8]"></textarea>
       </div>
+
       <!-- Payment Method -->
       <div>
         <label class="block text-gray-700 font-medium mb-2">Payment Method</label>
         <div class="flex gap-4">
           <div @click="paymentMethod = 'cash'"
-            :class="paymentMethod === 'cash' ? 'bg-blue-50 border-blue-600 shadow-lg' : 'border-gray-300 hover:shadow-md'"
-            class="flex-1 p-3 rounded-xl text-center cursor-pointer flex flex-col items-center gap-1 transition">
+               :class="paymentMethod === 'cash' ? 'bg-blue-50 border-blue-600 shadow-lg' : 'border-gray-300 hover:shadow-md'"
+               class="flex-1 p-3 rounded-xl text-center cursor-pointer flex flex-col items-center gap-1 transition">
             <span class="text-xl">💵</span>
             <span>Cash on Service</span>
           </div>
 
           <div @click="paymentMethod = 'upi'"
-            :class="paymentMethod === 'upi' ? 'border-blue-600 bg-blue-50 shadow-lg' : 'border-gray-300 hover:shadow-md'"
-            class="flex-1 p-3 rounded-xl text-center cursor-pointer flex flex-col items-center gap-1 transition">
+               :class="paymentMethod === 'upi' ? 'border-blue-600 bg-blue-50 shadow-lg' : 'border-gray-300 hover:shadow-md'"
+               class="flex-1 p-3 rounded-xl text-center cursor-pointer flex flex-col items-center gap-1 transition">
             🏦 UPI / Bank Transfer
           </div>
         </div>
@@ -75,14 +80,15 @@
       <!-- Booking Summary -->
       <div class="p-3 border rounded-xl bg-gray-50 flex flex-col gap-1">
         <p><strong>Service:</strong> {{ selectedService || '-' }}</p>
-        <p><strong>Provider:</strong> {{providers.find(p => p._id === selectedProviderId)?.name || '-'}}</p>
+        <p><strong>Provider:</strong> {{ selectedProvider.name || '-' }}</p>
         <p><strong>Price:</strong> ₹{{ getSelectedPrice() }}</p>
         <p><strong>Payment:</strong> {{ paymentMethod === 'cash' ? 'Cash' : 'UPI / Bank' }}</p>
         <p><strong>Scheduled:</strong> {{ selectedDate }} at {{ selectedTime }}</p>
       </div>
+
       <!-- Confirm Booking -->
       <button :disabled="loading || !isFormValid()" @click="confirmBooking"
-        class="w-full bg-[#0289b7] text-white py-3 rounded-xl hover:bg-[#005f6b] disabled:opacity-50 transition">
+              class="w-full bg-[#0289b7] text-white py-3 rounded-xl hover:bg-[#005f6b] disabled:opacity-50 transition">
         {{ loading ? 'Processing...' : `Book ₹${getSelectedPrice()}` }}
       </button>
 
@@ -105,8 +111,6 @@ const router = useRouter()
 const route = useRoute()
 
 const loading = ref(false)
-
-// Form fields
 const selectedService = ref('')
 const selectedProviderId = ref('')
 const name = ref('')
@@ -115,7 +119,6 @@ const address = ref('')
 const selectedDate = ref('')
 const selectedTime = ref('')
 const total = ref(0)
-
 const availableServices = ref([])
 const providers = ref([])
 const location = ref({ latitude: null, longitude: null })
@@ -126,38 +129,30 @@ const upiId = ref('parveendhillo08-1@okaxis')
 const upiQr = ref(upiQrImg)
 
 // Prices
-const servicePrices = {
-  Plumber: 199,
-  Electrician: 249,
-  "AC Repair": 399,
-  Carpenter: 299,
-  Cleaner: 149,
-  Mechanic: 349
-}
-
+const servicePrices = { Plumber: 199, Electrician: 249, "AC Repair": 399, Carpenter: 299, Cleaner: 149, Mechanic: 349 }
 const getSelectedPrice = () => total.value || servicePrices[selectedService.value] || 0
 
 const hasPrefilledService = computed(() => !!route.query.service)
 const hasPrefilledProvider = computed(() => !!route.query.providerId)
 
-// Computed selected provider
+// **Computed provider**
 const selectedProvider = computed(() =>
   providers.value.find(p => p._id === selectedProviderId.value) || {}
 )
 
+// Form validation
 const isFormValid = () =>
-  name.value && contact.value && address.value && selectedService.value && selectedProviderId.value && getSelectedPrice() > 0 && selectedDate.value && selectedTime.value
+  name.value && contact.value && address.value && selectedService.value &&
+  selectedProviderId.value && getSelectedPrice() > 0 && selectedDate.value && selectedTime.value
 
-// Booking
+// Confirm booking
 const confirmBooking = async () => {
   if (!isFormValid()) {
     toast.error('Please fill in all required fields.')
     return
   }
-
   loading.value = true
   const token = localStorage.getItem('token')
-
   try {
     await API.post(
       '/bookings',
@@ -175,27 +170,16 @@ const confirmBooking = async () => {
       },
       { headers: { Authorization: `Bearer ${token}` } }
     )
-
     router.push({
       path: '/booking-confirm',
       query: {
         service: selectedService.value,
+        providerId: selectedProvider.value._id,
         providerName: selectedProvider.value.name || 'Assigned Expert',
         amount: getSelectedPrice(),
         paymentMethod: paymentMethod.value
       }
     })
-
-    // Reset form
-    name.value = ''
-    contact.value = ''
-    address.value = ''
-    selectedService.value = ''
-    selectedProviderId.value = ''
-    selectedDate.value = ''
-    selectedTime.value = ''
-    total.value = 0
-    paymentMethod.value = 'cash'
   } catch (err) {
     toast.error(err.response?.data?.message || 'Booking failed.')
   } finally {
@@ -221,7 +205,7 @@ const fetchProviders = async () => {
   }
 }
 
-// Nearby services
+// Load nearby services
 const loadNearbyServices = async (latitude, longitude) => {
   const token = localStorage.getItem('token')
   try {
@@ -234,10 +218,9 @@ const loadNearbyServices = async (latitude, longitude) => {
   }
 }
 
-// Prefill from query params
+// Prefill query params
 onMounted(() => {
   const { service, providerId, date, time, total: t } = route.query
-
   if (service) selectedService.value = service
   if (providerId) selectedProviderId.value = providerId
   if (date) selectedDate.value = date
@@ -245,18 +228,15 @@ onMounted(() => {
   if (t) total.value = Number(t)
 
   if (navigator.geolocation) {
-    navigator.geolocation.getCurrentPosition(
-      async pos => {
-        location.value = { latitude: pos.coords.latitude, longitude: pos.coords.longitude }
-        await loadNearbyServices(pos.coords.latitude, pos.coords.longitude)
-        if (selectedService.value) await fetchProviders()
-      },
-      async () => {
-        toast.error('Geolocation denied. Showing all services.')
-        availableServices.value = Object.keys(servicePrices)
-        if (selectedService.value) await fetchProviders()
-      }
-    )
+    navigator.geolocation.getCurrentPosition(async pos => {
+      location.value = { latitude: pos.coords.latitude, longitude: pos.coords.longitude }
+      await loadNearbyServices(pos.coords.latitude, pos.coords.longitude)
+      if (selectedService.value) await fetchProviders()
+    }, async () => {
+      toast.error('Geolocation denied. Showing all services.')
+      availableServices.value = Object.keys(servicePrices)
+      if (selectedService.value) await fetchProviders()
+    })
   } else {
     toast.error('Geolocation not supported.')
     availableServices.value = Object.keys(servicePrices)
@@ -264,3 +244,4 @@ onMounted(() => {
   }
 })
 </script>
+

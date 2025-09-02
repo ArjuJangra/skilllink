@@ -21,7 +21,6 @@ router.post('/login', providerLogin);
 
 router.put('/providerprofile/update/:id', uploadProviderPic.single('profilePic'), updateProviderProfile);
 router.get('/providerprofile', authMiddleware, getProviderProfile);
-
 // Get providers by service (and area)
 router.post('/by-service', async (req, res) => {
   const { serviceTitle, userArea } = req.body;
@@ -88,7 +87,7 @@ router.post('/privacy', authMiddleware, async (req, res) => {
   }
 });
 
-// (Optional) Get provider privacy settings
+// Get provider privacy settings
 router.get('/privacy', authMiddleware, async (req, res) => {
   try {
     const ServiceProvider = require('../models/ServiceProvider');
