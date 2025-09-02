@@ -16,13 +16,24 @@ router.get('/', authenticateUser, async (req, res) => {
     const bookings = await Booking.find({
       userId: req.user.id,
       status: { $ne: 'Completed' },
-    }).sort({ createdAt: -1 });
-    res.json(bookings);
+    })
+      .sort({ createdAt: -1 })
+      .populate('providerId', '-password -__v');
+
+    const formattedBookings = bookings.map(b => {
+      const booking = b.toObject();
+      booking.provider = booking.providerId || null; // rename for frontend
+      delete booking.providerId;
+      return booking;
+    });
+
+    res.json(formattedBookings);
   } catch (err) {
     console.error('Error fetching bookings:', err);
     res.status(500).json({ message: 'Failed to fetch bookings', error: err.message });
   }
 });
+
 
 // POST create booking
 router.post(
@@ -81,7 +92,7 @@ router.post(
       const savedBooking = await booking.save();
       console.log('✅ Booking saved:', savedBooking);
       // Populate provider info before sending response
-await savedBooking.populate('providerId', '-password -__v');
+      await savedBooking.populate('providerId', '-password -__v');
       res.status(201).json({ message: 'Booking confirmed', booking: savedBooking });
     } catch (err) {
       console.error('❌ Booking error:', err);

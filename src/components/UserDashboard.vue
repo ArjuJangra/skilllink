@@ -2,13 +2,11 @@
   <!-- Authenticated Dashboard Wrapper -->
   <div v-if="isAuthenticated" class="min-h-screen bg-gradient-to-b from-[#F0F9FF] to-white py-4 px-2 sm:py-8 sm:px-4">
     <div class="max-w-5xl mx-auto bg-gradient from-[#F0F9FF] via-white to-[#E6F4F9] rounded-3xl shadow-xl p-6">
-
       <!-- User Profile Card -->
       <div v-if="user"
         class="bg-gradient-to-br from-white via-[#f1faff] to-[#f5fafe] p-4 sm:p-6 rounded-3xl shadow-sm hover:shadow-md transition-all duration-300">
         <!-- Profile Section -->
         <div class="flex items-center gap-4 sm:gap-6 w-full">
-          <!-- Left: Profile Image -->
           <div class="relative flex-shrink-0">
             <img :src="user.profilePic ? API.getImageUrl(user.profilePic) : userImg"
               @error="e => e.target.src = userImg"
@@ -25,13 +23,8 @@
               </svg>
             </label>
           </div>
-
-          <!-- Center: Name, Email, Phone -->
           <div class="flex-1 flex flex-col justify-center overflow-hidden">
-            <h2 class="text-lg sm:text-2xl font-bold text-gray-900 truncate">
-              {{ user.name }}
-            </h2>
-
+            <h2 class="text-lg sm:text-2xl font-bold text-gray-900 truncate"> {{ user.name }} </h2>
             <div class="flex flex-col sm:flex-row sm:items-center sm:gap-4 mt-1 text-sm text-gray-600 overflow-hidden">
               <div class="flex items-center gap-1 truncate">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="currentColor">
@@ -49,7 +42,6 @@
               </div>
             </div>
           </div>
-
           <!-- Right: Edit Button -->
           <div class="flex-shrink-0 ml-2">
             <button @click="showEditProfileForm = true"
@@ -73,7 +65,6 @@
                 <h3 class="text-lg sm:text-lg font-semibold text-gray-800">Edit Profile</h3>
                 <button @click="showEditProfileForm = false" class="text-gray-400 hover:text-gray-600">✕</button>
               </div>
-
               <!-- Form -->
               <div class="space-y-3 sm:space-y-4">
                 <div>
@@ -81,20 +72,17 @@
                   <input v-model="editForm.name" type="text"
                     class="w-full px-3 py-2 sm:px-4 sm:py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#00A8E8] focus:outline-none shadow-sm" />
                 </div>
-
                 <div>
                   <label class="block text-sm sm:text-base font-medium text-gray-600 mb-1">Email</label>
                   <input v-model="editForm.email" type="email"
                     class="w-full px-3 py-2 sm:px-4 sm:py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#00A8E8] focus:outline-none shadow-sm" />
                 </div>
-
                 <div>
                   <label class="block text-sm sm:text-base font-medium text-gray-600 mb-1">Phone</label>
                   <input v-model="editForm.phone" type="tel"
                     class="w-full px-3 py-2 sm:px-4 sm:py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#00A8E8] focus:outline-none shadow-sm" />
                 </div>
               </div>
-
               <!-- Actions -->
               <div class="mt-4 sm:mt-5 flex justify-end gap-2">
                 <button @click="showEditProfileForm = false"
@@ -129,26 +117,56 @@
       </div>
       <!-- Loading -->
       <div v-if="isLoading" class="text-center text-[#007EA7] font-semibold py-6 sm:py-8">Loading...</div>
-
       <!-- Content -->
       <div v-else class="bg-gradient-to-br from-white via-[#f1faff] to-[#f5fafe]">
         <transition name="fade-slide " mode="out-in">
           <div :key="activeTab" class="w-full bg-white rounded-2xl shadow-md p-4 sm:p-6 transition-all">
+
             <!-- Bookings Tab -->
             <div v-if="activeTab === 'bookings'" class="space-y-6">
-              <h3 class="text-xl font-semibold text-[#007EA7]">My Bookings</h3>
+              <h3 class="text-2xl font-bold text-[#007EA7]">My Bookings</h3>
+              <div v-if="bookings.length" class="space-y-4">
 
-              <div v-if="bookings.length" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 gap-4">
-                <div v-for="booking in bookings" :key="booking._id" :class="[
-                  'relative bg-white p-5 rounded-xl shadow-md border-l-4 transition transform hover:shadow-xl hover:scale-105',
-                  booking.status === 'Pending' ? 'border-yellow-500' :
-                  booking.status === 'Accepted' ? 'border-blue-500' :
-                  booking.status === 'Completed' ? 'border-green-500' : 'border-red-500' ]">
+                <div v-for="booking in bookings" :key="booking._id"
+                  class="flex flex-col sm:flex-row justify-between bg-white rounded-2xl shadow-md p-4 sm:p-5 hover:shadow-lg transition-all border-l-4"
+                  :class="booking.status === 'Pending' ? 'border-yellow-500' :
+                    booking.status === 'Accepted' ? 'border-blue-500' :
+                      booking.status === 'Completed' ? 'border-green-500' : 'border-red-500'">
+                  <!-- Status Badge for small screens -->
+                  <span class="sm:hidden mb-2 px-3 py-1 rounded-full text-sm font-semibold self-start" :class="booking.status === 'Pending' ? 'bg-yellow-100 text-yellow-800' :
+                    booking.status === 'Accepted' ? 'bg-blue-100 text-blue-800' :
+                      booking.status === 'Completed' ? 'bg-green-100 text-green-800' :
+                        'bg-red-100 text-red-800'">
+                    {{ booking.status }}
+                  </span>
 
-                  <!-- Status Badge -->
-                  <div class="absolute top-2 right-2">
+                  <!-- Left: Booking & Provider Info -->
+                  <div class="flex-1 space-y-2">
+                    <div class="flex items-center gap-3">
+                      <img :src="booking.provider?.avatar || defaultProvider" alt="Provider"
+                        class="w-12 h-12 sm:w-14 sm:h-14 rounded-full border object-cover" />
+                      <div>
+                        <h4 class="text-base sm:text-lg font-semibold text-gray-800">{{ booking.service }}</h4>
+                        <p class="text-sm text-gray-600">
+                          By {{ booking.provider?.name || "Assigned Expert" }}
+                        </p>
+                      </div>
+                    </div>
+
+                    <p class="text-sm text-gray-600"><span class="font-medium">Name:</span> {{ booking.name }}</p>
+                    <p class="text-sm text-gray-600"><span class="font-medium">Contact:</span> {{ booking.contact }}</p>
+                    <p class="text-sm text-gray-600"><span class="font-medium">Address:</span> {{ booking.address }}</p>
+                    <p class="text-sm text-gray-600"><span class="font-medium">Price:</span> ₹{{ booking.price }}</p>
+                    <p class="text-sm text-gray-600"><span class="font-medium">Payment:</span> {{ booking.paymentMethod
+                      || 'Cash' }}</p>
+                    <p class="text-xs text-gray-400"> Booked: {{ formatDate(booking.createdAt) }}</p>
+                  </div>
+
+                  <!-- Right: Status & Actions -->
+                  <div class="hidden sm:flex flex-col justify-between items-end ml-4 flex-shrink-0">
+                    <!-- Status Badge on top -->
                     <span :class="[
-                      'px-2 py-1 rounded-full text-xs font-semibold',
+                      'px-3 py-1 rounded-full text-sm font-semibold',
                       booking.status === 'Pending' ? 'bg-yellow-100 text-yellow-800' :
                         booking.status === 'Accepted' ? 'bg-blue-100 text-blue-800' :
                           booking.status === 'Completed' ? 'bg-green-100 text-green-800' :
@@ -156,53 +174,49 @@
                     ]">
                       {{ booking.status }}
                     </span>
+
+                    <!-- Buttons at the bottom -->
+                    <div class="flex gap-2 mt-auto">
+                      <button @click="deleteBooking(booking._id)"
+                        class="bg-red-100 text-red-700 hover:bg-red-200 px-3 py-1 rounded-md text-sm transition flex items-center gap-1">
+                        <i class="fas fa-trash"></i> Delete
+                      </button>
+                      <button v-if="booking.status === 'Pending'"
+                        class="bg-blue-100 text-blue-700 hover:bg-blue-200 px-3 py-1 rounded-md text-sm transition">
+                        Details
+                      </button>
+                    </div>
                   </div>
-
-                  <!-- Edit Form -->
-                  <template v-if="editingId === booking._id">
-                    <input v-model="editableBooking.service" placeholder="Service" class="input-edit mb-2" />
-                    <input v-model="editableBooking.name" placeholder="Name" class="input-edit mb-2" />
-                    <input v-model="editableBooking.contact" placeholder="Contact" class="input-edit mb-2" />
-                    <input v-model="editableBooking.address" placeholder="Address" class="input-edit mb-2" />
-                    <div class="flex justify-end gap-2 mt-2">
-                      <button @click="saveEdit(booking._id)" class="btn-green">Save</button>
-                      <button @click="cancelEdit" class="btn-gray">Cancel</button>
-                    </div>
-                  </template>
-
-                  <!-- Display Info -->
-                  <template v-else>
-                    <div class="flex items-center gap-3 mb-2">
-                      <i class="fas fa-concierge-bell text-2xl text-gray-400"></i>
-                      <h4 class="font-semibold text-[#007EA7] text-lg">{{ booking.service }}</h4>
-                    </div>
-                    <p class="text-sm text-gray-500">Name: {{ booking.name }}</p>
-                    <p class="text-sm text-gray-500">Contact: {{ booking.contact }}</p>
-                    <p class="text-sm text-gray-500">Address: {{ booking.address }}</p>
-                    <p class="text-xs text-gray-400">Booked: {{ new Date(booking.createdAt).toLocaleString() }}</p>
-                    
-                  </template>
-
-                  <!-- Action Buttons -->
-                  <div class="absolute bottom-2 right-2 flex gap-2 text-sm">
-                    <button @click="startEdit(booking)" class="text-blue-500 hover:text-blue-700">
-                      <i class="fas fa-edit"></i>
+                  <!-- Buttons for small screens -->
+                  <div class="flex sm:hidden gap-2 mt-2">
+                    <button @click="deleteBooking(booking._id)"
+                      class="bg-red-100 text-red-700 hover:bg-red-200 px-3 py-1 rounded-md text-sm transition flex items-center gap-1">
+                      <i class="fas fa-trash"></i> Delete
                     </button>
-                    <button @click="deleteBooking(booking._id)" class="text-red-500 hover:text-red-700">
-                      <i class="fas fa-trash"></i>
+                    <button v-if="booking.status === 'Pending'"
+                      class="bg-blue-100 text-blue-700 hover:bg-blue-200 px-3 py-1 rounded-md text-sm transition">
+                      Details
                     </button>
                   </div>
+
+
                 </div>
               </div>
 
-              <p v-else class="text-gray-500">No bookings found.</p>
+              <!-- Empty State -->
+              <div v-else class="flex flex-col items-center justify-center py-10 text-gray-500">
+                <i class="fas fa-calendar-times text-4xl mb-3"></i>
+                <p>No bookings found.</p>
+                <button @click="router.push('/services')"
+                  class="mt-3 px-4 py-2 bg-[#007EA7] text-white rounded-lg hover:bg-[#005f7f] transition">
+                  Explore Services
+                </button>
+              </div>
             </div>
 
             <!-- History Tab -->
             <div v-else-if="activeTab === 'history'" class="space-y-6">
               <h3 class="text-xl font-semibold text-[#007EA7]">Previous Services</h3>
-
-
               <!-- Grid of History Cards -->
               <div v-if="history.length" class="grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 <div v-for="item in history" :key="item.id"
@@ -405,7 +419,6 @@ import relativeTime from 'dayjs/plugin/relativeTime';
 dayjs.extend(relativeTime);
 import userImg from '@/assets/user.png';
 
-
 const router = useRouter();
 const getToken = () => localStorage.getItem('token');
 
@@ -414,13 +427,20 @@ const isAuthenticated = ref(false), isLoading = ref(true), loading = ref(false);
 const showLogoutModal = ref(false), showEditProfileForm = ref(false), previewImage = ref(null);
 const tabs = ['bookings', 'history', 'address', 'settings'];
 const activeTab = ref(localStorage.getItem("activeTab") || "bookings");
+
 const user = ref({ name: '', email: '', phone: '', bio: '', profilePic: '' });
 const socket = ref(null);
-const bookings = ref([]), history = ref([]);
-const editingId = ref(null), editableBooking = ref({ name: '', contact: '', address: '', service: '' });
+
+// --- Booking state ---
+const bookings = ref([]);   // Active bookings
+const history = ref([]);    // Past/completed bookings
+
+// --- Address state ---
 const savedAddresses = ref(JSON.parse(localStorage.getItem('addresses')) || []);
 const newAddress = reactive({ pincode: '', city: '', address: '' });
 const showAddressForm = ref(false);
+
+// --- Password & Settings ---
 const passwordForm = reactive({ current: '', new: '', confirm: '' });
 const showPasswordForm = ref(false), isChangingPassword = ref(false);
 const notificationSettings = reactive({ email: true, sms: false, push: true });
@@ -438,73 +458,190 @@ const formatTab = t => t.charAt(0).toUpperCase() + t.slice(1).replace('-', ' ');
 const isValidDate = d => d && !isNaN(new Date(d).getTime());
 const formatTime = d => isValidDate(d) ? dayjs(d).format('hh:mm A') : '';
 const relativeDate = d => isValidDate(d) ? dayjs(d).fromNow() : 'N/A';
-const syncActiveTabFromHash = () => { const h = window.location.hash.replace('#', ''); if (tabs.includes(h)) activeTab.value = h; };
-
+const formatDate = d => isValidDate(d) ? dayjs(d).format('DD MMM YYYY, hh:mm A') : '';
 
 // --- Profile ---
-const getUserProfile = async () => { try { const { data } = await API.get('/user/profile'); user.value = data; auth.user = data; localStorage.setItem("user", JSON.stringify(data)); } catch { toast.error("Failed to load user data"); } };
-const handleProfileImageChange = async e => {
-  const f = e.target.files[0]; if (!f?.type.startsWith('image/')) return toast.error("Please select an image.");
-  previewImage.value = URL.createObjectURL(f);
-  const fd = new FormData(); fd.append('profilePic', f);
-  try { const { data } = await API.put('/user/profile/picture', fd); const pic = `${data.profilePic}?t=${Date.now()}`; user.value.profilePic = auth.user.profilePic = pic; let existing = JSON.parse(localStorage.getItem("user")); if (existing) { existing.profilePic = pic; localStorage.setItem("user", JSON.stringify(existing)); } toast.success("Profile picture updated!"); } catch { toast.error("Failed to upload profile picture."); }
+const getUserProfile = async () => {
+  try {
+    const { data } = await API.get('/user/profile');
+    user.value = data;
+    auth.user = data;
+    localStorage.setItem("user", JSON.stringify(data));
+  } catch {
+    toast.error("Failed to load user data");
+  }
 };
+
+const handleProfileImageChange = async e => {
+  const f = e.target.files[0];
+  if (!f?.type.startsWith('image/')) return toast.error("Please select an image.");
+
+  previewImage.value = URL.createObjectURL(f);
+  const fd = new FormData();
+  fd.append('profilePic', f);
+
+  try {
+    const { data } = await API.put('/user/profile/picture', fd);
+    const pic = `${data.profilePic}?t=${Date.now()}`;
+    user.value.profilePic = auth.user.profilePic = pic;
+
+    let existing = JSON.parse(localStorage.getItem("user"));
+    if (existing) {
+      existing.profilePic = pic;
+      localStorage.setItem("user", JSON.stringify(existing));
+    }
+    toast.success("Profile picture updated!");
+  } catch {
+    toast.error("Failed to upload profile picture.");
+  }
+};
+
 const updateUserProfile = async () => {
   if (!editForm.name || !editForm.email) return toast.error("Name and email are required.");
   loading.value = true;
-  try { const { data } = await API.put("/user/profile", { ...editForm }); Object.assign(user.value, editForm); toast.success(data.message || "Profile updated successfully!"); showEditProfileForm.value = false; } catch (err) { toast.error(err.response?.data?.message || "Failed to update profile."); } finally { loading.value = false; }
+  try {
+    const { data } = await API.put("/user/profile", { ...editForm });
+    Object.assign(user.value, editForm);
+    toast.success(data.message || "Profile updated successfully!");
+    showEditProfileForm.value = false;
+  } catch (err) {
+    toast.error(err.response?.data?.message || "Failed to update profile.");
+  } finally {
+    loading.value = false;
+  }
 };
 
 // --- Bookings ---
-const fetchBookings = async () => { try { bookings.value = (await API.get('/bookings')).data; } catch { toast.error("Failed to load bookings"); } };
-const fetchHistory = async () => { try { history.value = (await API.get('/bookings/history')).data; } catch { toast.error("Failed to load service history."); } };
+const fetchBookings = async () => {
+  try {
+    bookings.value = (await API.get('/bookings')).data;
+  } catch {
+    toast.error("Failed to load bookings");
+  }
+};
 
-const startEdit = b => { editingId.value = b._id; editableBooking.value = { ...b }; };
-const cancelEdit = () => { editingId.value = null; editableBooking.value = { service: '', name: '', contact: '', address: '' }; };
+const fetchHistory = async () => {
+  try {
+    history.value = (await API.get('/bookings/history')).data;
+  } catch {
+    toast.error("Failed to load service history.");
+  }
+};
 
-const saveEdit = async id => { try { const { data } = await API.put(`/bookings/${id}`, editableBooking.value); const i = bookings.value.findIndex(b => b._id === id); if (i !== -1) bookings.value[i] = data; editingId.value = null; } catch { toast.error('Update failed'); } };
+const deleteBooking = async id => {
+  try {
+    await API.delete(`/bookings/${id}`);
+    bookings.value = bookings.value.filter(b => b._id !== id);
+    toast.success('Booking deleted');
+  } catch {
+    toast.error('Failed to delete booking');
+  }
+};
 
-const moveToHistory = b => { history.value.push({ service: b.service, date: new Date(b.updatedAt).toLocaleDateString(), status: b.status }); bookings.value = bookings.value.filter(x => x._id !== b._id); };
-
-const deleteBooking = async id => { try { await API.delete(`/bookings/${id}`); bookings.value = bookings.value.filter(b => b._id !== id); toast.success('Booking deleted'); } catch { toast.error('Failed to delete booking'); } };
+const moveToHistory = b => {
+  history.value.push({
+    service: b.service,
+    date: new Date(b.updatedAt).toLocaleDateString(),
+    status: b.status
+  });
+  bookings.value = bookings.value.filter(x => x._id !== b._id);
+};
 
 // --- Notifications ---
-const fetchNotificationSettings = async () => { try { Object.assign(notificationSettings, (await API.get('/user/notifications')).data); } catch { toast.error("Failed to load notification settings."); } };
-const updateNotificationSettings = async () => { isSavingNotifications.value = true; try { const { data } = await API.put('/user/notifications', notificationSettings); toast.success(data.message || "Preferences updated."); } catch { toast.error("Could not update notifications."); } finally { isSavingNotifications.value = false; } };
+const fetchNotificationSettings = async () => {
+  try {
+    Object.assign(notificationSettings, (await API.get('/user/notifications')).data);
+  } catch {
+    toast.error("Failed to load notification settings.");
+  }
+};
+
+const updateNotificationSettings = async () => {
+  isSavingNotifications.value = true;
+  try {
+    const { data } = await API.put('/user/notifications', notificationSettings);
+    toast.success(data.message || "Preferences updated.");
+  } catch {
+    toast.error("Could not update notifications.");
+  } finally {
+    isSavingNotifications.value = false;
+  }
+};
 
 // --- Address ---
-const saveAddress = () => { if (newAddress.pincode && newAddress.city && newAddress.address) { savedAddresses.value.push({ ...newAddress }); localStorage.setItem('addresses', JSON.stringify(savedAddresses.value)); Object.assign(newAddress, { pincode: '', city: '', address: '' }); showAddressForm.value = false; } else toast.error('Please fill in all fields.'); };
-const deleteAddress = i => { savedAddresses.value.splice(i, 1); localStorage.setItem('addresses', JSON.stringify(savedAddresses.value)); toast.success("Address deleted."); };
+const saveAddress = () => {
+  if (newAddress.pincode && newAddress.city && newAddress.address) {
+    savedAddresses.value.push({ ...newAddress });
+    localStorage.setItem('addresses', JSON.stringify(savedAddresses.value));
+    Object.assign(newAddress, { pincode: '', city: '', address: '' });
+    showAddressForm.value = false;
+  } else toast.error('Please fill in all fields.');
+};
+
+const deleteAddress = i => {
+  savedAddresses.value.splice(i, 1);
+  localStorage.setItem('addresses', JSON.stringify(savedAddresses.value));
+  toast.success("Address deleted.");
+};
 
 // --- Password ---
-const changePassword = async () => { if (!passwordForm.current || !passwordForm.new || !passwordForm.confirm) return toast.error("All fields required"); if (passwordForm.new !== passwordForm.confirm) return toast.error("Passwords do not match"); isChangingPassword.value = true; try { const { data } = await API.post('/user/change-password', { currentPassword: passwordForm.current, newPassword: passwordForm.new }); toast.success(data.message || "Password updated!"); showPasswordForm.value = false; Object.assign(passwordForm, { current: '', new: '', confirm: '' }); } catch (err) { toast.error(err.response?.data?.message || "Error changing password"); } finally { isChangingPassword.value = false; } };
+const changePassword = async () => {
+  if (!passwordForm.current || !passwordForm.new || !passwordForm.confirm) return toast.error("All fields required");
+  if (passwordForm.new !== passwordForm.confirm) return toast.error("Passwords do not match");
+
+  isChangingPassword.value = true;
+  try {
+    const { data } = await API.post('/user/change-password', {
+      currentPassword: passwordForm.current,
+      newPassword: passwordForm.new
+    });
+    toast.success(data.message || "Password updated!");
+    showPasswordForm.value = false;
+    Object.assign(passwordForm, { current: '', new: '', confirm: '' });
+  } catch (err) {
+    toast.error(err.response?.data?.message || "Error changing password");
+  } finally {
+    isChangingPassword.value = false;
+  }
+};
 
 // --- Logout ---
-const logout = () => { logoutUser(); user.value = { name: '', email: '', phone: '', bio: '', profilePic: '' }; socket.value?.disconnect?.(); router.push('/homeboard'); };
+const logout = () => {
+  logoutUser();
+  user.value = { name: '', email: '', phone: '', bio: '', profilePic: '' };
+  socket.value?.disconnect?.();
+  router.push('/homeboard');
+};
 const confirmLogout = () => { logout(); showLogoutModal.value = false; };
 
 // --- Lifecycle ---
 onMounted(() => {
   const token = getToken();
   if (!token) return (toast.error("Please login first"), router.push('/login'));
-  const localUser = JSON.parse(localStorage.getItem('user')); if (localUser?.role === 'provider') return router.push('/provider/profile');
-  isAuthenticated.value = true; syncActiveTabFromHash();
-  Promise.all([getUserProfile(), fetchBookings(), fetchHistory(), fetchNotificationSettings()]).then(() => {
-    socket.value = io(API.defaults.baseURL, { auth: { token }, withCredentials: true, transports: ['websocket'] });
-    socket.value.emit('join', user.value._id);
-    socket.value.on('orderAccepted', d => (toast.info(`✅ Accepted by ${d.providerName}`), fetchBookings()));
-    socket.value.on('orderRejected', d => (toast.info(`❌ Rejected by ${d.providerName}`), fetchBookings()));
-    socket.value.on('orderCompleted', d => {
-      toast.success(`🎉 Booking for ${d.service} is completed`);
-      // Move the booking to history automatically
-      const booking = bookings.value.find(b => b._id === d._id);
-      if (booking) moveToHistory(booking);
-    });
 
-  }).finally(() => isLoading.value = false);
+  const localUser = JSON.parse(localStorage.getItem('user'));
+  if (localUser?.role === 'provider') return router.push('/provider/profile');
+
+  isAuthenticated.value = true;
+  Promise.all([getUserProfile(), fetchBookings(), fetchHistory(), fetchNotificationSettings()])
+    .then(() => {
+      socket.value = io(API.defaults.baseURL, { auth: { token }, withCredentials: true, transports: ['websocket'] });
+      socket.value.emit('join', user.value._id);
+
+      // Socket event listeners
+      socket.value.on('orderAccepted', d => (toast.info(`✅ Accepted by ${d.providerName}`), fetchBookings()));
+      socket.value.on('orderRejected', d => (toast.info(`❌ Rejected by ${d.providerName}`), fetchBookings()));
+      socket.value.on('orderCompleted', d => {
+        toast.success(`🎉 Booking for ${d.service} is completed`);
+        const booking = bookings.value.find(b => b._id === d._id);
+        if (booking) moveToHistory(booking);
+      });
+    })
+    .finally(() => isLoading.value = false);
 });
 onUnmounted(() => socket.value?.disconnect());
 </script>
+
 
 <style scoped>
 /* Responsive Images */
