@@ -102,7 +102,7 @@
         <template v-if="showButton === 'home'">
           <router-link :to="auth?.isLoggedIn ? '/homelogged' : '/homeboard'" class="ml-auto">
             <button
-              class="bg-[#0073b1] flex gap-1 items-center text-white px-4 py-2 rounded-lg hover:bg-[#005f91] transition">
+              class="bg-[#0073b1] flex gap-1 items-center text-white px-2 py-2 rounded-lg hover:bg-[#005f91] transition">
               <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
                 <path d="M12 3l8 7v10a2 2 0 0 1-2 2h-4a1 1 0 0 1-1-1v-5H11v5a1 1 0 0 1-1 1H6a2 2 0 0 1-2-2V10l8-7z" />
               </svg>
@@ -316,14 +316,17 @@
               Help
             </router-link>
             <button @click="showLogoutModal = true"
-              class="w-full flex items-center justify-center gap-2 px-4 py-2 bg-red-500 text-white font-semibold rounded-lg hover:bg-red-600 transition">
-              <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24"
-                stroke="currentColor" stroke-width="2">
-                <path stroke-linecap="round" stroke-linejoin="round"
-                  d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-6 0v-1m6 0H7" />
-              </svg>
-              Logout
-            </button>
+  class="w-full flex items-center justify-center gap-2 px-4 py-2 bg-red-500 text-white font-semibold rounded-lg hover:bg-red-600 transition">
+  <!-- Power icon -->
+<svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+  <circle cx="12" cy="12" r="9" stroke-linecap="round" stroke-linejoin="round"/>
+  <line x1="12" y1="3" x2="12" y2="10" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>
+
+
+  <span class="text-base">Logout</span>
+</button>
+
           </div>
         </div>
       </nav>
