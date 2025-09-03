@@ -1,47 +1,65 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-    <!-- Title and Favicon -->
-    <title>SkillLink | Service at Your Doorstep</title>
-    <link rel="icon" href="<%= BASE_URL %>favicon.ico" type="image/x-icon" />
+<head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-    <!-- FontAwesome Icons -->
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
-    />
-    <script src="https://accounts.google.com/gsi/client" async defer></script>
+  <!-- Title and Favicon -->
+  <title>SkillLink | Service at Your Doorstep</title>
+  <meta name="description"
+    content="SkillLink lets you book trusted service providers like electricians, plumbers, carpenters and more in just a few clicks. Fast, reliable, and secure.">
+  <meta name="keywords" content="SkillLink, home services, electrician, plumber, carpenter, booking app, hire experts">
+  <meta name="author" content="Parveen Dhillon">
+  <meta name="robots" content="index, follow">
+  <meta name="google-site-verification" content="google-site-verification: googlec1d2154f50b4c371.html" />
+  <!-- Open Graph -->
+  <meta property="og:title" content="SkillLink - Book Trusted Experts & Services">
+  <meta property="og:description" content="Book trusted electricians, plumbers, carpenters and more with SkillLink.">
+  <meta property="og:url" content="https://skilllink-com.vercel.app/">
+  <meta property="og:type" content="website">
+  <meta property="og:image" content="https://skilllink-com.vercel.app/og-image.png">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="SkillLink - Book Trusted Experts & Services">
+  <meta name="twitter:description" content="Find and book trusted experts quickly and securely.">
+  <meta name="twitter:image" content="https://skilllink-com.vercel.app/og-image.png">
+  <link rel="icon" href="<%= BASE_URL %>favicon.ico" type="image/x-icon" />
+
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
 
 
-    <!-- Meta Tags for SEO -->
-    <meta name="description" content="SkillLink - Easily find and book trusted service providers near you." />
-    <meta name="keywords" content="SkillLink, local services, plumbers, electricians, booking app" />
-    <meta name="author" content="SkillLink Team" />
+  <!-- Meta Tags for SEO -->
+  <meta name="description" content="SkillLink - Easily find and book trusted service providers near you." />
+  <meta name="keywords" content="SkillLink, local services, plumbers, electricians, booking app" />
+  <meta name="author" content="SkillLink Team" />
 
-    <!-- Open Graph (Social Sharing) -->
-    <meta property="og:title" content="SkillLink - Find Trusted Local Services" />
-    <meta property="og:description" content="Quickly find, connect, and book verified local service providers with SkillLink." />
-    <meta property="og:image" content="<%= BASE_URL %>preview.png" />
-    <meta property="og:url" content="https://skilllink.example.com" />
-    <meta property="og:type" content="website" />
+  <!-- Open Graph (Social Sharing) -->
+  <meta property="og:title" content="SkillLink - Find Trusted Local Services" />
+  <meta property="og:description"
+    content="Quickly find, connect, and book verified local service providers with SkillLink." />
+  <meta property="og:image" content="<%= BASE_URL %>preview.png" />
+  <meta property="og:url" content="https://skilllink.example.com" />
+  <meta property="og:type" content="website" />
 
-    <!-- Twitter Card -->
-    <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="SkillLink" />
-    <meta name="twitter:description" content="Easily find and book trusted local services." />
-    <meta name="twitter:image" content="<%= BASE_URL %>preview.png" />
-  </head>
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="SkillLink" />
+  <meta name="twitter:description" content="Easily find and book trusted local services." />
+  <meta name="twitter:image" content="<%= BASE_URL %>preview.png" />
+</head>
 
-  <body>
-    <noscript>
-      <strong>
-        We're sorry but SkillLink doesn't work properly without JavaScript enabled. Please enable it to continue.
-      </strong>
-    </noscript>
-    <div id="app"></div>
-  </body>
+<body>
+  <noscript>
+    <strong>
+      We're sorry but SkillLink doesn't work properly without JavaScript enabled. Please enable it to continue.
+    </strong>
+  </noscript>
+  <div id="app"></div>
+</body>
+
 </html>

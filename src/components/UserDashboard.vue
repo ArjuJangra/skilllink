@@ -215,24 +215,27 @@
             </div>
 
             <!-- History Tab -->
+            <!-- History Tab -->
             <div v-else-if="activeTab === 'history'" class="space-y-6">
-              <h3 class="text-xl font-semibold text-[#007EA7]">Previous Services</h3>
+              <h3 class="text-2xl font-bold text-[#007EA7]">Previous Services</h3>
+
               <!-- Grid of History Cards -->
-              <div v-if="history.length" class="grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              <div v-if="history.length" class="grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 <div v-for="item in history" :key="item.id"
-                  class="bg-white border border-gray-200 rounded-2xl shadow-sm hover:shadow-lg transform hover:scale-105 transition-all p-5 flex flex-col justify-between">
+                  class="bg-white border border-gray-200 rounded-2xl shadow-sm hover:shadow-lg transform hover:scale-105 transition-all p-6 flex flex-col justify-between">
 
                   <!-- Top Section: Service & Status -->
-                  <div class="flex justify-between items-start mb-3">
+                  <div class="flex justify-between items-start mb-4">
                     <div>
-                      <h4 class="text-lg font-bold text-[#007EA7]">{{ item.service }}</h4>
+                      <h4 class="text-lg font-semibold text-[#007EA7]">{{ item.service }}</h4>
                       <p class="text-gray-500 text-sm">{{ item.date }}</p>
                     </div>
 
-                    <!-- Status Badge with Icon -->
+                    <!-- Status Badge -->
                     <span class="flex items-center gap-1 text-sm font-semibold px-3 py-1 rounded-full" :class="item.status === 'Completed' ? 'bg-green-100 text-green-700'
                       : item.status === 'Rejected' ? 'bg-red-100 text-red-700'
                         : 'bg-yellow-100 text-yellow-700'">
+
                       <svg v-if="item.status === 'Completed'" xmlns="http://www.w3.org/2000/svg" class="h-4 w-4"
                         fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7" />
@@ -248,18 +251,48 @@
                         </circle>
                         <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"></path>
                       </svg>
+
                       {{ item.status }}
                     </span>
                   </div>
 
                   <!-- Optional Description -->
-                  <p v-if="item.description" class="text-gray-600 text-sm mb-2 line-clamp-3">{{ item.description }}</p>
+                  <p v-if="item.description" class="text-gray-600 text-sm mb-3 line-clamp-3">{{ item.description }}</p>
 
                   <!-- Optional Provider Info -->
-                  <div v-if="item.provider" class="flex items-center gap-2 mb-2">
-                    <img :src="item.provider.avatar || userImg" class="w-8 h-8 rounded-full object-cover"
-                      alt="provider" />
-                    <span class="text-gray-700 text-sm">{{ item.provider.name }}</span>
+                  <div v-if="item.provider" class="flex items-center gap-3 mb-3">
+                    <img :src="item.provider.avatar || userImg"
+                      class="w-10 h-10 rounded-full object-cover border border-gray-200" alt="provider" />
+                    <span class="text-gray-700 font-medium">{{ item.provider.name }}</span>
+                  </div>
+
+                  <!-- Ratings & Reviews (Only for Completed Services) -->
+                  <div v-if="item.status === 'Completed'" class="mt-3 border-t pt-3">
+                    <h5 class="text-sm font-semibold text-gray-700 mb-1">Rate & Review</h5>
+
+                    <!-- Star Rating -->
+                    <div class="flex items-center mb-2">
+                      <template v-for="n in 5" :key="n">
+                        <svg @click="item.userRating = n" xmlns="http://www.w3.org/2000/svg"
+                          class="w-5 h-5 cursor-pointer"
+                          :class="n <= (item.userRating || item.rating) ? 'text-yellow-400' : 'text-gray-300'"
+                          fill="currentColor" viewBox="0 0 20 20">
+                          <path
+                            d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.96a1 1 0 00.95.69h4.173c.969 0 1.371 1.24.588 1.81l-3.38 2.455a1 1 0 00-.364 1.118l1.287 3.96c.3.921-.755 1.688-1.54 1.118l-3.38-2.455a1 1 0 00-1.176 0l-3.38 2.455c-.784.57-1.838-.197-1.539-1.118l1.287-3.96a1 1 0 00-.364-1.118L2.05 9.387c-.783-.57-.38-1.81.588-1.81h4.173a1 1 0 00.95-.69l1.286-3.96z" />
+                        </svg>
+                      </template>
+                    </div>
+
+
+                    <!-- Review Text -->
+                    <textarea v-model="item.userReview" placeholder="Write your review..."
+                      class="w-full border rounded-md p-2 text-sm focus:ring-2 focus:ring-[#00A8E8]"
+                      rows="2"></textarea>
+
+                    <button @click="submitReview(item)"
+                      class="mt-2 bg-[#00A8E8] text-white px-4 py-1 rounded-lg hover:bg-[#007EA7] text-sm font-medium transition">
+                      Submit
+                    </button>
                   </div>
 
                   <!-- Bottom Section: Booked Date & Time -->
@@ -267,17 +300,24 @@
                     <span>Booked {{ isValidDate(item.date) ? relativeDate(item.date) : 'N/A' }}</span>
                     <span>{{ isValidDate(item.date) ? formatTime(item.date) : '' }}</span>
                   </div>
-
                 </div>
               </div>
 
               <!-- Empty State -->
-              <div v-else class="flex flex-col items-center justify-center py-10 text-gray-500">
-
-                <p>No service history available.</p>
-                <button @click="router.push('/services')" class="btn-blue mt-3">Explore Services</button>
+              <div v-else class="flex flex-col items-center justify-center py-16 text-gray-500 space-y-4">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-16 h-16 text-gray-300" fill="none" viewBox="0 0 24 24"
+                  stroke="currentColor" stroke-width="2">
+                  <path stroke-linecap="round" stroke-linejoin="round"
+                    d="M9 17v-6a2 2 0 012-2h2a2 2 0 012 2v6M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                </svg>
+                <p class="text-lg font-medium">No service history available.</p>
+                <button @click="router.push('/services')"
+                  class="bg-[#007EA7] text-white font-semibold px-5 py-2 rounded-lg hover:bg-[#005f91] transition">
+                  Explore Services
+                </button>
               </div>
             </div>
+
             <!-- Address Tab -->
             <div v-else-if="activeTab === 'address'" class="space-y-6">
               <div class="flex items-center justify-between">
@@ -418,7 +458,7 @@ import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 dayjs.extend(relativeTime);
 import userImg from '@/assets/user.png';
-
+import defaultProvider from '@/assets/default-provider.png';
 const router = useRouter();
 const getToken = () => localStorage.getItem('token');
 
@@ -641,7 +681,6 @@ onMounted(() => {
 });
 onUnmounted(() => socket.value?.disconnect());
 </script>
-
 
 <style scoped>
 /* Responsive Images */
