@@ -207,7 +207,7 @@
               <div v-else class="flex flex-col items-center justify-center py-10 text-gray-500">
                 <i class="fas fa-calendar-times text-4xl mb-3"></i>
                 <p>No bookings found.</p>
-                <button @click="router.push('/services')"
+                <button @click="router.push('/home')"
                   class="mt-3 px-4 py-2 bg-[#007EA7] text-white rounded-lg hover:bg-[#005f7f] transition">
                   Explore Services
                 </button>

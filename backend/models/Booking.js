@@ -22,7 +22,7 @@ const bookingSchema = new mongoose.Schema({
     default: 'Pending'
   },
   price: { type: Number, required: false, default: 100 },
-  paymentMethod: paymentMethod || 'Cash',
+    paymentMethod: { type: String, default: "Cash" },
 }, { timestamps: true });
 
 module.exports = mongoose.model('Booking', bookingSchema);
