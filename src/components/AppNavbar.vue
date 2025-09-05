@@ -178,58 +178,45 @@
               </span>
             </router-link>
 
-            <!-- Profile -->
-            <div class="relative" @mouseleave="showDropdown = false">
-              <button @click="showDropdown = !showDropdown" class="focus:outline-none">
-                <img :src="user && user.profilePic ? getImageUrl(user.profilePic) : defaultAvatar"
-                  @error="e => e.target.src = defaultAvatar" alt="User Profile"
-                  class="w-10 h-10 rounded-full object-cover border-2 border-[#0073b1] hover:ring-1 hover:ring-[#0073b1]"
-                  loading="lazy" />
-              </button>
-              <!-- Dropdown Menu -->
-              <transition enter-active-class="transition ease-out duration-200"
-                enter-from-class="opacity-0 translate-y-1" enter-to-class="opacity-100 translate-y-0"
-                leave-active-class="transition ease-in duration-150" leave-from-class="opacity-100 translate-y-0"
-                leave-to-class="opacity-0 translate-y-1">
-                <div v-if="showDropdown"
-                  class="absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded-lg shadow-lg z-50">
-                  <router-link to="/dashboard"
-                    class="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-[#0073b1] rounded-t-lg"
-                    @click="showDropdown = false">
-                    Dashboard
-                  </router-link>
-                  <router-link to="/about"
-                    class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-gray-100 hover:text-[#0073b1] transition"
-                    @click="closeMenu">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24"
-                      stroke="currentColor" stroke-width="2">
-                      <path stroke-linecap="round" stroke-linejoin="round"
-                        d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
-                    <span>About Us</span>
-                  </router-link>
+            <div class="relative cursor-pointer" @click="toggleDropdown">
+              <img :src="user && user.profilePic ? getImageUrl(user.profilePic) : defaultAvatar"
+                @error="e => e.target.src = defaultAvatar" alt="User Profile"
+                class="w-10 h-10 rounded-full object-cover border-2 border-[#0073b1] hover:ring-1 hover:ring-[#0073b1]"
+                loading="lazy" />
+              <div v-if="showDropdown" role="menu" tabindex="0" @keydown.escape="closeMenu"
+                class="absolute right-0 mt-2 w-40 bg-white rounded-xl shadow-lg border py-2 z-50  transition transform origin-top-right scale-95 opacity-0 animate-dropdown">
 
-                  <router-link to="/contact"
-                    class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-gray-100 hover:text-[#0073b1] transition"
-                    @click="closeMenu">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" viewBox="0 0 24 24" fill="currentColor">
-                      <path
-                        d="M6.62 10.79a15.05 15.05 0 006.59 6.59l2.2-2.2a1 1 0 011.11-.21 11.05 11.05 0 003.47.55 1 1 0 011 1V20a1 1 0 01-1 1C10.42 21 3 13.58 3 5a1 1 0 011-1h3.5a1 1 0 011 1c0 1.2.19 2.38.55 3.47a1 1 0 01-.21 1.11l-2.22 2.21z" />
-                    </svg>
-                    <span>Contact</span>
-                  </router-link>
+                <router-link to="/dashboard" class="block px-4 py-2 text-gray-700 hover:text-[#0073b1]">View
+                  Dashboard</router-link>
+                <router-link to="/about"
+                  class="flex items-center gap-3 px-4 py-2 rounded-lg text-gray-700 font-medium hover:bg-blue-50 hover:text-[#0073b1] transition">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24"
+                    stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                      d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                  About Us
+                </router-link>
+                <router-link to="/contact"
+                  class="flex items-center gap-3 px-4 py-2 rounded-lg text-gray-700 font-medium hover:bg-blue-50 hover:text-[#0073b1] transition"
+                  @click="closeMenu">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                    <path
+                      d="M6.62 10.79a15.05 15.05 0 006.59 6.59l2.2-2.2a1 1 0 011.11-.21 11.05 11.05 0 003.47.55 1 1 0 011 1V20a1 1 0 01-1 1C10.42 21 3 13.58 3 5a1 1 0 011-1h3.5a1 1 0 011 1c0 1.2.19 2.38.55 3.47a1 1 0 01-.21 1.11l-2.22 2.21z" />
+                  </svg>
+                  Contact
+                </router-link>
+                <router-link :to="{ path: '/help', query: { from: 'homelogged' } }"
+                  class="flex items-center gap-3 px-4 py-2 rounded-lg text-gray-700 font-medium hover:bg-blue-50 hover:text-[#0073b1] transition"
+                  @click="closeMenu">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                    <path fill-rule="evenodd" clip-rule="evenodd"
+                      d="M12 19.5C16.1421 19.5 19.5 16.1421 19.5 12C19.5 7.85786 16.1421 4.5 12 4.5C7.85786 4.5 4.5 7.85786 4.5 12C4.5 16.1421 7.85786 19.5 12 19.5ZM12 21C16.9706 21 21 16.9706 21 12C21 7.02944 16.9706 3 12 3C7.02944 3 3 7.02944 3 12C3 16.9706 7.02944 21 12 21ZM12.75 15V16.5H11.25V15H12.75ZM10.5 10.4318C10.5 9.66263 11.1497 9 12 9C12.8503 9 13.5 9.66263 13.5 10.4318C13.5 10.739 13.3151 11.1031 12.9076 11.5159C12.5126 11.9161 12.0104 12.2593 11.5928 12.5292L11.25 12.7509V14.25H12.75V13.5623C13.1312 13.303 13.5828 12.9671 13.9752 12.5696C14.4818 12.0564 15 11.3296 15 10.4318C15 8.79103 13.6349 7.5 12 7.5C10.3651 7.5 9 8.79103 9 10.4318H10.5Z" />
+                  </svg>
+                  Help
+                </router-link>
 
-                  <router-link :to="{ path: '/help', query: { from: 'homelogged' } }"
-                    class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-gray-100 hover:text-[#0073b1] transition"
-                    @click="closeMenu">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" viewBox="0 0 24 24" fill="currentColor">
-                      <path fill-rule="evenodd" clip-rule="evenodd"
-                        d="M12 19.5C16.1421 19.5 19.5 16.1421 19.5 12C19.5 7.85786 16.1421 4.5 12 4.5C7.85786 4.5 4.5 7.85786 4.5 12C4.5 16.1421 7.85786 19.5 12 19.5ZM12 21C16.9706 21 21 16.9706 21 12C21 7.02944 16.9706 3 12 3C7.02944 3 3 7.02944 3 12C3 16.9706 7.02944 21 12 21ZM12.75 15V16.5H11.25V15H12.75ZM10.5 10.4318C10.5 9.66263 11.1497 9 12 9C12.8503 9 13.5 9.66263 13.5 10.4318C13.5 10.739 13.3151 11.1031 12.9076 11.5159C12.5126 11.9161 12.0104 12.2593 11.5928 12.5292L11.25 12.7509V14.25H12.75V13.5623C13.1312 13.303 13.5828 12.9671 13.9752 12.5696C14.4818 12.0564 15 11.3296 15 10.4318C15 8.79103 13.6349 7.5 12 7.5C10.3651 7.5 9 8.79103 9 10.4318H10.5Z" />
-                    </svg>
-                    <span>Help</span>
-                  </router-link>
-                </div>
-              </transition>
+              </div>
             </div>
           </div>
         </template>
@@ -247,11 +234,11 @@
         <h1 class="text-xl sm:text-2xl font-bold text-[#0073b1]">SkillLink</h1>
       </div>
       <!-- Desktop Nav -->
-      <nav class="flex items-center gap-4">
+      <nav class="flex items-center space-x-2">
 
         <router-link :to="{ path: '/home', query: { disableBooking: true } }" class="ml-auto">
           <button
-            class="btn-secondary flex items-center gap-2 px-3 py-1.5 text-gray-700 font-semibold rounded-lg hover:ring-1 hover:text-[#0073b1] hover:ring-[#0073b1] transition  text-sm sm:text-base">
+            class="btn-secondary flex items-center  text-xs sm:text-sm md:text-base lg:text-lg gap-1 px-2 py-1.5 text-gray-700 font-semibold rounded-lg hover:ring-1 hover:text-[#0073b1] hover:ring-[#0073b1] transition">
             <!-- SVG icon -->
             <svg xmlns="http://www.w3.org/2000/svg" width="800px" height="800px" viewBox="0 0 1024 1024" fill="#000000"
               class="w-5 sm:w-6 h-5 sm:h-6 fill-current">
@@ -285,9 +272,11 @@
             @error="e => e.target.src = defaultAvatar" alt="User Profile"
             class="w-10 h-10 rounded-full object-cover border-2 border-[#0073b1] hover:ring-1 hover:ring-[#0073b1]"
             loading="lazy" />
-          <div v-if="showDropdown" class="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border py-2 z-50">
+          <div v-if="showDropdown" role="menu" tabindex="0" @keydown.escape="closeMenu"
+            class="absolute right-0 mt-2 w-48 bg-white rounded-xl shadow-lg border py-2 z-50  transition transform origin-top-right scale-95 opacity-0 animate-dropdown">
 
-            <router-link to="/dashboard" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Dashboard</router-link>
+            <router-link to="/dashboard" class="block px-4 py-2 text-gray-700 hover:text-[#0073b1]">View
+              Dashboard</router-link>
             <router-link to="/about"
               class="flex items-center gap-3 px-4 py-2 rounded-lg text-gray-700 font-medium hover:bg-blue-50 hover:text-[#0073b1] transition">
               <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24"
@@ -315,17 +304,18 @@
               </svg>
               Help
             </router-link>
-            <button @click="showLogoutModal = true"
-  class="w-full flex items-center justify-center gap-2 px-4 py-2 bg-red-500 text-white font-semibold rounded-lg hover:bg-red-600 transition">
-  <!-- Power icon -->
-<svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-  <circle cx="12" cy="12" r="9" stroke-linecap="round" stroke-linejoin="round"/>
-  <line x1="12" y1="3" x2="12" y2="10" stroke-linecap="round" stroke-linejoin="round"/>
-</svg>
+            <button @click="showLogoutModal = true" class="w-full flex items-center gap-3 px-4 py-2 rounded-xl 
+        text-red-500 font-medium shadow-sm transition-all duration-200 ease-in-out">
 
+              <!-- Logout Icon -->
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24"
+                stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M15 12H3m6-6l-6 6 6 6m6-12h6v12h-6" />
+              </svg>
 
-  <span class="text-base">Logout</span>
-</button>
+              <span class="text-sm font-semibold tracking-wide">Logout</span>
+            </button>
+
 
           </div>
         </div>
@@ -455,15 +445,30 @@ onMounted(() => {
 </script>
 
 <style scoped>
+@keyframes dropdown {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.animate-dropdown {
+  animation: dropdown 0.15s ease-out forwards;
+}
+
 .btn-red {
   padding: 0.5rem 1rem;
   border-radius: 0.375rem;
-  color: #fff;
   transition: background-color 0.2s;
 }
 
 .btn-red {
-  background: #ef4444;
+  color: #ef4444;
 }
 
 .btn-red:hover {
