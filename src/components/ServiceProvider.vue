@@ -256,7 +256,10 @@ export default {
     const fetchNewOrdersCount = async () => {
       try {
         const res = await API.get(`/providerorders`, { headers: { Authorization: `Bearer ${token}` } });
-        newOrdersCount.value = res.data.filter(order => order.status !== 'Completed').length;
+         
+    newOrdersCount.value = res.data.filter(
+      order => order.status === 'Pending' || order.status === 'Accepted'
+    ).length;
       } catch (err) {
         console.error('Error fetching new orders count:', err);
       }
