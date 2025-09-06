@@ -444,8 +444,8 @@ onMounted(() => {
 });
 </script>
 
-<style scoped>
-@keyframes dropdown {
+ <style scoped>
+ @keyframes dropdown {
   from {
     opacity: 0;
     transform: scale(0.95);

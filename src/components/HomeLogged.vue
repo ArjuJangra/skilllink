@@ -1,8 +1,8 @@
 <template>
   <div class="min-h-screen bg-gray-50">
-     <header class="bg-white shadow sticky top-0 z-50">
-<AppNavbar mode="homelogged" />
-     </header>
+    <header class="bg-white shadow sticky top-0 z-50">
+      <AppNavbar mode="homelogged" />
+    </header>
     <!-- Hero Section -->
     <section class="text-center py-10 px-4 bg-gradient-to-br from-blue-50 via-gray-50 to-blue-50">
       <div class="max-w-[1300px] mx-auto">
@@ -16,15 +16,26 @@
       </div>
     </section>
     <!-- Services Section -->
-    <section class="bg-gradient-to-lr from-blue-50 via-gray-50 to-blue-50 py-12 px-4">
-      <div class="max-w-[1300px] mx-auto">
-        <h3 class="text-2xl font-bold text-[#0073b1] mb-6 text-center">Services We Provide</h3>
-        <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 sm:gap-6"> <router-link
-            v-for="service in services" :key="service" :to="{ path: '/booking', query: { service: service } }"
-            class="bg-[#0073b1] text-white p-4 rounded-lg shadow text-center font-semibold transform hover:scale-105 hover:shadow-lg transition duration-300">
-            {{ service }} </router-link> </div>
-      </div>
-    </section>
+   <section class="bg-gradient-to-lr from-blue-50 via-gray-50 to-blue-50 py-12 px-4">
+  <div class="max-w-[1300px] mx-auto">
+    <h3 class="text-2xl font-bold text-[#0073b1] mb-6 text-center">
+      Services We Provide
+    </h3>
+
+    <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 sm:gap-6">
+      <span
+        v-for="service in services"
+        :key="service.title"
+        @click="goToServiceDetails(service)"
+        class="bg-[#0073b1] text-white px-4 py-3 rounded-lg shadow text-center font-semibold 
+               hover:bg-[#005f8d] hover:shadow-lg cursor-pointer transition duration-300"
+      >
+        {{ service.title }}
+      </span>
+    </div>
+  </div>
+</section>
+
     <!-- Solved Cases Section -->
     <section class="bg-gradient-to-r from-blue-50 via-gray-50 to-blue-50 py-12 px-4">
       <div class="max-w-[1300px] mx-auto">
@@ -162,7 +173,7 @@
           </div>
           <!-- Phone -->
           <div class="flex items-center gap-2 text-gray-700">
-           <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
               <path
                 d="M6.62 10.79a15.05 15.05 0 006.59 6.59l2.2-2.2a1 1 0 011.11-.21 11.05 11.05 0 003.47.55 1 1 0 011 1V20a1 1 0 01-1 1C10.42 21 3 13.58 3 5a1 1 0 011-1h3.5a1 1 0 011 1c0 1.2.19 2.38.55 3.47a1 1 0 01-.21 1.11l-2.22 2.21z" />
             </svg>
@@ -219,7 +230,7 @@
             </svg>
             <span>Services</span>
           </router-link>
-           <router-link to="/help" class="flex items-center gap-2 hover:text-[#00A8E8] transition" aria-label="FAQ">
+          <router-link to="/help" class="flex items-center gap-2 hover:text-[#00A8E8] transition" aria-label="FAQ">
             <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" xmlns:xlink="http://www.w3.org/1999/xlink"
               fill="currentcolor" version="1.1" id="Layer_1" viewBox="0 0 24 24">
               <g>
@@ -242,7 +253,7 @@
             <img class="w-4 h-4" src="https://img.icons8.com/ios/50/user-shield.png" alt="user-shield" />
             <span>Privacy Policy</span>
           </router-link>
-         <router-link to="/terms" class="flex items-center gap-2 hover:text-[#00A8E8] transition"
+          <router-link to="/terms" class="flex items-center gap-2 hover:text-[#00A8E8] transition"
             aria-label="Terms and Conditions">
             <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24"
               stroke="currentColor" stroke-width="2">
@@ -254,7 +265,7 @@
             </svg>
             <span>Terms & Conditions</span>
           </router-link>
-           <router-link to="/contact" class="flex items-center gap-2 hover:text-[#00A8E8] transition"
+          <router-link to="/contact" class="flex items-center gap-2 hover:text-[#00A8E8] transition"
             aria-label="Contact Us">
             <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24"
               stroke="currentColor" stroke-width="2">
@@ -282,9 +293,9 @@
                 d="M6.62 10.79a15.05 15.05 0 006.59 6.59l2.2-2.2a1 1 0 011.11-.21 11.05 11.05 0 003.47.55 1 1 0 011 1V20a1 1 0 01-1 1C10.42 21 3 13.58 3 5a1 1 0 011-1h3.5a1 1 0 011 1c0 1.2.19 2.38.55 3.47a1 1 0 01-.21 1.11l-2.22 2.21z" />
             </svg>
 
-             <a href="tel:+919876543210" class="hover:underline hover:text-[#00A8E8]">+91 98765 43210</a>
+            <a href="tel:+919876543210" class="hover:underline hover:text-[#00A8E8]">+91 98765 43210</a>
           </div>
-           <!-- Socials -->
+          <!-- Socials -->
           <div class="flex items-center gap-4 pt-2">
             <a href="#" class="hover:text-[#00A8E8] transition-colors">
               <!-- Twitter -->
@@ -324,16 +335,15 @@
 <script setup>
 import { ref, onMounted, onUnmounted } from 'vue';
 import API from '@/api';
-//import { useRouter } from 'vue-router';
+import { useRouter } from 'vue-router';
 import ServiceMap from '@/components/ServiceMap.vue';
-
 import AppNavbar from '@/components/AppNavbar.vue'
- 
+
 // Reactive state
 
 const socket = ref(null);
 const unreadCount = ref(0);
-
+const router = useRouter();
 // Fetch unread notifications
 const fetchUnreadCount = async () => {
   try {
@@ -352,9 +362,14 @@ onMounted(() => {
 onUnmounted(() => socket.value?.disconnect());
 // Services list
 const services = [
-  'Plumber', 'Electrician', 'Mechanic', 'Carpenter',
-  'AC Repair', 'Painter', 'Welder', 'Makeup Artist'
-];
+  { title: "Carpenter", desc: "Furniture repair, wooden work", price: 299, category: "Home & Repair" },
+  { title: "Plumber", desc: "Pipe leakage, taps, water motors", price: 199, category: "Home & Repair" },
+  { title: "Beautician", desc: "Home salon, bridal makeup", price: 249, category: "Personal Services" },
+  { title: "Driver on Call", desc: "Hourly/daily drivers", price: 199, category: "Outdoor & Utility" },
+    { title: 'Fitness Trainer', desc: 'Home workout or yoga sessions', price: 199, category: "Personal Services" },
+      { title: 'Babysitter', desc: 'Child care during office hours', price: 149, category: "Personal Services" },
+  // … add others
+]
 
 // Solved cases (static images)
 const solvedCases = [
@@ -374,4 +389,15 @@ const solvedCases = [
     description: '"Booked for a wedding. Amazing experience!" – Sneha, Jaipur'
   }
 ];
+const goToServiceDetails = (service) => {
+  router.push({
+    name: "ServiceDetails",
+    query: {
+      title: service.title,
+      desc: service.desc,
+      category: service.category,
+      price: service.price,
+    },
+  });
+};
 </script>
