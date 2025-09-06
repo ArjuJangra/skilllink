@@ -1,6 +1,6 @@
 import { createApp } from 'vue';
 import App from './App.vue';
-import router from './router'; 
+import router from './router';
 import './assets/main.css';
 import './assets/tailwind.css';
 import Vue3Toastify from 'vue3-toastify';
@@ -9,6 +9,7 @@ import 'aos/dist/aos.css';
 import AOS from 'aos';
 import '@fortawesome/fontawesome-free/css/all.css';
 import { initAuth } from './stores/auth';
+import './registerServiceWorker'
 AOS.init();
 
 const app = createApp(App);
