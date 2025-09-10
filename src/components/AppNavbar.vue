@@ -69,9 +69,10 @@
               </button>
             </div>
 
-            <!-- Mobile: Search icon toggle -->
+            <!-- Search toggle button (mobile only) -->
             <div class="sm:hidden flex items-center">
-              <button @click="showMobileSearch = !showMobileSearch" class="text-gray-600 hover:text-gray-900 p-2">
+              <button @click="showMobileSearch = !showMobileSearch"
+                class="text-gray-600 hover:text-gray-900 p-2 rounded-md focus:outline-none focus:ring-2 focus:ring-[#00A8E8]">
                 <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24"
                   stroke="currentColor" stroke-width="2">
                   <path stroke-linecap="round" stroke-linejoin="round"
@@ -80,23 +81,33 @@
               </button>
             </div>
 
-            <!-- Mobile: Expanded search input -->
-            <transition name="fade">
-              <div v-if="showMobileSearch" class="absolute top-12 left-0 w-full px-2 sm:hidden">
-                <div class="relative bg-white rounded-full shadow p-1">
-                  <input type="text" v-model="searchQuery" placeholder="Search..."
-                    class="pl-10 pr-10 py-2 w-full rounded-full border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#00A8E8]" />
-                  <span class="absolute inset-y-0 left-3 flex items-center text-gray-400">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24"
-                      stroke="currentColor" stroke-width="2">
-                      <path stroke-linecap="round" stroke-linejoin="round"
-                        d="M21 21l-4.35-4.35M16.65 16.65A7.5 7.5 0 1110.5 3a7.5 7.5 0 016.15 13.65z" />
-                    </svg>
-                  </span>
-                </div>
+            <!-- Expanded search input (overlay on mobile) -->
+            <transition name="slide-fade">
+              <div v-if="showMobileSearch"
+                class="fixed top-16 left-0 w-full px-3 py-2 bg-white shadow-md z-50 flex items-center">
+                <!-- Search icon -->
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-gray-400 flex-shrink-0" fill="none"
+                  viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                  <path stroke-linecap="round" stroke-linejoin="round"
+                    d="M21 21l-4.35-4.35M16.65 16.65A7.5 7.5 0 1110.5 3a7.5 7.5 0 016.15 13.65z" />
+                </svg>
+
+                <!-- Input -->
+                <input type="text" v-model="searchQuery" placeholder="Search..."
+                  class="flex-1 ml-2 text-sm py-1 border-0 focus:ring-0 focus:outline-none" />
+
+                <!-- Close button -->
+                <button @click="showMobileSearch = false"
+                  class="ml-2 text-gray-400 hover:text-gray-600 p-2 rounded-md focus:outline-none">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24"
+                    stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
               </div>
             </transition>
-          </div>
+
+       </div>
         </template>
         <!-- Home / Login / Profile -->
         <template v-if="showButton === 'home'">
@@ -444,8 +455,8 @@ onMounted(() => {
 });
 </script>
 
- <style scoped>
- @keyframes dropdown {
+<style scoped>
+@keyframes dropdown {
   from {
     opacity: 0;
     transform: scale(0.95);
@@ -491,5 +502,31 @@ onMounted(() => {
 .drawer-link:hover {
   color: #0073b1;
   box-shadow: 0 0 0 1px #0073b1;
+}
+
+/* Slide-fade animation */
+.slide-fade-enter-active,
+.slide-fade-leave-active {
+  transition: all 0.3s ease;
+}
+
+.slide-fade-enter-from {
+  transform: translateY(-100%);
+  opacity: 0;
+}
+
+.slide-fade-enter-to {
+  transform: translateY(0);
+  opacity: 1;
+}
+
+.slide-fade-leave-from {
+  transform: translateY(0);
+  opacity: 1;
+}
+
+.slide-fade-leave-to {
+  transform: translateY(-100%);
+  opacity: 0;
 }
 </style>

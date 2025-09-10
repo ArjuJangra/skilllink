@@ -70,7 +70,7 @@
       </div>
 
       <div class="relative z-10 max-w-screen-xl mx-auto text-center" data-aos="fade-up">
-        <h3 class="text-4xl font-bold text-[#0073b1] mb-6">About SkillLink</h3>
+        <h3 class="text-2xl font-bold text-[#0073b1] mb-6">About SkillLink</h3>
         <p class="max-w-3xl mx-auto text-gray-700 leading-relaxed text-lg sm:text-xl mb-10">
           SkillLink is your trusted platform to connect with skilled professionals across a wide range of services.
           Whether it's urgent home repairs or lifestyle services — we bring verified experts right to your doorstep.
@@ -147,7 +147,7 @@
     <!-- Service Area Map Section -->
     <section class="py-12 bg-gradient-to-r from-blue-50 via-gray-50 to-blue-50 px-4">
       <div class="max-w-screen-xl mx-auto text-center">
-        <h2 class="text-2xl font-bold mb-6 text-gray-800">Service Coverage Area</h2>
+        <h2 class="text-2xl font-bold mb-6 text-[#0073b1]">Service Coverage Area</h2>
         <ServiceMap />
       </div>
     </section>
@@ -155,7 +155,7 @@
     <section class="bg-blue-50 py-4 px-4">
       <div class="max-w-4xl mx-auto text-center">
         <!-- Title -->
-        <h3 class="text-2xl font-bold text-gray-800 mb-4">Contact Us</h3>
+        <h3 class="text-2xl font-bold text-[#0073b1] mb-4">Contact Us</h3>
         <p class="text-gray-600 mb-8">
           Need help? Reach out to our team quickly and easily.
         </p>
@@ -366,9 +366,10 @@ const services = [
   { title: "Plumber", desc: "Pipe leakage, taps, water motors", price: 199, category: "Home & Repair" },
   { title: "Beautician", desc: "Home salon, bridal makeup", price: 249, category: "Personal Services" },
   { title: "Driver on Call", desc: "Hourly/daily drivers", price: 199, category: "Outdoor & Utility" },
-    { title: 'Fitness Trainer', desc: 'Home workout or yoga sessions', price: 199, category: "Personal Services" },
-      { title: 'Babysitter', desc: 'Child care during office hours', price: 149, category: "Personal Services" },
-  // … add others
+  { title: 'Fitness Trainer', desc: 'Home workout or yoga sessions', price: 199, category: "Personal Services" },
+  { title: 'House Cleaner', desc: 'Daily/weekly cleaning', price: 149, category:"Cleaning & Maintenance" },
+  { title: 'Laptop-PC Repair', desc: 'Hardware/software issues', price: 299, category:"Tech & Digital Services" },
+  { title: 'Event Decorator', desc: 'Events & party decoration', price: 399, category:"Bonus" },
 ]
 
 // Solved cases (static images)
