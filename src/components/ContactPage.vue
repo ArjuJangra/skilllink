@@ -4,8 +4,8 @@
  <AppNavbar />
      </header>
     <!-- Page Content -->
-    <div class="pt-[90px] px-4 py-6 flex items-center justify-center">
-      <div class="w-full max-w-6xl bg-white rounded-xl shadow-xl p-6 md:p-10 overflow-y-auto max-h-[95vh]">
+    <div class=" px-4 py-6 flex items-center justify-center">
+      <div class="w-full max-w-7xl bg-white rounded-xl shadow-xl p-6 md:p-10 overflow-y-auto max-h-[95vh]">
         <!-- Header -->
         <div class="text-center mb-8">
           <h1 class="text-3xl font-bold text-[#0074B7]">Contact SkillLink</h1>

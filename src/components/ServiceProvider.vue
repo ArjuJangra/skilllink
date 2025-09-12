@@ -1,5 +1,5 @@
 <template>
-  <div class="min-h-screen bg-[#F0F9FF] text-gray-800">
+  <div class="min-h-screen bg-gray-50 text-gray-800">
     <header class="fixed top-0 left-0 right-0 z-50 bg-gradient-to-r from-white via-[#f1faff] to-[#f5fafe] shadow-md">
       <div class="max-w-6xl mx-auto px-4 sm:px-6 py-3 flex justify-between items-center">
 
@@ -103,11 +103,19 @@
       <section class="mb-10 flex flex-wrap gap-4 justify-center">
         <router-link to="/providerorders"
           class="bg-[#0073b1] hover:bg-[#005f8d] text-white px-5 py-3 rounded-lg font-semibold transition flex items-center gap-2">
-          <span>📄</span> View Orders
+          <span><svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+              <path
+                d="M7 18a2 2 0 100 4 2 2 0 000-4zm10 0a2 2 0 100 4 2 2 0 000-4zM7.68 14h9.66a2 2 0 001.9-1.37l2.7-7.93A1 1 0 0021 4H5.21l-.94-2H1v2h2l3.6 7.59-1.35 2.44A1 1 0 006 15h12v-2H7.68l.6-1.06L7.68 14z" />
+            </svg>
+          </span> View Orders
         </router-link>
         <router-link to="/providerprofile"
           class="bg-[#f46675] hover:bg-[#d95563] text-white px-5 py-3 rounded-lg font-semibold transition flex items-center gap-2">
-          <span>✏️</span> Update Profile
+          <span><svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+              <path d="M17.414 2.586a2 2 0 00-2.828 0L7 10.172V13h2.828l7.586-7.586a2 2 0 000-2.828z" />
+              <path fill-rule="evenodd" d="M4 16v-2h2v2H4zm0-4v-2h2v2H4zm0-4V6h2v2H4z" clip-rule="evenodd" />
+            </svg>
+          </span> Update Profile
         </router-link>
         <router-link to="/provideraddservice"
           class="bg-[#3B8D99] hover:bg-[#2f7077] text-white px-5 py-3 rounded-lg font-semibold transition flex items-center gap-2">
@@ -134,7 +142,12 @@
         <div>
           <h3 class="text-sm font-bold text-gray-800 mb-3">Quick Links</h3>
           <ul class="space-y-2 text-sm text-gray-600">
-            <li><router-link to="/providerabout" class="flex items-center gap-2 hover:text-[#0073b1] transition"> <!-- Info Circle Icon --> <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"> <path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /> </svg> <span>About Us</span> </router-link></li>
+            <li><router-link to="/providerabout" class="flex items-center gap-2 hover:text-[#0073b1] transition">
+                <!-- Info Circle Icon --> <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none"
+                  viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                  <path stroke-linecap="round" stroke-linejoin="round"
+                    d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg> <span>About Us</span> </router-link></li>
             <li>
               <router-link to="/providerpolicies" class="flex items-center gap-2 hover:text-[#0073b1] transition">
                 <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24"
@@ -152,18 +165,22 @@
         <div>
           <h3 class="text-sm font-bold text-gray-800 mb-3">Support</h3>
           <ul class="space-y-2 text-sm text-gray-600">
-             <li>
+            <li>
               <a href="mailto:connectteamskilllink@gmail.com"
                 class="flex items-center gap-2 hover:text-[#0073b1] transition">
                 <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
-              <path
-                d="M2.25 6.75A2.25 2.25 0 0 1 4.5 4.5h15a2.25 2.25 0 0 1 2.25 2.25v10.5A2.25 2.25 0 0 1 19.5 19.5h-15a2.25 2.25 0 0 1-2.25-2.25V6.75zm2.334-.75L12 11.327 19.416 6h-14.832zm15.166 1.635-7.731 5.154a.75.75 0 0 1-.838 0L3.45 7.635v9.615c0 .414.336.75.75.75h15a.75.75 0 0 0 .75-.75V7.635z" />
-            </svg>
+                  <path
+                    d="M2.25 6.75A2.25 2.25 0 0 1 4.5 4.5h15a2.25 2.25 0 0 1 2.25 2.25v10.5A2.25 2.25 0 0 1 19.5 19.5h-15a2.25 2.25 0 0 1-2.25-2.25V6.75zm2.334-.75L12 11.327 19.416 6h-14.832zm15.166 1.635-7.731 5.154a.75.75 0 0 1-.838 0L3.45 7.635v9.615c0 .414.336.75.75.75h15a.75.75 0 0 0 .75-.75V7.635z" />
+                </svg>
                 <span>connectteamskilllink@gmail.com</span>
               </a>
             </li>
-           
-          <li> <router-link to="/providercontact" class="flex items-center gap-2 hover:text-[#0073b1] transition"> <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor"> <path d="M6.62 10.79a15.05 15.05 0 006.59 6.59l2.2-2.2a1 1 0 011.11-.21 11.05 11.05 0 003.47.55 1 1 0 011 1V20a1 1 0 01-1 1C10.42 21 3 13.58 3 5a1 1 0 011-1h3.5a1 1 0 011 1c0 1.2.19 2.38.55 3.47a1 1 0 01-.21 1.11l-2.22 2.21z" /> </svg> <span>Contact Us</span> </router-link> </li>
+
+            <li> <router-link to="/providercontact" class="flex items-center gap-2 hover:text-[#0073b1] transition">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
+                  <path
+                    d="M6.62 10.79a15.05 15.05 0 006.59 6.59l2.2-2.2a1 1 0 011.11-.21 11.05 11.05 0 003.47.55 1 1 0 011 1V20a1 1 0 01-1 1C10.42 21 3 13.58 3 5a1 1 0 011-1h3.5a1 1 0 011 1c0 1.2.19 2.38.55 3.47a1 1 0 01-.21 1.11l-2.22 2.21z" />
+                </svg> <span>Contact Us</span> </router-link> </li>
           </ul>
         </div>
 
@@ -171,17 +188,20 @@
         <div>
           <h3 class="text-sm font-bold text-gray-800 mb-3">More</h3>
           <ul class="space-y-2 text-sm text-gray-600">
-            <li><router-link to="/terms" class="hover:text-[#0073b1] flex gap-2"> <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24"
-              stroke="currentColor" stroke-width="2">
-              <!-- Document outline -->
-              <path stroke-linecap="round" stroke-linejoin="round"
-                d="M6 2h9l5 5v13a2 2 0 01-2 2H6a2 2 0 01-2-2V4a2 2 0 012-2z" />
-              <!-- Text lines inside -->
-              <path stroke-linecap="round" stroke-linejoin="round" d="M9 8h6M9 12h6M9 16h4" />
-            </svg> Terms of Service</router-link></li>
-            <li><router-link to="/privacy" class="hover:text-[#0073b1] flex gap-2"> <img class="w-4 h-4" src="https://img.icons8.com/ios/50/user-shield.png" alt="user-shield" /> Privacy</router-link></li>
+            <li><router-link to="/terms" class="hover:text-[#0073b1] flex gap-2"> <svg
+                  xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24"
+                  stroke="currentColor" stroke-width="2">
+                  <!-- Document outline -->
+                  <path stroke-linecap="round" stroke-linejoin="round"
+                    d="M6 2h9l5 5v13a2 2 0 01-2 2H6a2 2 0 01-2-2V4a2 2 0 012-2z" />
+                  <!-- Text lines inside -->
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M9 8h6M9 12h6M9 16h4" />
+                </svg> Terms of Service</router-link></li>
           </ul>
-          <div class="flex space-x-4 mt-4"> <a href="#" class="text-gray-500 hover:text-[#0073b1]"><i class="fab fa-facebook-f"></i></a> <a href="#" class="text-gray-500 hover:text-[#0073b1]"><i class="fab fa-twitter"></i></a> <a href="#" class="text-gray-500 hover:text-[#0073b1]"><i class="fab fa-linkedin-in"></i></a> </div>
+          <div class="flex space-x-4 mt-4"> <a href="#" class="text-gray-500 hover:text-[#0073b1]"><i
+                class="fab fa-facebook-f"></i></a> <a href="#" class="text-gray-500 hover:text-[#0073b1]"><i
+                class="fab fa-twitter"></i></a> <a href="#" class="text-gray-500 hover:text-[#0073b1]"><i
+                class="fab fa-linkedin-in"></i></a> </div>
         </div>
       </div>
 
@@ -256,10 +276,10 @@ export default {
     const fetchNewOrdersCount = async () => {
       try {
         const res = await API.get(`/providerorders`, { headers: { Authorization: `Bearer ${token}` } });
-         
-    newOrdersCount.value = res.data.filter(
-      order => order.status === 'Pending' || order.status === 'Accepted'
-    ).length;
+
+        newOrdersCount.value = res.data.filter(
+          order => order.status === 'Pending' || order.status === 'Accepted'
+        ).length;
       } catch (err) {
         console.error('Error fetching new orders count:', err);
       }

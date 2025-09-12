@@ -240,7 +240,7 @@
       <div class="flex items-center space-x-2">
         <img src="@/assets/skilllogo.png" alt="SkillLink Logo"
           class="w-10 h-10 sm:w-12 sm:h-12 transition-transform hover:rotate-12" loading="lazy" />
-        <h1 class="text-xl sm:text-2xl font-bold text-[#0073b1]"></h1>
+        <h1 class="text-xl sm:text-2xl font-bold text-[#0073b1]">SkillLink</h1>
       </div>
       <!-- Desktop Nav -->
       <nav class="flex items-center space-x-2">

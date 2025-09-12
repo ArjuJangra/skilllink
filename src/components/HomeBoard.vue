@@ -261,18 +261,6 @@
             <span>Privacy Policy</span>
           </router-link>
 
-          <router-link to="/terms" class="flex items-center gap-2 hover:text-[#00A8E8] transition"
-            aria-label="Terms and Conditions">
-            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24"
-              stroke="currentColor" stroke-width="2">
-              <!-- Document outline -->
-              <path stroke-linecap="round" stroke-linejoin="round"
-                d="M6 2h9l5 5v13a2 2 0 01-2 2H6a2 2 0 01-2-2V4a2 2 0 012-2z" />
-              <!-- Text lines inside -->
-              <path stroke-linecap="round" stroke-linejoin="round" d="M9 8h6M9 12h6M9 16h4" />
-            </svg>
-            <span>Terms & Conditions</span>
-          </router-link>
 
           <router-link to="/contact" class="flex items-center gap-2 hover:text-[#00A8E8] transition"
             aria-label="Contact Us">

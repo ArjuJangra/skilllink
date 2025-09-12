@@ -1,7 +1,7 @@
 <template>
   <div class="min-h-screen bg-gray-50 text-gray-800">
     <!-- Navbar -->
-    <header class="fixed top-0 left-0 right-0 z-50 bg-white shadow-md backdrop-blur-sm">
+    <header class="fixed top-0 left-0 right-0 z-50 bg-gradient-to-r from-white via-[#f1faff] to-[#f5fafe] shadow-md backdrop-blur-sm">
       <div class="max-w-6xl mx-auto px-4 py-3 sm:px-6 flex justify-between items-center">
         <div class="flex items-center space-x-2">
           <img :src="skillLogo" alt="SkillLink Logo" class="w-10 h-10" />

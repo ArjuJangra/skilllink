@@ -33,7 +33,7 @@
       
       <button
         @click="goToDetails"
-        class="bg-[#007EA7] flex items-center  text-white font-medium px-4 py-2 rounded-lg hover:bg-[#005f6b] transition duration-200 shadow-sm hover:shadow-md"
+        class="text-[#007EA7] flex items-center font-medium px-4 py-2 rounded-lg hover:text-[#2094e7] transition duration-200 shadow-sm hover:shadow-md"
       >
         View Details
          <svg

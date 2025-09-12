@@ -1,8 +1,31 @@
 <template>
   <div class="h-screen bg-[#F6F9FC] overflow-hidden">
    <header class="bg-white shadow sticky top-0 z-50">
-       <AppNavbar />
-    </header>
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="flex items-center justify-between h-16">
+      
+      <!-- Logo (Left) -->
+      <div class="flex items-center space-x-2">
+        <img src="@/assets/skilllogo.png" alt="Logo" class="w-10 h-10" />
+        <span class="text-xl font-bold text-[#0073b1]">SkillLink</span>
+      </div>
+
+      <!-- Home Button (Right) -->
+      <div>
+        <router-link 
+          :to="'/serviceprovider'" 
+          class="flex items-center gap-2 px-4 py-2 text-gray-600 hover:text-[#0073b1] transition font-semibold"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12 3l8 7v10a2 2 0 0 1-2 2h-4a1 1 0 0 1-1-1v-5H11v5a1 1 0 0 1-1 1H6a2 2 0 0 1-2-2V10l8-7z" />
+          </svg>
+          <span>Home</span>
+        </router-link>
+      </div>
+
+    </div>
+  </div>
+</header>
 
     <!-- Main Terms Content -->
     <div class="pt-[10px] px-2 flex justify-center items-start h-[calc(100vh-100px)]">
@@ -53,7 +76,6 @@
 
 <script setup>
 import { ref } from "vue";
-import AppNavbar from '@/components/AppNavbar.vue'
 
 const activeSection = ref(0);
 
