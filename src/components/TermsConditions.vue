@@ -1,24 +1,12 @@
 <template>
   <div class="h-screen bg-[#F6F9FC] overflow-hidden">
-    <!-- Fixed Header -->
-    <header class="w-full bg-white shadow-md fixed top-0 z-50">
-      <div class="max-w-[1120px] mx-auto px-4 py-4 flex items-center justify-between">
-        <div class="flex items-center space-x-2">
-          <img :src="skillLogo" alt="SkillLink Logo" class="h-10 w-auto" />
-          <span class="text-xl font-bold text-[#0074B7]">SkillLink</span>
-        </div>
-        <router-link
-          to="/homelogged"
-          class="bg-[#0074B7] text-white px-4 py-2 rounded hover:bg-[#005f91] transition"
-        >
-          Back to Home
-        </router-link>
-      </div>
+   <header class="bg-white shadow sticky top-0 z-50">
+       <AppNavbar />
     </header>
 
     <!-- Main Terms Content -->
-    <div class="pt-[100px] px-2 flex justify-center items-start h-[calc(100vh-100px)]">
-      <div class="w-full max-w-[1120px] bg-white rounded-xl shadow-xl p-6 flex flex-col">
+    <div class="pt-[10px] px-2 flex justify-center items-start h-[calc(100vh-100px)]">
+      <div class="w-full max-w-6xl bg-white rounded-xl shadow-xl p-6 flex flex-col">
         <!-- Center Title -->
         <div class="text-center mb-6">
           <h1 class="text-3xl font-bold text-[#0074B7] mb-2">Terms & Conditions</h1>
@@ -65,7 +53,7 @@
 
 <script setup>
 import { ref } from "vue";
-import skillLogo from "@/assets/skilllogo.png";
+import AppNavbar from '@/components/AppNavbar.vue'
 
 const activeSection = ref(0);
 

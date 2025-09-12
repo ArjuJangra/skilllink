@@ -10,10 +10,10 @@
         </div>
 
         <!-- Navigation -->
-        <nav class="flex items-center space-x-4 text-sm md:text-base">
+        <nav class="flex items-center space-x-2 text-sm md:text-base">
 
           <router-link to="/serviceprovider"
-            class="flex items-center gap-2 px-4 py-2 text-gray-600 hover:text-[#0073b1] hover:scale-105 transition-transform duration-200">
+            class="flex items-center gap-1 py-2 text-gray-600 hover:text-[#0073b1] hover:scale-105 transition-transform duration-200">
             <!-- Filled Home Icon -->
             <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
               <path d="M12 3l8 7v10a2 2 0 0 1-2 2h-4a1 1 0 0 1-1-1v-5H11v5a1 1 0 0 1-1 1H6a2 2 0 0 1-2-2V10l8-7z" />
@@ -22,7 +22,7 @@
           </router-link>
 
           <router-link to="/providerorders"
-            class="relative flex items-center gap-2 px-3 py-2 text-gray-600 hover:text-[#0073b1] transition font-medium"
+            class="relative flex items-center gap-2 py-2 text-gray-600 hover:text-[#0073b1] transition font-medium"
             active-class="text-[#0073b1] font-semibold after:absolute after:left-0 after:right-0 after:-bottom-1 after:h-[2px] after:bg-[#0073b1] after:rounded-full">
             <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
               <path

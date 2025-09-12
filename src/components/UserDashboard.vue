@@ -214,7 +214,7 @@
               </div>
             </div>
 
-            <!-- History Tab -->
+           
             <!-- History Tab -->
             <div v-else-if="activeTab === 'history'" class="space-y-6">
               <h3 class="text-2xl font-bold text-[#007EA7]">Previous Services</h3>
@@ -512,7 +512,7 @@ const getUserProfile = async () => {
   }
 };
 
-const handleProfileImageChange = async e => {
+ const handleProfileImageChange = async e => {
   const f = e.target.files[0];
   if (!f?.type.startsWith('image/')) return toast.error("Please select an image.");
 

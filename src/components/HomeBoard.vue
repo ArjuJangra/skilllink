@@ -229,7 +229,7 @@
             </svg>
             <span>About Us</span>
           </router-link>
-          <router-link to="/homeboard" class="flex items-center gap-2 hover:text-[#00A8E8] transition"
+          <router-link to="/home" class="flex items-center gap-2 hover:text-[#00A8E8] transition"
             aria-label="Services">
             <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
               <path

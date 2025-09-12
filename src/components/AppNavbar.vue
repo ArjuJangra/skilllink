@@ -107,17 +107,15 @@
               </div>
             </transition>
 
-       </div>
+          </div>
         </template>
         <!-- Home / Login / Profile -->
         <template v-if="showButton === 'home'">
           <router-link :to="auth?.isLoggedIn ? '/homelogged' : '/homeboard'" class="ml-auto">
-            <button
-              class="bg-[#0073b1] flex gap-1 items-center text-white px-2 py-2 rounded-lg hover:bg-[#005f91] transition">
-              <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
+            <button class=" flex gap-1 items-center text-white px-2 py-2 rounded-lg hover:bg-[#eff9fe] transition">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="28" height="28" fill="text-gray-100">
                 <path d="M12 3l8 7v10a2 2 0 0 1-2 2h-4a1 1 0 0 1-1-1v-5H11v5a1 1 0 0 1-1 1H6a2 2 0 0 1-2-2V10l8-7z" />
               </svg>
-              <span class="font-semibold">Home</span>
             </button>
           </router-link>
         </template>
@@ -242,7 +240,7 @@
       <div class="flex items-center space-x-2">
         <img src="@/assets/skilllogo.png" alt="SkillLink Logo"
           class="w-10 h-10 sm:w-12 sm:h-12 transition-transform hover:rotate-12" loading="lazy" />
-        <h1 class="text-xl sm:text-2xl font-bold text-[#0073b1]">SkillLink</h1>
+        <h1 class="text-xl sm:text-2xl font-bold text-[#0073b1]"></h1>
       </div>
       <!-- Desktop Nav -->
       <nav class="flex items-center space-x-2">

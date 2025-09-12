@@ -22,11 +22,6 @@
           <div class="relative group">
             <img :src="profileImage" @error="useDefaultImage" alt="Provider DP"
               class="w-16 h-16 sm:w-20 sm:h-20 rounded-full object-cover border border-gray-200 shadow-sm group-hover:scale-105 transition-transform duration-200" />
-            <!-- Glowing Online/Offline Dot -->
-            <span class="absolute bottom-1 right-1 block w-3.5 h-3.5 rounded-full border-2 border-white"
-              :class="isOnline ? 'bg-green-500 animate-ping-once' : 'bg-gray-400'"></span>
-            <span v-if="isOnline"
-              class="absolute bottom-1 right-1 block w-3.5 h-3.5 rounded-full border-2 border-white bg-green-500"></span>
           </div>
 
           <!-- Name & Details -->
@@ -73,11 +68,7 @@
                 <div v-if="showSecuritySection" class="mt-3 space-y-3 pl-4">
                   <button @click="showChangePasswordModal = true"
                     class="text-[#007EA7] hover:underline font-medium transition">Change Password</button>
-                  <label class="flex items-center space-x-2">
-                    <input type="checkbox" v-model="twoFactorEnabled" @change="toggleTwoFactor" />
-                    <span>Two-Factor Authentication (<strong>{{ twoFactorEnabled ? 'Enabled' : 'Disabled'
-                        }}</strong>)</span>
-                  </label>
+
                 </div>
               </transition>
             </div>
@@ -106,65 +97,36 @@
               </transition>
             </div>
 
-            <!-- Availability -->
+            <!-- Privacy Settings -->
             <div class="bg-gray-50 rounded-xl p-4 hover:bg-gray-100 transition">
-              <button @click="showAvailability = !showAvailability"
+              <button @click="showPrivacySettings = !showPrivacySettings"
                 class="flex justify-between items-center w-full font-semibold text-[#007EA7]">
-                <span class="flex items-center gap-2"> Availability Scheduling</span>
+                <span class="flex items-center gap-2">Privacy Settings</span>
               </button>
-              <transition name="fade">
-                <div v-if="showAvailability" class="mt-3 flex gap-4 pl-4">
-                  <label class="flex flex-col text-sm w-full">Start Time
-                    <input type="time" v-model="availability.start" @change="autoUpdateAvailability"
-                      class="border px-2 py-1 rounded focus:outline-none focus:ring-2 focus:ring-[#007EA7]" />
+
+              <transition enter-active-class="transition-all duration-300 ease-out" enter-from-class="max-h-0 opacity-0"
+                enter-to-class="max-h-96 opacity-100" leave-active-class="transition-all duration-300 ease-in"
+                leave-from-class="max-h-96 opacity-100" leave-to-class="max-h-0 opacity-0">
+                <div v-show="showPrivacySettings" class="mt-3 pl-4 space-y-2">
+                  <label class="flex items-center space-x-2">
+                    <input type="checkbox" v-model="privacySettings.showEmail" />
+                    <span>Show email on profile</span>
                   </label>
-                  <label class="flex flex-col text-sm w-full">End Time
-                    <input type="time" v-model="availability.end" @change="autoUpdateAvailability"
-                      class="border px-2 py-1 rounded focus:outline-none focus:ring-2 focus:ring-[#007EA7]" />
+                  <label class="flex items-center space-x-2">
+                    <input type="checkbox" v-model="privacySettings.showPhone" />
+                    <span>Show phone number on profile</span>
                   </label>
+
+                  <!-- Save button -->
+                  <button @click="updatePrivacySettings" :disabled="privacySubmitting"
+                    class="mt-2 px-4 py-2 bg-[#007EA7] text-white rounded-lg flex items-center">
+                    <span v-if="privacySubmitting"
+                      class="w-4 h-4 border-2 border-t-2 border-t-white border-white/40 rounded-full animate-spin mr-2"></span>
+                    Save Privacy Settings
+                  </button>
                 </div>
               </transition>
             </div>
-
-            <!-- Privacy Settings -->
-<div class="bg-gray-50 rounded-xl p-4 hover:bg-gray-100 transition">
-  <button @click="showPrivacySettings = !showPrivacySettings"
-    class="flex justify-between items-center w-full font-semibold text-[#007EA7]">
-    <span class="flex items-center gap-2">Privacy Settings</span>
-  </button>
-
-  <transition
-    enter-active-class="transition-all duration-300 ease-out"
-    enter-from-class="max-h-0 opacity-0"
-    enter-to-class="max-h-96 opacity-100"
-    leave-active-class="transition-all duration-300 ease-in"
-    leave-from-class="max-h-96 opacity-100"
-    leave-to-class="max-h-0 opacity-0"
-  >
-    <div v-show="showPrivacySettings" class="mt-3 pl-4 space-y-2">
-      <label class="flex items-center space-x-2">
-        <input type="checkbox" v-model="privacySettings.showEmail" />
-        <span>Show email on profile</span>
-      </label>
-      <label class="flex items-center space-x-2">
-        <input type="checkbox" v-model="privacySettings.showPhone" />
-        <span>Show phone number on profile</span>
-      </label>
-
-      <!-- Save button -->
-      <button
-        @click="updatePrivacySettings"
-        :disabled="privacySubmitting"
-        class="mt-2 px-4 py-2 bg-[#007EA7] text-white rounded-lg flex items-center"
-      >
-        <span v-if="privacySubmitting" class="w-4 h-4 border-2 border-t-2 border-t-white border-white/40 rounded-full animate-spin mr-2"></span>
-        Save Privacy Settings
-      </button>
-    </div>
-  </transition>
-</div>
-
-
           </section>
         </div>
         <!-- Right Column: Location + Logout -->
@@ -342,17 +304,8 @@ import { toast } from 'vue3-toastify'
 import 'vue3-toastify/dist/index.css'
 import dayjs from 'dayjs'
 import { auth, logoutUser } from '@/stores/auth'
-
-// Props
-const props = defineProps({
-  lastActive: {
-    type: String,
-    default: null
-  }
-})
-
 // Router
-const router = useRouter()
+ const router = useRouter()
 
 // Auth & state
 const isAuthenticated = computed(() => auth.isLoggedIn)
@@ -367,35 +320,20 @@ const showLocationModal = ref(false)
 const showChangePasswordModal = ref(false)
 const showDeactivateModal = ref(false)
 const showNotificationPrefs = ref(false)
-const showAvailability = ref(false)
 const showPrivacySettings = ref(false)
 
 // Form states
 const isSubmitting = ref(false)
 const passwordSubmitting = ref(false)
 const notifSubmitting = ref(false)
-const availabilitySubmitting = ref(false)
 const privacySubmitting = ref(false)
-// Profile form
 const editForm = reactive({ name: '', email: '', area: '' })
 const selectedFile = ref(null)
 const previewImage = ref('')
 const defaultPic = require('@/assets/user.png');
-// Password form
 const passwordForm = reactive({ currentPassword: '', newPassword: '', confirmPassword: '' })
-
-// Notification prefs
 const notificationPrefs = reactive({ email: false, sms: false, push: false })
-
-// Availability scheduling
-const availability = reactive({ start: '', end: '' })
-
-
-// Privacy settings
 const privacySettings = reactive({ showEmail: false, showPhone: false })
-
-// Two-factor auth
-const twoFactorEnabled = ref(false)
 
 // Computed
 const profileImage = computed(() =>
@@ -407,13 +345,6 @@ const profileImage = computed(() =>
 const lastLoginFormatted = computed(() =>
   provider.value?.lastLogin ? dayjs(provider.value.lastLogin).format('MMM D, YYYY h:mm A') : 'Not available'
 );
-
-const isOnline = computed(() => {
-  if (!props.lastActive) return false
-  const lastActiveTime = new Date(props.lastActive).getTime()
-  const now = Date.now()
-  return now - lastActiveTime < 5 * 60 * 1000 // online if active in last 5 min
-})
 
 // Methods
 const useDefaultImage = (e) => e.target.src = require('@/assets/user.png')
@@ -536,26 +467,6 @@ const autoUpdateNotificationPrefs = async () => {
   }
 }
 
-// Availability update
-const autoUpdateAvailability = async () => {
-  availabilitySubmitting.value = true
-  try {
-    const providerId = provider.value._id || provider.value.id
-    if (!providerId) return toast.error('Provider ID missing')
-    const token = localStorage.getItem('token')
-    await API.put(
-      `/providers/availability/${providerId}`,
-      availability,
-      { headers: { Authorization: `Bearer ${token}` } }
-    )
-    toast.success('Availability updated')
-  } catch {
-    toast.error('Failed to update availability')
-  } finally {
-    availabilitySubmitting.value = false
-  }
-}
-
 // Privacy settings
 const updatePrivacySettings = async () => {
   privacySubmitting.value = true
@@ -568,11 +479,6 @@ const updatePrivacySettings = async () => {
   } finally {
     privacySubmitting.value = false
   }
-}
-
-// Two-factor toggle
-const toggleTwoFactor = () => {
-  toast.info(twoFactorEnabled.value ? '2FA enabled (placeholder)' : '2FA disabled (placeholder)')
 }
 
 // Deactivate account
@@ -605,11 +511,8 @@ onMounted(async () => {
     notificationPrefs.email = res.data.notificationPrefs?.email ?? true
     notificationPrefs.sms = res.data.notificationPrefs?.sms ?? false
     notificationPrefs.push = res.data.notificationPrefs?.push ?? true
-    availability.start = res.data.availability?.start ?? '09:00'
-    availability.end = res.data.availability?.end ?? '17:00'
     privacySettings.showEmail = res.data.privacySettings?.showEmail ?? true
     privacySettings.showPhone = res.data.privacySettings?.showPhone ?? false
-    twoFactorEnabled.value = res.data.twoFactorEnabled ?? false
   } catch {
     toast.error('Failed to fetch profile')
     router.push('/login')

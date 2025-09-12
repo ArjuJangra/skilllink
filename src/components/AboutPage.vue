@@ -5,7 +5,7 @@
     </header>
     <!-- Main About Content -->
     <div class="pt-[20px] px-2 py-6 flex justify-center items-start">
-      <div class="w-full max-w-6xl bg-white rounded-xl shadow-xl p-4 md:p-6">
+      <div class="w-full max-w-7xl bg-white rounded-xl shadow-xl p-4 md:p-6">
         <div>
           <div class="text-center mb-6">
             <h1 class="text-3xl font-bold text-[#0074B7] mb-1">About SkillLink</h1>
