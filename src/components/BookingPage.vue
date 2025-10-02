@@ -15,10 +15,9 @@
       <div v-if="!hasPrefilledService">
         <label class="block text-gray-700 font-medium mb-2">Select a Service</label>
         <div class="grid grid-cols-2 gap-4">
-          <div v-for="service in availableServices" :key="service" 
-               @click="selectedService = service; fetchProviders()"
-               :class="selectedService === service ? 'border-blue-600 bg-blue-50 shadow-lg' : 'border-gray-300 hover:shadow-md'"
-               class="border p-3 rounded-xl text-center cursor-pointer transition">
+          <div v-for="service in availableServices" :key="service" @click="selectedService = service; fetchProviders()"
+            :class="selectedService === service ? 'border-blue-600 bg-blue-50 shadow-lg' : 'border-gray-300 hover:shadow-md'"
+            class="border p-3 rounded-xl text-center cursor-pointer transition">
             <p class="font-medium">{{ service }}</p>
             <p class="text-sm text-gray-500">₹{{ servicePrices[service] || '---' }}</p>
           </div>
@@ -29,10 +28,9 @@
       <div v-if="!hasPrefilledProvider && providers.length">
         <label class="block text-gray-700 font-medium mb-2">Select Provider</label>
         <div class="flex flex-col gap-3">
-          <div v-for="provider in providers" :key="provider._id" 
-               @click="selectedProviderId = provider._id"
-               :class="selectedProviderId === provider._id ? 'border-blue-600 bg-blue-50 shadow-lg' : 'border-gray-300 hover:shadow-md'"
-               class="border p-3 rounded-xl cursor-pointer transition flex justify-between items-center">
+          <div v-for="provider in providers" :key="provider._id" @click="selectedProviderId = provider._id"
+            :class="selectedProviderId === provider._id ? 'border-blue-600 bg-blue-50 shadow-lg' : 'border-gray-300 hover:shadow-md'"
+            class="border p-3 rounded-xl cursor-pointer transition flex justify-between items-center">
             <div>
               <p class="font-medium">{{ provider.name }}</p>
               <p class="text-sm text-gray-500">{{ provider.address }}</p>
@@ -44,37 +42,68 @@
       <!-- Personal Details -->
       <div class="flex flex-col gap-4">
         <input type="text" v-model="name" placeholder="Your Name"
-               class="w-full border rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#00A8E8]" />
+          class="w-full border rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#00A8E8]" />
         <input type="tel" v-model="contact" placeholder="Contact Number"
-               class="w-full border rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#00A8E8]" />
+          class="w-full border rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#00A8E8]" />
         <textarea v-model="address" placeholder="Address" rows="2"
-                  class="w-full border rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#00A8E8]"></textarea>
+          class="w-full border rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#00A8E8]"></textarea>
       </div>
 
       <!-- Payment Method -->
       <div>
         <label class="block text-gray-700 font-medium mb-2">Payment Method</label>
         <div class="flex gap-4">
+          <!-- Cash -->
           <div @click="paymentMethod = 'cash'"
-               :class="paymentMethod === 'cash' ? 'bg-blue-50 border-blue-600 shadow-lg' : 'border-gray-300 hover:shadow-md'"
-               class="flex-1 p-3 rounded-xl text-center cursor-pointer flex flex-col items-center gap-1 transition">
+            :class="paymentMethod === 'cash' ? 'bg-blue-50 border-blue-600 shadow-lg' : 'border-gray-300 hover:shadow-md'"
+            class="flex-1 p-3 rounded-xl text-center cursor-pointer flex flex-col items-center gap-1 transition">
             <span class="text-xl">💵</span>
             <span>Cash on Service</span>
           </div>
 
+          <!-- UPI -->
           <div @click="paymentMethod = 'upi'"
-               :class="paymentMethod === 'upi' ? 'border-blue-600 bg-blue-50 shadow-lg' : 'border-gray-300 hover:shadow-md'"
-               class="flex-1 p-3 rounded-xl text-center cursor-pointer flex flex-col items-center gap-1 transition">
+            :class="paymentMethod === 'upi' ? 'border-blue-600 bg-blue-50 shadow-lg' : 'border-gray-300 hover:shadow-md'"
+            class="flex-1 p-3 rounded-xl text-center cursor-pointer flex flex-col items-center gap-1 transition">
             🏦 UPI / Bank Transfer
           </div>
         </div>
 
-        <div v-if="paymentMethod === 'upi'" class="mt-3 p-3 border rounded-xl bg-gray-50 text-center">
-          <p class="text-sm mb-1">Send payment to:</p>
-          <p class="font-semibold text-blue-700">{{ upiId }}</p>
-          <img :src="upiQr" alt="UPI QR Code" class="w-32 h-32 mx-auto mt-2" />
-          <p class="text-xs text-gray-500 mt-1">After payment, click "Book ₹{{ getSelectedPrice() }}"</p>
+        <!-- UPI Instructions -->
+        <div v-if="paymentMethod === 'upi'" class="mt-3 p-4 border rounded-xl bg-gray-50 text-center space-y-3">
+
+          <!-- Step Instructions -->
+          <p class="text-sm text-gray-700">
+            Step 1: Send ₹<strong>{{ getSelectedPrice() }}</strong> to UPI ID: <strong>{{ upiId }}</strong><br>
+            Step 2: Include Booking ID <strong>{{ bookingId }}</strong> in UPI remarks<br>
+            Step 3: Upload payment screenshot for verification
+          </p>
+
+          <!-- Booking ID with copy button -->
+          <div class="flex justify-center items-center gap-2 mt-2">
+            <span class="text-sm text-gray-700">Booking ID: <strong>{{ bookingId }}</strong></span>
+            <button @click="copyBookingId" class="px-2 py-1 bg-blue-500 text-white rounded hover:bg-blue-600 text-xs">
+              Copy
+            </button>
+          </div>
+
+          <!-- QR Code -->
+          <img :src="upiQr" alt="UPI QR Code" class="w-40 h-40 mx-auto mt-2 rounded-lg border" />
+
+          <!-- Screenshot Upload -->
+          <label class="mt-2 cursor-pointer text-sm text-gray-700 bg-gray-100 p-2 rounded-lg hover:bg-gray-200">
+            Upload Screenshot After Payment
+            <input type="file" @change="onUPIScreenshotChange" class="hidden" />
+          </label>
+
+          <!-- Screenshot Preview -->
+          <div v-if="upiScreenshotURL" class="mt-2 text-sm text-green-700">
+            Screenshot selected: {{ upiScreenshot.name }}
+            <img :src="upiScreenshotURL" alt="Payment Screenshot" class="w-32 h-32 mt-1 mx-auto rounded-md border" />
+          </div>
+
         </div>
+
       </div>
 
       <!-- Booking Summary -->
@@ -85,10 +114,9 @@
         <p><strong>Payment:</strong> {{ paymentMethod === 'cash' ? 'Cash' : 'UPI / Bank' }}</p>
         <p><strong>Scheduled:</strong> {{ selectedDate }} at {{ selectedTime }}</p>
       </div>
-
       <!-- Confirm Booking -->
       <button :disabled="loading || !isFormValid()" @click="confirmBooking"
-              class="w-full bg-[#0289b7] text-white py-3 rounded-xl hover:bg-[#005f6b] disabled:opacity-50 transition">
+        class="w-full bg-[#0289b7] text-white py-3 rounded-xl hover:bg-[#005f6b] disabled:opacity-50 transition">
         {{ loading ? 'Processing...' : `Book ₹${getSelectedPrice()}` }}
       </button>
 
@@ -100,16 +128,18 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, watch } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import API from '@/api'
 import { toast } from 'vue3-toastify'
 import 'vue3-toastify/dist/index.css'
-import upiQrImg from '@/assets/upi-qr.jpg'
+import QRCode from 'qrcode'
 
+// Router
 const router = useRouter()
 const route = useRoute()
 
+// State
 const loading = ref(false)
 const selectedService = ref('')
 const selectedProviderId = ref('')
@@ -126,16 +156,49 @@ const location = ref({ latitude: null, longitude: null })
 // Payment
 const paymentMethod = ref('cash')
 const upiId = ref('parveendhillo08-1@okaxis')
-const upiQr = ref(upiQrImg)
+const bookingId = ref(`BK-${Date.now()}-${Math.floor(Math.random() * 1000)}`)
+const upiScreenshot = ref(null)
+const upiScreenshotURL = ref(null) // NEW: reactive URL for preview
+const upiQr = ref('')
+
+// Screenshot change handler
+const onUPIScreenshotChange = (e) => {
+  const file = e.target.files?.[0] || null
+  upiScreenshot.value = file
+
+  // revoke previous URL
+  if (upiScreenshotURL.value) URL.revokeObjectURL(upiScreenshotURL.value)
+  upiScreenshotURL.value = file ? URL.createObjectURL(file) : null
+}
+
+// Copy booking ID
+const copyBookingId = () => {
+  navigator.clipboard.writeText(bookingId.value)
+    .then(() => toast.success('Booking ID copied!'))
+    .catch(() => toast.error('Failed to copy Booking ID'))
+}
+
 
 // Prices
 const servicePrices = { Plumber: 199, Electrician: 249, "AC Repair": 399, Carpenter: 299, Cleaner: 149, Mechanic: 349 }
 const getSelectedPrice = () => total.value || servicePrices[selectedService.value] || 0
 
+// Generate UPI QR dynamically
+const generateUPIQR = async () => {
+  if (paymentMethod.value !== 'upi') return
+  const amount = getSelectedPrice()
+  const upiURL = `upi://pay?pa=${upiId.value}&pn=SkillLink&am=${amount}&cu=INR&tn=${bookingId.value}`
+  upiQr.value = await QRCode.toDataURL(upiURL)
+}
+
+// Regenerate QR when service, price, or booking ID changes
+watch([selectedService, total, bookingId, paymentMethod], generateUPIQR)
+
+// Prefilled flags
 const hasPrefilledService = computed(() => !!route.query.service)
 const hasPrefilledProvider = computed(() => !!route.query.providerId)
 
-// **Computed provider**
+// Computed selected provider
 const selectedProvider = computed(() =>
   providers.value.find(p => p._id === selectedProviderId.value) || {}
 )
@@ -143,7 +206,8 @@ const selectedProvider = computed(() =>
 // Form validation
 const isFormValid = () =>
   name.value && contact.value && address.value && selectedService.value &&
-  selectedProviderId.value && getSelectedPrice() > 0 && selectedDate.value && selectedTime.value
+  selectedProviderId.value && getSelectedPrice() > 0 && selectedDate.value && selectedTime.value &&
+  (paymentMethod.value === 'cash' || (paymentMethod.value === 'upi' && upiScreenshot.value))
 
 // Confirm booking
 const confirmBooking = async () => {
@@ -151,25 +215,27 @@ const confirmBooking = async () => {
     toast.error('Please fill in all required fields.')
     return
   }
+
   loading.value = true
-  const token = localStorage.getItem('token')
   try {
-    await API.post(
-      '/bookings',
-      {
-        service: selectedService.value,
-        providerId: selectedProviderId.value,
-        date: selectedDate.value,
-        time: selectedTime.value,
-        name: name.value,
-        contact: contact.value,
-        address: address.value,
-        price: getSelectedPrice(),
-        paymentMethod: paymentMethod.value,
-        paymentStatus: paymentMethod.value === 'cash' ? 'pending' : 'initiated'
-      },
-      { headers: { Authorization: `Bearer ${token}` } }
-    )
+    const formData = new FormData()
+    formData.append('service', selectedService.value)
+    formData.append('providerId', selectedProviderId.value)
+    formData.append('date', selectedDate.value)
+    formData.append('time', selectedTime.value)
+    formData.append('name', name.value)
+    formData.append('contact', contact.value)
+    formData.append('address', address.value)
+    formData.append('price', getSelectedPrice())
+    formData.append('paymentMethod', paymentMethod.value)
+    formData.append('paymentStatus', 'pending') // Always pending until verified
+    formData.append('bookingId', bookingId.value)
+    if (upiScreenshot.value) formData.append('upiScreenshot', upiScreenshot.value)
+
+    const token = localStorage.getItem('token')
+    await API.post('/bookings', formData, { headers: { Authorization: `Bearer ${token}` } })
+
+    toast.success(`Booking submitted! Booking ID: ${bookingId.value}. Admin will verify payment.`)
     router.push({
       path: '/booking-confirm',
       query: {
@@ -218,7 +284,7 @@ const loadNearbyServices = async (latitude, longitude) => {
   }
 }
 
-// Prefill query params
+// Prefill query params and geolocation
 onMounted(() => {
   const { service, providerId, date, time, total: t } = route.query
   if (service) selectedService.value = service
@@ -242,6 +308,8 @@ onMounted(() => {
     availableServices.value = Object.keys(servicePrices)
     if (selectedService.value) fetchProviders()
   }
+
+  // Generate initial QR
+  generateUPIQR()
 })
 </script>
-

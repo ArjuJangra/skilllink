@@ -6,7 +6,9 @@ const Booking = require('../models/Booking');
 const User = require('../models/User');
 const ServiceProvider = require('../models/ServiceProvider');
 const authenticateUser = require('../middleware/authMiddleware');
-
+const multer = require('multer');
+const upload = multer({ dest: 'uploads/' });
+const sendEmail = require('../utils/mailer');
 //  Test route
 router.get('/test', (req, res) => res.send('✅ Booking route is working'));
 
@@ -34,51 +36,50 @@ router.get('/', authenticateUser, async (req, res) => {
   }
 });
 
-
 // POST create booking
 router.post(
   '/',
   authenticateUser,
+  upload.single('upiScreenshot'),
   [
     body('service').notEmpty().withMessage('Service is required'),
     body('name').notEmpty().withMessage('Name is required'),
     body('contact').notEmpty().withMessage('Contact is required'),
     body('address').notEmpty().withMessage('Address is required'),
+    body('bookingId').notEmpty().withMessage('Booking ID is required'),
   ],
   async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) return res.status(400).json({ errors: errors.array() });
 
     try {
-      const { service, name, contact, address, providerId, price } = req.body;
+      const {
+        service, name, contact, address, providerId, price,
+        paymentMethod, bookingId, date, time
+      } = req.body;
 
       const user = await User.findById(req.user.id);
       if (!user) return res.status(404).json({ message: 'User not found' });
 
+      // Assign provider
       let assignedProvider;
-
       if (providerId) {
         assignedProvider = await ServiceProvider.findOne({
           _id: providerId,
           services: { $in: [service] },
         });
-
-        if (!assignedProvider) {
-          return res.status(404).json({ message: 'Selected provider is not available for this service' });
-        }
+        if (!assignedProvider) return res.status(404).json({ message: 'Provider not available' });
       } else {
         const matchingProviders = await ServiceProvider.find({
           services: { $in: [service] },
           pincode: user.pincode,
         });
-
-        if (!matchingProviders.length) {
-          return res.status(404).json({ message: 'No providers available in your area for this service' });
-        }
-
+        if (!matchingProviders.length)
+          return res.status(404).json({ message: 'No providers in your area' });
         assignedProvider = matchingProviders[Math.floor(Math.random() * matchingProviders.length)];
       }
 
+      // Create booking (always pending until verified)
       const booking = new Booking({
         userId: req.user.id,
         providerId: assignedProvider._id,
@@ -87,12 +88,37 @@ router.post(
         contact,
         address,
         price: price && price > 0 ? price : 100,
+        paymentMethod: paymentMethod || 'Cash',
+        paymentStatus: 'pending',
+        bookingId,
+        upiScreenshot: req.file?.path || null,
+        date,
+        time
       });
 
       const savedBooking = await booking.save();
-      console.log('✅ Booking saved:', savedBooking);
-      // Populate provider info before sending response
       await savedBooking.populate('providerId', '-password -__v');
+
+      // === SEND EMAIL TO ADMIN ===
+      try {
+        await sendEmail({
+          to: 'connectteamskilllink@gmail.com', // admin email
+          subject: `New Booking - ${bookingId}`,
+          text: `A new booking has been confirmed.\n
+User: ${name}\n
+Service: ${service}\n
+Amount: ₹${price}\n
+Payment Method: ${paymentMethod}\n
+Booking ID: ${bookingId}\n
+Date: ${date} ${time}\n
+Please verify the payment.`,
+          attachments: req.file ? [{ filename: req.file.originalname, path: req.file.path }] : []
+        });
+        console.log('✅ Admin notified by email');
+      } catch (err) {
+        console.error('❌ Failed to send email', err);
+      }
+
       res.status(201).json({ message: 'Booking confirmed', booking: savedBooking });
     } catch (err) {
       console.error('❌ Booking error:', err);

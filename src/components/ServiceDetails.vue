@@ -198,45 +198,102 @@
           <div class="bg-white rounded-2xl shadow p-6">
             <h2 class="text-xl font-bold text-gray-900 mb-4">Customer Reviews</h2>
 
-            <!-- Average Rating -->
-            <div class="flex items-center gap-2 mb-4">
-              <div class="text-2xl font-extrabold text-amber-500">{{ rating.toFixed(1) }} ★</div>
-              <div class="text-xs text-gray-500">Based on {{ reviews.length }} reviews</div>
-            </div>
+           <section class="reviews mt-8">
+    <!-- Average Rating -->
+    <div class="flex items-center gap-2 mb-4">
+      <div class="text-2xl font-extrabold text-amber-500">{{ rating.toFixed(1) }} ★</div>
+      <div class="text-xs text-gray-500">Based on {{ reviews.length }} reviews</div>
+    </div>
 
-            <!-- New Review Form -->
-            <div class="mb-6 p-4 bg-gray-50 rounded-xl space-y-3">
-              <div class="flex items-center gap-2">
-                <input v-model="newReview.user" placeholder="Your Name" class="input w-full" />
-                <input type="file" @change="onFileChange" />
-              </div>
-              <div class="flex items-center gap-1">
-                <span v-for="n in 5" :key="n" @click="setStarRating(n)" class="cursor-pointer text-amber-400 text-xl">
-                  {{ n <= newReview.stars ? '★' : '☆' }} </span>
-              </div>
-              <textarea v-model="newReview.text" placeholder="Write your review..." class="input w-full"></textarea>
-              <button @click="submitReview" class="btn-primary w-80">Submit Review</button>
-            </div>
+    <!-- New Review Form -->
+    <div class="mb-6 p-4 bg-gray-50 rounded-xl space-y-3">
+      <div class="flex items-center gap-2">
+        <input v-model="newReview.user" placeholder="Your Name" class="input w-full" />
+        <input type="file" @change="onFileChange" />
+      </div>
+      <div class="flex items-center gap-1">
+        <span
+          v-for="n in 5"
+          :key="n"
+          @click="setStarRating(n)"
+          class="cursor-pointer text-amber-400 text-xl"
+        >
+          {{ n <= newReview.stars ? '★' : '☆' }}
+        </span>
+      </div>
+      <textarea
+        v-model="newReview.text"
+        placeholder="Write your review..."
+        class="input w-full"
+      ></textarea>
+      <button
+        @click="submitReview"
+        :disabled="!newReview.user || !newReview.stars || !newReview.text"
+        class="btn-primary w-80 disabled:opacity-50"
+      >
+        Submit Review
+      </button>
+    </div>
 
-            <!-- Rating Bars -->
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-              <div class="space-y-2">
-                <div v-for="star in [5, 4, 3, 2, 1]" :key="star" class="flex items-center gap-3">
-                  <div class="w-12 text-sm text-gray-600">{{ star }}★</div>
-                  <div class="flex-1 h-2 bg-gray-100 rounded-full overflow-hidden">
-                    <div class="h-2 bg-amber-400 duration-500" :style="{ width: ratingBarWidth(star) + '%' }"></div>
-                  </div>
-                  <div class="w-10 text-right text-xs text-gray-500">{{ ratingCounts[star] || 0 }}</div>
-                </div>
-              </div>
-              <div class="p-4 rounded-xl bg-gray-50">
-                <div class="font-semibold text-gray-800 mb-2">What people like</div>
-                <ul class="text-sm text-gray-700 space-y-1">
-                  <li v-for="pro in reviewPros" :key="pro">• {{ pro }}</li>
-                </ul>
-              </div>
-            </div>
+    <!-- Rating Bars & Pros -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+      <!-- Rating Bars -->
+      <div class="space-y-2">
+        <div v-for="star in [5,4,3,2,1]" :key="star" class="flex items-center gap-3">
+          <div class="w-12 text-sm text-gray-600">{{ star }}★</div>
+          <div class="flex-1 h-2 bg-gray-100 rounded-full overflow-hidden">
+            <div class="h-2 bg-amber-400 duration-500" :style="{ width: ratingBarWidth(star) + '%' }"></div>
+          </div>
+          <div class="w-10 text-right text-xs text-gray-500">{{ ratingCounts[star] || 0 }}</div>
+        </div>
+      </div>
 
+      <!-- Pros Section -->
+      <div class="p-4 rounded-xl bg-gray-50">
+        <div class="font-semibold text-gray-800 mb-2">What people like</div>
+        <ul class="text-sm text-gray-700 space-y-1">
+          <li v-for="pro in reviewPros" :key="pro">• {{ pro }}</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Review List -->
+    <div v-if="reviews.length">
+      <div
+        v-for="r in filteredReviews"
+        :key="r.id"
+        class="flex items-start gap-4 p-4 border-b border-gray-200"
+      >
+        <img
+          :src="r.userAvatar || defaultAvatar"
+          alt="User Avatar"
+          class="w-12 h-12 rounded-full object-cover"
+          @error="handleImageError"
+        />
+        <div class="flex-1">
+          <div class="flex items-center justify-between">
+            <h3 class="font-medium">{{ r.user }}</h3>
+            <span class="text-sm text-gray-500">{{ r.date }}</span>
+          </div>
+          <div class="flex items-center mt-1 text-yellow-500">
+            <span v-for="s in 5" :key="s">
+              <i :class="s <= r.stars ? 'fas fa-star' : 'far fa-star'"></i>
+            </span>
+          </div>
+          <p class="mt-2 text-gray-700">{{ r.text }}</p>
+        </div>
+      </div>
+
+      <!-- Show All Reviews Button -->
+      <div v-if="showAllReviewsBtn" class="text-center mt-2">
+        <button @click="showAllReviews = true" class="text-blue-500 hover:underline">
+          Show all reviews
+        </button>
+      </div>
+    </div>
+
+    <div v-else class="text-gray-500 italic">No reviews yet. Be the first to add one!</div>
+  </section>
           </div>
           <!-- Related services -->
           <div class="bg-white rounded-2xl shadow p-6">
@@ -372,7 +429,7 @@ export default {
       // Availability
       selectedDate: "",
       selectedTime: "",
-      timeSlots: ["09:00 AM", "10:30 AM", "12:00 PM", "01:00 PM", "03:00 PM", "05:00 PM"],
+      timeSlots: ["09:00 AM", "10:30 AM", "12:00 PM", "01:00 PM", "03:00 PM", "04:00 PM"],
       bookedSlots: {
         "2025-08-24": ["09:00 AM", "01:00 PM"],
         "2025-08-25": ["12:00 PM"]

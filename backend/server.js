@@ -1,12 +1,12 @@
-const bookingRoutes = require('./routes/bookingRoutes');
+const dotenv = require('dotenv');
 const http = require('http');
 const { Server } = require('socket.io');
 const express = require('express');
 const cors = require('cors');
-const dotenv = require('dotenv');
 const mongoose = require('mongoose');
 const path = require('path');
 const jwt = require('jsonwebtoken');
+const bookingRoutes = require('./routes/bookingRoutes');
 const providerRoutes = require('./routes/providerRoutes');
 const contactRoutes = require('./routes/contactRoutes');
 const providerOrdersRoutes = require('./routes/providerOrders');
@@ -15,6 +15,8 @@ const authRoutes = require('./routes/auth');
 const userRoutes = require('./routes/userRoutes');
 const addressRoutes = require('./routes/addressRoutes');
 const serviceRoutes = require('./routes/serviceRoutes');
+const cron = require('node-cron');
+const cleanupOldScreenshots = require('./utils/cleanup');
 
 dotenv.config();
 
@@ -67,7 +69,11 @@ app.use(cors({
 app.get('/health', (_req, res) => {
   res.status(200).json({ ok: true });
 });
-
+// Schedule job every day at 2:00 AM
+cron.schedule('0 2 * * *', () => {
+  console.log('Running daily screenshot cleanup...');
+  cleanupOldScreenshots();
+});
 // ===== API Routes =====
 app.use('/api/auth', authRoutes);
 app.use('/api/user', userRoutes);

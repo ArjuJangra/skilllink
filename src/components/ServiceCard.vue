@@ -2,6 +2,13 @@
   <div   @click="goToDetails"
     class="bg-white rounded-2xl shadow-md hover:shadow-xl transition-transform transform hover:-translate-y-1 duration-300 flex flex-col overflow-hidden  cursor-pointer max-w-sm w-full"
   >
+    <img
+  v-if="service.image"
+  :src="`/images/${service.image}`"
+  :alt="service.title"
+  class="w-full h-40 object-cover"
+/>
+
     <!-- Optional Category Badge -->
     <div class="px-4 pt-4">
       <span
