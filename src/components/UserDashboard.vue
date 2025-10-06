@@ -578,20 +578,24 @@ onUnmounted(() => disconnect());
   }
 }
 
-.no-scrollbar::-webkit-scrollbar {
-  display: none;
-}
-
+/* No Scrollbar */
 .no-scrollbar {
   -ms-overflow-style: none;
   scrollbar-width: none;
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
 }
 
 /* Animations */
 .fade-zoom-enter-active,
 .fade-zoom-leave-active,
 .fade-tab-enter-active,
-.fade-tab-leave-active {
+.fade-tab-leave-active,
+.fade-enter-active,
+.fade-leave-active,
+.scale-fade-enter-active,
+.scale-fade-leave-active {
   transition: all 0.3s ease;
 }
 
@@ -602,8 +606,16 @@ onUnmounted(() => disconnect());
 }
 
 .fade-tab-enter-from,
-.fade-tab-leave-to {
+.fade-tab-leave-to,
+.fade-enter-from,
+.fade-leave-to {
   opacity: 0;
+}
+
+.scale-fade-enter-from,
+.scale-fade-leave-to {
+  opacity: 0;
+  transform: scale(0.95) translateY(-10px);
 }
 
 /* Inputs */
@@ -615,10 +627,9 @@ onUnmounted(() => disconnect());
   outline: none;
   transition: box-shadow 0.2s, border-color 0.2s;
 }
-
 .input-edit:focus {
-  box-shadow: 0 0 0 2px #00A8E8;
   border-color: #00A8E8;
+  box-shadow: 0 0 0 2px #00A8E8;
 }
 
 /* Buttons */
@@ -632,79 +643,21 @@ onUnmounted(() => disconnect());
 }
 
 .btn-blue,
-.btn-red {
-  padding: 0.5rem 1rem;
-}
-
+.btn-red { padding: 0.5rem 1rem; }
 .btn-green,
-.btn-gray {
-  padding: 0.25rem 0.75rem;
-}
-
-.btn-gray {
-  color: #1f2937;
-}
+.btn-gray { padding: 0.25rem 0.75rem; }
+.btn-gray { color: #1f2937; }
 
 /* Button Colors & Hover */
-.btn-blue {
-  background: #007EA7;
-}
+.btn-blue { background: #007EA7; }
+.btn-blue:hover { background: #005f78; }
 
-.btn-blue:hover {
-  background: #005f78;
-}
+.btn-green { background: #22c55e; }
+.btn-green:hover { background: #16a34a; }
 
-.btn-green {
-  background: #22c55e;
-}
+.btn-gray { background: #d1d5db; }
+.btn-gray:hover { background: #9ca3af; }
 
-.btn-green:hover {
-  background: #16a34a;
-}
-
-.btn-gray {
-  background: #d1d5db;
-}
-
-.btn-gray:hover {
-  background: #9ca3af;
-}
-
-.btn-red {
-  background: #ef4444;
-}
-
-.btn-red:hover {
-  background: #dc2626;
-}
-
-/* Fade background animation */
-.fade-enter-active,
-.fade-leave-active {
-  transition: opacity 0.3s ease;
-}
-
-.fade-enter-from,
-.fade-leave-to {
-  opacity: 0;
-}
-
-/* Modal scale pop effect */
-.scale-fade-enter-active {
-  transition: all 0.25s ease-out;
-}
-
-.scale-fade-leave-active {
-  transition: all 0.2s ease-in;
-}
-
-.scale-fade-enter-from {
-  opacity: 0;
-  transform: scale(0.95) translateY(-10px);
-}
-
-.scale-fade-leave-to {
-  opacity: 0;
-  transform: scale(0.95) translateY(-10px);
-}
+.btn-red { background: #ef4444; }
+.btn-red:hover { background: #dc2626; }
 </style>
