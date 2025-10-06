@@ -8,7 +8,6 @@ const ServiceProvider = require('../models/ServiceProvider');
 const authenticateUser = require('../middleware/authMiddleware');
 const multer = require('multer');
 const upload = multer({ dest: 'uploads/' });
-const sendEmail = require('../utils/mailer');
 //  Test route
 router.get('/test', (req, res) => res.send('✅ Booking route is working'));
 
@@ -99,25 +98,6 @@ router.post(
       const savedBooking = await booking.save();
       await savedBooking.populate('providerId', '-password -__v');
 
-      // === SEND EMAIL TO ADMIN ===
-      try {
-        await sendEmail({
-          to: 'connectteamskilllink@gmail.com', // admin email
-          subject: `New Booking - ${bookingId}`,
-          text: `A new booking has been confirmed.\n
-User: ${name}\n
-Service: ${service}\n
-Amount: ₹${price}\n
-Payment Method: ${paymentMethod}\n
-Booking ID: ${bookingId}\n
-Date: ${date} ${time}\n
-Please verify the payment.`,
-          attachments: req.file ? [{ filename: req.file.originalname, path: req.file.path }] : []
-        });
-        console.log('✅ Admin notified by email');
-      } catch (err) {
-        console.error('❌ Failed to send email', err);
-      }
 
       res.status(201).json({ message: 'Booking confirmed', booking: savedBooking });
     } catch (err) {

@@ -16,32 +16,28 @@
       </div>
     </section>
     <!-- Services Section -->
-   <section class="bg-gradient-to-lr from-blue-50 via-gray-50 to-blue-50 py-12 px-4">
-  <div class="max-w-[1300px] mx-auto">
-    <h3 class="text-2xl font-bold text-[#0073b1] mb-6 text-center">
-      Services We Provide
-    </h3>
+    <section class="py-8 px-4 bg-gradient-to-b from-white via-blue-50 to-white">
+      <div class="max-w-[1300px] mx-auto">
+        <h3 class="text-2xl sm:text-3xl font-bold text-center text-gray-800 mb-10">Services We Provide</h3>
 
-    <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 sm:gap-6">
-      <span
-        v-for="service in services"
-        :key="service.title"
-        @click="goToServiceDetails(service)"
-        class="bg-[#0073b1] text-white px-4 py-3 rounded-lg shadow text-center font-semibold 
-               hover:bg-[#005f8d] hover:shadow-lg cursor-pointer transition duration-300"
-      >
-        {{ service.title }}
-      </span>
-    </div>
-  </div>
-</section>
+        <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 sm:gap-6">
+          <span v-for="service in services" :key="service.title" @click="goToServiceDetails(service)" class="bg-gradient-to-b from-[#0073b1] via-[#3399cc] to-[#37a3eb] text-white 
+           p-5 rounded-lg shadow-lg flex flex-col items-center justify-center 
+           transform transition-all duration-500 font-semibold 
+           hover:-translate-y-1 hover:scale-105 hover:shadow-lg cursor-pointer text-sm sm:text-base">
+            {{ service.title }}
+          </span>
+        </div>
+      </div>
+    </section>
 
     <!-- Solved Cases Section -->
     <section class="bg-gradient-to-r from-blue-50 via-gray-50 to-blue-50 py-12 px-4">
       <div class="max-w-[1300px] mx-auto">
-        <h3 class="text-2xl font-bold text-[#0073b1] mb-6 text-center">
-          Some Cases We've Solved
-        </h3>
+        <h3 class="text-2xl font-bold text-gray-800 mb-6 text-center">Real Stories, Real Impact</h3>
+        <p class="text-gray-600 max-w-3xl mx-auto mb-12 text-base sm:text-lg">
+          See how SkillLink helped users solve everyday challenges — fast, reliable, and stress-free.
+        </p>
         <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
           <div v-for="caseItem in solvedCases" :key="caseItem.title"
             class="bg-white rounded-xl shadow-md overflow-hidden flex flex-col">
@@ -70,7 +66,7 @@
       </div>
 
       <div class="relative z-10 max-w-screen-xl mx-auto text-center" data-aos="fade-up">
-        <h3 class="text-2xl font-bold text-[#0073b1] mb-6">About SkillLink</h3>
+        <h3 class="text-2xl font-bold text-gray-800 mb-6">About SkillLink</h3>
         <p class="max-w-3xl mx-auto text-gray-700 leading-relaxed text-lg sm:text-xl mb-10">
           SkillLink is your trusted platform to connect with skilled professionals across a wide range of services.
           Whether it's urgent home repairs or lifestyle services — we bring verified experts right to your doorstep.
@@ -78,7 +74,7 @@
 
         <!-- Services Grid -->
         <div class="bg-gray-50 shadow-xl rounded-xl p-8 mt-6" data-aos="fade-up" data-aos-delay="100">
-          <h4 class="text-2xl font-semibold text-[#0073b1] mb-6">Our Available Services</h4>
+          <h4 class="text-2xl font-semibold text-gray-800 mb-6">Our Available Services</h4>
           <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 text-left text-gray-800 text-base">
             <ul class="space-y-3">
               <li><i class="fas fa-tools text-[#0073b1] mr-2"></i>Plumber</li>
@@ -110,7 +106,7 @@
 
         <!-- Why SkillLink -->
         <div class="mt-16" data-aos="fade-up" data-aos-delay="200">
-          <h4 class="text-2xl font-semibold text-[#0073b1] mb-6">Why Choose SkillLink?</h4>
+          <h4 class="text-2xl font-semibold text-gray-800 mb-6">Why Choose SkillLink?</h4>
           <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 max-w-5xl mx-auto text-left">
             <div class="bg-white shadow-md rounded-lg p-6 hover:shadow-xl transition" data-aos="zoom-in">
               <h5 class="text-lg font-semibold text-gray-800 mb-2">
@@ -147,7 +143,7 @@
     <!-- Service Area Map Section -->
     <section class="py-12 bg-gradient-to-r from-blue-50 via-gray-50 to-blue-50 px-4">
       <div class="max-w-screen-xl mx-auto text-center">
-        <h2 class="text-2xl font-bold mb-6 text-[#0073b1]">Service Coverage Area</h2>
+        <h2 class="text-2xl font-bold mb-6 text-gray-800">Service Coverage Area</h2>
         <ServiceMap />
       </div>
     </section>
@@ -155,7 +151,7 @@
     <section class="bg-blue-50 py-4 px-4">
       <div class="max-w-4xl mx-auto text-center">
         <!-- Title -->
-        <h3 class="text-2xl font-bold text-[#0073b1] mb-4">Contact Us</h3>
+        <h3 class="text-2xl font-bold text-gray-800 mb-4">Contact Us</h3>
         <p class="text-gray-600 mb-8">
           Need help? Reach out to our team quickly and easily.
         </p>
@@ -205,7 +201,7 @@
         <div class="space-y-4">
           <div class="flex items-center space-x-2">
             <img src="@/assets/skilllogo.png" alt="SkillLink Logo" class="w-10 h-10" />
-            <span class="text-xl font-extrabold text-[#0073b1]">SkillLink</span>
+            <span class="text-xl font-bold text-[#0073b1]">SkillLink</span>
           </div>
           <p class="text-sm leading-relaxed">
             Connecting skilled professionals with customers quickly, easily, and reliably.
@@ -367,16 +363,16 @@ const services = [
   { title: "Beautician", desc: "Home salon, bridal makeup", price: 249, category: "Personal Services" },
   { title: "Driver on Call", desc: "Hourly/daily drivers", price: 199, category: "Outdoor & Utility" },
   { title: 'Fitness Trainer', desc: 'Home workout or yoga sessions', price: 199, category: "Personal Services" },
-  { title: 'House Cleaner', desc: 'Daily/weekly cleaning', price: 149, category:"Cleaning & Maintenance" },
-  { title: 'Laptop-PC Repair', desc: 'Hardware/software issues', price: 299, category:"Tech & Digital Services" },
-  { title: 'Event Decorator', desc: 'Events & party decoration', price: 399, category:"Bonus" },
+  { title: 'House Cleaner', desc: 'Daily/weekly cleaning', price: 149, category: "Cleaning & Maintenance" },
+  { title: 'Laptop-PC Repair', desc: 'Hardware/software issues', price: 299, category: "Tech & Digital Services" },
+  { title: 'Event Decorator', desc: 'Events & party decoration', price: 399, category: "Bonus" },
 ]
 
 // Solved cases (static images)
 const solvedCases = [
   {
     title: 'Leaking Pipe Fixed',
-    image: require('@/assets/plumber.jpeg'),
+    image: require('@/assets/plumber2.jpg'),
     description: '"Emergency plumbing at night! SkillLink saved the day." – Rajesh, Delhi'
   },
   {
@@ -386,7 +382,7 @@ const solvedCases = [
   },
   {
     title: 'Wedding Makeup Expert',
-    image: require('@/assets/makeup.webp'),
+    image: require('@/assets/makeup2.jpg'),
     description: '"Booked for a wedding. Amazing experience!" – Sneha, Jaipur'
   }
 ];

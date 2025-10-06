@@ -2,13 +2,14 @@
   <!-- Conditional rendering based on mode prop -->
   <!--Default Navbar-->
   <header v-if="props.mode !== 'homelogged'"
-    class="sticky top-0 z-50 w-full bg-gradient-to-r from-white via-[#f1faff] to-[#f5fafe] shadow-md">
+    class="sticky top-0 z-50 w-full bg-gradient-to-r from-[#fffefc] via-[#fafafa] to-[#ffffff] shadow-md">
     <div class="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
       <!-- Logo -->
       <div class="flex items-center space-x-2">
         <img src="@/assets/skilllogo.png" alt="SkillLink Logo"
-          class="w-10 h-10 sm:w-12 sm:h-12 transition-transform hover:rotate-12" loading="lazy" />
-        <h1 class="text-xl sm:text-2xl font-bold text-[#0073b1]">SkillLink</h1>
+          class="w-10 h-10 sm:w-12 sm:h-12 transition-transform hover:rotate-12 shadow-lg rounded-s" loading="lazy" />
+
+        <h1 class="text-xl sm:text-2xl font-bold text-[#0073b1] relative text-shadow-md">SkillLink</h1>
       </div>
 
       <!-- Desktop Nav -->

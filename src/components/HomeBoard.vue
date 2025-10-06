@@ -16,25 +16,35 @@
     </section>
 
     <!-- Services Section -->
-    <section class="py-10 bg-white px-4">
+    <section class="py-8 px-4 bg-blue-50 to-white">
       <div class="max-w-screen-xl mx-auto">
-        <h3 class="text-xl sm:text-2xl font-bold text-center text-gray-800 mb-6">Services We Provide</h3>
+        <h3 class="text-2xl sm:text-3xl font-bold text-center text-gray-800 mb-10">Services We Provide</h3>
+
         <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 sm:gap-6">
-          <div v-for="service in services" :key="service"
-            class="bg-[#0073b1] text-white p-4 rounded-lg shadow text-center font-semibold transform hover:scale-105 hover:shadow-lg transition cursor-pointer text-sm sm:text-base">
+
+          <router-link v-for="service in services" :key="service" to="/login" class="bg-gradient-to-b from-[#0073b1] via-[#3399cc] to-[#37a3eb] text-white 
+           p-5 rounded-lg shadow-lg flex flex-col items-center justify-center 
+           transform transition-all duration-500 font-semibold 
+           hover:-translate-y-1 hover:scale-105 hover:shadow-lg cursor-pointer text-sm sm:text-base">
             {{ service }}
-          </div>
+          </router-link>
         </div>
+
       </div>
     </section>
 
     <!-- Solved Cases Section -->
     <section class="py-12 bg-blue-50 px-4">
       <div class="max-w-screen-xl mx-auto">
-        <h3 class="text-xl sm:text-2xl font-bold text-center text-gray-800 mb-6">Some Cases We've Solved</h3>
+        <h3 class="text-xl sm:text-2xl font-bold text-center text-gray-800 mb-6">Real Stories, Real Impact</h3>
+        <p class="text-gray-600 max-w-3xl mx-auto mb-12 text-base sm:text-lg">
+          See how SkillLink helped users solve everyday challenges — fast, reliable, and stress-free.
+        </p>
         <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
           <div class="bg-white rounded-xl shadow-md overflow-hidden">
-            <img src="@/assets/plumber.jpeg" alt="Plumber" class="w-full h-auto max:h-60 object-cover" />
+            <img src="@/assets/plumber2.jpg"
+              alt="Plumber repairing a leaking pipe under a kitchen sink in a modern home setting, focused and determined expression, bright and clean environment"
+              class="w-full h-auto max:h-60 object-cover" />
             <div class="p-4">
               <h4 class="text-lg font-bold text-[#0073b1] mb-2">Leaking Pipe Fixed</h4>
               <p class="text-gray-700 text-sm">"Plumbing emergency solved instantly. Life-saver!" – Rajesh, Delhi</p>
@@ -51,7 +61,7 @@
           </div>
 
           <div class="bg-white rounded-xl shadow-md overflow-hidden">
-            <img src="@/assets/makeup.webp" alt="Makeup Artist" class="w-full h-auto max:h-60 object-cover" />
+            <img src="@/assets/makeup2.jpg" alt="Makeup Artist" class="w-full h-auto max:h-60 object-cover" />
             <div class="p-4">
               <h4 class="text-lg font-bold text-[#0073b1] mb-2">Wedding Makeup</h4>
               <p class="text-gray-700 text-sm">"Booked a makeup artist for a wedding — skilled and professional!" –
@@ -76,7 +86,7 @@
 
       <!-- Main Content -->
       <div class="relative z-10 max-w-screen-xl mx-auto text-center" data-aos="fade-up">
-        <h3 class="text-4xl font-extrabold text-[#0073b1] mb-6">About SkillLink</h3>
+        <h3 class="text-2xl font-bold text-gray-800 mb-6">About SkillLink</h3>
         <p class="max-w-3xl mx-auto text-gray-700 leading-relaxed text-lg sm:text-xl mb-10">
           SkillLink is your trusted platform to connect with skilled professionals across a wide range of services.
           Whether it's urgent home repairs or lifestyle services — we bring verified experts right to your doorstep.
@@ -84,7 +94,7 @@
 
         <!-- Services Grid -->
         <div class="bg-white shadow-xl rounded-xl p-8 mt-6" data-aos="fade-up" data-aos-delay="100">
-          <h4 class="text-2xl font-semibold text-[#0073b1] mb-6">Our Available Services</h4>
+          <h4 class="text-2xl font-semibold text-gray-800 mb-6">Our Available Services</h4>
           <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 text-left text-gray-800 text-base">
             <ul class="space-y-3">
               <li><i class="fas fa-tools text-[#0073b1] mr-2"></i>Plumber</li>
@@ -116,7 +126,7 @@
 
         <!-- Why SkillLink -->
         <div class="mt-16" data-aos="fade-up" data-aos-delay="200">
-          <h4 class="text-2xl font-semibold text-[#0073b1] mb-6">Why Choose SkillLink?</h4>
+          <h4 class="text-2xl font-semibold text-gray-800 mb-6">Why Choose SkillLink?</h4>
           <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 max-w-5xl mx-auto text-left">
             <div class="bg-white shadow-md rounded-lg p-6 hover:shadow-xl transition" data-aos="zoom-in">
               <h5 class="text-lg font-semibold text-gray-800 mb-2">
@@ -222,15 +232,14 @@
           <h3 class="text-base font-bold text-gray-800">Quick Links</h3>
           <router-link to="/about" class="flex items-center gap-2 hover:text-[#00A8E8] transition"
             aria-label="About Us">
-             <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24"
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24"
               stroke="currentColor" stroke-width="2">
               <path stroke-linecap="round" stroke-linejoin="round"
                 d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
             <span>About Us</span>
           </router-link>
-          <router-link to="/home" class="flex items-center gap-2 hover:text-[#00A8E8] transition"
-            aria-label="Services">
+          <router-link to="/home" class="flex items-center gap-2 hover:text-[#00A8E8] transition" aria-label="Services">
             <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
               <path
                 d="M4 4h4v4H4V4zm6 0h4v4h-4V4zm6 0h4v4h-4V4zM4 10h4v4H4v-4zm6 0h4v4h-4v-4zm6 0h4v4h-4v-4zM4 16h4v4H4v-4zm6 0h4v4h-4v-4zm6 0h4v4h-4v-4z" />
