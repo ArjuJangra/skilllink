@@ -202,6 +202,9 @@ router.get('/history', authenticateUser, async (req, res) => {
       service: b.service,
       date: b.updatedAt.toISOString().split('T')[0],
       status: b.status,
+      review: b.review || '',         // <-- add review
+      rating: b.rating || 0,          // <-- add rating
+      provider: b.providerId || null, // keep provider info if needed
     }));
 
     res.json(formatted);
@@ -210,5 +213,41 @@ router.get('/history', authenticateUser, async (req, res) => {
     res.status(500).json({ message: 'Failed to fetch history', error: err.message });
   }
 });
+
+
+// PUT submit review for a booking
+router.put('/review/:id', authenticateUser, async (req, res) => {
+  try {
+    const booking = await Booking.findById(req.params.id);
+
+    if (!booking) return res.status(404).json({ message: 'Booking not found' });
+
+    // Only the user who booked can review
+    if (booking.userId.toString() !== req.user.id) {
+      return res.status(403).json({ message: 'Not authorized to review this booking' });
+    }
+
+    // Only completed bookings can be reviewed
+    if (booking.status !== 'Completed') {
+      return res.status(400).json({ message: 'You can only review completed services' });
+    }
+
+    const { rating, review } = req.body;
+
+    if (!rating || rating < 1 || rating > 5) {
+      return res.status(400).json({ message: 'Rating must be between 1 and 5' });
+    }
+
+    booking.rating = rating;
+    booking.review = review || '';
+    await booking.save();
+
+    res.json({ message: 'Review submitted successfully', booking });
+  } catch (err) {
+    console.error('Error submitting review:', err);
+    res.status(500).json({ message: 'Failed to submit review', error: err.message });
+  }
+});
+
 
 module.exports = router;
