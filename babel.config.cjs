@@ -1,4 +1,3 @@
-export default {
-  presets: ["@babel/preset-env"],
-  plugins: [],
+module.exports = {
+  presets: ["@vue/cli-plugin-babel/preset"]
 };
