@@ -1,104 +1,150 @@
 // backend/controllers/authController.js
-
 const bcrypt = require('bcryptjs');
-const jwt = require('jsonwebtoken');
 const User = require('../models/User');
 const ServiceProvider = require('../models/ServiceProvider');
 const generateToken = require('../utils/generateToken');
 
-// Signup Controller (for User only)
+// -------------------- SIGNUP --------------------
 exports.signup = async (req, res) => {
-  const { name, email, password } = req.body;
+  const {
+    name,
+    email,
+    phone,
+    password,
+    role,
+    services,
+    experience,
+    address,
+    latitude,
+    longitude,
+    area
+  } = req.body;
 
   try {
-    const existingUser = await User.findOne({ email });
-    if (existingUser) return res.status(400).json({ message: 'User already exists' });
+    if (!name || !password || !role) {
+      return res.status(400).json({ message: 'Name, password, and role are required.' });
+    }
+
+    if (!email && !phone) {
+      return res.status(400).json({ message: 'Either email or phone is required.' });
+    }
+
+    // Check if email or phone already exists
+    const existingUser = await User.findOne({
+      $or: [{ email: email?.toLowerCase() }, { phone }]
+    });
+
+    const existingProvider = await ServiceProvider.findOne({
+      $or: [{ email: email?.toLowerCase() }, { phone }]
+    });
+
+    if (existingUser || existingProvider) {
+      return res.status(409).json({ message: 'Email or phone already registered.' });
+    }
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    const user = await User.create({
-      name,
-      email,
-      password: hashedPassword,
-      notifications: {
-        email: true,
-        sms: false,
-        push: true,
-      },
-    });
+    let newAccount;
 
-    const token = generateToken(user._id, 'user');
-
-    return res.status(201).json({
-      token,
-      user: {
-        id: user._id,
-        name: user.name,
-        email: user.email,
-        role: 'user',
-        profilePic: user.profilePic || null,
-      },
-    });
-  } catch (error) {
-    console.error('Signup Error:', error);
-    return res.status(500).json({ message: 'Server error', error: error.message });
-  }
-};
-
-// Login Controller
-exports.login = async (req, res) => {
-  const { email, password } = req.body;
-
-  try {
-    console.log('➡️ Login attempt:\n', email);
-
-    let user = await User.findOne({ email: { $regex: new RegExp(`^${email}$`, 'i') } });
-    console.log(user ? '✅ Found in User' : '❌ Not in User');
-
-    let role = 'user';
-
-    if (!user) {
-      console.log('🔍 Checking in ServiceProvider collection...');
-      const testQuery = { email: { $regex: new RegExp(`^${email}$`, 'i') } };
-      console.log('🔎 Query:', testQuery);
-
-      user = await ServiceProvider.findOne(testQuery);
-      console.log(user ? '✅ Found in ServiceProvider' : '❌ Not in ServiceProvider');
-
-      if (user) {
-        console.log('🧾 Found user:', {
-          name: user.name,
-          email: user.email,
-          id: user._id,
-        });
+    if (role === 'provider') {
+      if (!services || !Array.isArray(services) || services.length === 0 || !experience || !address || !latitude || !longitude) {
+        return res.status(400).json({ message: 'All provider fields are required.' });
       }
 
-      role = 'provider';
+      newAccount = new ServiceProvider({
+        name,
+        email: email?.toLowerCase(),
+        phone,
+        password: hashedPassword,
+        role: 'provider',
+        services,
+        experience,
+        address,
+        latitude,
+        longitude,
+        area
+      });
+    } else {
+      newAccount = new User({
+        name,
+        email: email?.toLowerCase(),
+        phone,
+        password: hashedPassword,
+        role: 'user'
+      });
     }
 
-    if (!user) {
-      return res.status(400).json({ message: 'User not found' });
-    }
+    await newAccount.save();
 
-    const isMatch = await bcrypt.compare(password, user.password);
-    if (!isMatch) return res.status(400).json({ message: 'Invalid credentials' });
+    const token = generateToken(newAccount._id, role);
 
-    const token = generateToken(user._id, role);
-
-    return res.json({
+    res.status(201).json({
       token,
       user: {
-        id: user._id,
-        name: user.name,
-        email: user.email,
-        role,
-        profilePic: user.profilePic || null,
-      },
+        id: newAccount._id,
+        name: newAccount.name,
+        email: newAccount.email || null,
+        phone: newAccount.phone || null,
+        role: newAccount.role,
+        services: newAccount.services || [],
+        experience: newAccount.experience || 0,
+        address: newAccount.address || '',
+      }
     });
-  } catch (error) {
-    console.error('Login Error:', error);
-    return res.status(500).json({ message: 'Server error', error: error.message });
+
+  } catch (err) {
+    console.error('Signup Error:', err);
+    res.status(500).json({ message: 'Server error', error: err.message });
   }
 };
 
+// -------------------- LOGIN --------------------
+exports.login = async (req, res) => {
+  const { contact, password, role } = req.body; // contact = email or phone
 
+  try {
+    if (!contact || !password || !role) {
+      return res.status(400).json({ message: 'Contact, password, and role are required.' });
+    }
+
+    let account;
+
+    // Use regex for email, exact match for phone
+    const query = contact.includes('@')
+      ? { email: { $regex: new RegExp(`^${contact}$`, 'i') } }
+      : { phone: contact };
+
+    if (role === 'provider') {
+      account = await ServiceProvider.findOne(query);
+    } else {
+      account = await User.findOne(query);
+    }
+
+    if (!account) {
+      return res.status(401).json({ message: 'Invalid email/phone or password.' });
+    }
+
+    const isMatch = await bcrypt.compare(password, account.password);
+    if (!isMatch) return res.status(401).json({ message: 'Invalid email/phone or password.' });
+
+    const token = generateToken(account._id, role);
+
+    res.status(200).json({
+      token,
+      user: {
+        id: account._id,
+        name: account.name,
+        email: account.email || null,
+        phone: account.phone || null,
+        role: account.role,
+        services: account.services || [],
+        experience: account.experience || 0,
+        address: account.address || ''
+      }
+    });
+
+  } catch (err) {
+    console.error('Login Error:', err);
+    res.status(500).json({ message: 'Server error', error: err.message });
+  }
+};

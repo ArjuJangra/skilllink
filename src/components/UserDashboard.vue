@@ -236,7 +236,6 @@
               </div>
             </div>
 
-            <!-- History Tab -->
             <div v-else-if="activeTab === 'history'" class="space-y-6">
               <h3 class="text-2xl font-bold text-[#007EA7]">Previous Services</h3>
 
@@ -294,24 +293,24 @@
                     <!-- Star Rating -->
                     <div class="flex items-center mb-2">
                       <template v-for="n in 5" :key="n">
-                        <svg @click="item.userRating = n" xmlns="http://www.w3.org/2000/svg"
-                          class="w-5 h-5 cursor-pointer"
-                          :class="n <= (item.userRating || item.rating) ? 'text-yellow-400' : 'text-gray-300'"
+                        <svg @mouseover="item.hoverRating = n" @mouseleave="item.hoverRating = 0"
+                          @click="item.userRating = n" xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 cursor-pointer"
+                          :class="n <= (item.hoverRating || item.userRating || item.rating) ? 'text-yellow-400' : 'text-gray-300'"
                           fill="currentColor" viewBox="0 0 20 20">
                           <path
                             d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.96a1 1 0 00.95.69h4.173c.969 0 1.371 1.24.588 1.81l-3.38 2.455a1 1 0 00-.364 1.118l1.287 3.96c.3.921-.755 1.688-1.54 1.118l-3.38-2.455a1 1 0 00-1.176 0l-3.38 2.455c-.784.57-1.838-.197-1.539-1.118l1.287-3.96a1 1 0 00-.364-1.118L2.05 9.387c-.783-.57-.38-1.81.588-1.81h4.173a1 1 0 00.95-.69l1.286-3.96z" />
                         </svg>
                       </template>
-
                     </div>
+
                     <!-- Review Text -->
                     <textarea v-model="item.userReview" placeholder="Write your review..."
                       class="w-full border rounded-md p-2 text-sm focus:ring-2 focus:ring-[#00A8E8]"
                       rows="2"></textarea>
 
-                    <button @click="submitReview(item)"
-                      class="mt-2 bg-[#00A8E8] text-white px-4 py-1 rounded-lg hover:bg-[#007EA7] text-sm font-medium transition">
-                      Submit
+                    <button @click="submitReview(item, user)" :disabled="!item.userRating || item.isSubmitting"
+                      class="mt-2 bg-[#00A8E8] text-white px-4 py-1 rounded-lg hover:bg-[#007EA7] text-sm font-medium transition disabled:opacity-50">
+                      {{ item.isSubmitting ? 'Submitting...' : 'Submit' }}
                     </button>
                   </div>
 
@@ -483,23 +482,24 @@ import { useSocket } from '@/composables/useSocket';
 import { useAddress } from '@/composables/useAddress';
 import { useSettings } from '@/composables/useSettings';
 const token = localStorage.getItem('token');
+import userAvatar from '@/assets/user.png'; // your default image
 
+const userImg = userAvatar;
 const router = useRouter();
 const isAuthenticated = ref(false);
 const isLoading = ref(true);
 const showLogoutModal = ref(false);
 const showEditProfileForm = ref(false);
 const activeTab = ref(localStorage.getItem("activeTab") || "bookings");
-
+const socket = ref(null);
 // --- Composables ---
 const { user, editForm, getUserProfile, updateUserProfile, handleProfileImageChange } = useUser();
 const { bookings, history, fetchBookings, fetchHistory, moveToHistory, deleteBooking, submitReview } = useBookings();
 const { notificationSettings, fetchNotificationSettings, updateNotificationSettings } = useNotifications();
 const { savedAddresses, newAddress, showAddressForm, saveAddress, deleteAddress } = useAddress();
 const { passwordForm, showPasswordForm, isChangingPassword, changePassword } = useSettings();
-const { socket, connect, disconnect } = useSocket(API.defaults.baseURL, token);
-
-
+const { connect, disconnect } = useSocket(API.defaults.baseURL, token);
+const tabs = ref(['bookings', 'history', 'address', 'settings']);
 // --- Watchers ---
 watch(showEditProfileForm, val => {
   if (val) Object.assign(editForm, { name: user.value.name, email: user.value.email, phone: user.value.phone });
@@ -515,7 +515,7 @@ const formatDate = d => isValidDate(d) ? dayjs(d).format('DD MMM YYYY, hh:mm A')
 
 // --- Logout ---
 const logout = () => {
-   auth.user = null;
+  auth.user = null;
   logoutUser();
   socket.value?.disconnect();
   router.push('/homeboard');
@@ -542,7 +542,7 @@ onMounted(async () => {
     fetchHistory(),
     fetchNotificationSettings()
   ]);
-connect(user.value._id);
+  connect(user.value._id);
   // Initialize socket after fetching user data
   socket.value = io(API.defaults.baseURL, {
     auth: { token },
@@ -552,15 +552,21 @@ connect(user.value._id);
   socket.value.emit('join', user.value._id);
 
   // Socket event listeners
-  socket.value.on('orderAccepted', (d) => { toast.info(`✅ Accepted by ${d.providerName}`);
-    fetchBookings(); });
+  socket.value.on('orderAccepted', (d) => {
+    toast.info(`✅ Accepted by ${d.providerName}`);
+    fetchBookings();
+  });
 
-  socket.value.on('orderRejected', (d) => { toast.info(`❌ Rejected by ${d.providerName}`);
-    fetchBookings();});
+  socket.value.on('orderRejected', (d) => {
+    toast.info(`❌ Rejected by ${d.providerName}`);
+    fetchBookings();
+  });
 
-  socket.value.on('orderCompleted', (d) => { toast.success(`🎉 Booking for ${d.service} is completed`);
- const booking = bookings.value.find(b => b._id === d._id);
-    if (booking) moveToHistory(booking); });
+  socket.value.on('orderCompleted', (d) => {
+    toast.success(`🎉 Booking for ${d.service} is completed`);
+    const booking = bookings.value.find(b => b._id === d._id);
+    if (booking) moveToHistory(booking);
+  });
 
   socket.value.on('newReview', (d) => { toast.info(`New review from ${d.userName} for ${d.bookingId}`); });
   isLoading.value = false;
@@ -583,6 +589,7 @@ onUnmounted(() => disconnect());
   -ms-overflow-style: none;
   scrollbar-width: none;
 }
+
 .no-scrollbar::-webkit-scrollbar {
   display: none;
 }
@@ -627,6 +634,7 @@ onUnmounted(() => disconnect());
   outline: none;
   transition: box-shadow 0.2s, border-color 0.2s;
 }
+
 .input-edit:focus {
   border-color: #00A8E8;
   box-shadow: 0 0 0 2px #00A8E8;
@@ -643,21 +651,49 @@ onUnmounted(() => disconnect());
 }
 
 .btn-blue,
-.btn-red { padding: 0.5rem 1rem; }
+.btn-red {
+  padding: 0.5rem 1rem;
+}
+
 .btn-green,
-.btn-gray { padding: 0.25rem 0.75rem; }
-.btn-gray { color: #1f2937; }
+.btn-gray {
+  padding: 0.25rem 0.75rem;
+}
+
+.btn-gray {
+  color: #1f2937;
+}
 
 /* Button Colors & Hover */
-.btn-blue { background: #007EA7; }
-.btn-blue:hover { background: #005f78; }
+.btn-blue {
+  background: #007EA7;
+}
 
-.btn-green { background: #22c55e; }
-.btn-green:hover { background: #16a34a; }
+.btn-blue:hover {
+  background: #005f78;
+}
 
-.btn-gray { background: #d1d5db; }
-.btn-gray:hover { background: #9ca3af; }
+.btn-green {
+  background: #22c55e;
+}
 
-.btn-red { background: #ef4444; }
-.btn-red:hover { background: #dc2626; }
+.btn-green:hover {
+  background: #16a34a;
+}
+
+.btn-gray {
+  background: #d1d5db;
+}
+
+.btn-gray:hover {
+  background: #9ca3af;
+}
+
+.btn-red {
+  background: #ef4444;
+}
+
+.btn-red:hover {
+  background: #dc2626;
+}
 </style>

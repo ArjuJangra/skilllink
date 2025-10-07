@@ -9,26 +9,41 @@ const authenticateUser = require('../middleware/authMiddleware');
 // ---------------------- SIGNUP ----------------------
 router.post('/signup', async (req, res) => {
   try {
-    const { name, email, password, role, services, experience, address, latitude, longitude } = req.body;
-    if (!name || !email || !password || !role) {
-      return res.status(400).json({ message: 'Name, email, password, and role are required.' });
+    const { name, email, phone, password, role, services, experience, address, latitude, longitude } = req.body;
+
+    if (!name || !password || !role) {
+      return res.status(400).json({ message: 'Name, password, and role are required.' });
     }
 
-    const normalizedEmail = email.toLowerCase().trim();
+    if (!email && !phone) {
+      return res.status(400).json({ message: 'Either email or phone is required.' });
+    }
 
-    // Check if email already exists in User or ServiceProvider
-    const existingUser = await User.findOne({ email: normalizedEmail });
-    const existingProvider = await ServiceProvider.findOne({ email: normalizedEmail });
+    const normalizedEmail = email ? email.toLowerCase().trim() : null;
+    const normalizedPhone = phone ? phone.trim() : null;
+
+    // Check if email or phone already exists
+    const existingUser = await User.findOne({
+      $or: [
+        { email: normalizedEmail },
+        { phone: normalizedPhone }
+      ]
+    });
+    const existingProvider = await ServiceProvider.findOne({
+      $or: [
+        { email: normalizedEmail },
+        { phone: normalizedPhone }
+      ]
+    });
 
     if (existingUser || existingProvider) {
-      return res.status(409).json({ message: 'Email already registered.' });
+      return res.status(409).json({ message: 'Email or phone already registered.' });
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
     let newAccount;
     if (role === 'provider') {
-      // Validate provider-specific fields
       if (!services || !Array.isArray(services) || services.length === 0 || !experience || !address || !latitude || !longitude) {
         return res.status(400).json({ message: 'All provider fields are required.' });
       }
@@ -36,6 +51,7 @@ router.post('/signup', async (req, res) => {
       newAccount = new ServiceProvider({
         name,
         email: normalizedEmail,
+        phone: normalizedPhone,
         password: hashedPassword,
         role: 'provider',
         services,
@@ -49,6 +65,7 @@ router.post('/signup', async (req, res) => {
       newAccount = new User({
         name,
         email: normalizedEmail,
+        phone: normalizedPhone,
         password: hashedPassword,
         role: 'user',
       });
@@ -64,6 +81,7 @@ router.post('/signup', async (req, res) => {
         _id: newAccount._id,
         name: newAccount.name,
         email: newAccount.email,
+        phone: newAccount.phone,
         role: newAccount.role,
         services: newAccount.services || [],
         experience: newAccount.experience || 0,
@@ -80,32 +98,38 @@ router.post('/signup', async (req, res) => {
 // ---------------------- LOGIN ----------------------
 router.post('/login', async (req, res) => {
   try {
-    const { email, password, role } = req.body;
-    if (!email || !password || !role) {
-      return res.status(400).json({ message: 'Email, password, and role are required.' });
+    const { contact, password, role } = req.body; // contact can be email or phone
+
+    if (!contact || !password || !role) {
+      return res.status(400).json({ message: 'Contact (email/phone), password, and role are required.' });
     }
 
-    const normalizedEmail = email.toLowerCase().trim();
+    const normalizedContact = contact.trim().toLowerCase();
+
     let account;
-
     if (role === 'provider') {
-      account = await ServiceProvider.findOne({ email: normalizedEmail });
+      account = await ServiceProvider.findOne({
+        $or: [
+          { email: normalizedContact },
+          { phone: normalizedContact }
+        ]
+      });
     } else {
-      account = await User.findOne({ email: normalizedEmail });
+      account = await User.findOne({
+        $or: [
+          { email: normalizedContact },
+          { phone: normalizedContact }
+        ]
+      });
     }
-
-    console.log('🔹 Attempting login with:', { email: normalizedEmail, role });
-    console.log('🔹 Account found:', account);
 
     if (!account) {
-      return res.status(401).json({ message: 'Invalid email or password' });
+      return res.status(401).json({ message: 'Invalid email/phone or password' });
     }
 
     const isMatch = await bcrypt.compare(password, account.password);
-    console.log('🔹 Password match:', isMatch);
-
     if (!isMatch) {
-      return res.status(401).json({ message: 'Invalid email or password' });
+      return res.status(401).json({ message: 'Invalid email/phone or password' });
     }
 
     const token = jwt.sign({ id: account._id, role: account.role }, process.env.JWT_SECRET, { expiresIn: '1d' });
@@ -117,6 +141,7 @@ router.post('/login', async (req, res) => {
         _id: account._id,
         name: account.name,
         email: account.email,
+        phone: account.phone,
         role: account.role,
         services: account.services || [],
         experience: account.experience || 0,
@@ -135,4 +160,3 @@ router.get('/check', authenticateUser, (req, res) => {
 });
 
 module.exports = router;
-

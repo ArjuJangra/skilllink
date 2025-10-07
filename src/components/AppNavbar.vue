@@ -16,15 +16,15 @@
       <nav class=" md:flex flex items-center gap-2">
         <template v-if="!props.hideExtras">
           <router-link to="/about"
-            class="nav-link hidden sm:inline text-xs sm:text-sm md:text-base lg:text-lg font-semibold text-gray-600 hover:text-[#0073b1] px-2 sm:px-3 py-1 sm:py-2 rounded-lg transition hover:scale-105">
+            class="nav-link hidden sm:inline text-xs sm:text-sm md:text-base lg:text-lg font-semibold text-gray-800 hover:text-[#0073b1] px-2 sm:px-3 py-1 sm:py-2 rounded-lg transition hover:scale-105">
             About Us
           </router-link>
 
           <router-link to="/contact"
-            class="nav-link hidden sm:inline text-xs sm:text-sm md:text-base lg:text-lg  font-semibold text-gray-600 hover:text-[#0073b1] px-2 py-2 rounded-lg transition hover:scale-105">Contact</router-link>
+            class="nav-link hidden sm:inline text-xs sm:text-sm md:text-base lg:text-lg  font-semibold text-gray-800 hover:text-[#0073b1] px-2 py-2 rounded-lg transition hover:scale-105">Contact</router-link>
 
           <router-link :to="{ path: '/help', query: { from: 'homelogged' } }"
-            class="nav-link hidden sm:inline text-xs sm:text-sm md:text-base lg:text-lg  font-semibold text-gray-600 hover:text-[#0073b1] px-2 py-2 rounded-lg transition hover:scale-105">Help</router-link>
+            class="nav-link hidden sm:inline text-xs sm:text-sm md:text-base lg:text-lg  font-semibold text-gray-800 hover:text-[#0073b1] px-2 py-2 rounded-lg transition hover:scale-105">Help</router-link>
 
           <router-link :to="{ path: '/home', query: { disableBooking: true } }" class="ml-auto">
             <button
@@ -48,7 +48,7 @@
             <!-- Desktop: Full search bar -->
             <div class="hidden sm:block w-72">
               <!-- Search icon -->
-              <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-400">
+              <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-600">
                 <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24"
                   stroke="currentColor" stroke-width="2">
                   <path stroke-linecap="round" stroke-linejoin="round"
@@ -57,8 +57,8 @@
               </span>
 
               <!-- Input -->
-              <input type="text" v-model="searchQuery" placeholder="Search services..."
-                class="pl-10 pr-12 py-2 w-full rounded-full border border-gray-300 shadow-sm focus:outline-none focus:ring-2 focus:ring-[#00A8E8] focus:border-[#00A8E8] transition duration-200 hover:shadow-md" />
+              <input type="text" v-model="searchQuery" placeholder="Search for services..."
+                class="pl-10 pr-12 py-2 w-full rounded-lg border bg-gray-200 border-gray-300 shadow-sm focus:outline-none hover:bg-slate-50 focus:border-gray-100 transition duration-200 hover:shadow-md" />
 
               <!-- Clear button -->
               <button v-if="searchQuery" @click="searchQuery = ''"
@@ -111,125 +111,142 @@
           </div>
         </template>
         <!-- Home / Login / Profile -->
-        <template v-if="showButton === 'home'">
-          <router-link :to="auth?.isLoggedIn ? '/homelogged' : '/homeboard'" class="ml-auto">
-            <button class=" flex gap-1 items-center text-white px-2 py-2 rounded-lg hover:bg-[#eff9fe] transition">
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="28" height="28" fill="text-gray-100">
+        <template v-if="showHomeButtonOnAuthPages">
+          <!-- Home button redirects to homeboard -->
+          <router-link to="/homeboard" class="ml-auto">
+            <button class="flex gap-1 items-center text-white px-3 py-2 rounded-lg hover:text-[#eff9fe] transition hover:scale-105">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="28" height="28"
+                class="w-7 h-7 text-[#0073b1]  fill-current">
                 <path d="M12 3l8 7v10a2 2 0 0 1-2 2h-4a1 1 0 0 1-1-1v-5H11v5a1 1 0 0 1-1 1H6a2 2 0 0 1-2-2V10l8-7z" />
               </svg>
             </button>
           </router-link>
         </template>
 
-        <template v-else-if="showButton === 'login'">
-          <div class="ml-auto relative">
-            <!-- Button -->
-
-            <button @click="showDropdown = !showDropdown"
-              class="btn-primary flex items-center justify-center px-2 py-2 bg-[#0073b1] text-white font-semibold rounded-lg hover:bg-[#005f91] transition focus:outline-none">
-              <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 sm:hidden" fill="none" viewBox="0 0 24 24"
-                stroke="currentColor" stroke-width="2">
-                <path stroke-linecap="round" stroke-linejoin="round"
-                  d="M5.121 17.804A7 7 0 0112 14a7 7 0 016.879 3.804M12 12a5 5 0 100-10 5 5 0 000 10z" />
-              </svg>
-              <router-link to="/login">
-                <span class="hidden sm:inline text-xs sm:text-sm md:text-base lg:text-lg">Login / Sign Up</span>
-              </router-link>
-            </button>
-
-            <!-- Dropdown menu for small screens -->
-            <transition name="fade">
-              <div v-if="showDropdown"
-                class="absolute right-0 mt-2 w-40 bg-white border border-gray-200 rounded-lg shadow-lg z-50 sm:hidden">
-                <router-link to="/login"
-                  class="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-[#0073b1] rounded-t-lg"
-                  @click="showDropdown = false">
-                  Login
-                </router-link>
-                <router-link to="/signup"
-                  class="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-[#0073b1] rounded-b-lg"
-                  @click="showDropdown = false">
-                  Sign Up
-                </router-link>
-                <hr class="my-1 border-gray-200" />
-
-                <router-link to="/about" class="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-[#0073b1]"
-                  @click="showDropdown = false">
-                  About Us
-                </router-link>
-                <router-link to="/contact" class="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-[#0073b1]"
-                  @click="showDropdown = false">
-                  Contact
-                </router-link>
-                <router-link :to="{ path: '/help', query: { from: 'homelogged' } }"
-                  class="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-[#0073b1]"
-                  @click="showDropdown = false">
-                  Help
-                </router-link>
-
-              </div>
-            </transition>
-          </div>
-        </template>
-
         <template v-else>
-          <div class="flex items-center gap-3 ml-auto">
-            <!-- Notification Bell -->
-            <router-link to="/notifications"
-              class="relative w-10 h-10 flex items-center justify-center rounded-full hover:text-[#0073b1] transition duration-200">
-              <svg class="w-7 h-7 text-gray-700 hover:text-[#0073b1]" fill="none" stroke="currentColor" stroke-width="2"
-                viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round"
-                  d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
-              </svg>
-              <span v-if="unreadCount > 0"
-                class="absolute -top-0.5 -right-0.5 bg-red-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full">
-                {{ unreadCount }}
-              </span>
+          <template v-if="showButton === 'home'">
+            <router-link :to="auth?.isLoggedIn ? '/homelogged' : '/homeboard'" class="ml-auto">
+              <button class=" flex gap-1 items-center text-white px-2 py-2 rounded-lg hover:bg-[#eff9fe] transition">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="28" height="28" fill="text-gray-100">
+                  <path d="M12 3l8 7v10a2 2 0 0 1-2 2h-4a1 1 0 0 1-1-1v-5H11v5a1 1 0 0 1-1 1H6a2 2 0 0 1-2-2V10l8-7z" />
+                </svg>
+              </button>
             </router-link>
+          </template>
 
-            <div class="relative cursor-pointer" @click="toggleDropdown">
-              <img :src="user && user.profilePic ? getImageUrl(user.profilePic) : defaultAvatar"
-                @error="e => e.target.src = defaultAvatar" alt="User Profile"
-                class="w-10 h-10 rounded-full object-cover border-2 border-[#0073b1] hover:ring-1 hover:ring-[#0073b1]"
-                loading="lazy" />
-              <div v-if="showDropdown" role="menu" tabindex="0" @keydown.escape="closeMenu"
-                class="absolute right-0 mt-2 w-40 bg-white rounded-xl shadow-lg border py-2 z-50  transition transform origin-top-right scale-95 opacity-0 animate-dropdown">
+          <template v-else-if="showButton === 'login'">
+            <div class="ml-auto relative">
+              <!-- Button -->
 
-                <router-link to="/dashboard" class="block px-4 py-2 text-gray-700 hover:text-[#0073b1]">View
-                  Dashboard</router-link>
-                <router-link to="/about"
-                  class="flex items-center gap-3 px-4 py-2 rounded-lg text-gray-700 font-medium hover:bg-blue-50 hover:text-[#0073b1] transition">
-                  <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24"
-                    stroke="currentColor" stroke-width="2">
-                    <path stroke-linecap="round" stroke-linejoin="round"
-                      d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                  </svg>
-                  About Us
+              <button @click="showDropdown = !showDropdown"
+                class="btn-primary flex items-center justify-center px-2 py-2 bg-[#0073b1] text-white font-semibold rounded-lg hover:bg-[#005f91] transition focus:outline-none">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 sm:hidden" fill="none" viewBox="0 0 24 24"
+                  stroke="currentColor" stroke-width="2">
+                  <path stroke-linecap="round" stroke-linejoin="round"
+                    d="M5.121 17.804A7 7 0 0112 14a7 7 0 016.879 3.804M12 12a5 5 0 100-10 5 5 0 000 10z" />
+                </svg>
+                <router-link to="/login">
+                  <span class="hidden sm:inline text-xs sm:text-sm md:text-base lg:text-lg">Login / Sign Up</span>
                 </router-link>
-                <router-link to="/contact"
-                  class="flex items-center gap-3 px-4 py-2 rounded-lg text-gray-700 font-medium hover:bg-blue-50 hover:text-[#0073b1] transition"
-                  @click="closeMenu">
-                  <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
-                    <path
-                      d="M6.62 10.79a15.05 15.05 0 006.59 6.59l2.2-2.2a1 1 0 011.11-.21 11.05 11.05 0 003.47.55 1 1 0 011 1V20a1 1 0 01-1 1C10.42 21 3 13.58 3 5a1 1 0 011-1h3.5a1 1 0 011 1c0 1.2.19 2.38.55 3.47a1 1 0 01-.21 1.11l-2.22 2.21z" />
-                  </svg>
-                  Contact
-                </router-link>
-                <router-link :to="{ path: '/help', query: { from: 'homelogged' } }"
-                  class="flex items-center gap-3 px-4 py-2 rounded-lg text-gray-700 font-medium hover:bg-blue-50 hover:text-[#0073b1] transition"
-                  @click="closeMenu">
-                  <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
-                    <path fill-rule="evenodd" clip-rule="evenodd"
-                      d="M12 19.5C16.1421 19.5 19.5 16.1421 19.5 12C19.5 7.85786 16.1421 4.5 12 4.5C7.85786 4.5 4.5 7.85786 4.5 12C4.5 16.1421 7.85786 19.5 12 19.5ZM12 21C16.9706 21 21 16.9706 21 12C21 7.02944 16.9706 3 12 3C7.02944 3 3 7.02944 3 12C3 16.9706 7.02944 21 12 21ZM12.75 15V16.5H11.25V15H12.75ZM10.5 10.4318C10.5 9.66263 11.1497 9 12 9C12.8503 9 13.5 9.66263 13.5 10.4318C13.5 10.739 13.3151 11.1031 12.9076 11.5159C12.5126 11.9161 12.0104 12.2593 11.5928 12.5292L11.25 12.7509V14.25H12.75V13.5623C13.1312 13.303 13.5828 12.9671 13.9752 12.5696C14.4818 12.0564 15 11.3296 15 10.4318C15 8.79103 13.6349 7.5 12 7.5C10.3651 7.5 9 8.79103 9 10.4318H10.5Z" />
-                  </svg>
-                  Help
-                </router-link>
+              </button>
 
+              <!-- Dropdown menu for small screens -->
+              <transition name="fade">
+                <div v-if="showDropdown"
+                  class="absolute right-0 mt-2 w-40 bg-white border border-gray-200 rounded-lg shadow-lg z-50 sm:hidden">
+                  <router-link to="/login"
+                    class="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-[#0073b1] rounded-t-lg"
+                    @click="showDropdown = false">
+                    Login
+                  </router-link>
+                  <router-link to="/signup"
+                    class="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-[#0073b1] rounded-b-lg"
+                    @click="showDropdown = false">
+                    Sign Up
+                  </router-link>
+                  <hr class="my-1 border-gray-200" />
+
+                  <router-link to="/about" class="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-[#0073b1]"
+                    @click="showDropdown = false">
+                    About Us
+                  </router-link>
+                  <router-link to="/contact" class="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-[#0073b1]"
+                    @click="showDropdown = false">
+                    Contact
+                  </router-link>
+                  <router-link :to="{ path: '/help', query: { from: 'homelogged' } }"
+                    class="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-[#0073b1]"
+                    @click="showDropdown = false">
+                    Help
+                  </router-link>
+
+                </div>
+              </transition>
+            </div>
+          </template>
+
+          <template v-else>
+            <div class="flex items-center gap-3 ml-auto">
+              <!-- Notification Bell -->
+              <router-link to="/notifications"
+                class="relative w-10 h-10 flex items-center justify-center rounded-full hover:text-[#0073b1] transition duration-200">
+                <svg class="w-7 h-7 text-gray-700 hover:text-[#0073b1]" fill="none" stroke="currentColor"
+                  stroke-width="2" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round"
+                    d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+                </svg>
+                <span v-if="unreadCount > 0"
+                  class="absolute -top-0.5 -right-0.5 bg-red-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full">
+                  {{ unreadCount }}
+                </span>
+              </router-link>
+
+              <div class="relative cursor-pointer" @click="toggleDropdown">
+                <img :src="user && user.profilePic ? getImageUrl(user.profilePic) : defaultAvatar"
+                  @error="e => e.target.src = defaultAvatar" alt="User Profile"
+                  class="w-10 h-10 rounded-full object-cover border-2 border-[#0073b1] hover:ring-1 hover:ring-[#0073b1]"
+                  loading="lazy" />
+                <div v-if="showDropdown" role="menu" tabindex="0" @keydown.escape="closeMenu"
+                  class="absolute right-0 mt-2 w-40 bg-white rounded-xl shadow-lg border py-2 z-50  transition transform origin-top-right scale-95 opacity-0 animate-dropdown">
+
+                  <router-link to="/dashboard" class="block px-4 py-2 text-gray-700 hover:text-[#0073b1]">View
+                    Dashboard</router-link>
+                  <router-link to="/about"
+                    class="flex items-center gap-3 px-4 py-2 rounded-lg text-gray-700 font-medium hover:bg-blue-50 hover:text-[#0073b1] transition">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24"
+                      stroke="currentColor" stroke-width="2">
+                      <path stroke-linecap="round" stroke-linejoin="round"
+                        d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    About Us
+                  </router-link>
+                  <router-link to="/contact"
+                    class="flex items-center gap-3 px-4 py-2 rounded-lg text-gray-700 font-medium hover:bg-blue-50 hover:text-[#0073b1] transition"
+                    @click="closeMenu">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                      <path
+                        d="M6.62 10.79a15.05 15.05 0 006.59 6.59l2.2-2.2a1 1 0 011.11-.21 11.05 11.05 0 003.47.55 1 1 0 011 1V20a1 1 0 01-1 1C10.42 21 3 13.58 3 5a1 1 0 011-1h3.5a1 1 0 011 1c0 1.2.19 2.38.55 3.47a1 1 0 01-.21 1.11l-2.22 2.21z" />
+                    </svg>
+                    Contact
+                  </router-link>
+                  <router-link :to="{ path: '/help', query: { from: 'homelogged' } }"
+                    class="flex items-center gap-3 px-4 py-2 rounded-lg text-gray-700 font-medium hover:bg-blue-50 hover:text-[#0073b1] transition"
+                    @click="closeMenu">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                      <path fill-rule="evenodd" clip-rule="evenodd"
+                        d="M12 19.5C16.1421 19.5 19.5 16.1421 19.5 12C19.5 7.85786 16.1421 4.5 12 4.5C7.85786 4.5 4.5 7.85786 4.5 12C4.5 16.1421 7.85786 19.5 12 19.5ZM12 21C16.9706 21 21 16.9706 21 12C21 7.02944 16.9706 3 12 3C7.02944 3 3 7.02944 3 12C3 16.9706 7.02944 21 12 21ZM12.75 15V16.5H11.25V15H12.75ZM10.5 10.4318C10.5 9.66263 11.1497 9 12 9C12.8503 9 13.5 9.66263 13.5 10.4318C13.5 10.739 13.3151 11.1031 12.9076 11.5159C12.5126 11.9161 12.0104 12.2593 11.5928 12.5292L11.25 12.7509V14.25H12.75V13.5623C13.1312 13.303 13.5828 12.9671 13.9752 12.5696C14.4818 12.0564 15 11.3296 15 10.4318C15 8.79103 13.6349 7.5 12 7.5C10.3651 7.5 9 8.79103 9 10.4318H10.5Z" />
+                    </svg>
+                    Help
+                  </router-link>
+
+                </div>
               </div>
             </div>
-          </div>
+          </template>
         </template>
+
+
+
       </nav>
     </div>
 
@@ -382,6 +399,10 @@ watch(searchQuery, (newVal) => {
 
 const closeMenu = () => { isOpen.value = false; };
 const getImageUrl = (path) => API?.getImageUrl ? API.getImageUrl(path) : path;
+
+const showHomeButtonOnAuthPages = computed(() => {
+  return route.path === '/login' || route.path === '/signup'
+})
 
 const toggleDropdown = () => {
   showDropdown.value = !showDropdown.value;

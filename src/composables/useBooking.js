@@ -8,19 +8,26 @@ export const useBookings = (socket) => {
   const history = ref([]);
 
   const fetchBookings = async () => {
-    try { bookings.value = (await API.get('/bookings')).data; } 
+    try { bookings.value = (await API.get('/bookings')).data; }
     catch { toast.error("Failed to load bookings"); }
   };
 
   const fetchHistory = async () => {
-    try { history.value = (await API.get('/bookings/history')).data; } 
-    catch { toast.error("Failed to load history"); }
+    try {
+      const response = await API.get('/bookings/history');
+      // Add hoverRating property for star hover effect per card
+      history.value = response.data.map(h => ({ ...h, hoverRating: 0 }));
+    } catch {
+      toast.error("Failed to load history");
+    }
   };
 
   const moveToHistory = (b) => {
     history.value.push({ ...b, date: new Date(b.updatedAt).toLocaleDateString() });
     bookings.value = bookings.value.filter(x => x._id !== b._id);
   };
+
+
 
   const deleteBooking = async (id) => {
     try {
@@ -32,24 +39,58 @@ export const useBookings = (socket) => {
     }
   };
 
-  const submitReview = async (item) => {
-    if (!item.userRating) return toast.error("Select rating first");
-    item.isSubmitting = true;
-    try {
-      await API.put(`/bookings/review/${item.id}`, {
-        rating: item.userRating,
-        review: item.userReview,
-        providerId: item.provider?._id
-      });
-      const idx = history.value.findIndex(h => h.id === item.id);
-      if (idx !== -1) history.value[idx] = { ...history.value[idx], rating: item.userRating, review: item.userReview };
+ const submitReview = async (item, currentUser) => {
+  // Validate rating
+  if (!item.userRating) {
+    toast.error("Select a rating first");
+    return;
+  }
 
-      toast.success("Review submitted!");
-      socket.value?.emit('newReview', { providerId: item.provider?._id, bookingId: item.id, rating: item.userRating, review: item.userReview });
-    } catch {
-      toast.error("Failed to submit review");
-    } finally { item.isSubmitting = false; }
-  };
+  // Prevent double submission
+  if (item.isSubmitting) return;
+
+  item.isSubmitting = true;
+
+  try {
+    // Prepare payload for /api/reviews
+    const payload = {
+      userId: currentUser.id,      // Logged-in user ID
+      bookingId: item.id,           // Booking being reviewed
+      rating: item.userRating,
+      reviewText: item.userReview || ""
+    };
+
+    // Call the Review API
+    await API.post("/reviews", payload);
+
+    // Update local history array
+    const idx = history.value.findIndex(h => h.id === item.id);
+    if (idx !== -1) {
+      history.value[idx] = { 
+        ...history.value[idx], 
+        rating: item.userRating, 
+        review: item.userReview 
+      };
+    }
+
+    toast.success("Review submitted successfully!");
+    
+    // Emit socket event if needed
+    socket.value?.emit("newReview", {
+      providerId: item.provider?._id,
+      bookingId: item.id,
+      rating: item.userRating,
+      review: item.userReview
+    });
+
+  } catch (err) {
+    console.error("Review submission error:", err.response?.data || err.message);
+    toast.error(err.response?.data?.message || "Failed to submit review");
+  } finally {
+    item.isSubmitting = false;
+  }
+};
+
 
   return { bookings, history, fetchBookings, fetchHistory, moveToHistory, deleteBooking, submitReview };
 };

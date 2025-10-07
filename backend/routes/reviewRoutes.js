@@ -1,6 +1,7 @@
-import express from "express";
-import Review from "../models/Review.js";
-import Booking from "../models/Booking.js";
+const express = require("express");
+const Review = require("../models/Review");
+const Booking = require("../models/Booking");
+
 const router = express.Router();
 
 // POST /api/reviews
@@ -32,4 +33,4 @@ router.post("/", async (req, res) => {
   }
 });
 
-export default router;
+module.exports = router;

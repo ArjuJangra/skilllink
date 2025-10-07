@@ -1,140 +1,184 @@
 <template>
   <div class="min-h-screen flex items-center justify-center bg-gray-100 px-4 py-8 relative">
+    <!-- Navbar fixed at top -->
+    <div class="w-full fixed top-0 left-0 z-50">
+      <AppNavbar />
+    </div>
+    <div class="flex flex-1 items-center justify-center pt-16 px-4">
+      <!-- Signup Form Card -->
+      <transition name="fade">
+        <div v-if="!showSplash" class="w-full max-w-md bg-white p-6 md:p-8 rounded-2xl shadow-xl z-10">
 
-    <!-- Signup Form Card -->
-    <transition name="fade">
-      <div v-if="!showSplash" class="w-full max-w-md bg-white p-6 md:p-8 rounded-2xl shadow-xl z-10">
+          <!-- Header -->
+          <div class="text-center mb-6">
+            <img src="@/assets/skilllogo.png" alt="SkillLink Logo" class="w-24 h-24 mx-auto mb-4 rounded-lg" />
+            <h2 class="text-2xl font-bold bg-gradient-to-r from-[#3B8D99] to-[#f46675] bg-clip-text text-transparent">
+              Create Your SkillLink Account
+            </h2>
+            <p class="text-gray-500 text-sm mt-2">Join us and start your journey today</p>
+          </div>
 
-        <!-- Header -->
-        <div class="text-center mb-6">
-          <img src="@/assets/skilllogo.png" alt="SkillLink Logo" class="w-20 h-20 mx-auto mb-4" />
-          <h2 class="text-2xl font-bold bg-gradient-to-r from-[#3B8D99] to-[#f46675] bg-clip-text text-transparent">
-            Create Your SkillLink Account
-          </h2>
-          <p class="text-gray-500 text-sm mt-2">Join us and start your journey today</p>
-        </div>
+          <form @submit.prevent="handleSubmit" class="space-y-5">
 
-        <form @submit.prevent="handleSubmit" class="space-y-5">
+           <!-- Role Selection -->
+<div class="mb-6">
+  <label class="block text-lg font-semibold text-gray-800 mb-2">Register as:</label>
+  <div class="flex gap-4">
+    <!-- User Card -->
+    <div
+      @click="form.role = 'user'"
+      :class="form.role === 'user' ? 'border-blue-500 bg-blue-50 shadow-lg' : 'border-gray-300 bg-white'"
+      class="flex-1 cursor-pointer border rounded-xl p-4 flex flex-col items-center justify-center hover:shadow-md transition"
+    >
+      <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 mb-2 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.121 17.804A7 7 0 0112 14a7 7 0 016.879 3.804M12 12a5 5 0 100-10 5 5 0 000 10z" />
+      </svg>
+      <span class="font-medium text-gray-700">User</span>
+    </div>
 
-          <!-- Role Selection -->
-          <div>
-            <label class="block text-lg font-semibold text-gray-800 mb-2">Register as:</label>
-            <div class="flex gap-6">
-              <label class="flex items-center space-x-2 cursor-pointer">
-                <input type="radio" value="user" v-model="form.role" @change="resetFields" class="accent-[#0073b1]" />
-                <span class="text-gray-800">User</span>
-              </label>
-              <label class="flex items-center space-x-2 cursor-pointer">
-                <input type="radio" value="provider" v-model="form.role" @change="resetFields"
-                  class="accent-[#0073b1]" />
-                <span class="text-gray-800">Service Provider</span>
-              </label>
+    <!-- Provider Card -->
+    <div
+      @click="form.role = 'provider'"
+      :class="form.role === 'provider' ? 'border-blue-500 bg-blue-50 shadow-lg' : 'border-gray-300 bg-white'"
+      class="flex-1 cursor-pointer border rounded-xl p-4 flex flex-col items-center justify-center hover:shadow-md transition"
+    >
+      <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 mb-2 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l9-5-9-5-9 5 9 5z" />
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l6.16-3.422a12.083 12.083 0 01.84 6.062c-.337 2.14-1.233 4.15-2.535 5.838L12 14z" />
+      </svg>
+      <span class="font-medium text-gray-700">Service Provider</span>
+    </div>
+  </div>
+</div>
+
+            <!-- Full Name -->
+            <div>
+              <label class="block text-sm font-semibold text-gray-700 mb-1">Full Name</label>
+              <input v-model="form.name" type="text" placeholder="Your Name" required
+                class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0073b1] transition" />
             </div>
-          </div>
 
-          <!-- Full Name -->
-          <div>
-            <label class="block text-sm font-semibold text-gray-700 mb-1">Full Name</label>
-            <input v-model="form.name" type="text" placeholder="Your Name" required
-              class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0073b1] transition" />
-          </div>
+            <!-- Contact (Email or Phone) -->
+            <div>
+              <label class="block text-sm font-semibold text-gray-700 mb-1">Email or Phone</label>
+              <div class="relative">
+                <input v-model="form.contact" type="text" placeholder="Enter email or 10-digit phone" required
+                  class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 pr-10 transition"
+                  @input="validateContact" />
+                <span v-if="form.contact" class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400">
+                  <svg v-if="isEmail(form.contact)" xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-blue-500"
+                    fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M16 12H8m0 0l4-4m-4 4l4 4" />
+                  </svg>
+                  <svg v-else-if="isPhone(form.contact)" xmlns="http://www.w3.org/2000/svg"
+                    class="w-5 h-5 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                  </svg>
+                  <svg v-else xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-red-500" fill="none"
+                    viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </span>
+              </div>
+              <p v-if="form.contact && !isEmail(form.contact) && !isPhone(form.contact)"
+                class="text-red-500 text-sm mt-1">
+                Enter a valid email or 10-digit phone number.
+              </p>
+            </div>
 
-          <!-- Email -->
-          <div>
-            <label class="block text-sm font-semibold text-gray-700 mb-1">Email</label>
-            <input v-model="form.email" type="email" placeholder="you@example.com" required
-              class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0073b1] transition" />
-          </div>
 
-          <!-- Password -->
-          <div class="relative">
-            <label class="block text-sm font-semibold text-gray-700 mb-1">Password</label>
-            <input v-model="form.password" :type="showPassword ? 'text' : 'password'" placeholder="••••••••" required
-              class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 pr-12 transition" :class="{
-                'border-red-500': form.password.length > 0 && form.password.length < 6,
-                'border-gray-300': form.password.length >= 6 || form.password.length === 0
-              }" />
-            <button type="button" @click="showPassword = !showPassword"
-              class="absolute right-3 bottom-2 top-10 transform -translate-y-1/2 text-gray-500 hover:text-blue-500 transition">
-              {{ showPassword ? 'Hide' : 'Show' }}
-            </button>
-            <p v-if="form.password.length > 0 && form.password.length < 6" class="text-red-500 text-sm mt-1">
-              Password must be at least 6 characters.
-            </p>
-          </div>
-          <!-- Provider Fields -->
-          <div v-if="form.role === 'provider'" class="space-y-4">
-
-            <!-- Services -->
+            <!-- Password -->
             <div class="relative">
-              <label class="block text-sm font-semibold text-gray-700 mb-1">Select up to 3 Services</label>
-              <Multiselect v-model="form.services" :options="availableServices" :multiple="true" :max="3"
-                placeholder="Select up to 3 services" class="w-full text-gray-700" :show-labels="false"
-                :allow-empty="true" track-by="" label="" :custom-label="(option) => option" append-to-body
-                direction="bottom" @open="dropdownOpen = true" @close="dropdownOpen = false" />
-            </div>
-
-            <!-- Experience -->
-            <div>
-              <label class="block text-sm font-semibold text-gray-700 mb-1">Years of Experience</label>
-              <input v-model="form.experience" type="number" min="0"
-                class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 transition" />
-            </div>
-            <!-- Area -->
-            <div>
-              <label class="block text-sm font-semibold text-gray-700 mb-1">Area (Location)</label>
-              <input v-model="form.area" type="text" placeholder="e.g., Sector 14, Rohini" required
-                class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 transition" />
-              <small class="text-gray-500">Helps users find you nearby.</small>
-            </div>
-
-            <!-- Geolocation -->
-            <div class="mt-2">
-              <button type="button" @click="getLocation"
-                class="px-3 py-1 text-sm bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition">
-                Use My Current Location
+              <label class="block text-sm font-semibold text-gray-700 mb-1">Password</label>
+              <input v-model="form.password" :type="showPassword ? 'text' : 'password'" placeholder="••••••••" required
+                class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 pr-12 transition" :class="{
+                  'border-red-500': form.password.length > 0 && form.password.length < 6,
+                  'border-gray-300': form.password.length >= 6 || form.password.length === 0
+                }" />
+              <button type="button" @click="showPassword = !showPassword"
+                class="absolute right-3 bottom-2 top-10 transform -translate-y-1/2 text-gray-500 hover:text-blue-500 transition">
+                {{ showPassword ? 'Hide' : 'Show' }}
               </button>
+              <p v-if="form.password.length > 0 && form.password.length < 6" class="text-red-500 text-sm mt-1">
+                Password must be at least 6 characters.
+              </p>
+            </div>
+            <!-- Provider Fields -->
+            <div v-if="form.role === 'provider'" class="space-y-4">
+
+              <!-- Services -->
+              <div class="relative">
+                <label class="block text-sm font-semibold text-gray-700 mb-1">Select up to 3 Services</label>
+                <Multiselect v-model="form.services" :options="availableServices" :multiple="true" :max="3"
+                  placeholder="Select up to 3 services" class="w-full text-gray-700" :show-labels="false"
+                  :allow-empty="true" track-by="" label="" :custom-label="(option) => option" append-to-body
+                  direction="bottom" @open="dropdownOpen = true" @close="dropdownOpen = false" />
+              </div>
+
+              <!-- Experience -->
+              <div>
+                <label class="block text-sm font-semibold text-gray-700 mb-1">Years of Experience</label>
+                <input v-model="form.experience" type="number" min="0"
+                  class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 transition" />
+              </div>
+              <!-- Area -->
+              <div>
+                <label class="block text-sm font-semibold text-gray-700 mb-1">Area (Location)</label>
+                <input v-model="form.area" type="text" placeholder="e.g., Sector 14, Rohini" required
+                  class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 transition" />
+                <small class="text-gray-500">Helps users find you nearby.</small>
+              </div>
+
+              <!-- Geolocation -->
+              <div class="mt-2">
+                <button type="button" @click="getLocation"
+                  class="px-3 py-1 text-sm bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition">
+                  Use My Current Location
+                </button>
+              </div>
+
+              <!-- Address -->
+              <div>
+                <label class="block text-sm font-semibold text-gray-700 mb-1">Address</label>
+                <textarea v-model="form.address" rows="3"
+                  class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 transition"></textarea>
+              </div>
+
             </div>
 
-            <!-- Address -->
-            <div>
-              <label class="block text-sm font-semibold text-gray-700 mb-1">Address</label>
-              <textarea v-model="form.address" rows="3"
-                class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 transition"></textarea>
-            </div>
+            <!-- Submit Button -->
+            <button :disabled="loading" type="submit"
+              class="w-full py-2 rounded-lg text-white font-semibold bg-gradient-to-r from-blue-500 to-blue-700 hover:from-blue-600 hover:to-blue-800 transition flex justify-center items-center gap-2 relative">
+              <span v-if="!loading">Sign Up</span>
+              <span v-else class="flex items-center justify-center gap-2">
+                <svg class="animate-spin h-4 w-4 text-white" fill="none" viewBox="0 0 24 24">
+                  <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                  <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"></path>
+                </svg>
+                Signing up...
+              </span>
+            </button>
 
-          </div>
+            <!-- Login Link -->
+            <p class="text-center text-gray-500 text-sm mt-3">
+              Already have an account?
+              <router-link to="/login" class="text-[#0073b1] font-medium hover:underline">Login here</router-link>
+            </p>
 
-          <!-- Submit Button -->
-          <button :disabled="loading" type="submit"
-            class="w-full py-2 rounded-lg text-white font-semibold bg-gradient-to-r from-blue-500 to-blue-700 hover:from-blue-600 hover:to-blue-800 transition flex justify-center items-center gap-2 relative">
-            <span v-if="!loading">Sign Up</span>
-            <span v-else class="flex items-center justify-center gap-2">
-              <svg class="animate-spin h-4 w-4 text-white" fill="none" viewBox="0 0 24 24">
-                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"></path>
-              </svg>
-              Signing up...
-            </span>
-          </button>
+          </form>
+        </div>
+      </transition>
 
-          <!-- Login Link -->
-          <p class="text-center text-gray-500 text-sm mt-3">
-            Already have an account?
-            <router-link to="/login" class="text-[#0073b1] font-medium hover:underline">Login here</router-link>
-          </p>
+      <!-- Splash Screen -->
+      <transition name="overlay-fade">
+        <div v-if="showSplash" class="absolute inset-0 flex flex-col items-center justify-center bg-white z-20">
+          <img src="@/assets/skilllogo.png" alt="SkillLink Logo" class="w-32 mb-4 animate-scale-bounce" />
+          <p class="text-gray-700 font-medium text-lg animate-pulse">Signing Up...</p>
+        </div>
+      </transition>
+    </div>
 
-        </form>
-      </div>
-    </transition>
-
-    <!-- Splash Screen -->
-    <transition name="overlay-fade">
-      <div v-if="showSplash" class="absolute inset-0 flex flex-col items-center justify-center bg-white z-20">
-        <img src="@/assets/skilllogo.png" alt="SkillLink Logo" class="w-32 mb-4 animate-scale-bounce" />
-        <p class="text-gray-700 font-medium text-lg animate-pulse">Signing Up...</p>
-      </div>
-    </transition>
 
   </div>
 </template>
@@ -148,6 +192,7 @@ import { toast } from 'vue3-toastify';
 import { loginUser } from '@/stores/auth';
 import Multiselect from 'vue-multiselect';
 import 'vue-multiselect/dist/vue-multiselect.min.css';
+import AppNavbar from '@/components/AppNavbar.vue';
 
 const router = useRouter();
 const loading = ref(false);
@@ -157,7 +202,7 @@ const showPassword = ref(false);
 const form = reactive({
   name: '',
   role: '',
-  email: '',
+  contact: '',
   password: '',
   services: [],
   experience: '',
@@ -168,6 +213,14 @@ const form = reactive({
   city: ''
 });
 
+// ✅ Functions must be outside handleSubmit to be used in template
+const isEmail = (value) => /\S+@\S+\.\S+/.test(value);
+const isPhone = (value) => /^[0-9]{10}$/.test(value); // 10-digit number
+
+const validateContact = () => {
+  // optional: live feedback or styling can go here
+};
+
 const availableServices = [
   'Plumber', 'Electrician', 'Mechanic', 'Carpenter', 'AC/Appliance Repair',
   'Painter', 'Welder', 'House Cleaner', 'Sofa/Curtain Cleaner', 'Water Tank Cleaner',
@@ -177,8 +230,8 @@ const availableServices = [
   'House Shifting/Packers', 'Tailor', 'Event Decorator', 'Pet Groomer'
 ];
 
-const resetFields = () => {
-  form.email = '';
+/*const resetFields = () => {
+  form.contact = '';
   form.password = '';
   form.services = [];
   form.experience = '';
@@ -188,7 +241,7 @@ const resetFields = () => {
   form.longitude = null;
   form.city = '';
 };
-
+*/
 const getLocation = () => {
   if (!navigator.geolocation) {
     toast.error('Geolocation is not supported by your browser.');
@@ -201,17 +254,10 @@ const getLocation = () => {
       form.longitude = position.coords.longitude;
 
       try {
-        // Use Nominatim API to get human-readable address
-
         const res = await axios.get('https://nominatim.openstreetmap.org/reverse', {
-          params: {
-            lat: form.latitude,
-            lon: form.longitude,
-            format: 'json'
-          }
+          params: { lat: form.latitude, lon: form.longitude, format: 'json' }
         });
         if (res.data && res.data.address) {
-          // Fill the Area field with city/neighborhood
           form.area = res.data.address.suburb || res.data.address.neighbourhood || res.data.address.city || '';
           toast.success('Location detected and filled automatically!');
         }
@@ -219,9 +265,7 @@ const getLocation = () => {
         toast.error('Failed to fetch address from coordinates.');
       }
     },
-    () => {
-      toast.error('Enable location access for this feature.');
-    }
+    () => toast.error('Enable location access for this feature.')
   );
 };
 
@@ -231,28 +275,19 @@ const handleSubmit = async () => {
     return;
   }
 
+  if (!isEmail(form.contact) && !isPhone(form.contact)) {
+    toast.error('Enter a valid email or 10-digit phone number');
+    return;
+  }
+
   try {
     loading.value = true;
-    const endpoint = form.role === 'user'
-  ? '/auth/signup'               // normal user signup
-  : '/providers/signup';         // provider signup
 
-    // Prepare payload
+    const endpoint = form.role === 'user' ? '/auth/signup' : '/providers/signup';
+
     const payload = form.role === 'user'
-  ? { name: form.name, email: form.email, password: form.password, role: form.role }
-  : {
-      name: form.name,
-      email: form.email,
-      password: form.password,
-      latitude: form.latitude,
-      longitude: form.longitude,
-      address: form.address,
-      services: form.services,
-      experience: form.experience,
-      area: form.area,
-      role: 'provider'
-    };
-
+      ? { name: form.name, password: form.password, role: form.role, ...(isEmail(form.contact) ? { email: form.contact } : { phone: form.contact }) }
+      : { name: form.name, password: form.password, latitude: form.latitude, longitude: form.longitude, address: form.address, services: form.services, experience: form.experience, area: form.area, role: 'provider', ...(isEmail(form.contact) ? { email: form.contact } : { phone: form.contact }) };
 
     const response = await API.post(endpoint, payload);
 
@@ -263,7 +298,6 @@ const handleSubmit = async () => {
     setTimeout(() => {
       showSplash.value = false;
       router.push(form.role === 'user' ? '/homelogged' : '/serviceprovider');
-      //toast.success(`Welcome, ${response.data.user?.name || 'User'}!`, { theme: 'colored', autoClose: 2000 });
     }, 1500);
 
   } catch (err) {

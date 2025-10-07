@@ -8,7 +8,8 @@ const ServiceProvider = require('../models/ServiceProvider');
 const authenticateUser = require('../middleware/authMiddleware');
 const multer = require('multer');
 const upload = multer({ dest: 'uploads/' });
-//  Test route
+
+// Test route
 router.get('/test', (req, res) => res.send('✅ Booking route is working'));
 
 // GET active bookings
@@ -23,7 +24,7 @@ router.get('/', authenticateUser, async (req, res) => {
 
     const formattedBookings = bookings.map(b => {
       const booking = b.toObject();
-      booking.provider = booking.providerId || null; // rename for frontend
+      booking.provider = booking.providerId || null;
       delete booking.providerId;
       return booking;
     });
@@ -52,10 +53,7 @@ router.post(
     if (!errors.isEmpty()) return res.status(400).json({ errors: errors.array() });
 
     try {
-      const {
-        service, name, contact, address, providerId, price,
-        paymentMethod, bookingId, date, time
-      } = req.body;
+      const { service, name, contact, address, providerId, price, paymentMethod, bookingId, date, time } = req.body;
 
       const user = await User.findById(req.user.id);
       if (!user) return res.status(404).json({ message: 'User not found' });
@@ -73,12 +71,11 @@ router.post(
           services: { $in: [service] },
           pincode: user.pincode,
         });
-        if (!matchingProviders.length)
-          return res.status(404).json({ message: 'No providers in your area' });
+        if (!matchingProviders.length) return res.status(404).json({ message: 'No providers in your area' });
         assignedProvider = matchingProviders[Math.floor(Math.random() * matchingProviders.length)];
       }
 
-      // Create booking (always pending until verified)
+      // Create booking
       const booking = new Booking({
         userId: req.user.id,
         providerId: assignedProvider._id,
@@ -97,7 +94,6 @@ router.post(
 
       const savedBooking = await booking.save();
       await savedBooking.populate('providerId', '-password -__v');
-
 
       res.status(201).json({ message: 'Booking confirmed', booking: savedBooking });
     } catch (err) {
@@ -123,45 +119,20 @@ router.put('/mark-completed/:id', authenticateUser, async (req, res) => {
   }
 });
 
-router.delete('/clearhistory', authenticateUser, async (req, res) => {
-  try {
-    console.log("👉 clearhistory user:", req.user);
-
-    await Booking.deleteMany({
-      userId: req.user._id,
-      status: { $in: ['Completed', 'Rejected'] }
-    });
-
-    res.json({ message: 'History cleared successfully' });
-  } catch (err) {
-    console.error('Error clearing history:', err);
-    res.status(500).json({ message: 'Failed to clear history', error: err.message });
-  }
-});
-
 // DELETE booking with ownership check
 router.delete('/:id', authenticateUser, async (req, res) => {
   try {
     const bookingId = req.params.id;
 
     if (!bookingId.match(/^[0-9a-fA-F]{24}$/)) {
-      // Validate ObjectId format
       return res.status(400).json({ message: 'Invalid booking ID' });
     }
 
     const booking = await Booking.findById(bookingId);
-
-    if (!booking) {
-      return res.status(404).json({ message: 'Booking not found' });
-    }
-
-    // Ensure user owns the booking
-    if (booking.userId.toString() !== req.user.id) {
-      return res.status(403).json({ message: 'Not authorized to delete this booking' });
-    }
+    if (!booking) return res.status(404).json({ message: 'Booking not found' });
+    if (booking.userId.toString() !== req.user.id) return res.status(403).json({ message: 'Not authorized to delete this booking' });
 
     await Booking.deleteOne({ _id: bookingId });
-
     res.json({ message: 'Booking deleted successfully' });
   } catch (err) {
     console.error(`Error deleting booking [ID: ${req.params.id}]:`, err);
@@ -189,7 +160,7 @@ router.put('/:id', authenticateUser, async (req, res) => {
   }
 });
 
-// GET booking history
+// GET booking history (without rating/review)
 router.get('/history', authenticateUser, async (req, res) => {
   try {
     const historyBookings = await Booking.find({
@@ -202,9 +173,7 @@ router.get('/history', authenticateUser, async (req, res) => {
       service: b.service,
       date: b.updatedAt.toISOString().split('T')[0],
       status: b.status,
-      review: b.review || '',         // <-- add review
-      rating: b.rating || 0,          // <-- add rating
-      provider: b.providerId || null, // keep provider info if needed
+      provider: b.providerId || null,
     }));
 
     res.json(formatted);
@@ -213,41 +182,5 @@ router.get('/history', authenticateUser, async (req, res) => {
     res.status(500).json({ message: 'Failed to fetch history', error: err.message });
   }
 });
-
-
-// PUT submit review for a booking
-router.put('/review/:id', authenticateUser, async (req, res) => {
-  try {
-    const booking = await Booking.findById(req.params.id);
-
-    if (!booking) return res.status(404).json({ message: 'Booking not found' });
-
-    // Only the user who booked can review
-    if (booking.userId.toString() !== req.user.id) {
-      return res.status(403).json({ message: 'Not authorized to review this booking' });
-    }
-
-    // Only completed bookings can be reviewed
-    if (booking.status !== 'Completed') {
-      return res.status(400).json({ message: 'You can only review completed services' });
-    }
-
-    const { rating, review } = req.body;
-
-    if (!rating || rating < 1 || rating > 5) {
-      return res.status(400).json({ message: 'Rating must be between 1 and 5' });
-    }
-
-    booking.rating = rating;
-    booking.review = review || '';
-    await booking.save();
-
-    res.json({ message: 'Review submitted successfully', booking });
-  } catch (err) {
-    console.error('Error submitting review:', err);
-    res.status(500).json({ message: 'Failed to submit review', error: err.message });
-  }
-});
-
 
 module.exports = router;

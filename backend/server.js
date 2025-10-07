@@ -15,6 +15,7 @@ const authRoutes = require('./routes/auth');
 const userRoutes = require('./routes/userRoutes');
 const addressRoutes = require('./routes/addressRoutes');
 const serviceRoutes = require('./routes/serviceRoutes');
+const reviewRoutes = require('./routes/reviewRoutes');
 const cron = require('node-cron');
 const cleanupOldScreenshots = require('./utils/cleanup');
 
@@ -84,7 +85,7 @@ app.use('/api/providers', providerRoutes);
 app.use('/api/contact', contactRoutes);
 app.use('/api/providerorders', providerOrdersRoutes);
 app.use('/api/notifications', notificationRoutes);
-
+app.use("/api/reviews", reviewRoutes);
 
 // ===== Socket.IO JWT Authentication =====
 io.use((socket, next) => {
