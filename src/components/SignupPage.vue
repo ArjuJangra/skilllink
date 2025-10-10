@@ -20,36 +20,38 @@
 
           <form @submit.prevent="handleSubmit" class="space-y-5">
 
-           <!-- Role Selection -->
-<div class="mb-6">
-  <label class="block text-lg font-semibold text-gray-800 mb-2">Register as:</label>
-  <div class="flex gap-4">
-    <!-- User Card -->
-    <div
-      @click="form.role = 'user'"
-      :class="form.role === 'user' ? 'border-blue-500 bg-blue-50 shadow-lg' : 'border-gray-300 bg-white'"
-      class="flex-1 cursor-pointer border rounded-xl p-4 flex flex-col items-center justify-center hover:shadow-md transition"
-    >
-      <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 mb-2 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.121 17.804A7 7 0 0112 14a7 7 0 016.879 3.804M12 12a5 5 0 100-10 5 5 0 000 10z" />
-      </svg>
-      <span class="font-medium text-gray-700">User</span>
-    </div>
+            <!-- Role Selection -->
+            <div class="mb-6">
+              <label class="block text-lg font-semibold text-gray-800 mb-2">Register as:</label>
+              <div class="flex gap-4">
+                <!-- User Card -->
+                <div @click="form.role = 'user'"
+                  :class="form.role === 'user' ? 'border-blue-500 bg-blue-50 shadow-lg' : 'border-gray-300 bg-white'"
+                  class="flex-1 cursor-pointer border rounded-xl p-4 flex flex-col items-center justify-center hover:shadow-md transition">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 mb-2 text-blue-500" fill="currentColor"
+                    viewBox="0 0 24 24">
+                    <path
+                      d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
+                  </svg>
 
-    <!-- Provider Card -->
-    <div
-      @click="form.role = 'provider'"
-      :class="form.role === 'provider' ? 'border-blue-500 bg-blue-50 shadow-lg' : 'border-gray-300 bg-white'"
-      class="flex-1 cursor-pointer border rounded-xl p-4 flex flex-col items-center justify-center hover:shadow-md transition"
-    >
-      <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 mb-2 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l9-5-9-5-9 5 9 5z" />
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l6.16-3.422a12.083 12.083 0 01.84 6.062c-.337 2.14-1.233 4.15-2.535 5.838L12 14z" />
-      </svg>
-      <span class="font-medium text-gray-700">Service Provider</span>
-    </div>
-  </div>
-</div>
+                  <span class="font-medium text-gray-700">User</span>
+                </div>
+
+                <!-- Provider Card -->
+                <div @click="form.role = 'provider'"
+                  :class="form.role === 'provider' ? 'border-blue-500 bg-blue-50 shadow-lg' : 'border-gray-300 bg-white'"
+                  class="flex-1 cursor-pointer border rounded-xl p-4 flex flex-col items-center justify-center hover:shadow-md transition">
+                  <!-- Modern Service/Tool Icon -->
+                  <svg xmlns="http://www.w3.org/2000/svg" class="w-10 h-10 mb-2 text-green-500" fill="none"
+                    viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M9 12h6m2 0a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v3a2 2 0 002 2m0 0v5a2 2 0 002 2h4a2 2 0 002-2v-5" />
+                  </svg>
+                  <span class="font-medium text-gray-700">Service Provider</span>
+                </div>
+
+              </div>
+            </div>
 
             <!-- Full Name -->
             <div>
