@@ -1,6 +1,6 @@
 <template>
   <div class="min-h-screen bg-[#F0F9FF]">
-    <header>
+    <header class="bg-white shadow sticky top-0 z-50">
       <AppNavbar :mode="'default'" :showSearch="true" :hideExtras="true" @search="searchQuery = $event" />
     </header>
 

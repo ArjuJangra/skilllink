@@ -77,8 +77,7 @@
 </template>
 
 <script setup>
-
-import { reactive, ref } from 'vue';
+ import { reactive, ref } from 'vue';
 import { useRouter } from 'vue-router';
 import API from '@/api';
 import { auth, loginUser } from '@/stores/auth';
@@ -109,10 +108,10 @@ const handleLogin = async () => {
 
   try {
     const payload = {
-      role: loginForm.role,
-      password: loginForm.password,
-      ...(isEmail(loginForm.contact) ? { email: loginForm.contact } : { phone: loginForm.contact })
-    };
+  role: loginForm.role,
+  password: loginForm.password,
+  contact: loginForm.contact.trim()  
+};
 
     const res = await API.post('/auth/login', payload);
 

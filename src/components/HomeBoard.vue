@@ -5,7 +5,7 @@
       <AppNavbar />
     </header>
     <!-- Hero -->
-    <section class="py-10 bg-gradient-to-br from-blue-100 to-white text-center px-4">
+    <section class="py-10 bg-gradient-to-br from-blue-50 via-gray-50 to-blue-50 text-center px-4">
       <h2
         class="text-2xl sm:text-3xl md:text-4xl font-bold bg-gradient-to-r from-[#3B8D99] to-[#f46675] bg-clip-text text-transparent mb-4">
         Connecting You to Trusted Local Experts
@@ -16,7 +16,7 @@
     </section>
 
     <!-- Services Section -->
-    <section class="py-8 px-4 bg-blue-50 to-white">
+    <section class="py-8 px-4 bg-gradient-to-b from-white via-blue-50 to-white">
       <div class="max-w-screen-xl mx-auto">
         <h3 class="text-2xl sm:text-3xl font-bold text-center text-gray-800 mb-10">Services We Provide</h3>
 

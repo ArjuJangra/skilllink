@@ -11,6 +11,7 @@ router.post('/signup', async (req, res) => {
   try {
     const { name, email, phone, password, role, services, experience, address, latitude, longitude } = req.body;
 
+    // Basic validation
     if (!name || !password || !role) {
       return res.status(400).json({ message: 'Name, password, and role are required.' });
     }
@@ -19,32 +20,42 @@ router.post('/signup', async (req, res) => {
       return res.status(400).json({ message: 'Either email or phone is required.' });
     }
 
-    const normalizedEmail = email ? email.toLowerCase().trim() : null;
+    const normalizedEmail = email ? email.trim().toLowerCase() : null;
     const normalizedPhone = phone ? phone.trim() : null;
 
-    // Check if email or phone already exists
-    const existingUser = await User.findOne({
-      $or: [
-        { email: normalizedEmail },
-        { phone: normalizedPhone }
-      ]
-    });
-    const existingProvider = await ServiceProvider.findOne({
-      $or: [
-        { email: normalizedEmail },
-        { phone: normalizedPhone }
-      ]
-    });
+    // Build query for checking duplicates safely (ignore empty strings)
+    const queryConditions = [];
+    if (normalizedEmail) queryConditions.push({ email: normalizedEmail });
+    if (normalizedPhone) queryConditions.push({ phone: normalizedPhone });
+
+    let existingUser = null;
+    let existingProvider = null;
+
+    if (queryConditions.length > 0) {
+      const safeConditions = queryConditions.filter(cond => {
+        const value = Object.values(cond)[0];
+        return value !== undefined && value !== null && value !== '';
+      });
+
+      if (safeConditions.length > 0) {
+        existingUser = await User.findOne({ $or: safeConditions });
+        existingProvider = await ServiceProvider.findOne({ $or: safeConditions });
+      }
+    }
 
     if (existingUser || existingProvider) {
       return res.status(409).json({ message: 'Email or phone already registered.' });
     }
 
+    // Hash password
     const hashedPassword = await bcrypt.hash(password, 10);
 
     let newAccount;
+
     if (role === 'provider') {
-      if (!services || !Array.isArray(services) || services.length === 0 || !experience || !address || !latitude || !longitude) {
+      // Provider-specific validation
+      if (!services || !Array.isArray(services) || services.length === 0 ||
+          !experience || !address || !latitude || !longitude) {
         return res.status(400).json({ message: 'All provider fields are required.' });
       }
 
@@ -58,21 +69,23 @@ router.post('/signup', async (req, res) => {
         experience,
         address,
         latitude,
-        longitude,
+        longitude
       });
 
     } else {
+      // Regular user
       newAccount = new User({
         name,
         email: normalizedEmail,
         phone: normalizedPhone,
         password: hashedPassword,
-        role: 'user',
+        role: 'user'
       });
     }
 
     await newAccount.save();
 
+    // Generate JWT token
     const token = jwt.sign({ id: newAccount._id, role: newAccount.role }, process.env.JWT_SECRET, { expiresIn: '1d' });
 
     res.status(201).json({
@@ -85,8 +98,8 @@ router.post('/signup', async (req, res) => {
         role: newAccount.role,
         services: newAccount.services || [],
         experience: newAccount.experience || 0,
-        address: newAccount.address || '',
-      },
+        address: newAccount.address || ''
+      }
     });
 
   } catch (err) {
