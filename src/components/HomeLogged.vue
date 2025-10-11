@@ -4,29 +4,45 @@
       <AppNavbar mode="homelogged" />
     </header>
     <!-- Hero Section -->
-    <section class="text-center py-10 px-4 bg-gradient-to-br from-blue-50 via-gray-50 to-blue-50">
-      <div class="max-w-[1300px] mx-auto">
-        <h2
-          class="text-2xl sm:text-3xl md:text-4xl font-bold bg-gradient-to-r from-[#3B8D99] to-[#f46675] bg-clip-text text-transparent mb-4">
-          Connecting You to Trusted Local Experts
-        </h2>
-        <p class="text-gray-600 text-base sm:text-lg md:text-xl max-w-2xl mx-auto">
-          Book skilled professionals like plumbers, electricians, makeup artists, and more — all in one platform.
-        </p>
+    <section
+      class="relative bg-gradient-to-br from-blue-50 via-white to-blue-50 text-center overflow-hidden py-16 px-4">
+      <!-- Hero Content -->
+      <h1
+        class="text-3xl sm:text-4xl md:text-5xl font-extrabold bg-gradient-to-r from-[#3B8D99] to-[#f46675] bg-clip-text text-transparent mb-6">
+        Connecting You to Trusted Local Experts
+      </h1>
+
+      <p class="text-gray-600 max-w-2xl mx-auto text-base sm:text-lg mb-4">
+        Book skilled professionals like plumbers, electricians, makeup artists, and more — all in one platform.
+      </p>
+
+      <!-- Call to Action -->
+      <div class="flex justify-center gap-4 flex-wrap">
+
+        <router-link to="/home"
+          class="inline-block px-6 py-3 font-semibold text-[#0073b1] rounded-lg border-2 border-[#0073b1] hover:bg-[#0073b1] hover:text-white transition">
+          Explore Services
+        </router-link>
       </div>
+
     </section>
     <!-- Services Section -->
-    <section class="py-8 px-4 bg-gradient-to-b from-white via-blue-50 to-white">
-      <div class="max-w-[1300px] mx-auto">
-        <h3 class="text-2xl sm:text-3xl font-bold text-center text-gray-800 mb-10">Services We Provide</h3>
+    <section class="py-12 px-6 bg-gradient-to-b from-white via-blue-50/40 to-white">
+      <div class="max-w-screen-xl mx-auto text-center">
+        <h3 class="text-3xl sm:text-4xl font-bold text-center text-gray-800 mb-12"> Our Professional Services</h3>
 
         <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 sm:gap-6">
-          <span v-for="service in services" :key="service.title" @click="goToServiceDetails(service)" class="bg-gradient-to-b from-[#0073b1] via-[#3399cc] to-[#37a3eb] text-white 
-           p-5 rounded-lg shadow-lg flex flex-col items-center justify-center 
-           transform transition-all duration-500 font-semibold 
-           hover:-translate-y-1 hover:scale-105 hover:shadow-lg cursor-pointer text-sm sm:text-base">
-            {{ service.title }}
-          </span>
+          <div v-for="service in services" :key="service.title" @click="goToServiceDetails(service)" class="bg-white border border-gray-200 p-6 rounded-2xl shadow-sm flex flex-col items-center justify-center 
+         transform transition-all duration-500 font-semibold hover:-translate-y-1 hover:scale-105 hover:shadow-lg 
+         cursor-pointer text-sm sm:text-base group">
+            <div class="bg-blue-100 p-3 rounded-full mb-3 group-hover:bg-blue-500 transition">
+              <component :is="service.icon" class="w-7 h-7 text-blue-600 group-hover:text-white transition" />
+            </div>
+            <h4 class="font-semibold text-gray-800 group-hover:text-blue-600 transition text-sm sm:text-base">
+              {{ service.title }}
+            </h4>
+          </div>
+
         </div>
       </div>
     </section>
@@ -34,7 +50,7 @@
     <!-- Solved Cases Section -->
     <section class="bg-gradient-to-r from-blue-50 via-gray-50 to-blue-50 py-12 px-4">
       <div class="max-w-[1300px] mx-auto">
-        <h3 class="text-2xl font-bold text-gray-800 mb-6 text-center">Real Stories, Real Impact</h3>
+        <h3 class="text-2xl sm:text-3xl font-bold text-gray-800 mb-6 text-center">Real Stories, Real Impact</h3>
         <p class="text-gray-600 max-w-3xl mx-auto mb-12 text-base sm:text-lg">
           See how SkillLink helped users solve everyday challenges — fast, reliable, and stress-free.
         </p>
@@ -53,262 +69,241 @@
         </div>
       </div>
     </section>
-    <!-- About Section -->
-    <section class="relative py-12 px-4 bg-gradient-to-lr from-[#F0F9FF] via-white to-[#E6F4F9] overflow-hidden">
-      <!-- SVG Background -->
+    <!-- About Section-->
+    <section class="relative py-12 px-4 bg-gradient-to-br from-[#F0F9FF] via-white to-[#E6F4F9] overflow-hidden">
       <div class="absolute inset-0 z-0 pointer-events-none">
-        <svg class="absolute top-0 left-0 opacity-20 w-[600px]" viewBox="0 0 600 600" fill="none">
-          <circle cx="300" cy="300" r="300" fill="#0073b1" fill-opacity="0.05" />
+        <svg class="absolute top-0 left-0 opacity-10 w-[600px]" viewBox="0 0 600 600" fill="none">
+          <circle cx="300" cy="300" r="300" fill="#0073b1" />
         </svg>
         <svg class="absolute bottom-0 right-0 opacity-10 w-[400px]" viewBox="0 0 400 400" fill="none">
-          <rect x="0" y="0" width="400" height="400" fill="#00BFFF" fill-opacity="0.04" rx="80" />
+          <rect width="400" height="400" fill="#00BFFF" rx="80" />
         </svg>
       </div>
 
-      <div class="relative z-10 max-w-screen-xl mx-auto text-center" data-aos="fade-up">
-        <h3 class="text-2xl font-bold text-gray-800 mb-6">About SkillLink</h3>
-        <p class="max-w-3xl mx-auto text-gray-700 leading-relaxed text-lg sm:text-xl mb-10">
-          SkillLink is your trusted platform to connect with skilled professionals across a wide range of services.
-          Whether it's urgent home repairs or lifestyle services — we bring verified experts right to your doorstep.
-        </p>
+      <!-- Main Content -->
+      <div class="relative z-10 max-w-screen-xl mx-auto text-center space-y-14" data-aos="fade-up">
+
+        <!-- Heading -->
+        <div>
+          <h3 class="text-3xl sm:text-4xl font-bold text-gray-800 mb-4">About SkillLink</h3>
+          <p class="max-w-3xl mx-auto text-gray-600 leading-relaxed text-lg">
+            SkillLink connects you with verified professionals for everything from home repairs to personal services —
+            reliable, quick, and affordable.
+          </p>
+        </div>
 
         <!-- Services Grid -->
-        <div class="bg-gray-50 shadow-xl rounded-xl p-8 mt-6" data-aos="fade-up" data-aos-delay="100">
-          <h4 class="text-2xl font-semibold text-gray-800 mb-6">Our Available Services</h4>
-          <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 text-left text-gray-800 text-base">
+        <div class="bg-white shadow-xl rounded-2xl p-10" data-aos="fade-up">
+          <h4 class="text-2xl font-semibold text-gray-800 mb-8">Our Available Services</h4>
+          <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8 text-left text-gray-700 text-base">
             <ul class="space-y-3">
-              <li><i class="fas fa-tools text-[#0073b1] mr-2"></i>Plumber</li>
-              <li><i class="fas fa-bolt text-[#0073b1] mr-2"></i>Electrician</li>
-              <li><i class="fas fa-car text-[#0073b1] mr-2"></i>Mechanic</li>
-              <li><i class="fas fa-hammer text-[#0073b1] mr-2"></i>Carpenter</li>
-              <li><i class="fas fa-wind text-[#0073b1] mr-2"></i>AC Repair</li>
-              <li><i class="fas fa-paint-roller text-[#0073b1] mr-2"></i>Painter</li>
+              <li><i class="fas fa-tools text-blue-600 mr-2"></i>Plumber</li>
+              <li><i class="fas fa-bolt text-blue-600 mr-2"></i>Electrician</li>
+              <li><i class="fas fa-car text-blue-600 mr-2"></i>Mechanic</li>
+              <li><i class="fas fa-hammer text-blue-600 mr-2"></i>Carpenter</li>
+              <li><i class="fas fa-wind text-blue-600 mr-2"></i>AC Repair</li>
+              <li><i class="fas fa-paint-roller text-blue-600 mr-2"></i>Painter</li>
             </ul>
             <ul class="space-y-3">
-              <li><i class="fas fa-wrench text-[#0073b1] mr-2"></i>Welder</li>
-              <li><i class="fas fa-magic text-[#0073b1] mr-2"></i>Makeup Artist</li>
-              <li><i class="fas fa-broom text-[#0073b1] mr-2"></i>Cleaner</li>
-              <li><i class="fas fa-seedling text-[#0073b1] mr-2"></i>Gardener</li>
-              <li><i class="fas fa-mobile-alt text-[#0073b1] mr-2"></i>Mobile Technician</li>
-              <li><i class="fas fa-desktop text-[#0073b1] mr-2"></i>Computer Technician</li>
+              <li><i class="fas fa-wrench text-blue-600 mr-2"></i>Welder</li>
+              <li><i class="fas fa-magic text-blue-600 mr-2"></i>Makeup Artist</li>
+              <li><i class="fas fa-soap text-blue-600 mr-2"></i>Cleaner</li>
+              <li><i class="fas fa-seedling text-blue-600 mr-2"></i>Gardener</li>
+              <li><i class="fas fa-mobile-alt text-blue-600 mr-2"></i>Mobile Technician</li>
+              <li><i class="fas fa-desktop text-blue-600 mr-2"></i>Computer Technician</li>
             </ul>
             <ul class="space-y-3">
-              <li><i class="fas fa-cogs text-[#0073b1] mr-2"></i>Home Appliance Repair</li>
-              <li><i class="fas fa-bug text-[#0073b1] mr-2"></i>Pest Control</li>
-              <li><i class="fas fa-tshirt text-[#0073b1] mr-2"></i>Laundry Services</li>
-              <li><i class="fas fa-water text-[#0073b1] mr-2"></i>Water Purifier Technician</li>
-              <li><i class="fas fa-pencil-ruler text-[#0073b1] mr-2"></i>Interior Designer</li>
-              <li><i class="fas fa-truck-moving text-[#0073b1] mr-2"></i>Packers & Movers</li>
-              <li><i class="fas fa-gem text-[#0073b1] mr-2"></i>Event Decorators</li>
+              <li><i class="fas fa-cogs text-blue-600 mr-2"></i>Home Appliance Repair</li>
+              <li><i class="fas fa-bug text-blue-600 mr-2"></i>Pest Control</li>
+              <li><i class="fas fa-tshirt text-blue-600 mr-2"></i>Laundry Services</li>
+              <li><i class="fas fa-water text-blue-600 mr-2"></i>Water Purifier Technician</li>
+              <li><i class="fas fa-pencil-ruler text-blue-600 mr-2"></i>Interior Designer</li>
+              <li><i class="fas fa-gem text-blue-600 mr-2"></i>Event Decorators</li>
             </ul>
           </div>
         </div>
 
-        <!-- Why SkillLink -->
-        <div class="mt-16" data-aos="fade-up" data-aos-delay="200">
-          <h4 class="text-2xl font-semibold text-gray-800 mb-6">Why Choose SkillLink?</h4>
-          <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 max-w-5xl mx-auto text-left">
-            <div class="bg-white shadow-md rounded-lg p-6 hover:shadow-xl transition" data-aos="zoom-in">
-              <h5 class="text-lg font-semibold text-gray-800 mb-2">
-                <i class="fas fa-check-circle text-[#0073b1] mr-2"></i>Verified Professionals
+        <!-- Why Choose -->
+        <div class="mt-16" data-aos="fade-up">
+          <h4 class="text-2xl font-semibold text-gray-800 mb-8">Why Choose SkillLink?</h4>
+          <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+            <div class="bg-white shadow-lg rounded-xl p-8 hover:shadow-2xl transition">
+              <h5 class="text-lg font-semibold text-gray-800 mb-3">
+                <i class="fas fa-check-circle text-blue-600 mr-2"></i>Verified Professionals
               </h5>
-              <p class="text-gray-600 text-sm">All providers are background-checked and verified for your peace of mind.
-              </p>
+              <p class="text-gray-600 text-sm leading-relaxed">Background-checked experts you can trust for every
+                service.</p>
             </div>
-            <div class="bg-white shadow-md rounded-lg p-6 hover:shadow-xl transition" data-aos="zoom-in"
-              data-aos-delay="100">
-              <h5 class="text-lg font-semibold text-gray-800 mb-2">
-                <i class="fas fa-bolt text-[#0073b1] mr-2"></i>Fast & Reliable
+            <div class="bg-white shadow-lg rounded-xl p-8 hover:shadow-2xl transition">
+              <h5 class="text-lg font-semibold text-gray-800 mb-3">
+                <i class="fas fa-bolt text-blue-600 mr-2"></i>Fast & Reliable
               </h5>
-              <p class="text-gray-600 text-sm">Get prompt responses and quality service on every request.</p>
+              <p class="text-gray-600 text-sm leading-relaxed">Quick response, efficient service, and on-time
+                completion.</p>
             </div>
-            <div class="bg-white shadow-md rounded-lg p-6 hover:shadow-xl transition" data-aos="zoom-in"
-              data-aos-delay="200">
-              <h5 class="text-lg font-semibold text-gray-800 mb-2">
-                <i class="fas fa-wallet text-[#0073b1] mr-2"></i>Transparent Pricing
+            <div class="bg-white shadow-lg rounded-xl p-8 hover:shadow-2xl transition">
+              <h5 class="text-lg font-semibold text-gray-800 mb-3">
+                <i class="fas fa-wallet text-blue-600 mr-2"></i>Transparent Pricing
               </h5>
-              <p class="text-gray-600 text-sm">No hidden costs — know what you pay for, always.</p>
+              <p class="text-gray-600 text-sm leading-relaxed">Upfront pricing with no hidden costs — ever.</p>
             </div>
           </div>
         </div>
 
         <!-- Closing Note -->
-        <p class="max-w-3xl mx-auto text-gray-700 leading-relaxed text-lg sm:text-xl mt-14" data-aos="fade-up"
-          data-aos-delay="300">
-          With SkillLink, expert help is just a few taps away — fast, safe, and reliable. Join thousands of happy users
-          today.
+        <p class="max-w-3xl mx-auto text-gray-700 leading-relaxed text-lg mt-14 italic" data-aos="fade-up">
+          “Expert help, a tap away — with SkillLink, convenience meets trust.”
         </p>
       </div>
     </section>
     <!-- Service Area Map Section -->
     <section class="py-12 bg-gradient-to-r from-blue-50 via-gray-50 to-blue-50 px-4">
       <div class="max-w-screen-xl mx-auto text-center">
-        <h2 class="text-2xl font-bold mb-6 text-gray-800">Service Coverage Area</h2>
+        <h2 class="text-2xl sm:text-3xl font-bold text-gray-800 mb-4">Service Coverage Area</h2>
         <ServiceMap />
       </div>
     </section>
-    <!-- Contact Section -->
-    <section class="bg-blue-50 py-4 px-4">
-      <div class="max-w-4xl mx-auto text-center">
+    <!--Contact-->
+    <section class="bg-gray-50 py-6 px-6">
+      <div class="max-w-4xl mx-auto text-center" data-aos="fade-up">
         <!-- Title -->
-        <h3 class="text-2xl font-bold text-gray-800 mb-4">Contact Us</h3>
-        <p class="text-gray-600 mb-8">
-          Need help? Reach out to our team quickly and easily.
+        <h3 class="text-3xl font-bold text-gray-800 mb-4">Contact Us</h3>
+        <p class="text-gray-600 mb-10 text-lg">
+          Need help? Reach out to our support team — we’re here to assist you.
         </p>
-        <!-- Contact Info Row -->
-        <div class="flex flex-col sm:flex-row justify-center gap-6 mb-6">
+
+        <!-- Contact Info Cards -->
+        <div class="flex flex-col sm:flex-row justify-center items-stretch gap-6 mb-10">
           <!-- Email -->
-          <div class="flex items-center gap-2 text-gray-700">
-            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
+          <div
+            class="flex-1 bg-white shadow-md rounded-xl p-5 flex items-center gap-3 text-gray-700 hover:shadow-lg transition">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-gray-600" viewBox="0 0 24 24"
+              fill="currentColor">
               <path
-                d="M2.25 6.75A2.25 2.25 0 0 1 4.5 4.5h15a2.25 2.25 0 0 1 2.25 2.25v10.5A2.25 2.25 0 0 1 19.5 19.5h-15a2.25 2.25 0 0 1-2.25-2.25V6.75zm2.334-.75L12 11.327 19.416 6h-14.832zm15.166 1.635-7.731 5.154a.75.75 0 0 1-.838 0L3.45 7.635v9.615c0 .414.336.75.75.75h15a.75.75 0 0 0 .75-.75V7.635z" />
+                d="M2.25 6.75A2.25 2.25 0 0 1 4.5 4.5h15a2.25 2.25 0 0 1 2.25 2.25v10.5A2.25 2.25 0 0 1 19.5 19.5h-15a2.25 2.25 0 0 1-2.25-2.25V6.75zm2.334-.75L12 11.327 19.416 6h-14.832z" />
             </svg>
-            <a href="mailto:connectteamskilllink@gmail.com" class="hover:underline">
+            <a href="mailto:connectteamskilllink@gmail.com" class="font-medium hover:text-blue-600 transition">
               connectteamskilllink@gmail.com
             </a>
           </div>
+
           <!-- Phone -->
-          <div class="flex items-center gap-2 text-gray-700">
-            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
+          <div
+            class="flex-1 bg-white shadow-md rounded-xl p-5 flex items-center gap-3 text-gray-700 hover:shadow-lg transition">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-green-600" viewBox="0 0 24 24"
+              fill="currentColor">
               <path
                 d="M6.62 10.79a15.05 15.05 0 006.59 6.59l2.2-2.2a1 1 0 011.11-.21 11.05 11.05 0 003.47.55 1 1 0 011 1V20a1 1 0 01-1 1C10.42 21 3 13.58 3 5a1 1 0 011-1h3.5a1 1 0 011 1c0 1.2.19 2.38.55 3.47a1 1 0 01-.21 1.11l-2.22 2.21z" />
             </svg>
-            <span>+91-9876543210</span>
+            <span class="font-medium">+91-9876543210</span>
           </div>
 
           <!-- Hours -->
-          <div class="flex items-center gap-2 text-gray-700">
-            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 " fill="none" viewBox="0 0 24 24"
+          <div
+            class="flex-1 bg-white shadow-md rounded-xl p-5 flex items-center gap-3 text-gray-700 hover:shadow-lg transition">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-blue-700" fill="none" viewBox="0 0 24 24"
               stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                 d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
-            <span>Mon – Sat, 9 AM – 7 PM</span>
+            <span class="font-medium">Mon – Sat, 9 AM – 7 PM</span>
           </div>
         </div>
-        <!-- Call to Action -->
+
+        <!-- CTA -->
         <router-link to="/contact"
-          class="inline-block bg-[#0073b1] text-white font-semibold px-6 py-2 rounded hover:bg-[#005f91] transition">
+          class="inline-block bg-gradient-to-r from-[#00A8E8] to-[#007EA7] text-white font-semibold px-8 py-3 rounded-xl shadow-md hover:shadow-lg hover:scale-105 transform transition">
           Send a Message
         </router-link>
       </div>
     </section>
     <!-- Footer -->
-    <footer class="bg-gray-100 text-gray-700 border-t">
-      <div class="max-w-6xl mx-auto px-6 py-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8">
+    <footer class="bg-gradient-to-r from-[#007EA7] to-[#00A8E8] text-white shadow-inner shadow-black/10">
+      <div class="max-w-7xl mx-auto px-6 py-12 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8">
 
         <!-- Logo & Tagline -->
         <div class="space-y-4">
           <div class="flex items-center space-x-2">
-            <img src="@/assets/skilllogo.png" alt="SkillLink Logo" class="w-10 h-10" />
-            <span class="text-xl font-bold text-[#0073b1]">SkillLink</span>
+            <img src="@/assets/skilllogo.png" alt="SkillLink Logo" class="w-10 h-10 rounded-lg" />
+            <span class="text-2xl font-extrabold bg-gradient-to-r from-white to-[#b7ced7] 
+bg-clip-text text-transparent">
+              SkillLink
+            </span>
+
           </div>
-          <p class="text-sm leading-relaxed">
+          <p class="text-sm leading-relaxed text-white/80">
             Connecting skilled professionals with customers quickly, easily, and reliably.
           </p>
+          <!-- Call-to-Action Button -->
+          <router-link to="/signup"
+            class="inline-block mt-2 px-4 py-2 bg-white text-blue-700 font-semibold rounded-lg hover:bg-gray-100 transition">
+            Join Now
+          </router-link>
         </div>
 
         <!-- Quick Links -->
         <div class="space-y-3">
-          <h3 class="text-base font-bold text-gray-800">Quick Links</h3>
-          <router-link to="/about" class="flex items-center gap-2 hover:text-[#00A8E8] transition">
-            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24"
-              stroke="currentColor" stroke-width="2">
-              <path stroke-linecap="round" stroke-linejoin="round"
-                d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-            </svg>
-            <span>About Us</span>
+          <h3 class="text-base font-bold text-white">Company</h3>
+          <router-link to="/about" class="flex items-center gap-2 hover:text-white/90 transition">
+            About Us
           </router-link>
-          <router-link to="/home" class="flex items-center gap-2 hover:text-[#00A8E8] transition">
-            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
-              <path
-                d="M4 4h4v4H4V4zm6 0h4v4h-4V4zm6 0h4v4h-4V4zM4 10h4v4H4v-4zm6 0h4v4h-4v-4zm6 0h4v4h-4v-4zM4 16h4v4H4v-4zm6 0h4v4h-4v-4zm6 0h4v4h-4v-4z" />
-            </svg>
-            <span>Services</span>
+          <router-link to="/blog" class="flex items-center gap-2 hover:text-white/90 transition">
+            Blog
           </router-link>
-          <router-link to="/help" class="flex items-center gap-2 hover:text-[#00A8E8] transition" aria-label="FAQ">
-            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" xmlns:xlink="http://www.w3.org/1999/xlink"
-              fill="currentcolor" version="1.1" id="Layer_1" viewBox="0 0 24 24">
-              <g>
-                <path
-                  d="M12,2C6.5,2,2,6.5,2,12s4.5,10,10,10s10-4.5,10-10S17.5,2,12,2z M12,20c-4.5,0-8-3.5-8-8s3.5-8,8-8s8,3.5,8,8   S16.5,20,12,20z" />
-              </g>
-              <rect x="11" y="15" width="2" height="2" />
-              <path
-                d="M13,14h-2c0-2.6,2-2.1,2-4.2c0-0.4-0.2-1.3-1.1-1.3c-0.3,0-1,0.5-1,1.5H9c0,0-0.4-3,2.9-3C14.5,7,15,8.9,15,9.8  C15,12.1,13,12.3,13,14z" />
-            </svg>
-            <span>Help</span>
+          <router-link to="/careers" class="flex items-center gap-2 hover:text-white/90 transition">
+            Careers
+          </router-link>
+          <router-link to="/contact" class="flex items-center gap-2 hover:text-white/90 transition">
+            Contact
           </router-link>
         </div>
 
-        <!-- Support -->
-        <div class="space-y-3 flex flex-col">
-          <h3 class="text-base font-bold text-gray-800">Support</h3>
-          <router-link to="/privacy" class="flex items-center gap-2 hover:text-[#00A8E8] transition"
-            aria-label="Privacy Policy">
-            <img class="w-4 h-4" src="https://img.icons8.com/ios/50/user-shield.png" alt="user-shield" />
-            <span>Privacy Policy</span>
-          </router-link>
-          <router-link to="/terms" class="flex items-center gap-2 hover:text-[#00A8E8] transition"
-            aria-label="Terms and Conditions">
-            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24"
-              stroke="currentColor" stroke-width="2">
-              <!-- Document outline -->
-              <path stroke-linecap="round" stroke-linejoin="round"
-                d="M6 2h9l5 5v13a2 2 0 01-2 2H6a2 2 0 01-2-2V4a2 2 0 012-2z" />
-              <!-- Text lines inside -->
-              <path stroke-linecap="round" stroke-linejoin="round" d="M9 8h6M9 12h6M9 16h4" />
-            </svg>
-            <span>Terms & Conditions</span>
-          </router-link>
-          <router-link to="/contact" class="flex items-center gap-2 hover:text-[#00A8E8] transition"
-            aria-label="Contact Us">
-            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24"
-              stroke="currentColor" stroke-width="2">
-              <path stroke-linecap="round" stroke-linejoin="round"
-                d="M8 10h8M8 14h6M21 12c0 4.418-4.03 8-9 8a9.957 9.957 0 01-4.916-1.332L3 20l1.332-4.084A9.957 9.957 0 013 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
-            </svg>
-            <span>Contact Us</span>
-          </router-link>
-        </div>
-
-        <!-- Reach Us -->
+        <!-- Services -->
         <div class="space-y-3">
-          <h3 class="text-base font-bold text-gray-800">Reach Us</h3>
+          <h3 class="text-base font-bold text-white">Services</h3>
+          <router-link to="/home" class="flex hover:text-white/90 transition">All Services</router-link>
+          <router-link to="/help" class="flex hover:text-white/90 transition">Help / FAQ</router-link>
+          <router-link to="/privacy" class="flex hover:text-white/90 transition">Privacy Policy</router-link>
+          <router-link to="/terms" class="flex hover:text-white/90 transition">Terms & Conditions</router-link>
+        </div>
+
+        <!-- Reach Us / Socials -->
+        <div class="space-y-3">
+          <h3 class="text-base font-bold text-white">Reach Us</h3>
           <div class="flex items-center gap-2">
             <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24"
               stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                 d="M12 11c1.656 0 3-1.344 3-3s-1.344-3-3-3-3 1.344-3 3 1.344 3 3 3zM12 2C8.686 2 6 5.686 6 11c0 5.313 6 11 6 11s6-5.687 6-11c0-5.314-2.686-9-6-9z" />
             </svg>
-            <span>Sector 41, Gurugram</span>
+            <span>Sector 14, Hisar</span>
           </div>
           <div class="flex items-center gap-2">
-            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
               <path
                 d="M6.62 10.79a15.05 15.05 0 006.59 6.59l2.2-2.2a1 1 0 011.11-.21 11.05 11.05 0 003.47.55 1 1 0 011 1V20a1 1 0 01-1 1C10.42 21 3 13.58 3 5a1 1 0 011-1h3.5a1 1 0 011 1c0 1.2.19 2.38.55 3.47a1 1 0 01-.21 1.11l-2.22 2.21z" />
             </svg>
-
-            <a href="tel:+919876543210" class="hover:underline hover:text-[#00A8E8]">+91 98765 43210</a>
+            <a href="tel:+919876543210" class="hover:underline hover:text-white/90">+91 7404227877</a>
           </div>
-          <!-- Socials -->
+
+          <!-- Social Icons -->
           <div class="flex items-center gap-4 pt-2">
-            <a href="#" class="hover:text-[#00A8E8] transition-colors">
-              <!-- Twitter -->
+            <a href="#" target="_blank" rel="noopener noreferrer" aria-label="Twitter"
+              class="hover:text-white/90 transition transform hover:scale-110">
               <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
                 <path
                   d="M22.46 6c-.77.35-1.6.59-2.46.69a4.26 4.26 0 001.88-2.36 8.5 8.5 0 01-2.7 1.03 4.24 4.24 0 00-7.23 3.86A12.04 12.04 0 013.9 4.78a4.24 4.24 0 001.31 5.66A4.2 4.2 0 014 10.9v.05a4.24 4.24 0 003.39 4.15c-.8.21-1.61.25-2.39.1a4.24 4.24 0 003.96 2.95A8.5 8.5 0 012 19.54 12 12 0 008.29 21.4c7.55 0 11.68-6.26 11.68-11.68 0-.18 0-.36-.01-.54A8.34 8.34 0 0024 4.56a8.19 8.19 0 01-2.36.65A4.18 4.18 0 0022.46 6z" />
               </svg>
             </a>
-            <a href="#" class="hover:text-[#00A8E8] transition-colors">
-              <!-- Facebook -->
+            <a href="#" target="_blank" rel="noopener noreferrer" aria-label="Facebook"
+              class="hover:text-white/90 transition transform hover:scale-110">
               <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
                 <path
                   d="M22.23 0H1.77C.79 0 0 .77 0 1.72v20.56C0 23.23.79 24 1.77 24h10.96v-9.33H9.69V11h2.99V8.41c0-2.96 1.8-4.57 4.44-4.57 1.26 0 2.34.09 2.66.13v3.08h-1.83c-1.44 0-1.72.68-1.72 1.68V11h3.44l-.45 3.67h-2.99V24h5.88c.98 0 1.77-.77 1.77-1.72V1.72C24 .77 23.21 0 22.23 0z" />
               </svg>
             </a>
-            <a href="#" class="hover:text-[#00A8E8] transition-colors">
-              <!-- GitHub -->
+            <a href="#" target="_blank" rel="noopener noreferrer" aria-label="GitHub"
+              class="hover:text-white/90 transition transform hover:scale-110">
               <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
                 <path
                   d="M12 2.04c-5.52 0-10 4.48-10 10 0 4.42 2.87 8.18 6.84 9.51.5.09.68-.22.68-.48v-1.69c-2.78.61-3.37-1.34-3.37-1.34-.45-1.15-1.11-1.46-1.11-1.46-.91-.62.07-.61.07-.61 1.01.07 1.54 1.04 1.54 1.04.89 1.52 2.34 1.08 2.91.83.09-.65.35-1.08.64-1.33-2.22-.25-4.55-1.11-4.55-4.95 0-1.09.39-1.99 1.03-2.69-.1-.25-.45-1.27.1-2.65 0 0 .84-.27 2.75 1.03A9.57 9.57 0 0112 6.8c.85 0 1.71.11 2.51.34 1.91-1.3 2.75-1.03 2.75-1.03.55 1.38.2 2.4.1 2.65.64.7 1.03 1.6 1.03 2.69 0 3.85-2.34 4.7-4.57 4.95.36.31.68.91.68 1.84v2.73c0 .26.18.57.69.48A10 10 0 0022 12.04c0-5.52-4.48-10-10-10z" />
@@ -317,11 +312,10 @@
           </div>
         </div>
       </div>
-      <!--Bottom Bar-->
-      <div class="border-t border-gray-200 mt-6 py-4 text-center text-sm text-gray-500">
-        © 2025 <span
-          class="font-semibold bg-gradient-to-r from-[#00A8E8] to-[#007EA7] bg-clip-text text-transparent">SkillLink</span>.
-        All rights reserved.
+
+      <!-- Bottom Bar -->
+      <div class="border-t border-white/30 mt-8 py-4 text-center text-sm text-white drop-shadow-sm">
+        © 2025 <span class="font-semibold">SkillLink</span>. All rights reserved.
       </div>
 
     </footer>
@@ -334,7 +328,16 @@ import API from '@/api';
 import { useRouter } from 'vue-router';
 import ServiceMap from '@/components/ServiceMap.vue';
 import AppNavbar from '@/components/AppNavbar.vue'
-
+import {
+  Hammer,          // Carpenter
+  Wrench,          // Plumber
+  Scissors,        // Beautician
+  Car,             // Driver on Call
+  Dumbbell,        // Fitness Trainer
+  SprayCan,           // House Cleaner
+  Laptop,          // Laptop-PC Repair
+  PartyPopper      // Event Decorator
+} from 'lucide-vue-next'
 // Reactive state
 
 const socket = ref(null);
@@ -358,14 +361,14 @@ onMounted(() => {
 onUnmounted(() => socket.value?.disconnect());
 // Services list
 const services = [
-  { title: "Carpenter", desc: "Furniture repair, wooden work", price: 299, category: "Home & Repair" },
-  { title: "Plumber", desc: "Pipe leakage, taps, water motors", price: 199, category: "Home & Repair" },
-  { title: "Beautician", desc: "Home salon, bridal makeup", price: 249, category: "Personal Services" },
-  { title: "Driver on Call", desc: "Hourly/daily drivers", price: 199, category: "Outdoor & Utility" },
-  { title: 'Fitness Trainer', desc: 'Home workout or yoga sessions', price: 199, category: "Personal Services" },
-  { title: 'House Cleaner', desc: 'Daily/weekly cleaning', price: 149, category: "Cleaning & Maintenance" },
-  { title: 'Laptop-PC Repair', desc: 'Hardware/software issues', price: 299, category: "Tech & Digital Services" },
-  { title: 'Event Decorator', desc: 'Events & party decoration', price: 399, category: "Bonus" },
+  { title: "Carpenter", desc: "Furniture repair, wooden work", price: 299, icon: Hammer, category: "Home & Repair" },
+  { title: "Plumber", desc: "Pipe leakage, taps, water motors", price: 199, icon: Wrench, category: "Home & Repair" },
+  { title: "Beautician", desc: "Home salon, bridal makeup", price: 249, icon: Scissors, category: "Personal Services" },
+  { title: "Driver on Call", desc: "Hourly/daily drivers", price: 199, icon: Car, category: "Outdoor & Utility" },
+  { title: "Fitness Trainer", desc: "Home workout or yoga sessions", price: 199, icon: Dumbbell, category: "Personal Services" },
+  { title: "House Cleaner", desc: "Daily/weekly cleaning", price: 149, icon: SprayCan, category: "Cleaning & Maintenance" },
+  { title: "Laptop-PC Repair", desc: "Hardware/software issues", price: 299, icon: Laptop, category: "Tech & Digital Services" },
+  { title: "Event Decorator", desc: "Events & party decoration", price: 399, icon: PartyPopper, category: "Bonus" },
 ]
 
 // Solved cases (static images)

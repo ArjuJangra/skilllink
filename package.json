@@ -28,6 +28,7 @@
     "leaflet": "^1.9.4",
     "leaflet-routing-machine": "^3.2.12",
     "leaflet.markercluster": "^1.5.3",
+    "lucide-vue-next": "^0.545.0",
     "multer": "^2.0.2",
     "qrcode": "^1.5.4",
     "register-service-worker": "^1.7.2",
