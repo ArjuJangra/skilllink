@@ -4,27 +4,38 @@
       <AppNavbar mode="homelogged" />
     </header>
     <!-- Hero Section -->
-    <section
-      class="relative bg-gradient-to-br from-blue-50 via-white to-blue-50 text-center overflow-hidden py-16 px-4">
-      <!-- Hero Content -->
-      <h1
-        class="text-3xl sm:text-4xl md:text-5xl font-extrabold bg-gradient-to-r from-[#3B8D99] to-[#f46675] bg-clip-text text-transparent mb-6">
-        Connecting You to Trusted Local Experts
-      </h1>
+    <section class="max-w-7xl mx-auto bg-gradient-to-r from-blue-50 via-white to-blue-50 py-12 px-4 relative overflow-hidden">
+      <!-- Decorative Circles -->
+      <div class="absolute -top-20 -left-20 w-72 h-72 rounded-full bg-blue-200 opacity-20"></div>
+      <div class="absolute -bottom-24 -right-24 w-96 h-96 rounded-full bg-blue-300 opacity-10"></div>
 
-      <p class="text-gray-600 max-w-2xl mx-auto text-base sm:text-lg mb-4">
-        Book skilled professionals like plumbers, electricians, makeup artists, and more — all in one platform.
-      </p>
+      <div class="max-w-7xl mx-auto flex flex-col-reverse md:flex-row items-center justify-between mr-8 ml-8 gap-10">
+        <!-- Left: Text & CTA -->
+        <div class="text-center md:text-left max-w-lg space-y-6">
+          <h1
+            class="text-3xl sm:text-4xl md:text-5xl mt-12 font-extrabold bg-gradient-to-r from-[#3B8D99] to-[#f46675] bg-clip-text text-transparent mb-6">
+            Connecting You to Trusted Local Experts
+          </h1>
+          <p class="text-gray-700 text-base sm:text-lg">
+            Verified experts for home repairs, lifestyle services, or any
+            task — fast, safe, and reliable.
+          </p>
+          <!-- Call to Action -->
+          <div class="flex justify-center gap-4 flex-wrap">
 
-      <!-- Call to Action -->
-      <div class="flex justify-center gap-4 flex-wrap">
+            <router-link to="/home"
+              class="inline-block mt-24 ml-28 px-12 py-3 font-semibold text-[#0073b1] rounded-lg border-2 border-[#0073b1] hover:bg-[#0073b1] hover:text-white transition">
+              Explore Services
+            </router-link>
+          </div>
 
-        <router-link to="/home"
-          class="inline-block px-6 py-3 font-semibold text-[#0073b1] rounded-lg border-2 border-[#0073b1] hover:bg-[#0073b1] hover:text-white transition">
-          Explore Services
-        </router-link>
+        </div>
+
+        <!-- Right: Illustration / Image -->
+        <div class="max-w-md w-full">
+          <img src="@/assets/hero-services.png" alt="Hero Illustration" class="w-full rounded-xl shadow-lg" />
+        </div>
       </div>
-
     </section>
     <!-- Services Section -->
     <section class="py-12 px-6 bg-gradient-to-b from-white via-blue-50/40 to-white">

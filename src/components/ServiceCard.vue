@@ -5,12 +5,13 @@
   >
     <!-- Service Image -->
     <img
-      v-if="resolvedImage"
-      :src="resolvedImage"
-      :alt="service.title + ' image'"
-      class="w-full h-40 sm:h-48 object-cover"
-      @error="handleImageError"
-    />
+  v-if="resolvedImage"
+  :src="resolvedImage"
+  :alt="service.title + ' image'"
+  class="w-full h-48 object-cover object-top rounded-t-2xl bg-gray-100"
+  @error="handleImageError"
+/>
+
     <div v-else class="w-full h-40 sm:h-48 bg-gray-200 flex items-center justify-center text-gray-400">
       No Image
     </div>
@@ -111,8 +112,6 @@ const handleImageError = (e) => {
   e.target.src = "/images/default-service.jpg";
 };
 </script>
-
-
 
 <style scoped>
 div.relative:hover img {

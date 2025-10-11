@@ -1,104 +1,118 @@
 <template>
   <div class="min-h-screen bg-[#F0F9FF]">
     <header class="bg-white shadow sticky top-0 z-50">
-      <AppNavbar :mode="'default'" :showSearch="true" :hideExtras="true" @search="searchQuery = $event" />
+      <AppNavbar
+        :mode="'default'"
+        :showSearch="true"
+        :hideExtras="true"
+        @search="searchQuery = $event"
+      />
     </header>
-
-    <!-- Hero Section -->
-    <section class="bg-gradient-to-r from-blue-50 via-white to-blue-50 py-12  px-4 relative overflow-hidden">
-      <!-- Decorative Circles / Illustration -->
-      <div class="absolute -top-20 -left-20 w-72 h-72 rounded-full bg-blue-200 opacity-20"></div>
-      <div class="absolute -bottom-24 -right-24 w-96 h-96 rounded-full bg-blue-300 opacity-10"></div>
-
-      <div class="max-w-7xl mx-auto flex flex-col-reverse md:flex-row items-center justify-between gap-10">
-
-        <!-- Left: Text & CTA -->
-        <div class="text-center md:text-left max-w-lg space-y-6">
-          <h1 class="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-gray-900 leading-tight">
-             Trusted Platform for <span class="text-blue-600">Skilled Professionals</span>
-          </h1>
-          <p class="text-gray-700 text-base sm:text-lg">
-            Find verified experts for home repairs, lifestyle services, or any task — fast, safe, and reliable.
-          </p>
-        </div>
-
-        <!-- Right: Illustration / Image -->
-        <div class="max-w-md w-full">
-          <img src="@/assets/hero-services.png" alt="Hero Illustration" class="w-full rounded-xl shadow-lg">
-        </div>
-
-      </div>
-    </section>
 
     <!-- Services Section -->
     <section class="px-4 py-10 max-w-7xl mx-auto space-y-10">
-      <!-- Section Heading -->
-<div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8 px-4">
-  <!-- Heading -->
-  <h1 class="text-3xl sm:text-4xl font-extrabold text-gray-900 text-center sm:text-left w-full sm:w-auto">
-    Our Services
-  </h1>
+      <!-- Toolbar: Search + Sort + Filter -->
+      <div
+        class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6"
+      >
+        <!-- Heading with count -->
+        <div class="text-gray-800 font-semibold text-lg flex items-center gap-2">
+          <span>Explore Services</span>
+          <span class="text-gray-400 text-sm">
+            ({{ filteredResults.length || allServicesCount }})
+          </span>
+        </div>
 
-  <!-- Sorting Dropdown -->
-  <div class="w-full sm:w-auto">
-    <select v-model="sortBy"
-      class="w-full sm:w-auto px-4 py-2 border border-gray-300 rounded-lg shadow-sm text-gray-700 text-sm focus:outline-none focus:ring-2 focus:ring-[#0073b1] focus:border-[#0073b1] hover:shadow-md transition-shadow duration-200">
-      <option value="popular">Most Popular</option>
-      <option value="newest">Newest</option>
-      <option value="priceLow">Price: Low to High</option>
-      <option value="priceHigh">Price: High to Low</option>
-    </select>
-  </div>
-</div>
+        <!-- Controls -->
+        <div class="flex items-center gap-2 w-full sm:w-auto">
 
+          <!-- Sort -->
+          <select
+            v-model="sortBy"
+            class="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#0073b1] focus:border-[#0073b1] hover:shadow-sm transition"
+          >
+            <option value="popular">Most Popular</option>
+            <option value="newest">Newest</option>
+            <option value="priceLow">Price: Low to High</option>
+            <option value="priceHigh">Price: High to Low</option>
+          </select>
 
-      <!-- Filtered Search Results -->
-      <div v-if="filteredResults.length">
-        <h2 class="text-xl font-semibold text-gray-800 mb-4">🔍 Search Results</h2>
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          <service-card v-for="(service, index) in filteredResults" :key="'filtered-' + index" :service="service"
-            class="transform hover:scale-105 transition duration-200" @book="goToBooking(service.title)"
-            @details="goToServiceDetails(service.title, service.desc, service.category)"
-            :disableBooking="disableBooking" />
+          <!-- Filter -->
+          <button
+            class="px-3 py-2 bg-[#0073b1] text-white rounded-lg flex items-center gap-1 hover:bg-[#005f8d] transition"
+          >
+            <i class="fas fa-filter"></i> Filter
+          </button>
         </div>
       </div>
 
-      <!-- Empty State -->
-      <div v-else-if="searchQuery && !filteredResults.length" class="text-center py-10">
+      <!-- Filtered Search Results -->
+      <div v-if="filteredResults.length">
+        <h2 class="text-xl font-semibold text-gray-800 mb-4">
+          🔍 Search Results
+        </h2>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          <ServiceCard
+            v-for="(service) in filteredResults"
+            :key="'filtered-' + service.title"
+            :service="service"
+            class="transform hover:scale-105 transition duration-200"
+            @book="goToBooking(service.title)"
+            @details="goToServiceDetails(service.title, service.desc, service.category)"
+            :disableBooking="disableBooking"
+          />
+        </div>
+      </div>
+
+      <!-- Empty Search -->
+      <div
+        v-else-if="searchQuery && !filteredResults.length"
+        class="text-center py-10"
+      >
         <p class="text-gray-600 text-lg">
-          No services found for "<span class="font-semibold">{{ searchQuery }}</span>"
+          No services found for
+          "<span class="font-semibold">{{ searchQuery }}</span>"
         </p>
-        <button @click="searchQuery = ''"
-          class="mt-4 px-4 py-2 bg-[#0073b1] text-white rounded-lg hover:bg-[#005f8d] transition">
+        <button
+          @click="searchQuery = ''"
+          class="mt-4 px-4 py-2 bg-[#0073b1] text-white rounded-lg hover:bg-[#005f8d] transition"
+        >
           Reset Search
         </button>
       </div>
 
-      <!-- Full List -->
+      <!-- Full Services List -->
       <div v-if="!searchQuery">
         <div class="divide-y divide-gray-200">
-          <div v-for="category in sortedServices" :key="category.title"
-            class="py-6 bg-gradient-to-r from-blue-50 via-gray-50 to-blue-50 rounded-2xl shadow-sm mb-8">
-            <!-- Category Heading -->
-            <h2 class="text-2xl font-semibold text-gray-800 flex items-center gap-3 mb-2">
+          <div
+            v-for="category in sortedServices"
+            :key="category.title"
+            class="py-6 bg-gradient-to-r from-blue-50 via-gray-50 to-blue-50 rounded-2xl shadow-sm mb-8"
+          >
+            <h2
+              class="text-2xl font-semibold text-gray-800 flex items-center gap-3 mb-2"
+            >
               <span class="relative inline-block">
                 {{ category.title }}
-                <span class="absolute left-0 -bottom-1 w-full h-[1px] bg-[#007EA7] rounded-full"></span>
+                <span
+                  class="absolute left-0 -bottom-1 w-full h-[1px] bg-[#007EA7] rounded-full"
+                ></span>
               </span>
             </h2>
-
-            <!-- Optional description -->
             <p v-if="category.desc" class="text-gray-600 text-sm mb-6">
               {{ category.desc }}
             </p>
 
-            <!-- Service Grid -->
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-              <service-card v-for="(service, index) in category.items" :key="index"
+              <ServiceCard
+                v-for="(service) in category.items"
+                :key="service.title"
                 :service="{ ...service, category: category.title }"
-                class="transform hover:scale-105 transition duration-200" @book="goToBooking(service.title)"
+                class="transform hover:scale-105 transition duration-200"
+                @book="goToBooking(service.title)"
                 @details="goToServiceDetails(service.title, service.desc, category.title)"
-                :disableBooking="disableBooking" />
+                :disableBooking="disableBooking"
+              />
             </div>
           </div>
         </div>
@@ -117,6 +131,7 @@ import AppNavbar from '@/components/AppNavbar.vue';
 
 const router = useRouter();
 const route = useRoute();
+
 const searchQuery = ref('');
 const profilePicUrl = ref('');
 const disableBooking = route.query.disableBooking === 'true';
@@ -158,13 +173,6 @@ watch(() => auth.user, (newUser) => {
   }
 }, { immediate: true, deep: true });
 
-// Navigation methods
-const goToBooking = (serviceTitle) => {
-  if (!disableBooking) router.push({ path: '/booking', query: { service: serviceTitle } });
-};
-const goToServiceDetails = (title, desc, category) => {
-  router.push({ name: 'ServiceDetails', query: { title, desc, category } });
-};
 
 // Helper function for sorting
 function sortServices(list) {
@@ -246,6 +254,11 @@ const services = [
   }
 ];
 
+// Computed: all services count
+const allServicesCount = computed(() =>
+  services.reduce((acc, cat) => acc + cat.items.length, 0)
+);
+
 // Filtered (search) results with sorting
 const filteredResults = computed(() => {
   if (!searchQuery.value.trim()) return [];
@@ -270,4 +283,12 @@ const sortedServices = computed(() => {
     };
   });
 });
+
+// Navigation methods
+const goToBooking = (serviceTitle) => {
+  if (!disableBooking) router.push({ path: '/booking', query: { service: serviceTitle } });
+};
+const goToServiceDetails = (title, desc, category) => {
+  router.push({ name: 'ServiceDetails', query: { title, desc, category } });
+};
 </script>

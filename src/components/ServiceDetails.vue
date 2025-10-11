@@ -32,7 +32,7 @@
             <div class="group relative h-[280px] sm:h-[360px] md:h-[420px] bg-gray-100">
               <!-- Image -->
               <img v-if="activeMedia && activeMedia.src" :src="activeMedia.src" :alt="title"
-                class="w-full h-full object-cover object-center" @error="handleImageError" />
+                class="w-full h-full object-cover object-top" @error="handleImageError" />
 
               <!-- gradient overlay only if image is present -->
               <div v-if="activeMedia && activeMedia.src"

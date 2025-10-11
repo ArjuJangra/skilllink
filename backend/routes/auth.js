@@ -1,17 +1,26 @@
 const express = require('express');
 const router = express.Router();
-const User = require('../models/User');
-const ServiceProvider = require('../models/ServiceProvider');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const User = require('../models/User');
+const ServiceProvider = require('../models/ServiceProvider');
 const authenticateUser = require('../middleware/authMiddleware');
+
+// Helper: normalize contact
+const normalizeContact = (contact) => {
+  if (!contact) return null;
+  contact = contact.trim();
+  return contact.includes('@') ? contact.toLowerCase() : contact; // emails lowercase, phones as-is
+};
 
 // ---------------------- SIGNUP ----------------------
 router.post('/signup', async (req, res) => {
   try {
-    const { name, email, phone, password, role, services, experience, address, latitude, longitude } = req.body;
+    const {
+      name, email, phone, password, role,
+      services, experience, address, area, latitude, longitude
+    } = req.body;
 
-    // Basic validation
     if (!name || !password || !role) {
       return res.status(400).json({ message: 'Name, password, and role are required.' });
     }
@@ -20,26 +29,26 @@ router.post('/signup', async (req, res) => {
       return res.status(400).json({ message: 'Either email or phone is required.' });
     }
 
-    const normalizedEmail = email ? email.trim().toLowerCase() : null;
-    const normalizedPhone = phone ? phone.trim() : null;
+    if (password.length < 6) {
+      return res.status(400).json({ message: 'Password must be at least 6 characters long.' });
+    }
 
-    // Build query for checking duplicates safely (ignore empty strings)
-    const queryConditions = [];
-    if (normalizedEmail) queryConditions.push({ email: normalizedEmail });
-    if (normalizedPhone) queryConditions.push({ phone: normalizedPhone });
+    const normalizedEmail = normalizeContact(email);
+    const normalizedPhone = normalizeContact(phone);
+
+    // Check duplicates in both collections
+    const query = [];
+    if (normalizedEmail) query.push({ email: normalizedEmail });
+    if (normalizedPhone) query.push({ phone: normalizedPhone });
 
     let existingUser = null;
     let existingProvider = null;
 
-    if (queryConditions.length > 0) {
-      const safeConditions = queryConditions.filter(cond => {
-        const value = Object.values(cond)[0];
-        return value !== undefined && value !== null && value !== '';
-      });
-
-      if (safeConditions.length > 0) {
-        existingUser = await User.findOne({ $or: safeConditions });
-        existingProvider = await ServiceProvider.findOne({ $or: safeConditions });
+    if (query.length > 0) {
+      const safeQuery = query.filter(q => Object.values(q)[0]);
+      if (safeQuery.length > 0) {
+        existingUser = await User.findOne({ $or: safeQuery });
+        existingProvider = await ServiceProvider.findOne({ $or: safeQuery });
       }
     }
 
@@ -47,15 +56,12 @@ router.post('/signup', async (req, res) => {
       return res.status(409).json({ message: 'Email or phone already registered.' });
     }
 
-    // Hash password
     const hashedPassword = await bcrypt.hash(password, 10);
-
     let newAccount;
 
     if (role === 'provider') {
-      // Provider-specific validation
       if (!services || !Array.isArray(services) || services.length === 0 ||
-          !experience || !address || !latitude || !longitude) {
+          !experience || !address || !latitude || !longitude || !area) {
         return res.status(400).json({ message: 'All provider fields are required.' });
       }
 
@@ -68,12 +74,12 @@ router.post('/signup', async (req, res) => {
         services,
         experience,
         address,
+        area,
         latitude,
         longitude
       });
 
     } else {
-      // Regular user
       newAccount = new User({
         name,
         email: normalizedEmail,
@@ -85,7 +91,6 @@ router.post('/signup', async (req, res) => {
 
     await newAccount.save();
 
-    // Generate JWT token
     const token = jwt.sign({ id: newAccount._id, role: newAccount.role }, process.env.JWT_SECRET, { expiresIn: '1d' });
 
     res.status(201).json({
@@ -98,12 +103,16 @@ router.post('/signup', async (req, res) => {
         role: newAccount.role,
         services: newAccount.services || [],
         experience: newAccount.experience || 0,
-        address: newAccount.address || ''
+        address: newAccount.address || '',
+        area: newAccount.area || ''
       }
     });
 
   } catch (err) {
     console.error('Signup error:', err);
+    if (err.code === 11000) {
+      return res.status(409).json({ message: 'Email or phone already registered.' });
+    }
     res.status(500).json({ message: 'Server error', error: err.message });
   }
 });
@@ -111,29 +120,23 @@ router.post('/signup', async (req, res) => {
 // ---------------------- LOGIN ----------------------
 router.post('/login', async (req, res) => {
   try {
-    const { contact, password, role } = req.body; // contact can be email or phone
+    const { contact, password, role } = req.body;
 
     if (!contact || !password || !role) {
       return res.status(400).json({ message: 'Contact (email/phone), password, and role are required.' });
     }
 
-    const normalizedContact = contact.trim().toLowerCase();
+    const normalizedContact = normalizeContact(contact);
 
     let account;
+    const query = contact.includes('@')
+      ? { email: normalizedContact }
+      : { phone: normalizedContact };
+
     if (role === 'provider') {
-      account = await ServiceProvider.findOne({
-        $or: [
-          { email: normalizedContact },
-          { phone: normalizedContact }
-        ]
-      });
+      account = await ServiceProvider.findOne(query);
     } else {
-      account = await User.findOne({
-        $or: [
-          { email: normalizedContact },
-          { phone: normalizedContact }
-        ]
-      });
+      account = await User.findOne(query);
     }
 
     if (!account) {
@@ -159,7 +162,8 @@ router.post('/login', async (req, res) => {
         services: account.services || [],
         experience: account.experience || 0,
         address: account.address || '',
-      },
+        area: account.area || ''
+      }
     });
 
   } catch (err) {
@@ -168,6 +172,7 @@ router.post('/login', async (req, res) => {
   }
 });
 
+// ---------------------- CHECK AUTH ----------------------
 router.get('/check', authenticateUser, (req, res) => {
   res.json({ user: req.user });
 });
