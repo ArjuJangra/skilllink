@@ -411,7 +411,7 @@ export default {
 
       // Pricing tiers
       tiers: [
-        { name: "Basic", price: 399, points: ["Inspection", "Minor fixes", "30-day support"] },
+        { name: "Basic", price: 499, points: ["Inspection", "Minor fixes", "30-day support"] },
         { name: "Standard", price: 699, points: ["Includes Basic", "Material support", "Priority scheduling"] },
         { name: "Premium", price: 999, points: ["Includes Standard", "Deep service", "90-day support"] },
       ],

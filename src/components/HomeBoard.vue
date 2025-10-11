@@ -263,7 +263,7 @@
         <!-- Logo & Tagline -->
         <div class="space-y-4">
           <div class="flex items-center space-x-2">
-            <img src="@/assets/skilllogo.png" alt="SkillLink Logo" class="w-10 h-10" />
+            <img src="@/assets/skilllogo.png" alt="SkillLink Logo" class="w-11 h-11 rounded-lg" />
             <span class="text-2xl font-extrabold bg-gradient-to-r from-white to-[#b7ced7] 
 bg-clip-text text-transparent">
               SkillLink

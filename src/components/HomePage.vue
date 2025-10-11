@@ -4,39 +4,60 @@
       <AppNavbar :mode="'default'" :showSearch="true" :hideExtras="true" @search="searchQuery = $event" />
     </header>
 
-    <!-- Hero -->
-    <section class="bg-gradient-to-r from-blue-50 via-gray-50 to-blue-50 py-6 sm:py-10 px-4 text-center shadow-sm">
-      <div class="max-w-3xl mx-auto">
-        <h1
-          class="text-2xl sm:text-3xl md:text-4xl font-extrabold bg-gradient-to-r from-[#3B8D99] to-[#f46675] bg-clip-text text-transparent leading-snug">
-          Your Helper, Anytime, Anywhere
-        </h1>
+    <!-- Hero Section -->
+    <section class="bg-gradient-to-r from-blue-50 via-white to-blue-50 py-12  px-4 relative overflow-hidden">
+      <!-- Decorative Circles / Illustration -->
+      <div class="absolute -top-20 -left-20 w-72 h-72 rounded-full bg-blue-200 opacity-20"></div>
+      <div class="absolute -bottom-24 -right-24 w-96 h-96 rounded-full bg-blue-300 opacity-10"></div>
+
+      <div class="max-w-7xl mx-auto flex flex-col-reverse md:flex-row items-center justify-between gap-10">
+
+        <!-- Left: Text & CTA -->
+        <div class="text-center md:text-left max-w-lg space-y-6">
+          <h1 class="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-gray-900 leading-tight">
+             Trusted Platform for <span class="text-blue-600">Skilled Professionals</span>
+          </h1>
+          <p class="text-gray-700 text-base sm:text-lg">
+            Find verified experts for home repairs, lifestyle services, or any task — fast, safe, and reliable.
+          </p>
+        </div>
+
+        <!-- Right: Illustration / Image -->
+        <div class="max-w-md w-full">
+          <img src="@/assets/hero-services.png" alt="Hero Illustration" class="w-full rounded-xl shadow-lg">
+        </div>
+
       </div>
     </section>
 
     <!-- Services Section -->
     <section class="px-4 py-10 max-w-7xl mx-auto space-y-10">
       <!-- Section Heading -->
-      <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
-        <h1 class="text-3xl font-bold text-gray-900">Our Services</h1>
+<div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8 px-4">
+  <!-- Heading -->
+  <h1 class="text-3xl sm:text-4xl font-extrabold text-gray-900 text-center sm:text-left w-full sm:w-auto">
+    Our Services
+  </h1>
 
-        <!-- Sorting -->
-        <select v-model="sortBy"
-          class="px-3 py-2 border rounded-lg text-sm text-gray-700 focus:ring-[#0073b1] focus:border-[#0073b1]">
-          <option value="popular">Most Popular</option>
-          <option value="newest">Newest</option>
-          <option value="priceLow">Price: Low to High</option>
-          <option value="priceHigh">Price: High to Low</option>
-        </select>
-      </div>
+  <!-- Sorting Dropdown -->
+  <div class="w-full sm:w-auto">
+    <select v-model="sortBy"
+      class="w-full sm:w-auto px-4 py-2 border border-gray-300 rounded-lg shadow-sm text-gray-700 text-sm focus:outline-none focus:ring-2 focus:ring-[#0073b1] focus:border-[#0073b1] hover:shadow-md transition-shadow duration-200">
+      <option value="popular">Most Popular</option>
+      <option value="newest">Newest</option>
+      <option value="priceLow">Price: Low to High</option>
+      <option value="priceHigh">Price: High to Low</option>
+    </select>
+  </div>
+</div>
+
 
       <!-- Filtered Search Results -->
       <div v-if="filteredResults.length">
         <h2 class="text-xl font-semibold text-gray-800 mb-4">🔍 Search Results</h2>
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           <service-card v-for="(service, index) in filteredResults" :key="'filtered-' + index" :service="service"
-            class="transform hover:scale-105 transition duration-200"
-            @book="goToBooking(service.title)"
+            class="transform hover:scale-105 transition duration-200" @book="goToBooking(service.title)"
             @details="goToServiceDetails(service.title, service.desc, service.category)"
             :disableBooking="disableBooking" />
         </div>
@@ -75,8 +96,7 @@
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
               <service-card v-for="(service, index) in category.items" :key="index"
                 :service="{ ...service, category: category.title }"
-                class="transform hover:scale-105 transition duration-200"
-                @book="goToBooking(service.title)"
+                class="transform hover:scale-105 transition duration-200" @book="goToBooking(service.title)"
                 @details="goToServiceDetails(service.title, service.desc, category.title)"
                 :disableBooking="disableBooking" />
             </div>
@@ -251,5 +271,3 @@ const sortedServices = computed(() => {
   });
 });
 </script>
-
-
