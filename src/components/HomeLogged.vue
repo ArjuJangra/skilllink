@@ -1,42 +1,44 @@
 <template>
-  <div class="min-h-screen bg-gray-50">
+  <div class="min-h-screen flex flex-col bg-gray-50">
     <header class="bg-white shadow sticky top-0 z-50">
       <AppNavbar mode="homelogged" />
     </header>
     <!-- Hero Section -->
-    <section class="max-w-7xl mx-auto bg-gradient-to-r from-blue-50 via-white to-blue-50 py-12 px-4 relative overflow-hidden">
+    <section
+      class="bg-gradient-to-r from-blue-50 via-white to-blue-50 py-12 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
       <!-- Decorative Circles -->
       <div class="absolute -top-20 -left-20 w-72 h-72 rounded-full bg-blue-200 opacity-20"></div>
       <div class="absolute -bottom-24 -right-24 w-96 h-96 rounded-full bg-blue-300 opacity-10"></div>
 
-      <div class="max-w-7xl mx-auto flex flex-col-reverse md:flex-row items-center justify-between mr-8 ml-8 gap-10">
+      <div class="container mx-auto flex flex-col-reverse md:flex-row items-center justify-between gap-10">
         <!-- Left: Text & CTA -->
-        <div class="text-center md:text-left max-w-lg space-y-6">
+        <div class="text-center md:text-left max-w-xl space-y-6">
           <h1
-            class="text-3xl sm:text-4xl md:text-5xl mt-12 font-extrabold bg-gradient-to-r from-[#3B8D99] to-[#f46675] bg-clip-text text-transparent mb-6">
+            class="text-3xl sm:text-4xl md:text-5xl font-extrabold bg-gradient-to-r from-[#3B8D99] to-[#f46675] bg-clip-text text-transparent leading-tight">
             Connecting You to Trusted Local Experts
           </h1>
-          <p class="text-gray-700 text-base sm:text-lg">
-            Verified experts for home repairs, lifestyle services, or any
-            task — fast, safe, and reliable.
-          </p>
-          <!-- Call to Action -->
-          <div class="flex justify-center gap-4 flex-wrap">
 
+          <p class="text-gray-700 text-base sm:text-lg max-w-md mx-auto md:mx-0">
+            Verified experts for home repairs, lifestyle services, or any task — fast, safe, and reliable.
+          </p>
+
+          <!-- Call to Action -->
+          <div class="flex justify-center md:justify-start mt-8">
             <router-link to="/home"
-              class="inline-block mt-24 ml-28 px-12 py-3 font-semibold text-[#0073b1] rounded-lg border-2 border-[#0073b1] hover:bg-[#0073b1] hover:text-white transition">
+              class="inline-block px-8 py-3 font-semibold text-[#0073b1] rounded-lg border-2 border-[#0073b1] hover:bg-[#0073b1] hover:text-white transition duration-300">
               Explore Services
             </router-link>
           </div>
-
         </div>
 
         <!-- Right: Illustration / Image -->
-        <div class="max-w-md w-full">
-          <img src="@/assets/hero-services.png" alt="Hero Illustration" class="w-full rounded-xl shadow-lg" />
+        <div class="max-w-md w-full mx-auto md:mx-0 flex justify-center md:justify-end">
+          <img src="@/assets/hero-services.png" alt="Hero Illustration"
+            class="w-full md:w-[420px] rounded-xl shadow-lg object-contain" />
         </div>
       </div>
     </section>
+
     <!-- Services Section -->
     <section class="py-12 px-6 bg-gradient-to-b from-white via-blue-50/40 to-white">
       <div class="max-w-screen-xl mx-auto text-center">

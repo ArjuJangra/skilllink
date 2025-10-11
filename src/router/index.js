@@ -17,6 +17,7 @@ import ServiceDetails from '@/components/ServiceDetails.vue';
 import AddService from '@/components/AddService.vue';
 import PrivacyPolicy from '@/components/PrivacyPolicy.vue';
 import TermsConditions from '@/components/TermsConditions.vue';
+import CareerPage from '@/components/CareerPage.vue';
 // import { auth } from '@/stores/auth';
 
 const routes = [
@@ -30,6 +31,7 @@ const routes = [
   { path: '/about', name: "About", component: AboutPage },
   { path: '/contact', component: ContactPage },
   { path: '/help', component: HelpPage },
+  { path: '/careers', component: CareerPage},
   { path: '/homelogged', component: HomeLogged, meta: { requiresAuth: true, role: 'user' } },
   {
     path: '/ServiceProvider', component: ServiceProvider, meta: { requiresAuth: true, role: 'provider' }  },

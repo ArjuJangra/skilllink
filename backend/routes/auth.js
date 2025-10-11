@@ -6,20 +6,10 @@ const User = require('../models/User');
 const ServiceProvider = require('../models/ServiceProvider');
 const authenticateUser = require('../middleware/authMiddleware');
 
-// Helper: normalize contact
-const normalizeContact = (contact) => {
-  if (!contact) return null;
-  contact = contact.trim();
-  return contact.includes('@') ? contact.toLowerCase() : contact; // emails lowercase, phones as-is
-};
-
 // ---------------------- SIGNUP ----------------------
 router.post('/signup', async (req, res) => {
   try {
-    const {
-      name, email, phone, password, role,
-      services, experience, address, area, latitude, longitude
-    } = req.body;
+    const { name, email, phone, password, role } = req.body;
 
     if (!name || !password || !role) {
       return res.status(400).json({ message: 'Name, password, and role are required.' });
@@ -29,124 +19,89 @@ router.post('/signup', async (req, res) => {
       return res.status(400).json({ message: 'Either email or phone is required.' });
     }
 
-    if (password.length < 6) {
-      return res.status(400).json({ message: 'Password must be at least 6 characters long.' });
-    }
+    // Normalize
+    const normalizedEmail = email ? email.trim().toLowerCase() : undefined;
+    const normalizedPhone = phone ? phone.trim() : undefined;
 
-    const normalizedEmail = normalizeContact(email);
-    const normalizedPhone = normalizeContact(phone);
-
-    // Check duplicates in both collections
+    // Check duplicates safely
     const query = [];
     if (normalizedEmail) query.push({ email: normalizedEmail });
     if (normalizedPhone) query.push({ phone: normalizedPhone });
 
-    let existingUser = null;
-    let existingProvider = null;
-
     if (query.length > 0) {
-      const safeQuery = query.filter(q => Object.values(q)[0]);
-      if (safeQuery.length > 0) {
-        existingUser = await User.findOne({ $or: safeQuery });
-        existingProvider = await ServiceProvider.findOne({ $or: safeQuery });
+      const existingUser = await User.findOne({ $or: query });
+      if (existingUser) {
+        return res.status(409).json({ message: 'Email or phone already registered.' });
       }
     }
 
-    if (existingUser || existingProvider) {
-      return res.status(409).json({ message: 'Email or phone already registered.' });
-    }
-
+    // Hash password
     const hashedPassword = await bcrypt.hash(password, 10);
-    let newAccount;
 
-    if (role === 'provider') {
-      if (!services || !Array.isArray(services) || services.length === 0 ||
-          !experience || !address || !latitude || !longitude || !area) {
-        return res.status(400).json({ message: 'All provider fields are required.' });
-      }
+    // Create new user
+    const newUser = new User({
+      name,
+      password: hashedPassword,
+      role,
+      email: normalizedEmail,
+      phone: normalizedPhone
+    });
 
-      newAccount = new ServiceProvider({
-        name,
-        email: normalizedEmail,
-        phone: normalizedPhone,
-        password: hashedPassword,
-        role: 'provider',
-        services,
-        experience,
-        address,
-        area,
-        latitude,
-        longitude
-      });
+    await newUser.save();
 
-    } else {
-      newAccount = new User({
-        name,
-        email: normalizedEmail,
-        phone: normalizedPhone,
-        password: hashedPassword,
-        role: 'user'
-      });
-    }
-
-    await newAccount.save();
-
-    const token = jwt.sign({ id: newAccount._id, role: newAccount.role }, process.env.JWT_SECRET, { expiresIn: '1d' });
+    // Generate token
+    const token = jwt.sign({ id: newUser._id, role: newUser.role }, process.env.JWT_SECRET, { expiresIn: '1d' });
 
     res.status(201).json({
       token,
       user: {
-        _id: newAccount._id,
-        name: newAccount.name,
-        email: newAccount.email,
-        phone: newAccount.phone,
-        role: newAccount.role,
-        services: newAccount.services || [],
-        experience: newAccount.experience || 0,
-        address: newAccount.address || '',
-        area: newAccount.area || ''
+        _id: newUser._id,
+        name: newUser.name,
+        email: newUser.email,
+        phone: newUser.phone,
+        role: newUser.role
       }
     });
 
   } catch (err) {
     console.error('Signup error:', err);
-    if (err.code === 11000) {
-      return res.status(409).json({ message: 'Email or phone already registered.' });
-    }
     res.status(500).json({ message: 'Server error', error: err.message });
   }
 });
 
+
 // ---------------------- LOGIN ----------------------
 router.post('/login', async (req, res) => {
   try {
-    const { contact, password, role } = req.body;
+    const { contact, password, role } = req.body; // contact = email or phone
 
     if (!contact || !password || !role) {
-      return res.status(400).json({ message: 'Contact (email/phone), password, and role are required.' });
+      return res.status(400).json({ message: 'Contact, password, and role are required.' });
     }
 
-    const normalizedContact = normalizeContact(contact);
+    const normalizedContact = contact.trim().toLowerCase();
 
     let account;
-    const query = contact.includes('@')
-      ? { email: normalizedContact }
-      : { phone: normalizedContact };
-
     if (role === 'provider') {
-      account = await ServiceProvider.findOne(query);
+      account = await ServiceProvider.findOne({
+        $or: [
+          { email: normalizedContact },
+          { phone: normalizedContact }
+        ]
+      });
     } else {
-      account = await User.findOne(query);
+      account = await User.findOne({
+        $or: [
+          { email: normalizedContact },
+          { phone: normalizedContact }
+        ]
+      });
     }
 
-    if (!account) {
-      return res.status(401).json({ message: 'Invalid email/phone or password' });
-    }
+    if (!account) return res.status(401).json({ message: 'Invalid email/phone or password' });
 
     const isMatch = await bcrypt.compare(password, account.password);
-    if (!isMatch) {
-      return res.status(401).json({ message: 'Invalid email/phone or password' });
-    }
+    if (!isMatch) return res.status(401).json({ message: 'Invalid email/phone or password' });
 
     const token = jwt.sign({ id: account._id, role: account.role }, process.env.JWT_SECRET, { expiresIn: '1d' });
 
@@ -158,19 +113,16 @@ router.post('/login', async (req, res) => {
         name: account.name,
         email: account.email,
         phone: account.phone,
-        role: account.role,
-        services: account.services || [],
-        experience: account.experience || 0,
-        address: account.address || '',
-        area: account.area || ''
+        role: account.role
       }
     });
 
   } catch (err) {
     console.error('Login error:', err);
-    res.status(500).json({ message: 'Login failed. Try again later', error: err.message });
+    res.status(500).json({ message: 'Server error', error: err.message });
   }
 });
+
 
 // ---------------------- CHECK AUTH ----------------------
 router.get('/check', authenticateUser, (req, res) => {

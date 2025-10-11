@@ -6,7 +6,8 @@
     </header>
 
     <section
-      class="relative bg-gradient-to-br from-blue-50 via-white to-blue-50 text-center overflow-hidden py-20 px-4">
+      class="relative bg-gradient-to-br from-gray-50 via-white to-gray-100
+ text-center overflow-hidden py-20 px-4">
       <!-- Hero Content -->
       <h1
         class="text-3xl sm:text-4xl md:text-5xl font-extrabold bg-gradient-to-r from-[#3B8D99] to-[#f46675] bg-clip-text text-transparent mb-6">

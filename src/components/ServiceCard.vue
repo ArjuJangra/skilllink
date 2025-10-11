@@ -68,7 +68,6 @@ const props = defineProps({
 const router = useRouter();
 const resolvedImage = ref("/images/default-service.jpg");
 
-// Load only the first image (e.g., plumber, plumber2, plumber3 -> pick plumber)
 const buildImage = async () => {
   if (!props.service.title) return;
 
@@ -78,16 +77,31 @@ const buildImage = async () => {
     .replace(/\s+/g, "-")
     .replace(/-+/g, "-");
 
-  const exts = ["jpg", "webp", "avif", "jpeg", "png"];
+  const exts = ["webp", "avif", "jpg", "jpeg", "png"];
 
   for (const ext of exts) {
-    const src = `/images/${slug}.${ext}`; // only the first image
+    const src = `/images/${slug}.${ext}`;
     const img = new Image();
-    img.src = src;
-    img.onload = () => { resolvedImage.value = src; };
-    img.onerror = () => {};
+
+    const isLoaded = await new Promise((resolve) => {
+      img.onload = () => resolve(true);
+      img.onerror = () => resolve(false);
+      img.src = src;
+    });
+
+    // ✅ If image is found, stop checking others
+    if (isLoaded) {
+      resolvedImage.value = src;
+      break;
+    }
+  }
+
+  // 🧩 Optional fallback (in case none found)
+  if (!resolvedImage.value) {
+    resolvedImage.value = "/images/default-placeholder.png";
   }
 };
+
 
 onMounted(buildImage);
 
