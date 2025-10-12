@@ -23,49 +23,60 @@
             <!-- Role Selection -->
             <div class="mb-6">
               <label class="block text-lg font-semibold text-gray-800 mb-2">Register as:</label>
-              <div class="flex gap-4">
+              <div class="flex flex-col sm:flex-row gap-4">
                 <!-- User Card -->
-                <div @click="form.role = 'user'"
-                  :class="form.role === 'user' ? 'border-blue-500 bg-blue-50 shadow-lg' : 'border-gray-300 bg-white'"
-                  class="flex-1 cursor-pointer border rounded-xl p-4 flex flex-col items-center justify-center hover:shadow-md transition">
-                  <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 mb-2 text-blue-500" fill="currentColor"
-                    viewBox="0 0 24 24">
-                    <path
-                      d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
-                  </svg>
-
-                  <span class="font-medium text-gray-700">User</span>
+                <div @click="form.role = 'user'" :class="form.role === 'user'
+                  ? 'border-blue-600 bg-blue-50 shadow-lg scale-105'
+                  : 'border-gray-300 bg-white hover:border-blue-300 hover:shadow-md'"
+                  class="flex-1 cursor-pointer border rounded-2xl p-3 flex flex-col items-center justify-center transition-all duration-300 ease-in-out hover:scale-105">
+                  <div class="w-14 h-14 flex items-center justify-center rounded-full mb-3"
+                    :class="form.role === 'user' ? 'bg-blue-100' : 'bg-gray-200'">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-7 h-7 text-blue-500" fill="currentColor"
+                      viewBox="0 0 24 24">
+                      <path
+                        d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
+                    </svg>
+                  </div>
+                  <span class="font-semibold text-gray-800 text-base">User</span>
                 </div>
 
                 <!-- Provider Card -->
-                <div @click="form.role = 'provider'"
-                  :class="form.role === 'provider' ? 'border-blue-500 bg-blue-50 shadow-lg' : 'border-gray-300 bg-white'"
-                  class="flex-1 cursor-pointer border rounded-xl p-4 flex flex-col items-center justify-center hover:shadow-md transition">
-                  <!-- Modern Service/Tool Icon -->
-                  <svg xmlns="http://www.w3.org/2000/svg" class="w-10 h-10 mb-2 text-green-500" fill="none"
-                    viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                      d="M9 12h6m2 0a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v3a2 2 0 002 2m0 0v5a2 2 0 002 2h4a2 2 0 002-2v-5" />
-                  </svg>
-                  <span class="font-medium text-gray-700">Service Provider</span>
+                <div @click="form.role = 'provider'" :class="form.role === 'provider'
+                  ? 'border-green-600 bg-green-50 shadow-lg scale-105'
+                  : 'border-gray-300 bg-white hover:border-green-300 hover:shadow-md'"
+                  class="flex-1 cursor-pointer border rounded-2xl p-3 flex flex-col items-center justify-center transition-all duration-300 ease-in-out hover:scale-105">
+
+                  <div class="w-16 h-16 flex items-center justify-center rounded-full mb-3"
+                    :class="form.role === 'provider' ? 'bg-green-100' : 'bg-gray-100'">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 text-green-500" fill="currentColor"
+                      viewBox="0 0 24 24">
+                      <path d="M10 2h4a2 2 0 0 1 2 2v2h4a2 2 0 0 1 2 2v12a2 
+      2 0 0 1-2 2H4a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4V4a2 
+      2 0 0 1 2-2zm4 4V4h-4v2h4zM4 8v2h16V8H4zm0 
+      4v6h16v-6H4z" />
+                    </svg>
+                  </div>
+
+                  <span class="font-semibold text-gray-800 text-base">Service Provider</span>
                 </div>
 
               </div>
+
             </div>
 
             <!-- Full Name -->
             <div>
               <label class="block text-sm font-semibold text-gray-700 mb-1">Full Name</label>
               <input v-model="form.name" type="text" placeholder="Your Name" required
-                class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0073b1] transition" />
+                class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-1 focus:ring-gray-700 transition" />
             </div>
 
-            <!-- Contact (Email or Phone) -->
+            <!-- Contact -->
             <div>
               <label class="block text-sm font-semibold text-gray-700 mb-1">Email or Phone</label>
               <div class="relative">
-                <input v-model="form.contact" type="text" placeholder="Enter email or 10-digit phone" required
-                  class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 pr-10 transition"
+                <input v-model="form.contact" type="text" placeholder="Your Email or Phone" required
+                  class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-1 focus:ring-gray-700 pr-10 transition"
                   @input="validateContact" />
                 <span v-if="form.contact" class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400">
                   <svg v-if="isEmail(form.contact)" xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-blue-500"

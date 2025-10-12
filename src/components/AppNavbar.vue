@@ -120,8 +120,8 @@
         <template v-else>
           <template v-if="showButton === 'home'">
             <router-link :to="auth?.isLoggedIn ? '/homelogged' : '/homeboard'" class="ml-auto">
-              <button class=" flex gap-1 items-center text-white px-2 py-2 rounded-lg hover:bg-[#eff9fe] transition">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="28" height="28" fill="text-gray-100">
+              <button class="flex gap-1 items-center text-white px-3 py-2 rounded-lg hover:text-[#eff9fe] transition hover:scale-105">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="28" height="28"  class="w-7 h-7 text-[#0073b1]  fill-current">
                   <path d="M12 3l8 7v10a2 2 0 0 1-2 2h-4a1 1 0 0 1-1-1v-5H11v5a1 1 0 0 1-1 1H6a2 2 0 0 1-2-2V10l8-7z" />
                 </svg>
               </button>
@@ -140,7 +140,7 @@
                     d="M5.121 17.804A7 7 0 0112 14a7 7 0 016.879 3.804M12 12a5 5 0 100-10 5 5 0 000 10z" />
                 </svg>
                 <router-link to="/login">
-                  <span class="hidden sm:inline text-xs sm:text-sm md:text-base lg:text-lg">Login / Sign Up</span>
+                  <span class="hidden sm:inline text-xs sm:text-sm md:text-base lg:text-lg">Login | Sign Up</span>
                 </router-link>
               </button>
 

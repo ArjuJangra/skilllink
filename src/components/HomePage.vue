@@ -189,58 +189,70 @@ function sortServices(list) {
 // Services data
 const services = [
   {
-    title: '🛠️ Home & Repair Services',
-    desc: 'Reliable professionals for all your home repair needs.',
-    items: [
-      { title: 'Carpenter', desc: 'Furniture repair, wooden work', price: 299 },
-      { title: 'Electrician', desc: 'Wiring, appliance fitting, fans', price: 249 },
-      { title: 'Plumber', desc: 'Pipe leakage, taps, water motors', price: 199 },
-      { title: 'Mechanic', desc: 'Bike/car repair & servicing', price: 349 },
-      { title: 'AC-Appliance Repair', desc: 'AC, fridge, washing machine repairs', price: 399 },
-      { title: 'Painter', desc: 'House painting, texture walls', price: 299 },
-      { title: 'Welder', desc: 'Metalwork, gates, frames', price: 199 }
-    ]
-  },
+  title: '🛠️ Home & Repair Services',
+  desc: 'Reliable professionals for all your home repair needs.',
+  items: [
+    { title: 'Carpenter', desc: 'Furniture repair, wooden work', price: 299 },
+    { title: 'Electrician', desc: 'Wiring, appliance fitting, fans', price: 249 },
+    { title: 'Plumber', desc: 'Pipe leakage, taps, water motors', price: 199 },
+    { title: 'Mechanic', desc: 'Bike/car repair & servicing', price: 349 },
+    { title: 'AC-Appliance Repair', desc: 'AC, fridge, washing machine repairs', price: 399 },
+    { title: 'Painter', desc: 'House painting, texture walls', price: 299 },
+    { title: 'Welder', desc: 'Metalwork, gates, frames', price: 199 },
+    { title: 'Roofer', desc: 'Roof repair, waterproofing, tiling', price: 349 },
+    { title: 'Mason', desc: 'Brickwork, plastering, construction repairs', price: 299 }
+  ]
+},
+ {
+  title: '🧼 Cleaning & Maintenance',
+  desc: 'Keep your home and office fresh, clean, and hygienic.',
+  items: [
+    { title: 'House Cleaner', desc: 'Daily/weekly cleaning', price: 149 },
+    { title: 'Sofa-Curtain Cleaner', desc: 'Deep cleaning for fabrics', price: 199 },
+    { title: 'Water Tank Cleaner', desc: 'Sanitation of overhead tanks', price: 249 },
+    { title: 'Pest Control', desc: 'Termite, cockroach, mosquito control', price: 299 },
+    { title: 'Kitchen Cleaning', desc: 'Deep cleaning of kitchen surfaces and chimneys', price: 299 },
+    { title: 'Bathroom-Tile Disinfection', desc: 'Thorough cleaning and germ removal in bathrooms', price: 249 }
+  ]
+},
   {
-    title: '🧼 Cleaning & Maintenance',
-    desc: 'Keep your home and office fresh, clean, and hygienic.',
-    items: [
-      { title: 'House Cleaner', desc: 'Daily/weekly cleaning', price: 149 },
-      { title: 'Sofa-Curtain Cleaner', desc: 'Deep cleaning for fabrics', price: 199 },
-      { title: 'Water Tank Cleaner', desc: 'Sanitation of overhead tanks', price: 249 },
-      { title: 'Pest Control', desc: 'Termite, cockroach, mosquito control', price: 299 },
-    ]
-  },
+  title: '🧑‍🌾 Outdoor & Utility',
+  desc: 'Reliable helpers for your outdoor and utility needs.',
+  items: [
+    { title: 'Gardener', desc: 'Planting, trimming, maintenance', price: 199 },
+    { title: 'Security Guard', desc: 'Residential/commercial security', price: 299 },
+    { title: 'Driver on Call', desc: 'Hourly/daily drivers', price: 199 },
+    { title: 'Cook-Chef', desc: 'Part-time or full-time cooking help', price: 249 },
+    { title: 'Pool Maintenance', desc: 'Cleaning and maintaining swimming pools', price: 299 },
+    { title: 'Car Washing & Detailing', desc: 'On-demand car cleaning and detailing services', price: 199 }
+  ]
+},
   {
-    title: '🧑‍🌾 Outdoor & Utility',
-    desc: 'Reliable helpers for your outdoor and utility needs.',
-    items: [
-      { title: 'Gardener', desc: 'Planting, trimming, maintenance', price: 199 },
-      { title: 'Security Guard', desc: 'Residential/commercial security', price: 299 },
-      { title: 'Driver on Call', desc: 'Hourly/daily drivers', price: 199 },
-      { title: 'Cook-Chef', desc: 'Part-time or full-time cooking help', price: 249 },
-    ]
-  },
-  {
-    title: '👩‍⚕️ Personal Services',
-    desc: 'Trusted personal care and lifestyle services at home.',
-    items: [
-      { title: 'Beautician', desc: 'Home salon, bridal makeup', price: 249 },
-      { title: 'Massage Therapist', desc: 'Body massage, relaxation therapy', price: 299 },
-      { title: 'Fitness Trainer', desc: 'Home workout or yoga sessions', price: 199 },
-      { title: 'Babysitter', desc: 'Child care during office hours', price: 149 },
-    ]
-  },
-  {
-    title: '💻 Tech & Digital Services',
-    desc: 'Technical experts for all your digital needs.',
-    items: [
-      { title: 'Laptop-PC Repair', desc: 'Hardware/software issues', price: 299 },
-      { title: 'CCTV Installation', desc: 'Camera setup for home/shop', price: 249 },
-      { title: 'Mobile Technician', desc: 'Screen repair, battery, etc.', price: 199 },
-      { title: 'Internet Technician', desc: 'Router, broadband, Wi-Fi setup', price: 149 },
-    ]
-  },
+  title: '👩‍⚕️ Personal Services',
+  desc: 'Trusted personal care and lifestyle services at your convenience.',
+  items: [
+    { title: 'Beautician', desc: 'Salon services, makeup, hair styling', price: 249 },
+    { title: 'Massage Therapist', desc: 'Body massage, relaxation therapy', price: 299 },
+    { title: 'Fitness Trainer', desc: 'Personal training, gym, or yoga sessions', price: 199 },
+    { title: 'Babysitter', desc: 'Reliable childcare support', price: 149 },
+    { title: 'Physiotherapist', desc: 'Injury recovery, muscle therapy, mobility improvement', price: 299 },
+    { title: 'Nutrition Consultant', desc: 'Personalized diet and nutrition guidance', price: 249 }
+  ]
+},
+{
+  title: '💻 Tech & Digital Services',
+  desc: 'Technical experts for all your big digital tasks and installations.',
+  items: [
+    { title: 'Laptop-PC Repair', desc: 'Hardware/software issues', price: 299 },
+    { title: 'CCTV Installation', desc: 'Full security camera setup for home or office', price: 499 },
+    { title: 'Mobile Technician', desc: 'Advanced repairs and diagnostics', price: 399 },
+    { title: 'Network & LAN Setup', desc: 'Complete wired/wireless network for home or office', price: 499 },
+    { title: 'Server Installation & Maintenance', desc: 'Setup and maintain servers for offices', price: 999 },
+    { title: 'Home Automation Setup', desc: 'Smart home systems: lighting, security, appliances', price: 799 },
+    { title: 'Audio-Visual System Installation', desc: 'Projectors, home theatre, conference room setup', price: 699 },
+  ]
+}
+,
   {
     title: '📦 Bonus Services',
     desc: 'Extra services to make your life easier.',
