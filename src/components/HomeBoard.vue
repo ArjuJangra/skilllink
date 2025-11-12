@@ -1,13 +1,11 @@
 <template>
-  <div class="min-h-screen bg-gray-50">
+  <div class="relative min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-100">
     <!-- Header -->
     <header class="bg-white shadow sticky top-0 z-50">
       <AppNavbar />
     </header>
 
-    <section
-      class="relative bg-gradient-to-br from-gray-50 via-white to-gray-100
- text-center overflow-hidden py-20 px-4">
+    <section class="relative text-center overflow-hidden py-20 px-4">
       <!-- Hero Content -->
       <h1
         class="text-3xl sm:text-4xl md:text-5xl font-extrabold bg-gradient-to-r from-[#3B8D99] to-[#f46675] bg-clip-text text-transparent mb-6">
@@ -33,7 +31,7 @@
     </section>
 
     <!-- Services Section -->
-    <section class="py-12 px-6 bg-gradient-to-b from-white via-blue-50/40 to-white">
+    <section class="py-12 px-6 ">
       <div class="max-w-screen-xl mx-auto text-center">
         <h3 class="text-3xl sm:text-4xl font-bold text-gray-800 mb-12">
           Our Professional Services
@@ -58,7 +56,7 @@
     </section>
 
     <!-- Solved Cases Section -->
-    <section class="py-12 bg-blue-50 px-4">
+    <section class="py-12 px-4">
       <div class="max-w-screen-xl mx-auto">
         <h3 class="text-2xl sm:text-3xl font-bold text-center text-gray-800 mb-6">Real Stories, Real Impact</h3>
         <p class="text-gray-600 max-w-3xl mx-auto mb-12 text-base sm:text-lg">
@@ -95,7 +93,7 @@
 
         </div>
         <!-- Counters Section (Add above Contact Section) -->
-        <section class="py-12 bg-gradient-to-br from-blue-50 to-white text-center">
+        <section class="py-12  text-center">
           <div class="max-w-5xl mx-auto grid grid-cols-1 sm:grid-cols-3 gap-8">
             <div class="bg-white rounded-xl shadow-lg p-6 hover:shadow-xl transition transform hover:-translate-y-1">
               <h4 class="text-4xl font-bold text-[#0073b1] mb-2">50+</h4>
@@ -115,7 +113,7 @@
     </section>
 
     <!-- About Section-->
-    <section class="relative py-12 px-4 bg-gradient-to-br from-[#F0F9FF] via-white to-[#E6F4F9] overflow-hidden">
+    <section class="relative py-12 px-4  overflow-hidden">
       <div class="absolute inset-0 z-0 pointer-events-none">
         <svg class="absolute top-0 left-0 opacity-10 w-[600px]" viewBox="0 0 600 600" fill="none">
           <circle cx="300" cy="300" r="300" fill="#0073b1" />
@@ -203,7 +201,7 @@
     </section>
 
     <!--Contact-->
-    <section class="bg-gray-50 py-12 px-6">
+    <section class=" py-12 px-6">
       <div class="max-w-4xl mx-auto text-center" data-aos="fade-up">
         <!-- Title -->
         <h3 class="text-3xl font-bold text-gray-800 mb-4">Contact Us</h3>

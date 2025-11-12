@@ -1,68 +1,55 @@
 <template>
   <div class="min-h-screen bg-gradient-to-b from-[#EAF6FF] to-white">
-
     <div class="sticky top-0 z-30 h-1 w-full bg-gradient-to-r from-[#00B4D8] via-[#48CAE4] to-[#0096C7]"></div>
 
     <div class="max-w-6xl mx-auto px-4 sm:px-6 py-6 lg:py-10">
-      <!-- Header -->
+      <!-- Header / Breadcrumb -->
       <div class="text-sm text-gray-500 mb-4 flex items-center gap-2 flex-wrap">
-        <!-- Home link -->
         <router-link to="/home"
           class="hover:text-[#007EA7] transition-colors duration-200 font-medium flex items-center gap-1">
           <i class="fas fa-home text-xs"></i> Home
         </router-link>
-        <!-- Separator -->
         <span class="text-gray-400">/</span>
-        <!-- Category  -->
         <span class="capitalize font-medium text-gray-500">
           {{ category || 'Service' }}
         </span>
         <span class="text-gray-400">/</span>
-        <!-- Current service -->
         <span class="text-gray-700 font-semibold line-clamp-1" :title="title || 'Detail'">
           {{ title || 'Detail' }}
         </span>
       </div>
 
       <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <!-- LEFT: Gallery + Overview -->
+        <!-- LEFT: Gallery + Overview + tiers + addons + reviews etc -->
         <div class="lg:col-span-2 space-y-6">
-          <!-- HERO: Image Carousel -->
+          <!-- Image / Carousel -->
           <div class="relative rounded-3xl overflow-hidden shadow-[0_8px_30px_rgba(0,0,0,0.12)]">
             <div class="group relative h-[280px] sm:h-[360px] md:h-[420px] bg-gray-100">
-              <!-- Image -->
               <img v-if="activeMedia && activeMedia.src" :src="activeMedia.src" :alt="title"
                 class="w-full h-full object-cover object-top" @error="handleImageError" />
-
-              <!-- gradient overlay only if image is present -->
               <div v-if="activeMedia && activeMedia.src"
                 class="absolute inset-0 bg-gradient-to-t from-black/40 via-black/10 to-transparent"></div>
 
-              <!-- badges -->
               <div class="absolute top-4 left-4 flex items-center gap-2">
                 <span class="badge">Top Rated</span>
                 <span class="badge bg-amber-500/90">Bestseller</span>
               </div>
 
-              <!-- left/right controls -->
               <button @click="prevMedia" class="carousel-btn left-3" aria-label="Previous">‹</button>
               <button @click="nextMedia" class="carousel-btn right-3" aria-label="Next">›</button>
 
-              <!-- dots -->
               <div class="absolute bottom-3 w-full flex justify-center gap-1.5">
                 <button v-for="(m, i) in media" :key="m.key" @click="currentIndex = i"
                   class="h-1.5 rounded-full transition-all"
                   :class="currentIndex === i ? 'w-8 bg-white' : 'w-3 bg-white/60 hover:bg-white/80'"></button>
               </div>
 
-              <!-- title overlay -->
               <h1 v-if="activeMedia && activeMedia.src"
                 class="absolute bottom-5 left-5 text-white text-2xl sm:text-3xl md:text-4xl font-extrabold drop-shadow">
                 {{ title }}
               </h1>
             </div>
 
-            <!-- thumbs -->
             <div class="grid grid-cols-5 gap-2 p-3 bg-white">
               <button v-for="(m, i) in media" :key="m.key + '-thumb'" @click="currentIndex = i"
                 class="relative rounded-xl overflow-hidden border transition hover:scale-[1.01]"
@@ -72,37 +59,81 @@
             </div>
           </div>
 
-          <!-- Overview -->
-          <div class="bg-white rounded-2xl shadow p-6">
-            <h2 class="text-xl font-bold text-gray-900 mb-2">Overview</h2>
-            <p class="text-gray-700 leading-relaxed">
-              {{ desc }}
-            </p>
+ <!-- Overview Section -->
+  <div class="bg-white rounded-2xl shadow p-6">
+    <h2 class="text-xl font-bold text-gray-900 mb-2">Overview</h2>
+    <p class="text-gray-700 leading-relaxed mb-4">{{ desc }}</p>
 
-            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-6">
-              <div class="card-soft">
-                <div class="card-title">Estimated Time</div>
-                <div class="card-text">60–100 minutes</div>
-              </div>
-              <div class="card-soft">
-                <div class="card-title">Typical Cost</div>
-                <div class="card-text">₹300 – ₹1000</div>
-              </div>
-              <div class="card-soft">
-                <div class="card-title">Included</div>
-                <div class="card-text">Visit, Inspection, Basic Service</div>
-              </div>
-            </div>
+    <!-- 🔽 Sub-Services Section -->
+    <div v-if="subServices.length" class="mt-4">
+      <h3 class="text-lg font-semibold text-gray-800 mb-3">Available Sub-Services</h3>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+        <button
+          v-for="(item, idx) in subServices"
+          :key="idx"
+          @click="selectSubService(item)"
+          class="p-4 rounded-xl border text-left transition hover:shadow-md"
+          :class="selectedSubService?.id === item.id
+            ? 'border-[#00B4D8] bg-[#E0F7FF]'
+            : 'border-gray-200 bg-white'"
+        >
+          <div class="font-semibold text-gray-800">{{ item.name }}</div>
+          <p class="text-xs text-gray-600 mt-1 line-clamp-2">
+            {{ item.description }}
+          </p>
+          <div class="mt-2 text-[#00B4D8] font-medium text-sm">
+            Starting ₹{{ item.tiers[0]?.price || item.price }}
           </div>
+        </button>
+      </div>
 
-          <!-- Package tiers -->
+      <!-- ✅ Selected Sub-Service Summary -->
+      <div
+        v-if="selectedSubService"
+        class="mt-4 bg-[#E0F7FF] border border-[#00B4D8] text-gray-800 rounded-xl p-4"
+      >
+        <div class="font-semibold text-lg">
+          Selected: {{ selectedSubService.name }}
+        </div>
+        <p class="text-sm text-gray-600 mt-1">
+          {{ selectedSubService.description }}
+        </p>
+        <div class="text-[#00B4D8] font-medium mt-1">
+          Starting ₹{{ selectedSubService.tiers[0]?.price || selectedSubService.price }}
+        </div>
+      </div>
+    </div>
+
+    <div v-else class="text-gray-400 text-sm text-center py-3">
+      No sub-services available for {{ category }}
+    </div>
+
+    <!-- Rest of Overview -->
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-6">
+      <div class="card-soft">
+        <div class="card-title">Estimated Time</div>
+        <div class="card-text">60–100 minutes</div>
+      </div>
+      <div class="card-soft">
+        <div class="card-title">Typical Cost</div>
+        <div class="card-text">₹300 – ₹1000</div>
+      </div>
+      <div class="card-soft">
+        <div class="card-title">Included</div>
+        <div class="card-text">Visit, Inspection, Basic Service</div>
+      </div>
+    </div>
+  </div>
+
+          <!-- Package / Tier Selection -->
           <div class="bg-white rounded-2xl shadow p-6">
             <div class="flex items-center justify-between mb-4">
               <h2 class="text-xl font-bold text-gray-900">Packages</h2>
               <span class="text-xs text-gray-500">Tap to select</span>
             </div>
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <button v-for="tier in tiers" :key="tier.name" @click="selectedTier = tier"
+              <button v-for="tier in tiers" :key="tier.name" @click="selectTier(tier)"
                 class="tier p-5 rounded-xl border transition-transform duration-200 hover:scale-105 focus:outline-none"
                 :class="selectedTier.name === tier.name
                   ? 'ring-2 ring-[#00B4D8] bg-[#E0F7FF] shadow-lg'
@@ -123,7 +154,7 @@
               </button>
             </div>
 
-            <!-- Addons & quantity -->
+            <!-- Addons & Quantity -->
             <div class="mt-6 grid grid-cols-1 md:grid-cols-2 gap-4">
               <div class="p-4 rounded-xl bg-gray-50 space-y-2">
                 <div class="font-semibold text-gray-800 mb-2">Add-ons</div>
@@ -159,143 +190,109 @@
                     {{ couponMessage }}
                   </p>
                 </div>
-
               </div>
             </div>
           </div>
 
-          <!-- Availability -->
+          <!-- Availability / Slot Selection -->
           <div class="bg-white rounded-2xl shadow p-6">
             <h2 class="text-xl font-bold text-gray-900 mb-4">Availability</h2>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <label class="block text-sm text-gray-600 mb-1">Select Date</label>
-                <input type="date" class="input w-full" :min="today" :max="maxDate" v-model="selectedDate"
-                  placeholder="Select a date" />
+                <input type="date" class="input w-full" :min="today" :max="maxDate" v-model="selectedDate" />
               </div>
 
               <div>
                 <label class="block text-sm text-gray-600 mb-1">Select Time</label>
-                <select class="input w-full" v-model="selectedTime" :disabled="!selectedDate">
+                <select class="input w-full" v-model="selectedTime" :disabled="!selectedDate" @change="calculateSurge">
                   <option disabled value="">Choose a slot</option>
                   <option v-for="slot in timeSlots" :key="slot" :value="slot" :disabled="isSlotBooked(slot)"
                     :class="isSlotBooked(slot) ? 'text-gray-400 line-through' : ''">
                     {{ slot }}
                   </option>
-
                 </select>
               </div>
             </div>
-            <!-- Selected slot summary -->
             <p v-if="selectedDate && selectedTime" class="text-sm text-gray-700 mt-2">
-              You selected: <strong>{{ selectedDate }}</strong> at
-              <strong>{{ selectedTime }}</strong>
+              You selected: <strong>{{ selectedDate }}</strong> at <strong>{{ selectedTime }}</strong>
             </p>
-
             <p class="text-xs text-gray-500 mt-2">* Real-time slots can be fetched from your API later.</p>
           </div>
 
+          <!-- Reviews & Ratings -->
           <div class="bg-white rounded-2xl shadow p-6">
             <h2 class="text-xl font-bold text-gray-900 mb-4">Customer Reviews</h2>
 
-           <section class="reviews mt-8">
-    <!-- Average Rating -->
-    <div class="flex items-center gap-2 mb-4">
-      <div class="text-2xl font-extrabold text-amber-500">{{ rating.toFixed(1) }} ★</div>
-      <div class="text-xs text-gray-500">Based on {{ reviews.length }} reviews</div>
-    </div>
+            <section class="reviews mt-8">
+              <div class="flex items-center gap-2 mb-4">
+                <div class="text-2xl font-extrabold text-amber-500">{{ rating.toFixed(1) }} ★</div>
+                <div class="text-xs text-gray-500">Based on {{ reviews.length }} reviews</div>
+              </div>
 
-    <!-- New Review Form -->
-    <div class="mb-6 p-4 bg-gray-50 rounded-xl space-y-3">
-      <div class="flex items-center gap-2">
-        <input v-model="newReview.user" placeholder="Your Name" class="input w-full" />
-        <input type="file" @change="onFileChange" />
-      </div>
-      <div class="flex items-center gap-1">
-        <span
-          v-for="n in 5"
-          :key="n"
-          @click="setStarRating(n)"
-          class="cursor-pointer text-amber-400 text-xl"
-        >
-          {{ n <= newReview.stars ? '★' : '☆' }}
-        </span>
-      </div>
-      <textarea
-        v-model="newReview.text"
-        placeholder="Write your review..."
-        class="input w-full"
-      ></textarea>
-      <button
-        @click="submitReview"
-        :disabled="!newReview.user || !newReview.stars || !newReview.text"
-        class="btn-primary w-80 disabled:opacity-50"
-      >
-        Submit Review
-      </button>
-    </div>
+              <div class="mb-6 p-4 bg-gray-50 rounded-xl space-y-3">
+                <div class="flex items-center gap-2">
+                  <input v-model="newReview.user" placeholder="Your Name" class="input w-full" />
+                  <input type="file" @change="onFileChange" />
+                </div>
+                <div class="flex items-center gap-1">
+                  <span v-for="n in 5" :key="n" @click="setStarRating(n)" class="cursor-pointer text-amber-400 text-xl">
+                    {{ n <= newReview.stars ? '★' : '☆' }} </span>
+                </div>
+                <textarea v-model="newReview.text" placeholder="Write your review..." class="input w-full"></textarea>
+                <button @click="submitReview" :disabled="!newReview.user || !newReview.stars || !newReview.text"
+                  class="btn-primary w-80 disabled:opacity-50">
+                  Submit Review
+                </button>
+              </div>
 
-    <!-- Rating Bars & Pros -->
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-      <!-- Rating Bars -->
-      <div class="space-y-2">
-        <div v-for="star in [5,4,3,2,1]" :key="star" class="flex items-center gap-3">
-          <div class="w-12 text-sm text-gray-600">{{ star }}★</div>
-          <div class="flex-1 h-2 bg-gray-100 rounded-full overflow-hidden">
-            <div class="h-2 bg-amber-400 duration-500" :style="{ width: ratingBarWidth(star) + '%' }"></div>
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                <div class="space-y-2">
+                  <div v-for="star in [5, 4, 3, 2, 1]" :key="star" class="flex items-center gap-3">
+                    <div class="w-12 text-sm text-gray-600">{{ star }}★</div>
+                    <div class="flex-1 h-2 bg-gray-100 rounded-full overflow-hidden">
+                      <div class="h-2 bg-amber-400 duration-500" :style="{ width: ratingBarWidth(star) + '%' }"></div>
+                    </div>
+                    <div class="w-10 text-right text-xs text-gray-500">{{ ratingCounts[star] || 0 }}</div>
+                  </div>
+                </div>
+                <div class="p-4 rounded-xl bg-gray-50">
+                  <div class="font-semibold text-gray-800 mb-2">What people like</div>
+                  <ul class="text-sm text-gray-700 space-y-1">
+                    <li v-for="pro in reviewPros" :key="pro">• {{ pro }}</li>
+                  </ul>
+                </div>
+              </div>
+
+              <div v-if="reviews.length">
+                <div v-for="r in filteredReviews" :key="r.id"
+                  class="flex items-start gap-4 p-4 border-b border-gray-200">
+                  <img :src="r.userAvatar || defaultAvatar" alt="User Avatar"
+                    class="w-12 h-12 rounded-full object-cover" @error="handleImageError" />
+                  <div class="flex-1">
+                    <div class="flex items-center justify-between">
+                      <h3 class="font-medium">{{ r.user }}</h3>
+                      <span class="text-sm text-gray-500">{{ r.date }}</span>
+                    </div>
+                    <div class="flex items-center mt-1 text-yellow-500">
+                      <span v-for="s in 5" :key="s">
+                        <i :class="s <= r.stars ? 'fas fa-star' : 'far fa-star'"></i>
+                      </span>
+                    </div>
+                    <p class="mt-2 text-gray-700">{{ r.text }}</p>
+                  </div>
+                </div>
+                <div v-if="showAllReviewsBtn" class="text-center mt-2">
+                  <button @click="showAllReviews = true" class="text-blue-500 hover:underline">
+                    Show all reviews
+                  </button>
+                </div>
+              </div>
+              <div v-else class="text-gray-500 italic">No reviews yet. Be the first to add one!</div>
+            </section>
           </div>
-          <div class="w-10 text-right text-xs text-gray-500">{{ ratingCounts[star] || 0 }}</div>
-        </div>
-      </div>
 
-      <!-- Pros Section -->
-      <div class="p-4 rounded-xl bg-gray-50">
-        <div class="font-semibold text-gray-800 mb-2">What people like</div>
-        <ul class="text-sm text-gray-700 space-y-1">
-          <li v-for="pro in reviewPros" :key="pro">• {{ pro }}</li>
-        </ul>
-      </div>
-    </div>
-
-    <!-- Review List -->
-    <div v-if="reviews.length">
-      <div
-        v-for="r in filteredReviews"
-        :key="r.id"
-        class="flex items-start gap-4 p-4 border-b border-gray-200"
-      >
-        <img
-          :src="r.userAvatar || defaultAvatar"
-          alt="User Avatar"
-          class="w-12 h-12 rounded-full object-cover"
-          @error="handleImageError"
-        />
-        <div class="flex-1">
-          <div class="flex items-center justify-between">
-            <h3 class="font-medium">{{ r.user }}</h3>
-            <span class="text-sm text-gray-500">{{ r.date }}</span>
-          </div>
-          <div class="flex items-center mt-1 text-yellow-500">
-            <span v-for="s in 5" :key="s">
-              <i :class="s <= r.stars ? 'fas fa-star' : 'far fa-star'"></i>
-            </span>
-          </div>
-          <p class="mt-2 text-gray-700">{{ r.text }}</p>
-        </div>
-      </div>
-
-      <!-- Show All Reviews Button -->
-      <div v-if="showAllReviewsBtn" class="text-center mt-2">
-        <button @click="showAllReviews = true" class="text-blue-500 hover:underline">
-          Show all reviews
-        </button>
-      </div>
-    </div>
-
-    <div v-else class="text-gray-500 italic">No reviews yet. Be the first to add one!</div>
-  </section>
-          </div>
-          <!-- Related services -->
+          <!-- Related Services -->
           <div class="bg-white rounded-2xl shadow p-6">
             <h2 class="text-xl font-bold text-gray-900 mb-4">You might also like</h2>
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -314,7 +311,7 @@
           <div class="h-20"></div>
         </div>
 
-        <!-- RIGHT: Booking summary card -->
+        <!-- RIGHT: Booking summary / cost -->
         <div class="lg:col-span-1">
           <div class="sticky top-4">
             <div class="bg-white rounded-2xl shadow p-6">
@@ -326,9 +323,7 @@
               <div class="mt-4 space-y-2 text-sm text-gray-700">
                 <div class="flex justify-between">
                   <span>Tier</span>
-                  <span class="font-medium">
-                    {{ selectedTier.name || "Not selected" }}
-                  </span>
+                  <span class="font-medium">{{ selectedTier.name || "Not selected" }}</span>
                 </div>
                 <div class="flex justify-between">
                   <span>Quantity</span>
@@ -376,18 +371,19 @@
             </div>
           </div>
         </div>
-
       </div>
     </div>
 
-    <!-- Sticky bottom CTA (mobile) -->
+    <!-- Sticky bottom CTA on mobile -->
     <div class="lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur border-t">
       <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
         <div>
           <div class="text-xs text-gray-500">Total</div>
           <div class="text-lg font-bold">₹{{ total }}</div>
         </div>
-        <button class="btn-primary" :disabled="!canBook" @click="goToBooking">Proceed to Booking</button>
+        <button class="btn-primary" :disabled="!canBook" @click="goToBooking">
+          Proceed to Booking
+        </button>
       </div>
     </div>
   </div>
@@ -395,6 +391,7 @@
 
 <script>
 export default {
+  
   name: "ServiceDetail",
 
   props: {
@@ -409,13 +406,135 @@ export default {
       media: [],
       currentIndex: 0,
 
-      // Pricing tiers
+      // Pricing tiers (preserved)
       tiers: [
         { name: "Basic", price: 399, points: ["Inspection", "Minor fixes", "30-day support"] },
         { name: "Standard", price: 699, points: ["Includes Basic", "Material support", "Priority scheduling"] },
         { name: "Premium", price: 999, points: ["Includes Standard", "Deep service", "90-day support"] },
       ],
+       subServices: [
+        {
+          id: 1,
+          category: "Carpenter",
+          name: "Door Installation",
+          description: "Install a single wooden door (labor only)",
+          price: 299,
+          tiers: [
+            { name: "Basic", price: 299 },
+            { name: "Premium", price: 499 },
+          ],
+        },
+        {
+          id: 2,
+          category: "Carpenter",
+          name: "Bed Repair",
+          description: "Fix broken joints or tighten loose slats.",
+          price: 249,
+          tiers: [
+            { name: "Basic", price: 249 },
+            { name: "Premium", price: 449 },
+          ],
+        },
+        {
+          id: 3,
+          category: "Carpenter",
+          name: "Cupboard Hinge Fixing",
+          description: "Adjust or replace cabinet hinges for smooth movement.",
+          price: 199,
+          tiers: [
+            { name: "Basic", price: 199 },
+            { name: "Premium", price: 399 },
+          ],
+        },
+      ],
+
       selectedTier: { name: "", price: 0, points: [] },
+      pricingCatalog: {
+        "Carpenter": {
+          tiers: [
+            { name: "Basic", price: 249, details: ["1-hour visit", "Minor furniture fix"] },
+            { name: "Standard", price: 499, details: ["Up to 3-hour service", "Includes tools & materials"] },
+            { name: "Premium", price: 799, details: ["Full-day carpenter", "Custom furniture repair"] }
+          ],
+          addons: [
+            { key: "material", label: "Material cost (per use)", price: 99 },
+            { key: "urgent", label: "Same-day booking", price: 149 }
+          ]
+        },
+
+        "Electrician": {
+          tiers: [
+            { name: "Inspection", price: 149, details: ["1-hour visit", "Basic check-up & estimate"] },
+            { name: "Repair", price: 299, details: ["Switch, fan, light, socket repairs"] },
+            { name: "Full Setup", price: 599, details: ["New wiring, inverter, heavy appliances"] }
+          ],
+          addons: [
+            { key: "material", label: "Extra materials", price: 99 },
+            { key: "urgent", label: "Emergency call (within 2hr)", price: 199 }
+          ]
+        },
+
+        "Plumber": {
+          tiers: [
+            { name: "Basic", price: 199, details: ["Minor leak, tap fix"] },
+            { name: "Standard", price: 349, details: ["Fittings, pipe replacement"] },
+            { name: "Premium", price: 599, details: ["Bathroom repair, water tank, motor fix"] }
+          ],
+          addons: [
+            { key: "material", label: "Material charges", price: 149 },
+            { key: "urgent", label: "Express plumber", price: 199 }
+          ]
+        },
+
+        "AC-Appliance Repair": {
+          tiers: [
+            { name: "Inspection", price: 199, details: ["Basic inspection & diagnosis"] },
+            { name: "Service", price: 399, details: ["General service & filter cleaning"] },
+            { name: "Repair", price: 799, details: ["Gas refill / part replacement"] }
+          ],
+          addons: [
+            { key: "gas", label: "Gas refill", price: 499 },
+            { key: "urgent", label: "Same-day repair", price: 249 }
+          ]
+        },
+
+        "House Cleaner": {
+          tiers: [
+            { name: "Basic Clean", price: 199, details: ["1BHK - broom, mop, dusting"] },
+            { name: "Deep Clean", price: 399, details: ["Includes bathroom & kitchen cleaning"] },
+            { name: "Premium Clean", price: 699, details: ["Full home sanitation + sofa cleaning"] }
+          ],
+          addons: [
+            { key: "disinfection", label: "Add disinfection", price: 199 },
+            { key: "kitchen", label: "Add kitchen deep clean", price: 299 }
+          ]
+        },
+
+        "Beautician": {
+          tiers: [
+            { name: "Basic", price: 249, details: ["Facial / Threading / Hair trim"] },
+            { name: "Salon Combo", price: 499, details: ["Facial + Manicure + Pedicure"] },
+            { name: "Bridal Package", price: 1499, details: ["Bridal makeup & full-body spa"] }
+          ],
+          addons: [
+            { key: "homevisit", label: "Home visit convenience", price: 99 },
+            { key: "premiumproducts", label: "Premium brand products", price: 199 }
+          ]
+        },
+
+        "CCTV Installation": {
+          tiers: [
+            { name: "2-Camera Setup", price: 499, details: ["Includes mounting & wiring"] },
+            { name: "4-Camera Setup", price: 899, details: ["CCTV + DVR configuration"] },
+            { name: "Advanced Setup", price: 1299, details: ["Full home/office coverage"] }
+          ],
+          addons: [
+            { key: "extraCable", label: "Extra cable (per 10m)", price: 99 },
+            { key: "support", label: "1-month support", price: 199 }
+          ]
+        }
+      },
+
       addons: [
         { key: "fast", label: "Fast service (same-day)", price: 99, selected: false },
         { key: "eco", label: "Eco-friendly materials", price: 49, selected: false },
@@ -426,16 +545,16 @@ export default {
       couponValid: false,
       couponMessage: "",
 
-      // Availability
+      // Availability / slots
       selectedDate: "",
       selectedTime: "",
       timeSlots: ["09:00 AM", "10:30 AM", "12:00 PM", "01:00 PM", "03:00 PM", "04:00 PM"],
       bookedSlots: {
         "2025-08-24": ["09:00 AM", "01:00 PM"],
-        "2025-08-25": ["12:00 PM"]
+        "2025-08-25": ["12:00 PM"],
       },
 
-      // Reviews
+      // Reviews / ratings
       reviews: [
         { id: 1, user: "Ankita Sharma", userAvatar: "/images/u1.jpg", stars: 5, text: "Professional and quick. Fixed my issue in one visit.", date: "Jun 2025" },
         { id: 2, user: "Sneha Kulkarni", userAvatar: "/images/u2.jpg", stars: 4, text: "On time and polite. Good value.", date: "May 2025" },
@@ -453,6 +572,31 @@ export default {
       reviewSuccess: false,
       showAllReviews: false,
       related: [],
+
+      // === NEW / ADDED FIELDS & enhancements ===
+
+      // Membership / subscription discount logic
+      isMember: false,
+      membershipDiscountPct: 10,  // 10% discount for members
+      membershipMaxDiscount: 300,  // cap of ₹300 discount
+
+      // Distance / travel fee
+      travelDistanceKm: 0,  // to be computed from user/provider location
+      travelFeePerKm: 20,   // e.g. ₹20 per km
+      travelFee: 0,
+
+      // Surge / peak time multiplier
+      surgeMultiplier: 1.0,
+
+      // Provider / partner info
+      provider: {
+        id: null,
+        name: "",
+        rating: 0,
+        experienceYears: 0,
+        verified: false,
+        baseCity: "",
+      },
     };
   },
 
@@ -460,7 +604,7 @@ export default {
     today() {
       const now = new Date();
       const year = now.getFullYear();
-      const month = String(now.getMonth() + 1).padStart(2, '0'); // months are 0-indexed
+      const month = String(now.getMonth() + 1).padStart(2, '0');
       const day = String(now.getDate()).padStart(2, '0');
       return `${year}-${month}-${day}`;
     },
@@ -478,12 +622,29 @@ export default {
     selectedAddons() {
       return this.addons.filter(a => a.selected);
     },
+    // Enhanced subtotal with travel fee & surge
     subtotal() {
       if (!this.selectedTier.name) return 0;
-      return (this.selectedTier.price + this.selectedAddons.reduce((s, a) => s + a.price, 0)) * this.qty;
+      let base = this.selectedTier.price + this.selectedAddons.reduce((s, a) => s + a.price, 0);
+      base += this.travelFee;
+      base = Math.round(base * this.surgeMultiplier);
+      return base * this.qty;
     },
     discountAmount() {
-      return this.couponValid ? Math.round(this.subtotal * 0.1) : 0;
+      let disc = 0;
+      if (this.couponValid) {
+        disc += Math.round(this.subtotal * 0.1);  // 10% from coupon
+      }
+      if (this.isMember) {
+        const servicePart =
+          (this.selectedTier.price + this.selectedAddons.reduce((s, a) => s + a.price, 0)) * this.qty;
+        let memberDisc = Math.round(servicePart * (this.membershipDiscountPct / 100));
+        if (memberDisc > this.membershipMaxDiscount) {
+          memberDisc = this.membershipMaxDiscount;
+        }
+        disc += memberDisc;
+      }
+      return Math.min(disc, this.subtotal);
     },
     total() {
       return Math.max(0, this.subtotal - this.discountAmount);
@@ -507,7 +668,7 @@ export default {
     },
     showAllReviewsBtn() {
       return !this.showAllReviews && this.reviews.length > 5;
-    }
+    },
   },
 
   methods: {
@@ -528,6 +689,7 @@ export default {
     },
     selectTier(t) {
       this.selectedTier = t;
+      this.updateTravelFee();
     },
     applyCoupon() {
       if (!this.couponCode) {
@@ -561,7 +723,6 @@ export default {
         qty: this.qty,
         addons: this.selectedAddons.map(a => a.key).join(","),
         coupon: this.couponValid ? this.couponCode : "",
-        
       });
       this.$router.push(`/booking?${q}`);
     },
@@ -618,18 +779,36 @@ export default {
 
       this.newReview.date = `${month} ${year}`;
 
-      // Push new review to reviews array
       this.reviews.unshift({
         ...this.newReview,
         id: Date.now(),
-        userAvatar: this.newReview.userAvatar
+        userAvatar: this.newReview.userAvatar,
       });
 
-      // Update ratingCounts
       this.ratingCounts[this.newReview.stars] = (this.ratingCounts[this.newReview.stars] || 0) + 1;
 
-      // Reset newReview
       this.newReview = { user: "", userAvatar: this.defaultAvatar, stars: 0, text: "", date: "" };
+    },
+    updatePricingForService() {
+      const key = this.category || this.title;
+      const pricing = this.pricingCatalog[key] || null;
+
+      if (pricing) {
+        this.tiers = pricing.tiers;
+        this.addons = pricing.addons.map(a => ({ ...a, selected: false }));
+        this.selectedTier = pricing.tiers[0];
+      } else {
+        // fallback to default tiers if not found
+        this.tiers = [
+          { name: "Basic", price: 399, points: ["Standard service", "30-day support"] },
+          { name: "Standard", price: 699, points: ["Includes Basic", "Material support"] },
+          { name: "Premium", price: 999, points: ["Includes Standard", "Deep service"] },
+        ];
+        this.addons = [
+          { key: "fast", label: "Fast service (same-day)", price: 99, selected: false },
+          { key: "extra", label: "Extra task (+30 mins)", price: 149, selected: false },
+        ];
+      }
     },
 
     setStarRating(value) {
@@ -640,6 +819,33 @@ export default {
       if (!d) return "";
       const date = new Date(d);
       return date.toLocaleDateString();
+    }, selectSubService(item) {
+      this.selectedSubService = item;
+    },
+
+    // === NEW methods ===
+
+    updateTravelFee() {
+      this.travelFee = this.travelDistanceKm * this.travelFeePerKm;
+    },
+
+    calculateSurge() {
+      const peakSlots = ["12:00 PM", "03:00 PM", "04:00 PM"];
+      if (peakSlots.includes(this.selectedTime)) {
+        this.surgeMultiplier = 1.2;
+      } else {
+        this.surgeMultiplier = 1.0;
+      }
+    },
+
+    onTimeSlotSelect(slot) {
+      this.selectedTime = slot;
+      this.calculateSurge();
+    },
+
+    loadMembershipStatus() {
+      // TODO: call your backend / API to set isMember = true/false
+      this.isMember = false;
     },
   },
 
@@ -652,14 +858,18 @@ export default {
     });
     this.buildMediaFromTitle();
     this.buildRelated();
+    this.loadMembershipStatus();
+    this.updatePricingForService();
+
   },
 };
 </script>
 
 <style scoped>
-/* --- Shared Utilities --- */
-.flex-center {
-  display: inline-flex;
+/* --- Layout Utilities --- */
+.flex-center,
+.grid-center {
+  display: flex;
   align-items: center;
   justify-content: center;
 }
@@ -705,19 +915,50 @@ export default {
   transition: all 0.2s;
 }
 
+/* --- Carousel Buttons --- */
+.carousel-btn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 10;
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: 9999px;
+  border: 1px solid #e5e7eb;
+  background: rgba(255, 255, 255, 0.9);
+  display: grid;
+  place-content: center;
+  color: #374151;
+  font-size: 1.25rem;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  transition: background 0.2s;
+}
+
+.carousel-btn:hover {
+  background: #fff;
+}
+
+.carousel-btn.left-3 {
+  left: 0.75rem;
+}
+
+.carousel-btn.right-3 {
+  right: 0.75rem;
+}
+
 /* --- Badge --- */
 .badge {
   display: inline-flex;
   align-items: center;
-  font-size: 0.75rem;
-  font-weight: 500;
   padding: 0.125rem 0.5rem;
   border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 500;
   background: rgba(255, 255, 255, 0.9);
   color: #1f2937;
 }
 
-/* --- Card --- */
+/* --- Cards --- */
 .card-soft {
   border-radius: 0.75rem;
   padding: 1rem;
@@ -768,7 +1009,6 @@ export default {
   border-radius: 0.5rem;
   padding: 0.5rem 1rem;
   font-size: 0.875rem;
-  font-weight: 500;
   background: #111827;
 }
 
@@ -778,8 +1018,8 @@ export default {
 
 /* --- Input --- */
 .input {
-  border-radius: 0.5rem;
   border: 1px solid #d1d5db;
+  border-radius: 0.5rem;
   padding: 0.5rem 0.75rem;
   outline: none;
   transition: border-color 0.2s, box-shadow 0.2s;
@@ -787,10 +1027,10 @@ export default {
 
 .input:focus {
   border-color: #00B4D8;
-  box-shadow: 0 0 0 2px#00B4D833;
+  box-shadow: 0 0 0 2px #00B4D833;
 }
 
-/* --- Quantity Button --- */
+/* --- Quantity Buttons --- */
 .qty-btn {
   width: 2.25rem;
   height: 2.25rem;
@@ -825,29 +1065,7 @@ export default {
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
 }
 
-/* --- Carousel Button --- */
-.carousel-btn {
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 2.25rem;
-  height: 2.25rem;
-  border-radius: 9999px;
-  background: rgba(255, 255, 255, 0.9);
-  display: grid;
-  place-content: center;
-  color: #374151;
-  font-size: 1.25rem;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
-  border: 1px solid #e5e7eb;
-  transition: background 0.2s;
-}
-
-.carousel-btn:hover {
-  background: #fff;
-}
-
-/* --- Line Clamp --- */
+/* --- Text Clamp --- */
 .line-clamp-1 {
   display: -webkit-box;
   -webkit-line-clamp: 1;

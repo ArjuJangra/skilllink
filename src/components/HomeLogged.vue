@@ -1,11 +1,11 @@
 <template>
-  <div class="min-h-screen flex flex-col bg-gray-50">
+  <div class="min-h-screen flex flex-col bg-gradient-to-br from-gray-50 via-white to-gray-100">
     <header class="bg-white shadow sticky top-0 z-50">
       <AppNavbar mode="homelogged" />
     </header>
     <!-- Hero Section -->
     <section
-      class="bg-gradient-to-r from-blue-50 via-white to-blue-50 py-12 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
+      class=" py-12 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
       <!-- Decorative Circles -->
       <div class="absolute -top-20 -left-20 w-72 h-72 rounded-full bg-blue-200 opacity-20"></div>
       <div class="absolute -bottom-24 -right-24 w-96 h-96 rounded-full bg-blue-300 opacity-10"></div>
@@ -40,7 +40,7 @@
     </section>
 
     <!-- Services Section -->
-    <section class="py-12 px-6 bg-gradient-to-b from-white via-blue-50/40 to-white">
+    <section class="py-12 px-6 ">
       <div class="max-w-screen-xl mx-auto text-center">
         <h3 class="text-3xl sm:text-4xl font-bold text-center text-gray-800 mb-12"> Our Professional Services</h3>
 
@@ -61,7 +61,7 @@
     </section>
 
     <!-- Solved Cases Section -->
-    <section class="bg-gradient-to-r from-blue-50 via-gray-50 to-blue-50 py-12 px-4">
+    <section class=" py-12 px-4">
       <div class="max-w-[1300px] mx-auto">
         <h3 class="text-2xl sm:text-3xl font-bold text-gray-800 mb-6 text-center">Real Stories, Real Impact</h3>
         <p class="text-gray-600 max-w-3xl mx-auto mb-12 text-base sm:text-lg">
@@ -83,7 +83,7 @@
       </div>
     </section>
     <!-- About Section-->
-    <section class="relative py-12 px-4 bg-gradient-to-br from-[#F0F9FF] via-white to-[#E6F4F9] overflow-hidden">
+    <section class="relative py-12 px-4  overflow-hidden">
       <div class="absolute inset-0 z-0 pointer-events-none">
         <svg class="absolute top-0 left-0 opacity-10 w-[600px]" viewBox="0 0 600 600" fill="none">
           <circle cx="300" cy="300" r="300" fill="#0073b1" />
@@ -170,14 +170,14 @@
       </div>
     </section>
     <!-- Service Area Map Section -->
-    <section class="py-12 bg-gradient-to-r from-blue-50 via-gray-50 to-blue-50 px-4">
+    <section class="py-12 px-4">
       <div class="max-w-screen-xl mx-auto text-center">
         <h2 class="text-2xl sm:text-3xl font-bold text-gray-800 mb-4">Service Coverage Area</h2>
         <ServiceMap />
       </div>
     </section>
     <!--Contact-->
-    <section class="bg-gray-50 py-6 px-6">
+    <section class=" py-6 px-6">
       <div class="max-w-4xl mx-auto text-center" data-aos="fade-up">
         <!-- Title -->
         <h3 class="text-3xl font-bold text-gray-800 mb-4">Contact Us</h3>

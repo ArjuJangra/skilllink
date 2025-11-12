@@ -18,6 +18,7 @@ import AddService from '@/components/AddService.vue';
 import PrivacyPolicy from '@/components/PrivacyPolicy.vue';
 import TermsConditions from '@/components/TermsConditions.vue';
 import CareerPage from '@/components/CareerPage.vue';
+
 // import { auth } from '@/stores/auth';
 
 const routes = [

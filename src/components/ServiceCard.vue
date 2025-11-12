@@ -1,7 +1,7 @@
 <template>
   <div
     @click="goToDetails"
-    class="bg-white rounded-2xl shadow-md hover:shadow-xl transition-transform transform hover:-translate-y-1 duration-300 flex flex-col overflow-hidden cursor-pointer max-w-sm w-full"
+    class="bg-white rounded-2xl shadow-md hover:shadow-xl transition-transform transform  duration-300 flex flex-col overflow-hidden cursor-pointer max-w-sm w-full"
   >
     <!-- Service Image -->
     <img
@@ -46,7 +46,7 @@
       </div>
       <button
         @click.stop="goToDetails"
-        class="text-[#007EA7] flex items-center font-medium px-4 py-2 rounded-lg hover:text-[#2094e7] transition duration-200 shadow-sm hover:shadow-md"
+        class="text-[#007EA7] flex items-center font-medium px-4 py-2 rounded-lg hover:text-[#2094e7] hover:border transition duration-200 shadow-sm hover:shadow-md"
       >
         View Details
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4 ml-1">
