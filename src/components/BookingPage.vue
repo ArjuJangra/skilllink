@@ -25,19 +25,44 @@
       </div>
 
       <!-- Provider Selection -->
-      <div v-if="!hasPrefilledProvider && providers.length">
-        <label class="block text-gray-700 font-medium mb-2">Select Provider</label>
-        <div class="flex flex-col gap-3">
-          <div v-for="provider in providers" :key="provider._id" @click="selectedProviderId = provider._id"
-            :class="selectedProviderId === provider._id ? 'border-blue-600 bg-blue-50 shadow-lg' : 'border-gray-300 hover:shadow-md'"
-            class="border p-3 rounded-xl cursor-pointer transition flex justify-between items-center">
-            <div>
-              <p class="font-medium">{{ provider.name }}</p>
-              <p class="text-sm text-gray-500">{{ provider.address }}</p>
-            </div>
-          </div>
-        </div>
+<div v-if="!hasPrefilledProvider && providers.length">
+  <label class="block text-gray-700 font-semibold mb-3 text-lg">
+    Select Provider
+  </label>
+
+  <div class="flex flex-col gap-4">
+    <div
+      v-for="provider in providers"
+      :key="provider._id"
+      @click="selectedProviderId = provider._id"
+      class="p-4 rounded-2xl border cursor-pointer transition-all duration-300 flex justify-between items-center
+            shadow-sm hover:shadow-lg bg-white"
+      :class="selectedProviderId === provider._id
+        ? 'border-blue-600 bg-blue-50 scale-[1.02]'
+        : 'border-gray-300 hover:border-blue-400'"
+    >
+      <div>
+        <p class="font-semibold text-gray-800 text-base">
+          {{ provider.name }}
+        </p>
+        <p class="text-sm text-gray-500 mt-1">
+          {{ provider.address }}
+        </p>
       </div>
+
+      <!-- Selection Indicator -->
+      <div
+        class="w-5 h-5 rounded-full border-2 flex items-center justify-center transition"
+        :class="selectedProviderId === provider._id ? 'border-blue-600' : 'border-gray-400'"
+      >
+        <div
+          v-if="selectedProviderId === provider._id"
+          class="w-3 h-3 bg-blue-600 rounded-full"
+        ></div>
+      </div>
+    </div>
+  </div>
+</div>
 
       <!-- Personal Details -->
       <div class="flex flex-col gap-4">

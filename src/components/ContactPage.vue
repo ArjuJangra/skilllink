@@ -49,7 +49,7 @@
                 <span class="text-blue-600">connectteamskilllink@gmail.com</span>
               </p>
               <p class="text-sm text-gray-700 mt-1">
-                📞 <span class="font-semibold">Phone:</span> +91 98765 43210
+                📞 <span class="font-semibold">Phone:</span> +91 7404227877
               </p>
             </div>
 
