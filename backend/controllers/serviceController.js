@@ -51,7 +51,7 @@ exports.getNearbyServices = async (req, res) => {
         Math.sin(dLon / 2) ** 2;
       const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
       const d = R * c; // km
-      return d * 1000 <= maxDistance; // convert to meters
+      return d * 10000 <= maxDistance; // convert to meters
     };
 
     const nearbyProviders = providers.filter((provider) =>
