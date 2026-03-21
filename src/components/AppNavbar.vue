@@ -27,8 +27,7 @@
           <router-link :to="{ path: '/help', query: { from: 'homelogged' } }"
             class="nav-link hidden sm:inline text-xs sm:text-sm md:text-base lg:text-lg  font-semibold text-gray-800 hover:text-[#0073b1] px-2 py-2 rounded-lg transition hover:scale-105">Help</router-link>
 
-          <router-link :to="{ path: '/home', query: { disableBooking: true } }"
-           role="button"
+          <router-link :to="{ path: '/home', query: { disableBooking: true } }" role="button"
             class="ml-auto btn-secondary flex items-center  text-xs sm:text-sm md:text-base lg:text-lg gap-2 px-2 py-1.5 text-gray-700 font-semibold rounded-lg hover:ring-1 hover:text-[#0073b1] hover:ring-[#0073b1] transition-transform transform hover:scale-105">
             <IconCheck />
             <span>Book Service</span>
@@ -120,8 +119,10 @@
         <template v-else>
           <template v-if="showButton === 'home'">
             <router-link :to="auth?.isLoggedIn ? '/homelogged' : '/homeboard'" class="ml-auto">
-              <button class="flex gap-1 items-center text-white px-3 py-2 rounded-lg hover:text-[#eff9fe] transition hover:scale-105">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="28" height="28"  class="w-7 h-7 text-[#0073b1]  fill-current">
+              <button
+                class="flex gap-1 items-center text-white px-3 py-2 rounded-lg hover:text-[#eff9fe] transition hover:scale-105">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="28" height="28"
+                  class="w-7 h-7 text-[#0073b1]  fill-current">
                   <path d="M12 3l8 7v10a2 2 0 0 1-2 2h-4a1 1 0 0 1-1-1v-5H11v5a1 1 0 0 1-1 1H6a2 2 0 0 1-2-2V10l8-7z" />
                 </svg>
               </button>
@@ -364,14 +365,14 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, watch } from "vue";
+import { ref, computed, onMounted, } from "vue";
 import { useRoute, useRouter } from "vue-router";
-import { auth, logoutUser } from "@/stores/auth";
-import API from "@/api";
+// Import your Appwrite configuration
+import { account } from "@/appwrite";
 import defaultAvatarFile from '@/assets/user.png';
 import IconCheck from './IconCheck.vue';
-const defaultAvatar = defaultAvatarFile;
 
+const defaultAvatar = defaultAvatarFile;
 const props = defineProps({
   mode: { type: String, default: 'default' },
   showSearch: { type: Boolean, default: false },
@@ -379,7 +380,6 @@ const props = defineProps({
 });
 
 const user = ref(null);
-const isOpen = ref(false);
 const router = useRouter();
 const route = useRoute();
 const showDropdown = ref(false);
@@ -387,87 +387,54 @@ const showLogoutModal = ref(false);
 const unreadCount = ref(0);
 const searchQuery = ref("");
 const showMobileSearch = ref(false);
-const emit = defineEmits(["search"]);
+const isLoggedIn = ref(false); // Local reactive state for Appwrite
 
-watch(searchQuery, (newVal) => {
-  emit("search", newVal);
-});
-
-const closeMenu = () => { isOpen.value = false; };
-const getImageUrl = (path) => API?.getImageUrl ? API.getImageUrl(path) : path;
-
-const showHomeButtonOnAuthPages = computed(() => {
-  return route.path === '/login' || route.path === '/signup'
-})
-
-const toggleDropdown = () => {
-  showDropdown.value = !showDropdown.value;
-};
-
-// close dropdown if clicked outside
-document.addEventListener("click", (e) => {
-  if (!e.target.closest(".relative")) {
-    showDropdown.value = false;
-  }
-});
-
-// Fetch logged-in user profile only if logged in
-const fetchUserProfile = async () => {
-  if (!auth.isLoggedIn) return;
+// 🛠️ 1. Appwrite User Check
+const checkUserStatus = async () => {
   try {
-    const { data } = await API.get('/user/profile');
-    user.value = data;
+    const session = await account.get();
+    user.value = session;
+    isLoggedIn.value = true;
+
+    // Sync with LocalStorage for your Router Guard
+    localStorage.setItem('user', JSON.stringify({
+      id: session.$id,
+      name: session.name,
+      email: session.email,
+      role: session.labels?.includes('provider') ? 'provider' : 'user'
+    }));
   } catch (error) {
-    console.error('❌ Failed to fetch user profile:', error);
-  }
-};
-//  Fetch unread notification count
-const fetchUnreadNotifications = async () => {
-  if (!auth.isLoggedIn) return;
-  try {
-    const { data } = await API.get('/notifications/unread-count');
-    unreadCount.value = data.count || 0;
-  } catch (error) {
-    console.error('❌ Failed to fetch unread notifications:', error);
+    user.value = null;
+    isLoggedIn.value = false;
+    localStorage.removeItem('user');
+    console.log("No active Appwrite session");
   }
 };
 
-/**
- * 🔑 Navbar button logic:
- * - `/about`, `/contact`, `/help`, `/policy` → always show Home
- * - `/homeboard` → show Login if logged out, Profile if logged in
- * - Else → show Profile if logged in, Login if logged out
- */
+// 🛠️ 2. Appwrite Logout
+const confirmLogout = async () => {
+  try {
+    await account.deleteSession('current');
+    localStorage.removeItem('user');
+    user.value = null;
+    isLoggedIn.value = false;
+    showLogoutModal.value = false;
+    router.push('/homeboard');
+  } catch (error) {
+    console.error("Logout failed", error);
+  }
+};
+
 const showButton = computed(() => {
   const homePages = ["/about", "/contact", "/help", "/policy"];
-
-  if (homePages.includes(route.path)) {
-    return "home"; // Always Home
-  }
-
-  if (route.path === "/homeboard") {
-    return auth.isLoggedIn ? "profile" : "login";
-  }
-
-  return auth.isLoggedIn ? "profile" : "login";
+  if (homePages.includes(route.path)) return "home";
+  return isLoggedIn.value ? "profile" : "login";
 });
 
-// Logout functions
-const logout = () => {
-  logoutUser();
-  user.value = null;
-  router.push('/homeboard');
-};
-const confirmLogout = () => {
-  logout();
-  showLogoutModal.value = false;
-};
+const toggleDropdown = () => { showDropdown.value = !showDropdown.value; };
 
 onMounted(() => {
-  fetchUserProfile();
-  fetchUnreadNotifications();
-  // 🔄 Auto-refresh every 30s
-  setInterval(fetchUnreadNotifications, 30000);
+  checkUserStatus();
 });
 </script>
 

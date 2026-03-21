@@ -8,7 +8,7 @@ const reviewSchema = new mongoose.Schema({
   },
   service: { 
     type: mongoose.Schema.Types.ObjectId, 
-    ref: "Booking", // link to the booked service
+    ref: "Booking",
     required: true 
   },
   rating: { 

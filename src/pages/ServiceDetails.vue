@@ -1,6 +1,8 @@
 <template>
+
   <div class="min-h-screen bg-gradient-to-b from-[#EAF6FF] to-white">
     <div class="sticky top-0 z-30 h-1 w-full bg-gradient-to-r from-[#00B4D8] via-[#48CAE4] to-[#0096C7]"></div>
+    <AppNavbar />
 
     <div class="max-w-6xl mx-auto px-4 sm:px-6 py-6 lg:py-10">
       <!-- Header / Breadcrumb -->
@@ -23,108 +25,128 @@
         <!-- LEFT: Gallery + Overview + tiers + addons + reviews etc -->
         <div class="lg:col-span-2 space-y-6">
           <!-- Image / Carousel -->
-          <div class="relative rounded-3xl overflow-hidden shadow-[0_8px_30px_rgba(0,0,0,0.12)]">
-            <div class="group relative h-[280px] sm:h-[360px] md:h-[420px] bg-gray-100">
-              <img v-if="activeMedia && activeMedia.src" :src="activeMedia.src" :alt="title"
-                class="w-full h-full object-cover object-top" @error="handleImageError" />
-              <div v-if="activeMedia && activeMedia.src"
-                class="absolute inset-0 bg-gradient-to-t from-black/40 via-black/10 to-transparent"></div>
+          <div class="service-gallery group/container max-w-4xl mx-auto">
+            <div
+              class="relative overflow-hidden rounded-2xl bg-gray-50 border border-gray-100 shadow-sm transition-all duration-500 hover:shadow-xl">
 
-              <div class="absolute top-4 left-4 flex items-center gap-2">
-                <span class="badge">Top Rated</span>
-                <span class="badge bg-amber-500/90">Bestseller</span>
+              <div class="absolute top-5 left-5 z-20 flex flex-col gap-2">
+                <span
+                  class="inline-flex items-center px-3 py-1 bg-white/90 backdrop-blur-md border border-gray-100 rounded-full text-[10px] font-black uppercase tracking-widest text-[#FF3F6C] shadow-sm">
+                  <i class="fas fa-award mr-1.5"></i> Top Rated
+                </span>
+                <span
+                  class="inline-flex items-center px-3 py-1 bg-[#14C2AD] text-white rounded-full text-[10px] font-black uppercase tracking-widest shadow-sm">
+                  Bestseller
+                </span>
               </div>
 
-              <button @click="prevMedia" class="carousel-btn left-3" aria-label="Previous">‹</button>
-              <button @click="nextMedia" class="carousel-btn right-3" aria-label="Next">›</button>
+              <div class="relative aspect-square sm:aspect-video lg:aspect-[3/2] max-h-[650px] overflow-hidden">
+                <transition name="fade-slide" mode="out-in">
+                  <img :key="currentIndex" v-if="activeMedia?.src" :src="activeMedia.src" :alt="title"
+                    class="w-full h-full object-cover object-center transform transition-transform duration-1000 group-hover/container:scale-105"
+                    @error="handleImageError" />
+                </transition>
 
-              <div class="absolute bottom-3 w-full flex justify-center gap-1.5">
-                <button v-for="(m, i) in media" :key="m.key" @click="currentIndex = i"
-                  class="h-1.5 rounded-full transition-all"
-                  :class="currentIndex === i ? 'w-8 bg-white' : 'w-3 bg-white/60 hover:bg-white/80'"></button>
+                <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-80">
+                </div>
+
+                <div
+                  class="absolute inset-0 flex items-center justify-between px-4 opacity-0 group-hover/container:opacity-100 transition-opacity duration-300">
+                  <button @click="prevMedia" class="nav-arrow-btn">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7" />
+                    </svg>
+                  </button>
+                  <button @click="nextMedia" class="nav-arrow-btn">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7" />
+                    </svg>
+                  </button>
+                </div>
+
+                <div class="absolute bottom-6 left-6 right-6 flex justify-between items-end">
+                  <div class="space-y-1">
+                    <p class="text-[10px] text-white/70 font-black uppercase tracking-[0.2em]">Service Insight</p>
+                    <h1 class="text-white text-2xl md:text-3xl font-black uppercase tracking-tight">{{ title }}</h1>
+                  </div>
+
+                  <div
+                    class="px-3 py-1 bg-black/30 backdrop-blur-md rounded-full text-white/90 text-[11px] font-bold tracking-tighter">
+                    {{ currentIndex + 1 }} / {{ media.length }}
+                  </div>
+                </div>
               </div>
-
-              <h1 v-if="activeMedia && activeMedia.src"
-                class="absolute bottom-5 left-5 text-white text-2xl sm:text-3xl md:text-4xl font-extrabold drop-shadow">
-                {{ title }}
-              </h1>
             </div>
 
-            <div class="grid grid-cols-5 gap-2 p-3 bg-white">
-              <button v-for="(m, i) in media" :key="m.key + '-thumb'" @click="currentIndex = i"
-                class="relative rounded-xl overflow-hidden border transition hover:scale-[1.01]"
-                :class="currentIndex === i ? 'border-[#00B4D8]' : 'border-gray-200'">
-                <img v-if="m.type === 'image'" :src="m.src" class="h-16 w-full object-cover object-center" />
+            <div class="flex gap-3 mt-4 overflow-x-auto no-scrollbar pb-2">
+              <button v-for="(m, i) in media" :key="m.key" @click="currentIndex = i"
+                class="relative flex-shrink-0 w-20 h-20 rounded-xl overflow-hidden border-2 transition-all duration-300"
+                :class="currentIndex === i ? 'border-[#FF3F6C] scale-95 shadow-md' : 'border-transparent opacity-60 hover:opacity-100'">
+                <img :src="m.src" class="w-full h-full object-cover" />
+                <div v-if="currentIndex === i" class="absolute inset-0 bg-[#FF3F6C]/10"></div>
               </button>
             </div>
           </div>
 
- <!-- Overview Section -->
-  <div class="bg-white rounded-2xl shadow p-6">
-    <h2 class="text-xl font-bold text-gray-900 mb-2">Overview</h2>
-    <p class="text-gray-700 leading-relaxed mb-4">{{ desc }}</p>
+          <!-- Overview Section -->
+          <div class="bg-white rounded-2xl shadow p-6">
+            <h2 class="text-xl font-bold text-gray-900 mb-2">Overview</h2>
+            <p class="text-gray-700 leading-relaxed mb-4">{{ desc }}</p>
 
-    <!-- 🔽 Sub-Services Section -->
-    <div v-if="subServices.length" class="mt-4">
-      <h3 class="text-lg font-semibold text-gray-800 mb-3">Available Sub-Services</h3>
+            <!-- 🔽 Sub-Services Section -->
+            <div v-if="subServices.length" class="mt-4">
+              <h3 class="text-lg font-semibold text-gray-800 mb-3">Available Sub-Services</h3>
 
-      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-        <button
-          v-for="(item, idx) in subServices"
-          :key="idx"
-          @click="selectSubService(item)"
-          class="p-4 rounded-xl border text-left transition hover:shadow-md"
-          :class="selectedSubService?.id === item.id
-            ? 'border-[#00B4D8] bg-[#E0F7FF]'
-            : 'border-gray-200 bg-white'"
-        >
-          <div class="font-semibold text-gray-800">{{ item.name }}</div>
-          <p class="text-xs text-gray-600 mt-1 line-clamp-2">
-            {{ item.description }}
-          </p>
-          <div class="mt-2 text-[#00B4D8] font-medium text-sm">
-            Starting ₹{{ item.tiers[0]?.price || item.price }}
+              <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                <button v-for="(item, idx) in subServices" :key="idx" @click="selectSubService(item)"
+                  class="p-4 rounded-xl border text-left transition hover:shadow-md" :class="selectedSubService?.id === item.id
+                    ? 'border-[#00B4D8] bg-[#E0F7FF]'
+                    : 'border-gray-200 bg-white'">
+                  <div class="font-semibold text-gray-800">{{ item.name }}</div>
+                  <p class="text-xs text-gray-600 mt-1 line-clamp-2">
+                    {{ item.description }}
+                  </p>
+                  <div class="mt-2 text-[#00B4D8] font-medium text-sm">
+                    Starting ₹{{ item.tiers[0]?.price || item.price }}
+                  </div>
+                </button>
+              </div>
+
+              <!-- ✅ Selected Sub-Service Summary -->
+              <div v-if="selectedSubService"
+                class="mt-4 bg-[#E0F7FF] border border-[#00B4D8] text-gray-800 rounded-xl p-4">
+                <div class="font-semibold text-lg">
+                  Selected: {{ selectedSubService.name }}
+                </div>
+                <p class="text-sm text-gray-600 mt-1">
+                  {{ selectedSubService.description }}
+                </p>
+                <div class="text-[#00B4D8] font-medium mt-1">
+                  Starting ₹{{ selectedSubService.tiers[0]?.price || selectedSubService.price }}
+                </div>
+              </div>
+            </div>
+
+            <div v-else class="text-gray-400 text-sm text-center py-3">
+              No sub-services available for {{ category }}
+            </div>
+
+            <!-- Rest of Overview -->
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-6">
+              <div class="card-soft">
+                <div class="card-title">Estimated Time</div>
+                <div class="card-text">60–100 minutes</div>
+              </div>
+              <div class="card-soft">
+                <div class="card-title">Typical Cost</div>
+                <div class="card-text">₹300 – ₹1000</div>
+              </div>
+              <div class="card-soft">
+                <div class="card-title">Included</div>
+                <div class="card-text">Visit, Inspection, Basic Service</div>
+              </div>
+            </div>
           </div>
-        </button>
-      </div>
-
-      <!-- ✅ Selected Sub-Service Summary -->
-      <div
-        v-if="selectedSubService"
-        class="mt-4 bg-[#E0F7FF] border border-[#00B4D8] text-gray-800 rounded-xl p-4"
-      >
-        <div class="font-semibold text-lg">
-          Selected: {{ selectedSubService.name }}
-        </div>
-        <p class="text-sm text-gray-600 mt-1">
-          {{ selectedSubService.description }}
-        </p>
-        <div class="text-[#00B4D8] font-medium mt-1">
-          Starting ₹{{ selectedSubService.tiers[0]?.price || selectedSubService.price }}
-        </div>
-      </div>
-    </div>
-
-    <div v-else class="text-gray-400 text-sm text-center py-3">
-      No sub-services available for {{ category }}
-    </div>
-
-    <!-- Rest of Overview -->
-    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-6">
-      <div class="card-soft">
-        <div class="card-title">Estimated Time</div>
-        <div class="card-text">60–100 minutes</div>
-      </div>
-      <div class="card-soft">
-        <div class="card-title">Typical Cost</div>
-        <div class="card-text">₹300 – ₹1000</div>
-      </div>
-      <div class="card-soft">
-        <div class="card-title">Included</div>
-        <div class="card-text">Visit, Inspection, Basic Service</div>
-      </div>
-    </div>
-  </div>
 
           <!-- Package / Tier Selection -->
           <div class="bg-white rounded-2xl shadow p-6">
@@ -390,8 +412,13 @@
 </template>
 
 <script>
+
+import AppNavbar from '@/components/AppNavbar.vue';
+
 export default {
-  
+  components: {
+    AppNavbar
+  },
   name: "ServiceDetail",
 
   props: {
@@ -412,7 +439,7 @@ export default {
         { name: "Standard", price: 699, points: ["Includes Basic", "Material support", "Priority scheduling"] },
         { name: "Premium", price: 999, points: ["Includes Standard", "Deep service", "90-day support"] },
       ],
-       subServices: [
+      subServices: [
         {
           id: 1,
           category: "Carpenter",
@@ -866,6 +893,30 @@ export default {
 </script>
 
 <style scoped>
+.nav-arrow-btn {
+  @apply w-10 h-10 flex items-center justify-center bg-white/90 backdrop-blur-sm rounded-full shadow-lg text-gray-900 hover:bg-[#FF3F6C] hover:text-white transition-all active:scale-90;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* Smooth Fade & Slide Animation */
+.fade-slide-enter-active,
+.fade-slide-leave-active {
+  transition: all 0.5s ease;
+}
+
+.fade-slide-enter-from {
+  opacity: 0;
+  transform: translateX(20px);
+}
+
+.fade-slide-leave-to {
+  opacity: 0;
+  transform: translateX(-20px);
+}
+
 /* --- Layout Utilities --- */
 .flex-center,
 .grid-center {

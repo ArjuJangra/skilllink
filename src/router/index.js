@@ -1,96 +1,108 @@
 import { createRouter, createWebHistory } from 'vue-router';
+import { account } from '@/appwrite'; // Ensure this path points to your Appwrite config
 
-import LoginPage from '@/components/LoginPage.vue';
-import SignupPage from '@/components/SignupPage.vue';
-import HomePage from '@/components/HomePage.vue';
-import HomeBoard from '@/components/HomeBoard.vue';
-import HomeLogged from '@/components/HomeLogged.vue';
-import AboutPage from '@/components/AboutPage.vue';
-import ContactPage from '@/components/ContactPage.vue';
-import HelpPage from '@/components/HelpPage.vue';
-import ServiceProvider from '@/components/ServiceProvider.vue';
-import ProviderOrders from '@/components/ProviderOrders.vue';
-import ProviderPolicies from '@/components/ProviderPolicies.vue';
-import ProviderAbout from '@/components/ProviderAbout.vue';
-import ProviderContact from '@/components/ProviderContact.vue';
-import ServiceDetails from '@/components/ServiceDetails.vue';
-import AddService from '@/components/AddService.vue';
-import PrivacyPolicy from '@/components/PrivacyPolicy.vue';
-import TermsConditions from '@/components/TermsConditions.vue';
-import CareerPage from '@/components/CareerPage.vue';
-
-// import { auth } from '@/stores/auth';
+// Helper for lazy loading components
+const loadPage = (path) => () => import(`@/pages/${path}.vue`);
+const loadComp = (path) => () => import(`@/components/${path}.vue`);
 
 const routes = [
   { path: '/', redirect: '/homeboard' },
-  { path: '/login', component: LoginPage },
-  { path: '/signup', component: SignupPage },
-  { path: '/home', component: HomePage },
-  { path: '/homeboard', component: HomeBoard },
-  { path: '/privacy', component: PrivacyPolicy },
-  { path: '/terms', component: TermsConditions },
-  { path: '/about', name: "About", component: AboutPage },
-  { path: '/contact', component: ContactPage },
-  { path: '/help', component: HelpPage },
-  { path: '/careers', component: CareerPage},
-  { path: '/homelogged', component: HomeLogged, meta: { requiresAuth: true, role: 'user' } },
-  {
-    path: '/ServiceProvider', component: ServiceProvider, meta: { requiresAuth: true, role: 'provider' }  },
+  
+  // --- Public Routes ---
+  { path: '/login', component: loadPage('LoginPage') },
+  { path: '/signup', component: loadPage('SignupPage') },
+  { path: '/homeboard', component: loadPage('HomeBoard') },
+  { path: '/about', name: "About", component: loadPage('AboutPage') },
+  { path: '/contact', component: loadComp('ContactPage') },
+  { path: '/help', component: loadComp('HelpPage') },
+  { path: '/privacy', component: loadComp('PrivacyPolicy') },
+  { path: '/terms', component: loadPage('TermsConditions') },
+  { path: '/careers', component: loadPage('CareerPage') },
 
-  // Auth-Protected Routes
+  // --- Protected Identity Redirector ---
   {
     path: "/profile",
-    beforeEnter: (to, from, next) => {
-      const user = JSON.parse(localStorage.getItem("user"));
-      if (!user) return next("/login");
-      if (user?.role === "provider") {
-        next("/providerprofile");
-      } else {
-        next("/dashboard");
+    beforeEnter: async (to, from, next) => {
+      try {
+        const user = await account.get();
+        // Check custom labels or logic for provider/user
+        const isProvider = user.labels?.includes('provider');
+        next(isProvider ? "/providerprofile" : "/dashboard");
+      } catch {
+        next("/login");
       }
     },
     meta: { requiresAuth: true }
   },
-  {
-    path: '/providerprofile',  name: 'ProviderProfile',  component: () => import('@/components/ProviderDashboard.vue'),
-    meta: { requiresAuth: true, role: 'provider' }  },
-    {  path: '/providerorders',  name: 'ProviderOrders',  component: ProviderOrders,  meta: { requiresAuth: true ,role: 'provider' } } ,
-    {  path: '/providerpolicies', name: 'ProviderPolicies', component: ProviderPolicies, meta: { requiresAuth: true ,role: 'provider' } },
-    {  path: '/providerabout',   name: 'ProviderAbout',   component: ProviderAbout,   meta: { requiresAuth: true  ,role: 'provider'} },
-    {  path: '/providercontact',  name: 'ProviderContact',  component: ProviderContact,  meta: { requiresAuth: true  ,role: 'provider'}},
 
-    //UserRoutes
+  // --- User Routes ---
+  { path: '/home', component: loadPage('HomePage'), meta: { requiresAuth: true, role: 'user' } },
+  { path: '/homelogged', component: loadPage('HomeLogged'), meta: { requiresAuth: true, role: 'user' } },
+  { path: '/dashboard', name: 'Dashboard', component: loadComp('UserDashboard'), meta: { requiresAuth: true, role: 'user' } },
+  { path: '/booking', component: loadComp('BookingPage'), meta: { requiresAuth: true, role: 'user' } },
+  { path: '/service-details', component: loadPage('ServiceDetails'), meta: { requiresAuth: true, role: 'user' } },
+  // Ensure this matches your actual file path: src/components/NotificationHistory.vue
+{ 
+  path: '/notifications', 
+  name: 'Notifications', 
+  component: () => import('@/components/NotificationHistory.vue'), 
+  meta: { requiresAuth: true } 
+},
+{
+  path: '/service-details', 
+  name: 'ServiceDetails', // <--- This must match "ServiceDetails" exactly
+  component: () => import('@/pages/ServiceDetails.vue'),
+  meta: { requiresAuth: true, role: 'user' }
+},
+// router/index.js
+{
+  path: '/booking',
+  name: 'BookingPage',
+  // Make sure this path is 100% correct
+  component: () => import('@/components/BookingPage.vue')
+},
+// router/index.js
+{
+  path: '/booking-confirm',
+  name: 'BookingConfirm', // <--- This MUST match "BookingConfirm" exactly
+  component: () => import('@/components/BookingConfirm.vue') 
+},
 
-  {  path: '/dashboard', name: 'Dashboard', component: () => import('@/components/UserDashboard.vue'),  meta: { requiresAuth: true }  },
-  {    path: '/booking',    name: 'Booking',    component: () => import('@/components/BookingPage.vue'),    meta: { requiresAuth: true }  },
-  {    path: '/booking-confirm',    name: 'BookingConfirm',    component: () => import('@/components/BookingConfirm.vue'),    meta: { requiresAuth: true }  },
-  { path: '/notifications', name: 'Notifications',
-    component: () => import('@/components/NotificationHistory.vue'),
-    meta: { requiresAuth: true }  },
-{  path: '/service-details',  name: 'ServiceDetails',
-  component: ServiceDetails,
-  meta: { requiresAuth: true, role: 'user' }},
-  {  path: '/provideraddservice',  name: 'AddService',  component: AddService, }
+  // --- Provider Routes ---
+  { path: '/providerprofile', component: loadPage('provider/ProviderDashboard'), meta: { requiresAuth: true, role: 'provider' } },
+  { path: '/providerorders', component: loadPage('provider/ProviderOrders'), meta: { requiresAuth: true, role: 'provider' } },
+  { path: '/provideraddservice', name: 'AddService', component: loadComp('AddService'), meta: { requiresAuth: true, role: 'provider' } }
 ];
 
 const router = createRouter({
   history: createWebHistory(),
   routes,
+  scrollBehavior() { return { top: 0 }; }
 });
 
-// 🔐Global Navigation Guard
+// 🔐 Appwrite-Ready Global Navigation Guard
+router.beforeEach(async (to, from, next) => {
+  let user = null;
 
-router.beforeEach((to, from, next) => {
-  const storedUser = JSON.parse(localStorage.getItem('user'));
-  const isAuthenticated = !!storedUser;
+  // 1. Try to get the user from Appwrite session
+  try {
+    user = await account.get();
+  } catch (e) {
+    user = null;
+  }
 
-  if (to.meta.requiresAuth) {
-    if (!isAuthenticated) {
-      return next({ path: '/login' });
-    }
+  const isAuthenticated = !!user;
 
-    if (to.meta.role && storedUser.role !== to.meta.role) {
-      return next({ path: '/homeboard' }); // or just redirect to home
+  // 2. Handle Auth Requirement
+  if (to.meta.requiresAuth && !isAuthenticated) {
+    return next({ path: '/login', query: { redirect: to.fullPath } });
+  }
+
+  // 3. Handle Role-Based Access
+  if (to.meta.role && isAuthenticated) {
+    const userRole = user.labels?.includes('provider') ? 'provider' : 'user';
+    if (to.meta.role !== userRole) {
+      return next({ path: '/homeboard' });
     }
   }
 

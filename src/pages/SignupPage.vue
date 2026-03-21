@@ -199,7 +199,8 @@
 <script setup>
 import { reactive, ref } from 'vue';
 import { useRouter } from 'vue-router';
-import API from '@/api';
+// 1. Import Appwrite services AND your config
+import { account, databases, ID, APPWRITE_CONFIG } from '@/appwrite';
 import axios from 'axios';
 import { toast } from 'vue3-toastify';
 import { loginUser } from '@/stores/auth';
@@ -226,13 +227,7 @@ const form = reactive({
   city: ''
 });
 
-// ✅ Functions must be outside handleSubmit to be used in template
 const isEmail = (value) => /\S+@\S+\.\S+/.test(value);
-const isPhone = (value) => /^[0-9]{10}$/.test(value); // 10-digit number
-
-const validateContact = () => {
-  // optional: live feedback or styling can go here
-};
 
 const availableServices = [
   'Plumber', 'Electrician', 'Mechanic', 'Carpenter', 'AC/Appliance Repair',
@@ -243,78 +238,97 @@ const availableServices = [
   'House Shifting/Packers', 'Tailor', 'Event Decorator', 'Pet Groomer'
 ];
 
-/*const resetFields = () => {
-  form.contact = '';
-  form.password = '';
-  form.services = [];
-  form.experience = '';
-  form.address = '';
-  form.area = '';
-  form.latitude = null;
-  form.longitude = null;
-  form.city = '';
-};
-*/
 const getLocation = () => {
   if (!navigator.geolocation) {
     toast.error('Geolocation is not supported by your browser.');
     return;
   }
-
   navigator.geolocation.getCurrentPosition(
     async (position) => {
       form.latitude = position.coords.latitude;
       form.longitude = position.coords.longitude;
-
       try {
         const res = await axios.get('https://nominatim.openstreetmap.org/reverse', {
           params: { lat: form.latitude, lon: form.longitude, format: 'json' }
         });
         if (res.data && res.data.address) {
           form.area = res.data.address.suburb || res.data.address.neighbourhood || res.data.address.city || '';
-          toast.success('Location detected and filled automatically!');
+          form.city = res.data.address.city || res.data.address.town || '';
+          toast.success('Location detected!');
         }
       } catch (err) {
-        toast.error('Failed to fetch address from coordinates.');
+        toast.error('Failed to fetch address.');
       }
     },
-    () => toast.error('Enable location access for this feature.')
+    () => toast.error('Enable location access.')
   );
 };
 
 const handleSubmit = async () => {
-  if (!form.role) {
-    toast.error('Please select a role');
-    return;
-  }
-
-  if (!isEmail(form.contact) && !isPhone(form.contact)) {
-    toast.error('Enter a valid email or 10-digit phone number');
-    return;
-  }
+  // 1. Basic Validations
+  if (!form.role) return toast.error('Please select a role');
+  if (!isEmail(form.contact)) return toast.error('A valid email is required.');
+  if (form.password.length < 6) return toast.error('Password must be at least 6 characters.');
 
   try {
     loading.value = true;
 
-    const endpoint = form.role === 'user' ? '/auth/signup' : '/providers/signup';
+    // STEP 1: Create the Auth Account (Global for all users)
+    const newAccount = await account.create(
+      ID.unique(),
+      form.contact.trim(),
+      form.password,
+      form.name
+    );
 
-    const payload = form.role === 'user'
-      ? { name: form.name, password: form.password, role: form.role, ...(isEmail(form.contact) ? { email: form.contact } : { phone: form.contact }) }
-      : { name: form.name, password: form.password, latitude: form.latitude, longitude: form.longitude, address: form.address, services: form.services, experience: form.experience, area: form.area, role: 'provider', ...(isEmail(form.contact) ? { email: form.contact } : { phone: form.contact }) };
+    // STEP 2: Determine Collection based on Role
+    const collectionId = form.role === 'user'
+      ? APPWRITE_CONFIG.usersCollection
+      : APPWRITE_CONFIG.providersCollection;
 
-    const response = await API.post(endpoint, payload);
+    // STEP 3: Build the Payload
 
-    loginUser(response.data.token, response.data.user);
+    const profileData = {
+      name: form.name,
+      email: form.contact.trim(),
+      role: form.role,
+    };
+
+    if (form.role === 'provider') {
+      // These must exist as Attributes in your "providers" collection
+      profileData.area = form.area || '';
+      profileData.services = form.services;
+      profileData.experience = Number(form.experience) || 0;
+      profileData.latitude = form.latitude || 0;
+      profileData.longitude = form.longitude || 0;
+      profileData.address = form.address || '';
+    } else {
+      // For 'user' role, only add fields you actually created in the 'users' collection
+      // If you added 'address' or 'city' to the users table, uncomment them below:
+      // profileData.address = form.address || '';
+      // profileData.city = form.city || '';
+    }
+
+    // 5. Create the Document
+    const userDoc = await databases.createDocument(
+      APPWRITE_CONFIG.dbId,
+      collectionId,
+      newAccount.$id,
+      profileData
+    );
+    // 6. Finalize Login
+    await account.createEmailPasswordSession(form.contact.trim(), form.password);
+    loginUser(null, userDoc);
 
     showSplash.value = true;
-
     setTimeout(() => {
       showSplash.value = false;
       router.push(form.role === 'user' ? '/homelogged' : '/serviceprovider');
     }, 1500);
 
   } catch (err) {
-    toast.error(err.response?.data?.message || 'Signup failed. Try again.', { theme: 'colored' });
+    console.error("Signup Error:", err);
+    toast.error(err.message || 'Signup failed.', { theme: 'colored' });
   } finally {
     loading.value = false;
   }

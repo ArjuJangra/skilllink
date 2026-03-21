@@ -4,8 +4,7 @@
       <AppNavbar mode="homelogged" />
     </header>
     <!-- Hero Section -->
-    <section
-      class=" py-12 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
+    <section class=" py-12 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
       <!-- Decorative Circles -->
       <div class="absolute -top-20 -left-20 w-72 h-72 rounded-full bg-blue-200 opacity-20"></div>
       <div class="absolute -bottom-24 -right-24 w-96 h-96 rounded-full bg-blue-300 opacity-10"></div>
@@ -230,6 +229,7 @@
         </router-link>
       </div>
     </section>
+
     <!-- Footer -->
     <footer class="bg-gradient-to-r from-[#007EA7] to-[#00A8E8] text-white shadow-inner shadow-black/10">
       <div class="max-w-7xl mx-auto px-6 py-12 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8">
@@ -260,9 +260,7 @@ bg-clip-text text-transparent">
           <router-link to="/about" class="flex items-center gap-2 hover:text-white/90 transition">
             About Us
           </router-link>
-          <router-link to="/blog" class="flex items-center gap-2 hover:text-white/90 transition">
-            Blog
-          </router-link>
+
           <router-link to="/careers" class="flex items-center gap-2 hover:text-white/90 transition">
             Careers
           </router-link>

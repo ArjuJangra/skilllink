@@ -17,6 +17,7 @@
     "@vercel/analytics": "^1.5.0",
     "@vercel/speed-insights": "^1.2.0",
     "aos": "^2.3.4",
+    "appwrite": "^23.0.0",
     "axios": "^1.10.0",
     "chart.js": "^4.5.0",
     "core-js": "^3.8.3",
