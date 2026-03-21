@@ -89,7 +89,7 @@
                   <p><span class="font-medium text-gray-400">Price:</span> ₹{{ booking.price }}</p>
                   <p><span class="font-medium text-gray-400">Status:</span>
                     <span :class="booking.status === 'Accepted' ? 'text-blue-600' : 'text-yellow-600'">{{ booking.status
-                      }}</span>
+                    }}</span>
                   </p>
                 </div>
                 <p class="text-xs text-gray-400">Booked on: {{ formatDate(booking.$createdAt) }}</p>

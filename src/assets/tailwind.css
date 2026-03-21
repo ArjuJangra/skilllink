@@ -1,3 +1,24 @@
+/* src/assets/tailwind.css */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer components {
+  /* Put all the styles you want to use across ALL pages here */
+  
+  .btn-premium {
+    @apply px-6 py-2 bg-gradient-to-r from-[#007EA7] to-[#00B4DB] 
+           text-white rounded-xl font-medium shadow-md 
+           transition-all duration-300 hover:scale-105 active:scale-95;
+  }
+
+  .card-premium {
+    @apply bg-white/80 backdrop-blur-md border border-white/20 
+           rounded-3xl shadow-lg p-6;
+  }
+
+  .input-premium {
+    @apply w-full px-4 py-2 border border-gray-200 rounded-lg 
+           focus:ring-2 focus:ring-[#00A8E8] outline-none transition-all;
+  }
+}
