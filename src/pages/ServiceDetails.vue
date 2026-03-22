@@ -313,7 +313,7 @@
               <div v-else class="text-gray-500 italic">No reviews yet. Be the first to add one!</div>
             </section>
           </div>
-          
+
           <RelatedServices v-if="category" :category="category" :currentServiceId="$route.query.id" />
 
           <div class="h-20"></div>
@@ -379,8 +379,6 @@
             </div>
           </div>
         </div>
-
-
       </div>
 
     </div>
