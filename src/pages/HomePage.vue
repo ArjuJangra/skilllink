@@ -1,8 +1,6 @@
 <template>
   <div class="min-h-screen bg-[#F8FAFC]">
-    <header class="bg-white/80 backdrop-blur-md shadow-sm sticky top-0 z-50">
-      <AppNavbar :mode="'default'" :showSearch="false" :hideExtras="true" />
-    </header>
+    <AppNavbar :showSearch="true" />
 
     <div class="bg-white border-b border-gray-100">
       <section class="max-w-7xl mx-auto px-4 py-8">
@@ -31,7 +29,7 @@
       </section>
     </div>
 
-    <nav class="sticky top-[64px] bg-white border-b z-40 overflow-x-auto no-scrollbar py-4 px-4">
+    <nav class="sticky top-[64px] bg-white border-b z-40 overflow-x-auto no-scrollbar py-2 px-4">
       <div class="max-w-7xl mx-auto flex items-center gap-3">
         <button @click="selectedCategory = 'All'"
           :class="selectedCategory === 'All' ? 'bg-[#0073b1] text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'"

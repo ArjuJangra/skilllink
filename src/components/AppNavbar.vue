@@ -1,521 +1,260 @@
 <template>
-  <!--Default Navbar-->
-  <header v-if="props.mode !== 'homelogged'"
-    class="sticky top-0 z-50 w-full bg-gradient-to-r from-[#fffefc] via-[#fafafa] to-[#ffffff] shadow-md">
-    <div class="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
-      <!-- Logo -->
-      <div class="flex items-center space-x-2">
-        <img src="@/assets/skilllogo.png" alt="SkillLink Logo"
-          class="w-10 h-10 sm:w-12 sm:h-12 transition-transform hover:rotate-12 shadow-lg rounded-s" loading="lazy" />
+  <header class="sticky top-0 z-[100] w-full bg-white/95 backdrop-blur-md border-b border-slate-100 shadow-sm">
+    <div class="max-w-7xl mx-auto px-4 h-16  flex items-center justify-between gap-4">
 
-        <h1
-          class="text-xl sm:text-2xl font-bold text-gradient bg-gradient-to-b from-[#00A8E8] to-[#007EA7] bg-clip-text text-transparent relative text-shadow-md">
-          SkillLink</h1>
+      <router-link :to="isLoggedIn ? '/homelogged' : '/homeboard'"
+        class="flex items-center gap-2.5 shrink-0 group transition-all active:scale-95">
+        <div class="w-10 h-10 sm:w-12 sm:h-12 bg-white rounded-xl flex items-center justify-center 
+          shadow-sm border border-slate-100 group-hover:border-[#00A8E8]/30 transition-all overflow-hidden">
+          <img src="@/assets/skilllogo.png" class="w-full h-full object-cover " alt="SkillLink" />
+        </div>
+        <span
+          class="text-xl sm:text-2xl font-bold tracking-tight bg-gradient-to-tr from-[#00A8E8] to-[#007EA7] bg-clip-text text-transparent">
+          SkillLink
+        </span>
+      </router-link>
+
+      <div v-if="shouldShowSearch" class="hidden md:flex flex-1 max-w-md relative group px-4">
+        <SearchIcon
+          class="absolute left-7 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 group-focus-within:text-[#00A8E8] transition-colors" />
+        <input v-model="searchQuery" type="text" placeholder="Search for skills..."
+          class="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-100 rounded-xl text-sm focus:bg-white focus:ring-4 focus:ring-[#00A8E8]/5 focus:border-[#00A8E8]/50 transition-all outline-none" />
       </div>
 
-      <!-- Desktop Nav -->
-      <nav class=" md:flex flex items-center gap-2">
+      <div class="flex items-center gap-2 sm:gap-4">
 
-        <div class="hidden md:flex flex-1 mx-6">
-          <input v-model="searchQuery" placeholder="Search services..."
-            class="w-full px-4 py-2 border rounded-lg bg-gray-100 focus:outline-none focus:ring-2 focus:ring-[#007EA7]" />
-        </div>
-        <template v-if="!props.hideExtras">
-          <router-link to="/about"
-            class="nav-link hidden sm:inline text-xs sm:text-sm md:text-base lg:text-lg font-semibold text-gray-800 hover:text-[#0073b1] px-2 sm:px-3 py-1 sm:py-2 rounded-lg transition hover:scale-105">
-            About Us
-          </router-link>
+        <nav class="hidden lg:flex items-center gap-1 mr-2">
+          <router-link to="/about" class="nav-link">About</router-link>
+          <router-link to="/contact" class="nav-link">Contact</router-link>
+        </nav>
 
-          <router-link to="/contact"
-            class="nav-link hidden sm:inline text-xs sm:text-sm md:text-base lg:text-lg  font-semibold text-gray-800 hover:text-[#0073b1] px-2 py-2 rounded-lg transition hover:scale-105">Contact</router-link>
-
-          <router-link :to="{ path: '/help', query: { from: 'homelogged' } }"
-            class="nav-link hidden sm:inline text-xs sm:text-sm md:text-base lg:text-lg  font-semibold text-gray-800 hover:text-[#0073b1] px-2 py-2 rounded-lg transition hover:scale-105">Help</router-link>
-
-          <router-link :to="{ path: '/home', query: { disableBooking: true } }" role="button"
-            class="ml-auto flex items-center  text-xs sm:text-sm md:text-base lg:text-lg gap-2 px-2 py-1.5 text-gray-700 font-semibold rounded-lg hover:ring-1 hover:text-[#0073b1] hover:ring-[#0073b1] transition-transform transform hover:scale-105">
-            <IconCheck />
-            <span>Book Service</span>
-          </router-link>
-        </template>
-
-        <!-- Search Bar -->
-        <template v-if="props.showSearch">
-          <div class="relative">
-            <!-- Desktop: Full search bar -->
-            <div class="hidden sm:block w-72">
-              <!-- Search icon -->
-              <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-600">
-                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24"
-                  stroke="currentColor" stroke-width="2">
-                  <path stroke-linecap="round" stroke-linejoin="round"
-                    d="M21 21l-4.35-4.35M16.65 16.65A7.5 7.5 0 1110.5 3a7.5 7.5 0 016.15 13.65z" />
-                </svg>
-              </span>
-
-              <!-- Input -->
-              <input type="text" v-model="searchQuery" placeholder="Search for services..."
-                class="pl-10 pr-12 py-2 w-full rounded-lg border bg-gray-200 border-gray-300 shadow-sm focus:outline-none hover:bg-slate-50 focus:border-gray-100 transition duration-200 hover:shadow-md" />
-
-              <!-- Clear button -->
-              <button v-if="searchQuery" @click="searchQuery = ''"
-                class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-900 transition duration-200">
-                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24"
-                  stroke="currentColor" stroke-width="2">
-                  <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
-                </svg>
-              </button>
-            </div>
-
-            <!-- Search toggle button (mobile only) -->
-            <div class="sm:hidden flex items-center">
-              <button @click="showMobileSearch = !showMobileSearch"
-                class="text-gray-600 hover:text-gray-900 p-2 rounded-md focus:outline-none focus:ring-2 focus:ring-[#00A8E8]">
-                <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24"
-                  stroke="currentColor" stroke-width="2">
-                  <path stroke-linecap="round" stroke-linejoin="round"
-                    d="M21 21l-4.35-4.35M16.65 16.65A7.5 7.5 0 1110.5 3a7.5 7.5 0 016.15 13.65z" />
-                </svg>
-              </button>
-            </div>
-
-            <!-- Expanded search input (overlay on mobile) -->
-            <transition name="slide-fade">
-              <div v-if="showMobileSearch"
-                class="fixed top-16 left-0 w-full px-3 py-2 bg-white shadow-md z-50 flex items-center">
-                <!-- Search icon -->
-                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-gray-400 flex-shrink-0" fill="none"
-                  viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                  <path stroke-linecap="round" stroke-linejoin="round"
-                    d="M21 21l-4.35-4.35M16.65 16.65A7.5 7.5 0 1110.5 3a7.5 7.5 0 016.15 13.65z" />
-                </svg>
-
-                <!-- Input -->
-                <input type="text" v-model="searchQuery" placeholder="Search..."
-                  class="flex-1 ml-2 text-sm py-1 border-0 focus:ring-0 focus:outline-none" />
-
-                <!-- Close button -->
-                <button @click="showMobileSearch = false"
-                  class="ml-2 text-gray-400 hover:text-gray-600 p-2 rounded-md focus:outline-none">
-                  <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24"
-                    stroke="currentColor" stroke-width="2">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
-                  </svg>
-                </button>
-              </div>
-            </transition>
-
-          </div>
-        </template>
-        <!-- Home / Login / Profile -->
-        <template v-if="showHomeButtonOnAuthPages">
-          <!-- Home button redirects to homeboard -->
-          <router-link to="/homeboard" class="ml-auto">
+        <template v-if="!isLoggedIn">
+          <router-link to="/login">
             <button
-              class="flex gap-1 items-center text-white px-3 py-2 rounded-lg hover:text-[#eff9fe] transition hover:scale-105">
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="28" height="28"
-                class="w-7 h-7 text-[#0073b1]  fill-current">
-                <path d="M12 3l8 7v10a2 2 0 0 1-2 2h-4a1 1 0 0 1-1-1v-5H11v5a1 1 0 0 1-1 1H6a2 2 0 0 1-2-2V10l8-7z" />
-              </svg>
+              class="px-5 py-2.5 bg-gradient-to-br from-[#00A8E8] to-[#007EA7]  text-white text-sm font-bold rounded-xl hover:bg-[#007EA7] transition-all active:scale-95 shadow-lg shadow-blue-100">
+              Login | Signup
             </button>
           </router-link>
         </template>
 
         <template v-else>
-          <template v-if="showButton === 'home'">
-            <router-link :to="auth?.isLoggedIn ? '/homelogged' : '/homeboard'" class="ml-auto">
-              <button
-                class="flex gap-1 items-center text-white px-3 py-2 rounded-lg hover:text-[#eff9fe] transition hover:scale-105">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="28" height="28"
-                  class="w-7 h-7 text-[#0073b1]  fill-current">
-                  <path d="M12 3l8 7v10a2 2 0 0 1-2 2h-4a1 1 0 0 1-1-1v-5H11v5a1 1 0 0 1-1 1H6a2 2 0 0 1-2-2V10l8-7z" />
-                </svg>
-              </button>
-            </router-link>
-          </template>
+          <router-link to="/home"
+            class="flex items-center gap-2 px-3 py-2.5 sm:px-5 border rounded-xl transition-all duration-300 active:scale-95"
+            :class="route.path === '/home'
+              ? 'bg-[#00A8E8] border-[#00A8E8] text-white shadow-md'
+              : 'bg-white border-slate-200 text-slate-700 hover:border-[#00A8E8] hover:text-[#00A8E8]'">
+            <ShoppingBagIcon class="w-5 h-5" />
+            <span class="hidden sm:inline font-bold text-sm">Book Service</span>
+          </router-link>
 
-          <template v-else-if="showButton === 'login'">
-            <div class="ml-auto relative">
-              <!-- Button -->
+          <router-link to="/notifications"
+            class="hidden md:block relative p-2.5 text-slate-500 hover:bg-slate-50 rounded-xl transition-colors">
+            <BellIcon class="w-6 h-6" />
+            <span v-if="unreadCount"
+              class="absolute top-2.5 right-2.5 w-2.5 h-2.5 bg-red-500 border-2 border-white rounded-full"></span>
+          </router-link>
 
-              <button @click="showDropdown = !showDropdown"
-                class="btn-primary flex items-center justify-center px-2 py-2 bg-gradient-to-b from-[#00A8E8] to-[#007EA7] text-white font-semibold rounded-lg hover:bg-[#045580] transition focus:outline-none">
-                <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 sm:hidden" fill="none" viewBox="0 0 24 24"
-                  stroke="currentColor" stroke-width="2">
-                  <path stroke-linecap="round" stroke-linejoin="round"
-                    d="M5.121 17.804A7 7 0 0112 14a7 7 0 016.879 3.804M12 12a5 5 0 100-10 5 5 0 000 10z" />
-                </svg>
-                <router-link to="/login">
-                  <span class="hidden sm:inline text-xs sm:text-sm md:text-base lg:text-lg">Login | Sign Up</span>
-                </router-link>
-              </button>
-
-              <!-- Dropdown menu for small screens -->
-              <transition name="fade">
-                <div v-if="showDropdown"
-                  class="absolute right-0 mt-2 w-40 bg-white border border-gray-200 rounded-lg shadow-lg z-50 sm:hidden">
-                  <router-link to="/login"
-                    class="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-[#0073b1] rounded-t-lg"
-                    @click="showDropdown = false">
-                    Login
-                  </router-link>
-                  <router-link to="/signup"
-                    class="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-[#0073b1] rounded-b-lg"
-                    @click="showDropdown = false">
-                    Sign Up
-                  </router-link>
-                  <hr class="my-1 border-gray-200" />
-
-                  <router-link to="/about" class="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-[#0073b1]"
-                    @click="showDropdown = false">
-                    About Us
-                  </router-link>
-                  <router-link to="/contact" class="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-[#0073b1]"
-                    @click="showDropdown = false">
-                    Contact
-                  </router-link>
-                  <router-link :to="{ path: '/help', query: { from: 'homelogged' } }"
-                    class="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-[#0073b1]"
-                    @click="showDropdown = false">
-                    Help
-                  </router-link>
-
-                </div>
-              </transition>
-            </div>
-          </template>
-
-          <template v-else>
-            <div class="flex items-center gap-3 ml-auto">
-              <!-- Notification Bell -->
-              <router-link to="/notifications"
-                class="relative w-10 h-10 flex items-center justify-center rounded-full hover:text-[#0073b1] transition duration-200">
-                <svg class="w-7 h-7 text-gray-700 hover:text-[#0073b1]" fill="none" stroke="currentColor"
-                  stroke-width="2" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round"
-                    d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
-                </svg>
-                <span v-if="unreadCount > 0"
-                  class="absolute -top-0.5 -right-0.5 bg-red-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full">
-                  {{ unreadCount }}
-                </span>
-              </router-link>
-
-              <div class="relative cursor-pointer" @click="toggleDropdown">
-                <img :src="user && user.profilePic ? getImageUrl(user.profilePic) : defaultAvatar"
-                  @error="e => e.target.src = defaultAvatar" alt="User Profile"
-                  class="w-10 h-10 rounded-full object-cover border-2 border-[#0073b1] hover:ring-1 hover:ring-[#0073b1]"
-                  loading="lazy" />
-                <div v-if="showDropdown" role="menu" tabindex="0" @keydown.escape="closeMenu"
-                  class="absolute right-0 mt-2 w-40 bg-white rounded-xl shadow-lg border py-2 z-50  transition transform origin-top-right scale-95 opacity-0 animate-dropdown">
-
-                  <router-link to="/dashboard" class="block px-4 py-2 text-gray-700 hover:text-[#0073b1]">View
-                    Dashboard</router-link>
-                  <router-link to="/about"
-                    class="flex items-center gap-3 px-4 py-2 rounded-lg text-gray-700 font-medium hover:bg-blue-50 hover:text-[#0073b1] transition">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24"
-                      stroke="currentColor" stroke-width="2">
-                      <path stroke-linecap="round" stroke-linejoin="round"
-                        d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
-                    About Us
-                  </router-link>
-                  <router-link to="/contact"
-                    class="flex items-center gap-3 px-4 py-2 rounded-lg text-gray-700 font-medium hover:bg-blue-50 hover:text-[#0073b1] transition"
-                    @click="closeMenu">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
-                      <path
-                        d="M6.62 10.79a15.05 15.05 0 006.59 6.59l2.2-2.2a1 1 0 011.11-.21 11.05 11.05 0 003.47.55 1 1 0 011 1V20a1 1 0 01-1 1C10.42 21 3 13.58 3 5a1 1 0 011-1h3.5a1 1 0 011 1c0 1.2.19 2.38.55 3.47a1 1 0 01-.21 1.11l-2.22 2.21z" />
-                    </svg>
-                    Contact
-                  </router-link>
-                  <router-link :to="{ path: '/help', query: { from: 'homelogged' } }"
-                    class="flex items-center gap-3 px-4 py-2 rounded-lg text-gray-700 font-medium hover:bg-blue-50 hover:text-[#0073b1] transition"
-                    @click="closeMenu">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
-                      <path fill-rule="evenodd" clip-rule="evenodd"
-                        d="M12 19.5C16.1421 19.5 19.5 16.1421 19.5 12C19.5 7.85786 16.1421 4.5 12 4.5C7.85786 4.5 4.5 7.85786 4.5 12C4.5 16.1421 7.85786 19.5 12 19.5ZM12 21C16.9706 21 21 16.9706 21 12C21 7.02944 16.9706 3 12 3C7.02944 3 3 7.02944 3 12C3 16.9706 7.02944 21 12 21ZM12.75 15V16.5H11.25V15H12.75ZM10.5 10.4318C10.5 9.66263 11.1497 9 12 9C12.8503 9 13.5 9.66263 13.5 10.4318C13.5 10.739 13.3151 11.1031 12.9076 11.5159C12.5126 11.9161 12.0104 12.2593 11.5928 12.5292L11.25 12.7509V14.25H12.75V13.5623C13.1312 13.303 13.5828 12.9671 13.9752 12.5696C14.4818 12.0564 15 11.3296 15 10.4318C15 8.79103 13.6349 7.5 12 7.5C10.3651 7.5 9 8.79103 9 10.4318H10.5Z" />
-                    </svg>
-                    Help
-                  </router-link>
-
-                </div>
-              </div>
-            </div>
-          </template>
-        </template>
-
-      </nav>
-    </div>
-
-  </header>
-  <!--Homelogged Navbar -->
-  <header v-else class="sticky top-0 z-50 w-full bg-gradient-to-r from-[#fffefc] via-[#fafafa] to-[#ffffff] shadow-md">
-    <div class="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
-
-      <router-link :to="isLoggedIn ? '/homelogged' : '/'" class="flex items-center space-x-2 cursor-pointer group">
-        <img src="@/assets/skilllogo.png" alt="SkillLink Logo"
-          class="w-10 h-10 sm:w-12 sm:h-12 transition-transform group-hover:rotate-12 shadow-lg rounded-s"
-          loading="lazy" />
-
-        <h1
-          class="text-xl sm:text-2xl font-bold bg-gradient-to-b from-[#00A8E8] to-[#007EA7] bg-clip-text text-transparent relative text-shadow-md">
-          SkillLink
-        </h1>
-      </router-link>
-      <!-- Desktop Nav -->
-      <nav class="flex items-center space-x-2">
-
-        <router-link :to="{ path: '/home', query: { disableBooking: true } }" class="ml-auto">
-          <button
-            class="flex items-center  text-xs sm:text-sm md:text-base lg:text-lg gap-1 px-2 py-1.5 text-gray-700 font-semibold rounded-lg hover:ring-1 hover:text-[#0073b1] hover:ring-[#0073b1] transition">
-            <!-- SVG icon -->
-            <svg xmlns="http://www.w3.org/2000/svg" width="800px" height="800px" viewBox="0 0 1024 1024" fill="#000000"
-              class="w-5 sm:w-6 h-5 sm:h-6 fill-current">
-              <path
-                d="M959.018 208.158c0.23-2.721 0.34-5.45 0.34-8.172 0-74.93-60.96-135.89-135.89-135.89-1.54 0-3.036 0.06-6.522 0.213l-611.757-0.043c-1.768-0.085-3.563-0.17-5.424-0.17-74.812 0-135.67 60.84-135.67 135.712l0.188 10.952h-0.306l0.391 594.972-0.162 20.382c0 74.03 60.22 134.25 134.24 134.25 1.668 0 7.007-0.239 7.1-0.239l608.934 0.085c2.985 0.357 6.216 0.468 9.55 0.468 35.815 0 69.514-13.954 94.879-39.302 25.373-25.34 39.344-58.987 39.344-94.794l-0.145-12.015h0.918l-0.008-606.41z m-757.655 693.82l-2.585-0.203c-42.524 0-76.146-34.863-76.537-79.309V332.671H900.79l0.46 485.186-0.885 2.865c-0.535 1.837-0.8 3.58-0.8 5.17 0 40.382-31.555 73.766-71.852 76.002l-10.816 0.621v-0.527l-615.533-0.01zM900.78 274.424H122.3l-0.375-65.934 0.85-2.924c0.52-1.82 0.782-3.63 0.782-5.247 0-42.236 34.727-76.665 78.179-76.809l0.45-0.068 618.177 0.018 2.662 0.203c42.329 0 76.767 34.439 76.767 76.768 0 1.326 0.196 2.687 0.655 4.532l0.332 0.884v68.577z" />
-              <path
-                d="M697.67 471.435c-7.882 0-15.314 3.078-20.918 8.682l-223.43 223.439L346.599 596.84c-5.544-5.603-12.95-8.69-20.842-8.69s-15.323 3.078-20.918 8.665c-5.578 5.518-8.674 12.9-8.7 20.79-0.017 7.908 3.07 15.357 8.69 20.994l127.55 127.558c5.57 5.56 13.01 8.622 20.943 8.622 7.925 0 15.364-3.06 20.934-8.63l244.247-244.247c5.578-5.511 8.674-12.883 8.7-20.783 0.017-7.942-3.079-15.408-8.682-20.986-5.552-5.612-12.958-8.698-20.85-8.698z" />
-            </svg>
-            Book Service
-          </button>
-        </router-link>
-
-        <!-- Notification Bell -->
-        <router-link to="/notifications"
-          class="relative w-10 h-10 flex items-center justify-center rounded-full hover:text-[#0073b1] transition duration-200 focus:outline-none focus:ring-2 focus:ring-[#0073b1] focus:ring-offset-2">
-          <svg class="w-7 h-7 text-gray-700 hover:text-[#0073b1]" fill="none" stroke="currentColor" stroke-width="2"
-            viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-            <path stroke-linecap="round" stroke-linejoin="round"
-              d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
-          </svg>
-          <!-- 🔴 Badge -->
-          <span v-if="unreadCount > 0"
-            class="absolute -top-0.5 -right-0.5 bg-red-600 text-white text-[11px] font-bold min-w-[18px] h-[18px] flex items-center justify-center rounded-full shadow-md animate-pulse">
-            {{ unreadCount }}
-          </span>
-
-        </router-link>
-
-        <div class="relative cursor-pointer" @click="toggleDropdown">
-          <img :src="user && user.profilePic ? getImageUrl(user.profilePic) : defaultAvatar"
-            @error="e => e.target.src = defaultAvatar" alt="User Profile"
-            class="w-10 h-10 rounded-full object-cover border-2 border-[#0073b1] hover:ring-1 hover:ring-[#0073b1]"
-            loading="lazy" />
-          <div v-if="showDropdown" role="menu" tabindex="0" @keydown.escape="closeMenu"
-            class="absolute right-0 mt-2 w-48 bg-white rounded-xl shadow-lg border py-2 z-50  transition transform origin-top-right scale-95 opacity-0 animate-dropdown">
-
-            <router-link to="/dashboard" class="block px-4 py-2 text-gray-700 hover:text-[#0073b1]">View
-              Dashboard</router-link>
-            <router-link to="/about"
-              class="flex items-center gap-3 px-4 py-2 rounded-lg text-gray-700 font-medium hover:bg-blue-50 hover:text-[#0073b1] transition">
-              <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24"
-                stroke="currentColor" stroke-width="2">
-                <path stroke-linecap="round" stroke-linejoin="round"
-                  d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
-              About Us
-            </router-link>
-            <router-link to="/contact"
-              class="flex items-center gap-3 px-4 py-2 rounded-lg text-gray-700 font-medium hover:bg-blue-50 hover:text-[#0073b1] transition"
-              @click="closeMenu">
-              <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
-                <path
-                  d="M6.62 10.79a15.05 15.05 0 006.59 6.59l2.2-2.2a1 1 0 011.11-.21 11.05 11.05 0 003.47.55 1 1 0 011 1V20a1 1 0 01-1 1C10.42 21 3 13.58 3 5a1 1 0 011-1h3.5a1 1 0 011 1c0 1.2.19 2.38.55 3.47a1 1 0 01-.21 1.11l-2.22 2.21z" />
-              </svg>
-              Contact
-            </router-link>
-            <router-link :to="{ path: '/help', query: { from: 'homelogged' } }"
-              class="flex items-center gap-3 px-4 py-2 rounded-lg text-gray-700 font-medium hover:bg-blue-50 hover:text-[#0073b1] transition"
-              @click="closeMenu">
-              <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
-                <path fill-rule="evenodd" clip-rule="evenodd"
-                  d="M12 19.5C16.1421 19.5 19.5 16.1421 19.5 12C19.5 7.85786 16.1421 4.5 12 4.5C7.85786 4.5 4.5 7.85786 4.5 12C4.5 16.1421 7.85786 19.5 12 19.5ZM12 21C16.9706 21 21 16.9706 21 12C21 7.02944 16.9706 3 12 3C7.02944 3 3 7.02944 3 12C3 16.9706 7.02944 21 12 21ZM12.75 15V16.5H11.25V15H12.75ZM10.5 10.4318C10.5 9.66263 11.1497 9 12 9C12.8503 9 13.5 9.66263 13.5 10.4318C13.5 10.739 13.3151 11.1031 12.9076 11.5159C12.5126 11.9161 12.0104 12.2593 11.5928 12.5292L11.25 12.7509V14.25H12.75V13.5623C13.1312 13.303 13.5828 12.9671 13.9752 12.5696C14.4818 12.0564 15 11.3296 15 10.4318C15 8.79103 13.6349 7.5 12 7.5C10.3651 7.5 9 8.79103 9 10.4318H10.5Z" />
-              </svg>
-              Help
-            </router-link>
-            <button @click="showLogoutModal = true" class="w-full flex items-center gap-3 px-4 py-2 rounded-xl 
-        text-red-500 font-medium shadow-sm transition-all duration-200 ease-in-out">
-
-              <!-- Logout Icon -->
-              <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24"
-                stroke="currentColor" stroke-width="2">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M15 12H3m6-6l-6 6 6 6m6-12h6v12h-6" />
-              </svg>
-
-              <span class="text-sm font-semibold tracking-wide">Logout</span>
+          <div class="hidden md:block relative">
+            <button @click="toggleDropdown"
+              class="flex items-center gap-2 p-1 border border-slate-200 rounded-full hover:shadow-sm transition-all">
+              <img :src="user?.profilePic || defaultAvatar" class="w-8 h-8 rounded-full object-cover" />
+              <ChevronDownIcon class="w-4 h-4 text-slate-400 mr-1 transition-transform"
+                :class="{ 'rotate-180': showDropdown }" />
             </button>
 
-
+            <transition name="dropdown">
+              <div v-if="showDropdown"
+                class="absolute right-0 mt-3 w-52 bg-white border border-slate-100 rounded-2xl shadow-xl py-2 z-[110]">
+                <div class="px-4 py-2 mb-1 border-b border-slate-50">
+                  <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Signed in as</p>
+                  <p class="text-sm font-bold text-slate-800 truncate">{{ user?.name || 'User' }}</p>
+                </div>
+                <router-link @click="showDropdown = false" to="/dashboard" class="dropdown-item">
+                  <LayoutDashboardIcon class="w-4 h-4" /> Dashboard
+                </router-link>
+                <router-link @click="showDropdown = false" to="/profile" class="dropdown-item">
+                  <UserIcon class="w-4 h-4" /> My Profile
+                </router-link>
+                <div class="h-px bg-slate-100 my-1"></div>
+                <button @click="showLogoutModal = true; showDropdown = false" class="dropdown-item text-red-500 w-full">
+                  <LogOutIcon class="w-4 h-4" /> Logout
+                </button>
+              </div>
+            </transition>
           </div>
-        </div>
-      </nav>
+        </template>
+
+        <button @click="mobileMenu = !mobileMenu"
+          class="md:hidden p-2 text-slate-600 hover:bg-slate-50 rounded-xl transition-colors">
+          <MenuIcon v-if="!mobileMenu" class="w-7 h-7" />
+          <XIcon v-else class="w-7 h-7" />
+        </button>
+      </div>
     </div>
-    <!-- Logout Modal -->
-    <transition name="fade-zoom">
-      <div v-if="showLogoutModal" class="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-        <div class="bg-white p-6 rounded-xl shadow-xl w-80 animate-fade-in">
-          <h2 class="text-lg font-semibold mb-2">Confirm Logout</h2>
-          <p class="text-gray-600 mb-4">Are you sure you want to logout?</p>
-          <div class="flex justify-end space-x-3">
-            <button @click="showLogoutModal = false"
-              class="px-4 py-2 bg-gray-200 rounded-lg hover:bg-gray-300 transition">Cancel</button>
-            <button @click="confirmLogout"
-              class="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition">Logout</button>
+
+    <transition name="mobile-menu">
+      <div v-if="mobileMenu" class="fixed inset-0 top-[64px] sm:top-[80px] bg-white z-[90] md:hidden overflow-y-auto">
+        <div class="p-6 flex flex-col gap-8">
+
+          <div v-if="isLoggedIn" class="flex items-center gap-4 p-5 bg-slate-50 rounded-3xl border border-slate-100">
+            <img :src="user?.profilePic || defaultAvatar" class="w-14 h-14 rounded-2xl object-cover shadow-sm" />
+            <div class="flex-1">
+              <p class="text-xs font-bold text-slate-400 uppercase tracking-widest">Welcome back,</p>
+              <p class="text-lg font-black text-slate-900 leading-tight">{{ user?.name || 'Account' }}</p>
+            </div>
+          </div>
+
+          <div v-if="shouldShowSearch" class="relative">
+            <SearchIcon class="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
+            <input v-model="searchQuery" type="text" placeholder="What are you looking for?"
+              class="w-full pl-12 pr-4 py-4 bg-slate-100 border-none rounded-2xl text-base outline-none focus:ring-2 focus:ring-[#00A8E8]/20" />
+          </div>
+
+          <div class="space-y-1">
+            <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest px-4 mb-2">Main Menu</p>
+            <router-link @click="mobileMenu = false" to="/dashboard" class="mobile-nav-item">
+              <LayoutDashboardIcon class="w-6 h-6 text-[#00A8E8]" /> Dashboard
+            </router-link>
+            <router-link @click="mobileMenu = false" to="/profile" class="mobile-nav-item">
+              <UserIcon class="w-6 h-6 text-[#00A8E8]" /> My Profile
+            </router-link>
+            <router-link @click="mobileMenu = false" to="/notifications" class="mobile-nav-item">
+              <BellIcon class="w-6 h-6 text-[#00A8E8]" /> Notifications
+            </router-link>
+            <div class="h-px bg-slate-50 my-4"></div>
+            <router-link @click="mobileMenu = false" to="/about" class="mobile-nav-item">
+              <HelpCircleIcon class="w-6 h-6 text-slate-400" /> About SkillLink
+            </router-link>
+            <router-link @click="mobileMenu = false" to="/contact" class="mobile-nav-item">
+              <MailIcon class="w-6 h-6 text-slate-400" /> Help & Support
+            </router-link>
+          </div>
+
+          <div class="pt-4 border-t border-slate-100">
+            <button v-if="isLoggedIn" @click="showLogoutModal = true; mobileMenu = false"
+              class="w-full py-4 text-red-500 font-bold bg-red-50 rounded-2xl flex items-center justify-center gap-2">
+              <LogOutIcon class="w-5 h-5" /> Sign Out
+            </button>
+            <router-link v-else to="/login" @click="mobileMenu = false"
+              class="w-full py-4 bg-[#00A8E8] text-white font-bold rounded-2xl text-center shadow-lg shadow-blue-100">
+              Sign In / Register
+            </router-link>
           </div>
         </div>
       </div>
     </transition>
-
   </header>
+
+  <transition name="modal-fade">
+    <div v-if="showLogoutModal"
+      class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm flex items-center justify-center z-[200] px-4">
+      <div class="bg-white p-8 rounded-[2rem] w-full max-w-sm shadow-2xl overflow-hidden relative">
+        <div class="absolute top-0 left-0 w-full h-1.5 bg-red-500"></div>
+        <h2 class="text-xl font-bold text-center text-slate-800 mb-2">Confirm Logout</h2>
+        <p class="text-slate-500 text-center mb-8 text-sm">You will need to log back in to access your bookings and
+          profile.</p>
+        <div class="grid grid-cols-2 gap-3">
+          <button @click="showLogoutModal = false"
+            class="py-3.5 font-bold text-slate-600 bg-slate-100 rounded-2xl hover:bg-slate-200 transition-colors">Cancel</button>
+          <button @click="logout"
+            class="py-3.5 font-bold text-white bg-red-500 rounded-2xl shadow-lg shadow-red-100 active:scale-95 transition-all">Logout</button>
+        </div>
+      </div>
+    </div>
+  </transition>
 </template>
 
 <script setup>
-import { ref, computed, onMounted, } from "vue";
-import { useRoute, useRouter } from "vue-router";
-// Import your Appwrite configuration
-import { account } from "@/appwrite";
-import defaultAvatarFile from '@/assets/user.png';
-import IconCheck from './IconCheck.vue';
+import { ref, computed } from "vue"
+import { useRoute, useRouter } from "vue-router"
+// 1. Import your central auth store and the global logout function
+import { auth, logoutUser } from "@/stores/auth" 
+import {
+  SearchIcon, BellIcon, MenuIcon, XIcon, ShoppingBagIcon, MailIcon, HelpCircleIcon,
+  ChevronDownIcon, LayoutDashboardIcon, UserIcon, LogOutIcon
+} from "lucide-vue-next"
 
-const defaultAvatar = defaultAvatarFile;
-const props = defineProps({
-  mode: { type: String, default: 'default' },
-  showSearch: { type: Boolean, default: false },
-  hideExtras: { type: Boolean, default: false }
-});
+import defaultAvatarFile from "@/assets/user.png"
 
-const user = ref(null);
-const router = useRouter();
-const route = useRoute();
-const showDropdown = ref(false);
-const showLogoutModal = ref(false);
-const unreadCount = ref(0);
-const searchQuery = ref("");
-const showMobileSearch = ref(false);
-const isLoggedIn = ref(false); // Local reactive state for Appwrite
+const router = useRouter()
+const route = useRoute()
 
-// 🛠️ 1. Appwrite User Check
-const checkUserStatus = async () => {
+// 2. Map local variables to the Global Store
+// This ensures that when auth.js updates, the Navbar updates instantly
+const user = computed(() => auth.user)
+const isLoggedIn = computed(() => auth.isLoggedIn)
+
+const unreadCount = ref(3) 
+const showDropdown = ref(false)
+const mobileMenu = ref(false)
+const showLogoutModal = ref(false)
+const searchQuery = ref("")
+const defaultAvatar = defaultAvatarFile
+
+// 3. Simplified Logout using your central logic
+const logout = async () => {
   try {
-    const session = await account.get();
-    user.value = session;
-    isLoggedIn.value = true;
-
-    // Sync with LocalStorage for your Router Guard
-    localStorage.setItem('user', JSON.stringify({
-      id: session.$id,
-      name: session.name,
-      email: session.email,
-      role: session.labels?.includes('provider') ? 'provider' : 'user'
-    }));
-  } catch (error) {
-    user.value = null;
-    isLoggedIn.value = false;
-    localStorage.removeItem('user');
-    console.log("No active Appwrite session");
+    await logoutUser() // This handles Appwrite, LocalStorage, and Store cleanup
+    showLogoutModal.value = false
+    router.push("/homeboard")
+  } catch (error) { 
+    console.error("Logout failed:", error) 
   }
-};
+}
 
-// 🛠️ 2. Appwrite Logout
-const confirmLogout = async () => {
-  try {
-    await account.deleteSession('current');
-    localStorage.removeItem('user');
-    user.value = null;
-    isLoggedIn.value = false;
-    showLogoutModal.value = false;
-    router.push('/homeboard');
-  } catch (error) {
-    console.error("Logout failed", error);
-  }
-};
+const toggleDropdown = () => (showDropdown.value = !showDropdown.value)
+const shouldShowSearch = computed(() => !["/login", "/signup"].includes(route.path))
 
-const showButton = computed(() => {
-  const homePages = ["/about", "/contact", "/help", "/policy"];
-  if (homePages.includes(route.path)) return "home";
-  return isLoggedIn.value ? "profile" : "login";
-});
-
-const toggleDropdown = () => { showDropdown.value = !showDropdown.value; };
-
-onMounted(() => {
-  checkUserStatus();
-});
+// 4. REMOVED: onMounted(checkUserStatus) 
+// We don't check here anymore. initAuth() should be called in App.vue 
+// so the check happens only ONCE per session, not every time you change pages.
 </script>
 
 <style scoped>
-@keyframes dropdown {
-  from {
-    opacity: 0;
-    transform: scale(0.95);
-  }
-
-  to {
-    opacity: 1;
-    transform: scale(1);
-  }
+.nav-link {
+  @apply px-4 py-2 text-sm font-semibold text-slate-600 hover:text-[#00A8E8] transition-colors rounded-xl;
 }
 
-.animate-dropdown {
-  animation: dropdown 0.15s ease-out forwards;
+.dropdown-item {
+  @apply flex items-center gap-3 px-4 py-2.5 text-sm font-semibold text-slate-600 hover:bg-slate-50 transition-all cursor-pointer;
 }
 
-.btn-red {
-  padding: 0.5rem 1rem;
-  border-radius: 0.375rem;
-  transition: background-color 0.2s;
+.mobile-nav-item {
+  @apply flex items-center gap-4 px-4 py-4 text-base font-bold text-slate-700 hover:bg-slate-50 rounded-2xl transition-all;
 }
 
-.btn-red {
-  color: #ef4444;
+/* Dropdown Animation */
+.dropdown-enter-active,
+.dropdown-leave-active {
+  transition: all 0.2s ease-out;
 }
 
-.btn-red:hover {
-  background: #dc2626;
-}
-
-.drawer-link {
-  width: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: start;
-  gap: 0.5rem;
-  padding: 0.5rem 1rem;
-  font-weight: 600;
-  color: #4B5563;
-  border-radius: 0.5rem;
-  transition: all 0.2s;
-}
-
-.drawer-link:hover {
-  color: #0073b1;
-  box-shadow: 0 0 0 1px #0073b1;
-}
-
-/* Slide-fade animation */
-.slide-fade-enter-active,
-.slide-fade-leave-active {
-  transition: all 0.3s ease;
-}
-
-.slide-fade-enter-from {
-  transform: translateY(-100%);
+.dropdown-enter-from,
+.dropdown-leave-to {
   opacity: 0;
+  transform: translateY(8px) scale(0.98);
 }
 
-.slide-fade-enter-to {
-  transform: translateY(0);
-  opacity: 1;
+/* Mobile Menu Animation */
+.mobile-menu-enter-active,
+.mobile-menu-leave-active {
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.slide-fade-leave-from {
-  transform: translateY(0);
-  opacity: 1;
+.mobile-menu-enter-from,
+.mobile-menu-leave-to {
+  opacity: 0;
+  transform: translateX(100%);
 }
 
-.slide-fade-leave-to {
-  transform: translateY(-100%);
+/* Fade Animation */
+.modal-fade-enter-active,
+.modal-fade-leave-active {
+  transition: opacity 0.3s ease;
+}
+
+.modal-fade-enter-from,
+.modal-fade-leave-to {
   opacity: 0;
 }
 </style>

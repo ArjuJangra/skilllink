@@ -2,8 +2,8 @@
   <div class="min-h-screen bg-[#FBFDFF] pb-20">
     <AppNavbar />
 
-    <div v-if="!selectedServices.length && !loadingProvider" 
-         class="max-w-xl mx-auto py-24 px-6 text-center animate-fade-in">
+    <div v-if="!selectedServices.length && !loadingProvider"
+      class="max-w-xl mx-auto py-24 px-6 text-center animate-fade-in">
       <div class="w-24 h-24 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-8">
         <i class="fas fa-calendar-plus text-slate-300 text-3xl"></i>
       </div>
@@ -12,16 +12,18 @@
         Your previous booking is being processed. You can start a new booking or check your status in the dashboard.
       </p>
       <div class="flex flex-col sm:flex-row gap-4 justify-center">
-        <router-link to="/services" class="bg-[#0289b7] text-white px-8 py-4 rounded-2xl font-bold shadow-lg shadow-blue-100 hover:bg-[#005f6b] transition-all">
+        <router-link to="/services"
+          class="bg-[#0289b7] text-white px-8 py-4 rounded-2xl font-bold shadow-lg shadow-blue-100 hover:bg-[#005f6b] transition-all">
           Book Another Service
         </router-link>
-        <router-link to="/dashboard" class="bg-white text-slate-900 border border-slate-200 px-8 py-4 rounded-2xl font-bold hover:bg-slate-50 transition-all">
+        <router-link to="/dashboard"
+          class="bg-white text-slate-900 border border-slate-200 px-8 py-4 rounded-2xl font-bold hover:bg-slate-50 transition-all">
           View Dashboard
         </router-link>
       </div>
     </div>
 
-    <div v-else class="max-w-6xl mx-auto py-12 px-6">
+    <div class="max-w-6xl mx-auto py-12 px-6">
       <div class="mb-12">
         <div class="flex items-center justify-between max-w-2xl mx-auto relative">
           <div v-for="n in 3" :key="n" class="z-10 flex flex-col items-center">
@@ -34,12 +36,12 @@
             </div>
             <span
               :class="['text-[10px] mt-3 font-bold uppercase tracking-[0.15em]', step >= n ? 'text-[#0289b7]' : 'text-slate-400']">
-              {{ n === 1 ? 'Details' : n === 2 ? 'Expert' : 'Payment' }}
+              {{ n === 1 ? 'Details' : 'Payment' }}
             </span>
           </div>
           <div class="absolute top-6 left-0 w-full h-[2px] bg-slate-100 -z-0">
             <div class="h-full bg-[#0289b7] transition-all duration-700"
-              :style="{ width: ((step - 1) / 2) * 100 + '%' }"></div>
+              :style="{ width: ((step - 1) / 1) * 100 + '%' }"></div>
           </div>
         </div>
       </div>
@@ -71,75 +73,71 @@
               </div>
             </div>
 
+            <!-- PROVIDERS FIRST -->
             <div class="pt-8 border-t border-slate-50">
-              <label class="text-xs font-bold text-slate-500 uppercase tracking-wide block mb-6">
-                Available Services from <span class="text-[#0289b7]">{{ selectedProvider?.name || 'Expert' }}</span>
+              <label class="text-xs font-bold text-slate-500 uppercase mb-6 block">
+                Select Expert
               </label>
 
-              <div v-if="loadingProvider" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div v-for="i in 2" :key="i" class="h-20 bg-slate-50 animate-pulse rounded-2xl"></div>
+              <div v-if="loading" class="space-y-4">
+                <div v-for="i in 3" :key="i" class="h-24 bg-slate-50 rounded-3xl animate-pulse"></div>
               </div>
 
-              <div v-else class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div v-else class="space-y-4">
+                <div v-for="provider in providers" :key="provider.$id" @click="getProviderDetails(provider.$id)"
+                  class="p-5 rounded-3xl border-2 cursor-pointer transition-all" :class="selectedProviderId === provider.$id
+                    ? 'border-[#0289b7] bg-blue-50/40'
+                    : 'border-slate-100 hover:border-slate-200'">
+
+                  <div class="flex justify-between items-center">
+                    <div>
+                      <p class="font-bold text-slate-900">{{ provider.name }}</p>
+                      <p class="text-xs text-slate-400">{{ provider.area }}</p>
+
+                      <!-- SERVICES TAG -->
+                      <div class="flex flex-wrap gap-2 mt-2">
+                        <span v-for="s in provider.services" :key="s"
+                          class="text-[10px] px-2 py-1 bg-slate-100 rounded-lg">
+                          {{ s }}
+                        </span>
+                      </div>
+                    </div>
+
+                    <div class="w-6 h-6 rounded-full border-2 flex items-center justify-center"
+                      :class="selectedProviderId === provider.$id ? 'bg-[#0289b7] border-[#0289b7]' : 'border-slate-200'">
+                      <i v-if="selectedProviderId === provider.$id" class="fas fa-check text-white text-[10px]"></i>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- SERVICES AFTER PROVIDER -->
+            <div v-if="selectedProviderId" class="pt-8 border-t border-slate-50">
+              <label class="text-xs font-bold text-slate-500 uppercase mb-6 block">
+                Add More Services
+              </label>
+
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div v-for="serviceName in providerOfferedServices" :key="serviceName"
                   @click="toggleService(serviceName)"
-                  :class="selectedServices.includes(serviceName) ? 'border-[#0289b7] bg-blue-50/50' : 'border-slate-100 hover:border-slate-200 bg-slate-50/30'"
-                  class="border-2 p-5 rounded-2xl cursor-pointer transition-all flex items-center justify-between group">
-                  <div class="flex items-center gap-4">
-                    <div
-                      :class="selectedServices.includes(serviceName) ? 'bg-[#0289b7] border-[#0289b7]' : 'bg-white border-slate-200'"
-                      class="w-6 h-6 rounded-lg border flex items-center justify-center transition-all">
-                      <i v-if="selectedServices.includes(serviceName)" class="fas fa-check text-white text-[10px]"></i>
-                    </div>
-                    <div>
-                      <p class="font-bold text-sm text-slate-800">{{ serviceName }}</p>
-                      <p class="text-xs text-[#0289b7] font-black mt-0.5">₹{{ servicePrices[serviceName] || '299' }}</p>
-                    </div>
-                  </div>
+                  class="border-2 p-5 rounded-2xl cursor-pointer transition-all flex justify-between" :class="selectedServices.includes(serviceName)
+                    ? 'border-[#0289b7] bg-blue-50/40'
+                    : 'border-slate-100'">
+
+                  <span class="font-semibold text-sm">{{ serviceName }}</span>
+                  <span class="text-xs font-bold text-[#0289b7]">
+                    ₹{{ servicePrices[serviceName] }}
+                  </span>
                 </div>
               </div>
             </div>
+
           </div>
+
+
 
           <div v-if="step === 2"
-            class="bg-white rounded-[2.5rem] border border-slate-100 p-10 shadow-sm animate-fade-in">
-            <div class="flex items-center gap-4 mb-8">
-              <div class="w-10 h-10 bg-blue-50 text-[#0289b7] rounded-xl flex items-center justify-center">
-                <i class="fas fa-user-shield"></i>
-              </div>
-              <h3 class="text-xl font-black text-slate-900">Select Your Expert</h3>
-            </div>
-
-            <div v-if="loading" class="space-y-4">
-              <div v-for="i in 3" :key="i" class="h-24 bg-slate-50 rounded-3xl animate-pulse"></div>
-            </div>
-
-            <div v-else-if="providers.length" class="space-y-4">
-              <div v-for="provider in providers" :key="provider.$id" @click="selectedProviderId = provider.$id"
-                class="group p-6 rounded-3xl border-2 cursor-pointer transition-all duration-300 flex justify-between items-center"
-                :class="selectedProviderId === provider.$id ? 'border-[#0289b7] bg-blue-50/50' : 'border-slate-50 hover:border-slate-100 bg-slate-50/20'">
-                <div class="flex items-center gap-5">
-                  <div
-                    class="w-14 h-14 rounded-2xl bg-white border border-slate-100 flex items-center justify-center text-[#0289b7] font-black text-xl shadow-sm">
-                    {{ provider.name.charAt(0) }}
-                  </div>
-                  <div>
-                    <p class="font-bold text-slate-900">{{ provider.name }}</p>
-                    <div class="flex items-center gap-4 text-[10px] text-slate-500 font-bold uppercase mt-1">
-                      <span><i class="fas fa-star text-amber-400 mr-1"></i> 4.9</span>
-                      <span><i class="fas fa-map-marker-alt mr-1"></i> {{ provider.area }}</span>
-                    </div>
-                  </div>
-                </div>
-                <div class="w-7 h-7 rounded-full border-2 flex items-center justify-center transition-all"
-                  :class="selectedProviderId === provider.$id ? 'border-[#0289b7] bg-[#0289b7]' : 'border-slate-200'">
-                  <i v-if="selectedProviderId === provider.$id" class="fas fa-check text-white text-[10px]"></i>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div v-if="step === 3"
             class="bg-white rounded-[2.5rem] border border-slate-100 p-10 shadow-sm animate-fade-in">
             <div class="flex items-center gap-4 mb-8">
               <div class="w-10 h-10 bg-blue-50 text-[#0289b7] rounded-xl flex items-center justify-center">
@@ -325,10 +323,11 @@ const totalAmount = computed(() => {
 
 const isStepValid = computed(() => {
   if (step.value === 1) {
-    return name.value && contact.value && address.value && selectedServices.value?.length > 0;
+    return name.value && contact.value && address.value &&
+    selectedProviderId.value &&
+      selectedServices.value.length > 0 
   }
-  if (step.value === 2) return !!selectedProviderId.value;
-  return true;
+  return true
 })
 
 // --- METHODS ---
@@ -401,8 +400,10 @@ watch(selectedProviderId, (newId) => {
   if (newId) getProviderDetails(newId);
 })
 
-const nextStep = () => {
-  if (isStepValid.value) step.value++
+const nextStep = async () => {
+  if (!isStepValid.value) return
+
+  step.value++
 }
 
 const onUPIScreenshotChange = (e) => {
