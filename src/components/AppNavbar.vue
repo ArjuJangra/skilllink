@@ -28,7 +28,7 @@
             class="nav-link hidden sm:inline text-xs sm:text-sm md:text-base lg:text-lg  font-semibold text-gray-800 hover:text-[#0073b1] px-2 py-2 rounded-lg transition hover:scale-105">Help</router-link>
 
           <router-link :to="{ path: '/home', query: { disableBooking: true } }" role="button"
-            class="ml-auto btn-secondary flex items-center  text-xs sm:text-sm md:text-base lg:text-lg gap-2 px-2 py-1.5 text-gray-700 font-semibold rounded-lg hover:ring-1 hover:text-[#0073b1] hover:ring-[#0073b1] transition-transform transform hover:scale-105">
+            class="ml-auto flex items-center  text-xs sm:text-sm md:text-base lg:text-lg gap-2 px-2 py-1.5 text-gray-700 font-semibold rounded-lg hover:ring-1 hover:text-[#0073b1] hover:ring-[#0073b1] transition-transform transform hover:scale-105">
             <IconCheck />
             <span>Book Service</span>
           </router-link>
@@ -248,21 +248,22 @@
   <header v-else class="sticky top-0 z-50 w-full bg-gradient-to-r from-[#fffefc] via-[#fafafa] to-[#ffffff] shadow-md">
     <div class="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
 
-      <!-- Logo -->
-      <div class="flex items-center space-x-2">
+      <router-link :to="isLoggedIn ? '/homelogged' : '/'" class="flex items-center space-x-2 cursor-pointer group">
         <img src="@/assets/skilllogo.png" alt="SkillLink Logo"
-          class="w-10 h-10 sm:w-12 sm:h-12 transition-transform hover:rotate-12 shadow-lg rounded-s" loading="lazy" />
+          class="w-10 h-10 sm:w-12 sm:h-12 transition-transform group-hover:rotate-12 shadow-lg rounded-s"
+          loading="lazy" />
 
         <h1
-          class="text-xl sm:text-2xl font-bold text-gradient bg-gradient-to-b from-[#00A8E8] to-[#007EA7] bg-clip-text text-transparent relative text-shadow-md">
-          SkillLink</h1>
-      </div>
+          class="text-xl sm:text-2xl font-bold bg-gradient-to-b from-[#00A8E8] to-[#007EA7] bg-clip-text text-transparent relative text-shadow-md">
+          SkillLink
+        </h1>
+      </router-link>
       <!-- Desktop Nav -->
       <nav class="flex items-center space-x-2">
 
         <router-link :to="{ path: '/home', query: { disableBooking: true } }" class="ml-auto">
           <button
-            class="btn-secondary flex items-center  text-xs sm:text-sm md:text-base lg:text-lg gap-1 px-2 py-1.5 text-gray-700 font-semibold rounded-lg hover:ring-1 hover:text-[#0073b1] hover:ring-[#0073b1] transition">
+            class="flex items-center  text-xs sm:text-sm md:text-base lg:text-lg gap-1 px-2 py-1.5 text-gray-700 font-semibold rounded-lg hover:ring-1 hover:text-[#0073b1] hover:ring-[#0073b1] transition">
             <!-- SVG icon -->
             <svg xmlns="http://www.w3.org/2000/svg" width="800px" height="800px" viewBox="0 0 1024 1024" fill="#000000"
               class="w-5 sm:w-6 h-5 sm:h-6 fill-current">

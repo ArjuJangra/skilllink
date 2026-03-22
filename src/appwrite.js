@@ -8,7 +8,8 @@ const client = new Client()
 export const APPWRITE_CONFIG = {
     dbId: '69bc1ae900174fd0a3c6',          // Replace with your actual Database ID
     usersCollection: 'users',          // Replace with your User Collection ID
-    providersCollection: 'providers',  // Replace with your Provider Collection ID
+    providersCollection: 'providers', 
+    servicesCollection: 'services', // Replace with your Service Collection ID
     storageBucket: '69bc270e0029df27ceed'    // Optional: for profile pictures
 };
 

@@ -3,62 +3,38 @@
     <header class="bg-white shadow sticky top-0 z-50">
       <AppNavbar mode="homelogged" />
     </header>
-    <!-- Hero Section -->
-    <section class=" py-12 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
-      <!-- Decorative Circles -->
-      <div class="absolute -top-20 -left-20 w-72 h-72 rounded-full bg-blue-200 opacity-20"></div>
-      <div class="absolute -bottom-24 -right-24 w-96 h-96 rounded-full bg-blue-300 opacity-10"></div>
 
-      <div class="container mx-auto flex flex-col-reverse md:flex-row items-center justify-between gap-10">
-        <!-- Left: Text & CTA -->
-        <div class="text-center md:text-left max-w-xl space-y-6">
-          <h1
-            class="text-3xl sm:text-4xl md:text-5xl font-extrabold bg-gradient-to-r from-[#3B8D99] to-[#f46675] bg-clip-text text-transparent leading-tight">
-            Connecting You to Trusted Local Experts
+    <!--Hero -->
+    <section class="max-w-screen-xl relative h-[500px] flex items-center overflow-hidden bg-gray-900 mt-[-1px]">
+      <img src="https://images.unsplash.com/photo-1581578731548-c64695cc6952?auto=format&fit=crop&q=80"
+        class="absolute inset-0 w-full h-full object-cover opacity-60" />
+      <div class="absolute inset-0 bg-gradient-to-r from-black/90 via-black/40 to-transparent"></div>
+
+      <div class="container mx-auto px-6 relative z-10">
+        <div class="max-w-2xl space-y-5">
+          <span
+            class="inline-block px-3 py-1 bg-blue-600 text-white text-xs font-bold tracking-widest uppercase rounded">
+            Trusted by 10k+ Households
+          </span>
+          <h1 class="text-4xl md:text-6xl font-black text-white leading-tight">
+            Connecting You to <br /> <span class="text-[#00A8E8]">Trusted Local Experts</span>
           </h1>
-
-          <p class="text-gray-700 text-base sm:text-lg max-w-md mx-auto md:mx-0">
-            Verified experts for home repairs, lifestyle services, or any task — fast, safe, and reliable.
+          <p class="text-gray-300 text-lg max-w-md">
+            Verified experts for home repairs, lifestyle services, and technical tasks — fast, safe, and reliable.
           </p>
-
-          <!-- Call to Action -->
-          <div class="flex justify-center md:justify-start mt-8">
+          <div class="flex gap-4">
             <router-link to="/home"
               class="inline-block px-8 py-3 font-semibold text-[#0073b1] rounded-lg border-2 border-[#0073b1] hover:bg-[#0073b1] hover:text-white transition duration-300">
               Explore Services
             </router-link>
-          </div>
-        </div>
 
-        <!-- Right: Illustration / Image -->
-        <div class="max-w-md w-full mx-auto md:mx-0 flex justify-center md:justify-end">
-          <img src="@/assets/hero-services.png" alt="Hero Illustration"
-            class="w-full md:w-[420px] rounded-xl shadow-lg object-contain" />
+          </div>
         </div>
       </div>
     </section>
-
-    <!-- Services Section -->
-    <section class="py-12 px-6 ">
-      <div class="max-w-screen-xl mx-auto text-center">
-        <h3 class="text-3xl sm:text-4xl font-bold text-center text-gray-800 mb-12"> Our Professional Services</h3>
-
-        <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 sm:gap-6">
-          <div v-for="service in services" :key="service.title" @click="goToServiceDetails(service)" class="bg-white border border-gray-200 p-6 rounded-2xl shadow-sm flex flex-col items-center justify-center 
-         transform transition-all duration-500 font-semibold hover:-translate-y-1 hover:scale-105 hover:shadow-lg 
-         cursor-pointer text-sm sm:text-base group">
-            <div class="bg-blue-100 p-3 rounded-full mb-3 group-hover:bg-blue-500 transition">
-              <component :is="service.icon" class="w-7 h-7 text-blue-600 group-hover:text-white transition" />
-            </div>
-            <h4 class="font-semibold text-gray-800 group-hover:text-blue-600 transition text-sm sm:text-base">
-              {{ service.title }}
-            </h4>
-          </div>
-
-        </div>
-      </div>
-    </section>
-
+    <PromoBanner />
+    <ServicesSection />
+    <BestDeals @book="goToBooking" />
     <!-- Solved Cases Section -->
     <section class=" py-12 px-4">
       <div class="max-w-[1300px] mx-auto">
@@ -336,24 +312,20 @@ bg-clip-text text-transparent">
 <script setup>
 import { ref, onMounted, onUnmounted } from 'vue';
 import API from '@/api';
-import { useRouter } from 'vue-router';
+import { databases } from '@/appwrite'; // Ensure your appwrite.js exports 'databases'
+import { Query } from 'appwrite';
 import ServiceMap from '@/components/ServiceMap.vue';
 import AppNavbar from '@/components/AppNavbar.vue'
-import {
-  Hammer,          // Carpenter
-  Wrench,          // Plumber
-  Scissors,        // Beautician
-  Car,             // Driver on Call
-  Dumbbell,        // Fitness Trainer
-  SprayCan,           // House Cleaner
-  Laptop,          // Laptop-PC Repair
-  PartyPopper      // Event Decorator
-} from 'lucide-vue-next'
-// Reactive state
+import BestDeals from '@/components/home/BestDeals.vue';
+import PromoBanner from '@/components/home/PromoBanners.vue'
+import ServicesSection from '@/components/home/ServiceSection.vue';
 
+// Reactive state
+const topServices = ref([]);
+const loading = ref(true);
 const socket = ref(null);
 const unreadCount = ref(0);
-const router = useRouter();
+
 // Fetch unread notifications
 const fetchUnreadCount = async () => {
   try {
@@ -364,23 +336,33 @@ const fetchUnreadCount = async () => {
   }
 };
 
+const fetchTopServices = async () => {
+  try {
+    const response = await databases.listDocuments(
+      '69bc1ae900174fd0a3c6', // Remove brackets
+      'services',
+      [
+        Query.limit(4), // Get only the top 4 for the "Best Deals" grid
+        Query.orderDesc('$createdAt') // Or order by a 'rating' field if you have one
+      ]
+    );
+    // FIX 1: Use .value to assign the data to the ref
+    topServices.value = response.documents;
+  } catch (error) {
+    console.error('Error fetching services from Appwrite:', error);
+  } finally {
+    // FIX 2: Use .value to update the boolean state
+    loading.value = false;
+  }
+};
 
 // Lifecycle hook
 onMounted(() => {
+  fetchTopServices();
   fetchUnreadCount();
 });
 onUnmounted(() => socket.value?.disconnect());
-// Services list
-const services = [
-  { title: "Carpenter", desc: "Furniture repair, wooden work", price: 299, icon: Hammer, category: "Home & Repair" },
-  { title: "Plumber", desc: "Pipe leakage, taps, water motors", price: 199, icon: Wrench, category: "Home & Repair" },
-  { title: "Beautician", desc: "Home salon, bridal makeup", price: 249, icon: Scissors, category: "Personal Services" },
-  { title: "Driver on Call", desc: "Hourly/daily drivers", price: 199, icon: Car, category: "Outdoor & Utility" },
-  { title: "Fitness Trainer", desc: "Home workout or yoga sessions", price: 199, icon: Dumbbell, category: "Personal Services" },
-  { title: "House Cleaner", desc: "Daily/weekly cleaning", price: 149, icon: SprayCan, category: "Cleaning & Maintenance" },
-  { title: "Laptop-PC Repair", desc: "Hardware/software issues", price: 299, icon: Laptop, category: "Tech & Digital Services" },
-  { title: "Event Decorator", desc: "Events & party decoration", price: 399, icon: PartyPopper, category: "Bonus" },
-]
+
 
 // Solved cases (static images)
 const solvedCases = [
@@ -400,15 +382,5 @@ const solvedCases = [
     description: '"Booked for a wedding. Amazing experience!" – Sneha, Jaipur'
   }
 ];
-const goToServiceDetails = (service) => {
-  router.push({
-    name: "ServiceDetails",
-    query: {
-      title: service.title,
-      desc: service.desc,
-      category: service.category,
-      price: service.price,
-    },
-  });
-};
+
 </script>

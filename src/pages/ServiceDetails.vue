@@ -112,7 +112,7 @@
                 </button>
               </div>
 
-              <!-- ✅ Selected Sub-Service Summary -->
+              <!--  Selected Sub-Service Summary -->
               <div v-if="selectedSubService"
                 class="mt-4 bg-[#E0F7FF] border border-[#00B4D8] text-gray-800 rounded-xl p-4">
                 <div class="font-semibold text-lg">
@@ -313,22 +313,8 @@
               <div v-else class="text-gray-500 italic">No reviews yet. Be the first to add one!</div>
             </section>
           </div>
-
-          <!-- Related Services -->
-          <div class="bg-white rounded-2xl shadow p-6">
-            <h2 class="text-xl font-bold text-gray-900 mb-4">You might also like</h2>
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-              <router-link v-for="s in related" :key="s.title"
-                :to="`/service-details?title=${encodeURIComponent(s.title)}&desc=${encodeURIComponent(s.desc)}&category=${encodeURIComponent(s.category)}`"
-                class="group rounded-xl border overflow-hidden hover:shadow-md transition">
-                <img :src="s.image" class="h-36 w-full object-cover group-hover:scale-105 transition-transform" />
-                <div class="p-3">
-                  <div class="font-semibold text-gray-800 line-clamp-1">{{ s.title }}</div>
-                  <div class="text-xs text-gray-500">{{ s.category }}</div>
-                </div>
-              </router-link>
-            </div>
-          </div>
+          
+          <RelatedServices v-if="category" :category="category" :currentServiceId="$route.query.id" />
 
           <div class="h-20"></div>
         </div>
@@ -393,7 +379,10 @@
             </div>
           </div>
         </div>
+
+
       </div>
+
     </div>
 
     <!-- Sticky bottom CTA on mobile -->
@@ -412,21 +401,28 @@
 </template>
 
 <script>
-
 import AppNavbar from '@/components/AppNavbar.vue';
+import RelatedServices from '@/components/RelatedServices.vue';
+import { databases, storage, APPWRITE_CONFIG } from '@/appwrite';
+//import { Query } from 'appwrite';
 
 export default {
   components: {
-    AppNavbar
+    AppNavbar,
+    RelatedServices
   },
   name: "ServiceDetail",
-
   props: {
     defaultAvatar: { type: String, default: "/images/default-user.png" },
   },
 
   data() {
     return {
+      // Appwrite State
+      loading: true,
+      serviceId: null,
+
+      // Core Service Data
       title: "",
       desc: "",
       category: "",
@@ -699,6 +695,73 @@ export default {
   },
 
   methods: {
+
+    async fetchServiceData() {
+      const id = this.$route.query.id;
+      if (!id) {
+        this.loading = false;
+        return;
+      }
+
+      try {
+        this.loading = true;
+
+        // Pointing to servicesCollection instead of providers
+        const response = await databases.getDocument(
+          APPWRITE_CONFIG.dbId,
+          APPWRITE_CONFIG.servicesCollection,
+          id
+        );
+
+        // Mapping fields from your 'services' collection
+        // Adjust these keys (title, description, price) to match your Appwrite attributes
+        this.title = response.title || this.title;
+        this.desc = response.description || this.desc;
+        this.category = response.category || this.category;
+
+        // If you store tiers as a JSON string in a 'tiers' attribute
+        if (response.tiers) {
+          try {
+            this.tiers = typeof response.tiers === 'string' ? JSON.parse(response.tiers) : response.tiers;
+            this.selectedTier = this.tiers[0] || { name: "", price: 0 };
+          } catch (e) {
+            console.error("Error parsing tiers JSON", e);
+          }
+        }
+
+        // Handle Images from Appwrite Storage
+        if (response.imageIds && response.imageIds.length > 0) {
+          this.media = response.imageIds.map(fileId => ({
+            type: "image",
+            src: storage.getFilePreview(APPWRITE_CONFIG.storageBucket, fileId)
+          }));
+        } else if (response.imageUrl) {
+          // If you store a single URL instead of multiple IDs
+          this.media = [{ type: "image", src: response.imageUrl }];
+        } else {
+          await this.buildMediaFromTitle();
+        }
+
+        // Apply any logic that depends on the category fetched
+        this.updatePricingForService();
+
+      } catch (error) {
+        console.error("Service not found in 'services' collection:", error.message);
+        // Fallback so the page still shows the query-param data
+        await this.buildMediaFromTitle();
+        this.updatePricingForService();
+      } finally {
+        this.loading = false;
+      }
+    },
+
+    async loadMembershipStatus() {
+      // Logic to check if the current logged-in user is a member
+      // This usually involves checking the 'users' collection
+      this.isMember = false;
+    },
+
+
     handleImageError(e) {
       e.target.src = this.defaultAvatar;
     },
@@ -816,25 +879,15 @@ export default {
 
       this.newReview = { user: "", userAvatar: this.defaultAvatar, stars: 0, text: "", date: "" };
     },
+
     updatePricingForService() {
       const key = this.category || this.title;
-      const pricing = this.pricingCatalog[key] || null;
+      const pricing = this.pricingCatalog[key];
 
-      if (pricing) {
+      if (pricing && this.tiers.length === 0) {
         this.tiers = pricing.tiers;
         this.addons = pricing.addons.map(a => ({ ...a, selected: false }));
-        this.selectedTier = pricing.tiers[0];
-      } else {
-        // fallback to default tiers if not found
-        this.tiers = [
-          { name: "Basic", price: 399, points: ["Standard service", "30-day support"] },
-          { name: "Standard", price: 699, points: ["Includes Basic", "Material support"] },
-          { name: "Premium", price: 999, points: ["Includes Standard", "Deep service"] },
-        ];
-        this.addons = [
-          { key: "fast", label: "Fast service (same-day)", price: 99, selected: false },
-          { key: "extra", label: "Extra task (+30 mins)", price: 149, selected: false },
-        ];
+        this.selectedTier = this.tiers[0];
       }
     },
 
@@ -849,8 +902,6 @@ export default {
     }, selectSubService(item) {
       this.selectedSubService = item;
     },
-
-    // === NEW methods ===
 
     updateTravelFee() {
       this.travelFee = this.travelDistanceKm * this.travelFeePerKm;
@@ -870,258 +921,22 @@ export default {
       this.calculateSurge();
     },
 
-    loadMembershipStatus() {
-      // TODO: call your backend / API to set isMember = true/false
-      this.isMember = false;
-    },
+
   },
 
-  mounted() {
+  async mounted() {
+    // 1. Initial local state from query params for fast perceived performance
     const { title, desc, category } = this.$route.query;
-    Object.assign(this, {
-      title: title || "Service Detail",
-      desc: desc || "High-quality service at your doorstep with verified professionals.",
-      category: category || "General",
-    });
-    this.buildMediaFromTitle();
+    this.title = title || "Service Detail";
+    this.desc = desc || "";
+    this.category = category || "General";
+
+    // 2. Fetch real-time data from Appwrite
+    await this.fetchServiceData();
+
+    // 3. Initialize UI helpers
     this.buildRelated();
     this.loadMembershipStatus();
-    this.updatePricingForService();
-
   },
 };
 </script>
-
-<style scoped>
-.nav-arrow-btn {
-  @apply w-10 h-10 flex items-center justify-center bg-white/90 backdrop-blur-sm rounded-full shadow-lg text-gray-900 hover:bg-[#FF3F6C] hover:text-white transition-all active:scale-90;
-}
-
-.no-scrollbar::-webkit-scrollbar {
-  display: none;
-}
-
-/* Smooth Fade & Slide Animation */
-.fade-slide-enter-active,
-.fade-slide-leave-active {
-  transition: all 0.5s ease;
-}
-
-.fade-slide-enter-from {
-  opacity: 0;
-  transform: translateX(20px);
-}
-
-.fade-slide-leave-to {
-  opacity: 0;
-  transform: translateX(-20px);
-}
-
-/* --- Layout Utilities --- */
-.flex-center,
-.grid-center {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.grid-center {
-  display: grid;
-  place-content: center;
-}
-
-.text-sm {
-  font-size: 0.875rem;
-}
-
-.text-xs {
-  font-size: 0.75rem;
-}
-
-.font-medium {
-  font-weight: 500;
-}
-
-.font-semibold {
-  font-weight: 600;
-}
-
-.round-sm {
-  border-radius: 0.5rem;
-}
-
-.round-md {
-  border-radius: 0.75rem;
-}
-
-.round-lg {
-  border-radius: 1rem;
-}
-
-.round-full {
-  border-radius: 9999px;
-}
-
-.transition {
-  transition: all 0.2s;
-}
-
-/* --- Carousel Buttons --- */
-.carousel-btn {
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  z-index: 10;
-  width: 2.25rem;
-  height: 2.25rem;
-  border-radius: 9999px;
-  border: 1px solid #e5e7eb;
-  background: rgba(255, 255, 255, 0.9);
-  display: grid;
-  place-content: center;
-  color: #374151;
-  font-size: 1.25rem;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
-  transition: background 0.2s;
-}
-
-.carousel-btn:hover {
-  background: #fff;
-}
-
-.carousel-btn.left-3 {
-  left: 0.75rem;
-}
-
-.carousel-btn.right-3 {
-  right: 0.75rem;
-}
-
-/* --- Badge --- */
-.badge {
-  display: inline-flex;
-  align-items: center;
-  padding: 0.125rem 0.5rem;
-  border-radius: 9999px;
-  font-size: 0.75rem;
-  font-weight: 500;
-  background: rgba(255, 255, 255, 0.9);
-  color: #1f2937;
-}
-
-/* --- Cards --- */
-.card-soft {
-  border-radius: 0.75rem;
-  padding: 1rem;
-  border: 1px solid #f3f4f6;
-  background: linear-gradient(to bottom right, #f9fafb, #fff);
-}
-
-.card-title {
-  font-size: 0.875rem;
-  font-weight: 600;
-  color: #1f2937;
-}
-
-.card-text {
-  font-size: 0.875rem;
-  color: #4b5563;
-}
-
-/* --- Buttons --- */
-.btn-primary,
-.btn-secondary {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: 600;
-  color: #fff;
-  cursor: pointer;
-  transition: background 0.2s, opacity 0.2s;
-}
-
-.btn-primary {
-  border-radius: 0.75rem;
-  padding: 0.75rem 1.25rem;
-  background: #007EA7;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-}
-
-.btn-primary:hover {
-  background: #006786;
-}
-
-.btn-primary:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
-.btn-secondary {
-  border-radius: 0.5rem;
-  padding: 0.5rem 1rem;
-  font-size: 0.875rem;
-  background: #111827;
-}
-
-.btn-secondary:hover {
-  opacity: 0.9;
-}
-
-/* --- Input --- */
-.input {
-  border: 1px solid #d1d5db;
-  border-radius: 0.5rem;
-  padding: 0.5rem 0.75rem;
-  outline: none;
-  transition: border-color 0.2s, box-shadow 0.2s;
-}
-
-.input:focus {
-  border-color: #00B4D8;
-  box-shadow: 0 0 0 2px #00B4D833;
-}
-
-/* --- Quantity Buttons --- */
-.qty-btn {
-  width: 2.25rem;
-  height: 2.25rem;
-  border-radius: 0.5rem;
-  border: 1px solid #d1d5db;
-  font-weight: bold;
-  font-size: 1.125rem;
-  display: grid;
-  place-content: center;
-  transition: background 0.2s, transform 0.1s;
-}
-
-.qty-btn:hover {
-  background: #f9fafb;
-}
-
-.qty-btn:active {
-  transform: scale(0.95);
-}
-
-/* --- Tier Card --- */
-.tier {
-  border-radius: 1rem;
-  border: 1px solid #e5e7eb;
-  padding: 1rem;
-  background: #fff;
-  text-align: left;
-  transition: box-shadow 0.2s;
-}
-
-.tier:hover {
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-}
-
-/* --- Text Clamp --- */
-.line-clamp-1 {
-  display: -webkit-box;
-  -webkit-line-clamp: 1;
-  line-clamp: 1;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-}
-</style>
