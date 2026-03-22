@@ -15,6 +15,11 @@
 
       <!-- Desktop Nav -->
       <nav class=" md:flex flex items-center gap-2">
+
+        <div class="hidden md:flex flex-1 mx-6">
+          <input v-model="searchQuery" placeholder="Search services..."
+            class="w-full px-4 py-2 border rounded-lg bg-gray-100 focus:outline-none focus:ring-2 focus:ring-[#007EA7]" />
+        </div>
         <template v-if="!props.hideExtras">
           <router-link to="/about"
             class="nav-link hidden sm:inline text-xs sm:text-sm md:text-base lg:text-lg font-semibold text-gray-800 hover:text-[#0073b1] px-2 sm:px-3 py-1 sm:py-2 rounded-lg transition hover:scale-105">

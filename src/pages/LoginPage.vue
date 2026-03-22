@@ -9,10 +9,10 @@
     <!-- Splash Screen -->
     <transition name="overlay-fade">
       <div v-if="showSplash"
-        class="absolute inset-0 flex flex-col items-center justify-center bg-white dark:bg-gray-900 z-50">
+        class="fixed inset-0 flex flex-col items-center justify-center bg-white dark:bg-gray-900 z-[9999]">
         <img src="@/assets/skilllogo.png" alt="SkillLink Logo" class="w-32 mb-4 animate-scale-bounce rounded-sm" />
-        <p class="text-gray-700 dark:text-gray-200 font-medium text-lg animate-pulse">
-          Loading...
+        <p class="text-[#007EA7] font-bold text-xl animate-pulse">
+          Setting up your workspace...
         </p>
       </div>
     </transition>
@@ -202,9 +202,13 @@ const handleLogin = async () => {
     // 7. Success Splash & Redirect
     showSplash.value = true;
     setTimeout(() => {
-      showSplash.value = false;
+
       // Redirect based on the actual role found in the database document
-      router.push(userDoc.role === "provider" ? "/ServiceProvider" : "/homelogged");
+      if (userDoc.role === "provider") {
+        router.push("/ServiceProvider");
+      } else {
+        router.push("/homelogged");
+      }
     }, 1500);
 
   } catch (err) {
@@ -221,4 +225,3 @@ const handleLogin = async () => {
   }
 };
 </script>
-
