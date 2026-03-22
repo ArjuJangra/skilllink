@@ -1,96 +1,93 @@
 import { reactive } from 'vue';
-import { account, databases } from "@/appwrite"; // Assuming your Appwrite config is here
+import { account, databases } from "@/appwrite";
+
+// DATABASE CONFIG
+const DATABASE_ID = '69bc1ae900174fd0a3c6';
 
 export const auth = reactive({
   user: JSON.parse(localStorage.getItem('user')) || null,
-  isLoggedIn: !!localStorage.getItem('userId'), // Using userId as a persistent flag
+  isLoggedIn: !!localStorage.getItem('userId'),
 });
 
 /**
- * Syncs the session with Appwrite on page load/refresh
+ * LOGOUT: Ensures the reactive state is wiped BEFORE the redirect.
+ */
+export async function logoutUser() {
+  try {
+    // Attempt to kill session on Appwrite server
+    await account.deleteSession('current');
+  } catch (err) {
+    console.warn("Appwrite session already gone or error:", err.message);
+  } finally {
+    // CRITICAL: Wipe reactive state immediately so Navbar reacts
+    auth.isLoggedIn = false;
+    auth.user = null;
+    
+    // Clear ALL storage to ensure no leftover tokens/IDs
+    localStorage.clear(); 
+    
+    console.log("Auth state cleared globally.");
+  }
+}
+
+/**
+ * INIT: Syncs session and determines if user is Provider or Customer
  */
 export async function initAuth() {
   try {
-    // 1. Check if an active session exists in Appwrite
     const sessionUser = await account.get();
-    
-    // 2. Since your data is split, we try to find the profile
-    // Replace 'YOUR_DATABASE_ID' with your actual ID
-    const DATABASE_ID = 'YOUR_DATABASE_ID';
     let profile = null;
 
+    // Try finding in Users collection first
     try {
       profile = await databases.getDocument(DATABASE_ID, 'users', sessionUser.$id);
+      if (profile) profile.role = 'user'; 
     } catch (e) {
+      // If not in users, try Providers
       try {
         profile = await databases.getDocument(DATABASE_ID, 'providers', sessionUser.$id);
+        if (profile) profile.role = 'provider'; 
       } catch (err) {
-        console.error("Authenticated but no profile document found.");
+        console.error("No profile found in either collection.");
       }
     }
 
     if (profile) {
-      auth.user = profile;
-      auth.isLoggedIn = true;
-      localStorage.setItem("user", JSON.stringify(profile));
-      localStorage.setItem("userId", profile.$id);
+      // Call loginUser to sync state and storage
+      loginUser(profile);
+    } else {
+      // If session exists but no profile document, clear state
+      logoutUser();
     }
   } catch (err) {
-    // No active session found
-    console.warn("No active session:", err.message);
-    logoutUser();
+    auth.isLoggedIn = false;
+    auth.user = null;
+    localStorage.clear();
   }
 }
 
 /**
  * Updates the store after a successful login/signup
+ * Added safety checks to prevent '$id' of null error
  */
-export function loginUser(token, userData) {
-  // Appwrite handles the session internally; 'token' is not manually needed
+export function loginUser(userData) {
+  if (!userData) {
+    console.error("loginUser called with null/undefined data");
+    return;
+  }
+
+  // Update Reactive State
   auth.user = userData;
   auth.isLoggedIn = true;
+
+  // Update LocalStorage safely
   localStorage.setItem('user', JSON.stringify(userData));
-  localStorage.setItem('userId', userData.$id);
-}
-
-/**
- * Ends the Appwrite session and clears local state
- */
-export async function logoutUser() {
-  try {
-    // Delete the session from Appwrite server
-    await account.get();
-    await account.deleteSession('current');
-  } catch (err) {
-    console.error("Appwrite logout error:", err.message);
-  } finally {
-    // Always clear local state even if server call fails
-    auth.isLoggedIn = false;
-    auth.user = null;
-    localStorage.removeItem('user');
-    localStorage.removeItem('userId');
+  
+  // Use optional chaining (?.) or check existence
+  const userId = userData.$id || userData.id;
+  if (userId) {
+    localStorage.setItem('userId', userId);
   }
-}
 
-/**
- * Refresh the current user's profile data
- */
-export async function fetchUserProfile() {
-  if (!auth.user?.$id) return;
-
-  try {
-    const collection = auth.user.role === 'provider' ? 'providers' : 'users';
-    const profile = await databases.getDocument(
-      '69bc1ae900174fd0a3c6',
-      collection,
-      auth.user.$id
-    );
-    auth.user = profile;
-    localStorage.setItem("user", JSON.stringify(profile));
-  } catch (error) {
-    console.error("❌ Fetch profile error:", error);
-    if (error.code === 401) {
-      logoutUser();
-    }
-  }
+  console.log("Store Updated:", auth.user.role);
 }

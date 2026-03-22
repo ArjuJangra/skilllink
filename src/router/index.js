@@ -7,7 +7,7 @@ const loadComp = (path) => () => import(`@/components/${path}.vue`);
 
 const routes = [
   { path: '/', redirect: '/homeboard' },
-  
+
   // --- Public Routes ---
   { path: '/login', component: loadPage('LoginPage') },
   { path: '/signup', component: loadPage('SignupPage') },
@@ -42,34 +42,45 @@ const routes = [
   { path: '/booking', component: loadComp('BookingPage'), meta: { requiresAuth: true, role: 'user' } },
   { path: '/service-details', component: loadPage('ServiceDetails'), meta: { requiresAuth: true, role: 'user' } },
   // Ensure this matches your actual file path: src/components/NotificationHistory.vue
-{ 
-  path: '/notifications', 
-  name: 'Notifications', 
-  component: () => import('@/components/NotificationHistory.vue'), 
-  meta: { requiresAuth: true } 
-},
-{
-  path: '/service-details', 
-  name: 'ServiceDetails', // <--- This must match "ServiceDetails" exactly
-  component: () => import('@/pages/ServiceDetails.vue'),
-  meta: { requiresAuth: true, role: 'user' }
-},
-// router/index.js
-{
-  path: '/booking',
-  name: 'BookingPage',
-  // Make sure this path is 100% correct
-  component: () => import('@/components/BookingPage.vue')
-},
-// router/index.js
-{
-  path: '/booking-confirm',
-  name: 'BookingConfirm', // <--- This MUST match "BookingConfirm" exactly
-  component: () => import('@/components/BookingConfirm.vue') 
-},
+  {
+    path: '/notifications',
+    name: 'Notifications',
+    component: () => import('@/components/NotificationHistory.vue'),
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/service-details',
+    name: 'ServiceDetails', // <--- This must match "ServiceDetails" exactly
+    component: () => import('@/pages/ServiceDetails.vue'),
+    meta: { requiresAuth: true, role: 'user' }
+  },
+  // router/index.js
+  {
+    path: '/booking',
+    name: 'BookingPage',
+    // Make sure this path is 100% correct
+    component: () => import('@/components/BookingPage.vue')
+  },
+  // router/index.js
+  {
+    path: '/booking-confirm',
+    name: 'BookingConfirm', // <--- This MUST match "BookingConfirm" exactly
+    component: () => import('@/components/BookingConfirm.vue')
+  },
 
   // --- Provider Routes ---
-  { path: '/providerprofile', component: loadPage('provider/ProviderDashboard'), meta: { requiresAuth: true, role: 'provider' } },
+ // Change 'ServiceProvide' to 'ServiceProvider'
+{ 
+  path: '/providerprofile', 
+  component: loadPage('provider/ProviderDashboard'), 
+  meta: { requiresAuth: true, role: 'provider' } 
+},
+  {
+    path: '/serviceprovider',
+    name: 'ServiceProviderDashboard',
+    component: () => import('@/pages/provider/ServiceProvider.vue'), // Ensure path is correct
+    meta: { requiresAuth: true, role: 'provider' }
+  },
   { path: '/providerorders', component: loadPage('provider/ProviderOrders'), meta: { requiresAuth: true, role: 'provider' } },
   { path: '/provideraddservice', name: 'AddService', component: loadComp('AddService'), meta: { requiresAuth: true, role: 'provider' } }
 ];
@@ -82,16 +93,15 @@ const router = createRouter({
 
 // 🔐 Appwrite-Ready Global Navigation Guard
 router.beforeEach(async (to, from, next) => {
-  let user = null;
+  let userDoc = null;
 
-  // 1. Try to get the user from Appwrite session
-  try {
-    user = await account.get();
-  } catch (e) {
-    user = null;
+  // 1. Get the profile from LocalStorage (fastest for redirects)
+  const storedUser = localStorage.getItem("user");
+  if (storedUser) {
+    userDoc = JSON.parse(storedUser);
   }
 
-  const isAuthenticated = !!user;
+  const isAuthenticated = !!userDoc;
 
   // 2. Handle Auth Requirement
   if (to.meta.requiresAuth && !isAuthenticated) {
@@ -100,9 +110,13 @@ router.beforeEach(async (to, from, next) => {
 
   // 3. Handle Role-Based Access
   if (to.meta.role && isAuthenticated) {
-    const userRole = user.labels?.includes('provider') ? 'provider' : 'user';
+    // Check the 'role' field from your Database Document
+    const userRole = userDoc.role ? userDoc.role.toLowerCase().trim() : 'user';
+
     if (to.meta.role !== userRole) {
-      return next({ path: '/homeboard' });
+      console.warn(`Access Denied: Route needs ${to.meta.role}, User is ${userRole}`);
+      // Redirect to their respective correct home instead of just homeboard
+      return next(userRole === 'provider' ? '/serviceprovider' : '/homelogged');
     }
   }
 

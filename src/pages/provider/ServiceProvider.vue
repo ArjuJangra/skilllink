@@ -73,7 +73,9 @@
       <!-- Earnings Chart -->
       <section class="bg-white shadow rounded-2xl p-5 mb-6">
         <h3 class="text-[#0073b1] font-semibold text-lg sm:text-xl mb-3">Monthly Earnings</h3>
-        <canvas ref="earningsChart" class="w-full"></canvas>
+        <div class="relative w-full" style="height: 300px; min-height: 300px;">
+          <canvas ref="earningsChart"></canvas>
+        </div>
       </section>
 
       <!-- Recent Orders -->
@@ -215,14 +217,23 @@
 
 <script>
 import { ref, onMounted, reactive, computed, nextTick } from 'vue';
-import API from '@/api';
+import { useRouter } from 'vue-router';
+// Import Appwrite services
+import { databases, storage, APPWRITE_CONFIG } from '@/appwrite';
+import { Query } from 'appwrite';
 import Chart from 'chart.js/auto';
 
 export default {
   name: 'ServiceProvider',
   setup() {
+    const router = useRouter();
     const provider = ref(null);
-    const stats = reactive({ total: 0, completed: 0, earnings: 0, earningsData: [] });
+    const stats = reactive({
+      total: 0,
+      completed: 0,
+      earnings: 0,
+      earningsData: Array(12).fill(0)
+    });
     const recentOrders = ref([]);
     const newOrdersCount = ref(0);
     const profileCompletion = ref(0);
@@ -230,11 +241,14 @@ export default {
     const earningsChart = ref(null);
     const chartInstance = ref(null);
 
-    const profileImage = computed(() =>
-      provider.value?.profilePic
-        ? API.getImageUrl(`providers/${provider.value.profilePic}`)
-        : defaultPic
-    );
+    // 1. Appwrite Image Preview
+    const profileImage = computed(() => {
+      if (provider.value?.profilePic) {
+        // Uses the Storage service to get the file preview URL
+        return storage.getFilePreview(APPWRITE_CONFIG.bucketId || 'profiles', provider.value.profilePic);
+      }
+      return defaultPic;
+    });
 
     const greeting = computed(() => {
       const hour = new Date().getHours();
@@ -243,120 +257,169 @@ export default {
       else return 'Good Evening';
     });
 
-    const statsCards = computed(() => [
-      { title: 'Total Orders', value: stats.total, color: 'text-[#007EA7]' },
-      { title: 'Completed', value: stats.completed, color: 'text-green-500' },
-      { title: 'Earnings', value: stats.earnings, color: 'text-yellow-600' },
-      { title: 'Profile Completion', value: profileCompletion.value, color: 'text-[#0073b1]' },
-    ]);
-    const handleImageError = (e) => (e.target.src = defaultPic);
-    const statusMap = {
-      Pending: 'bg-yellow-100 text-yellow-800',
-      Accepted: 'bg-blue-100 text-blue-800',
-      Completed: 'bg-green-100 text-green-800',
-      Rejected: 'bg-red-100 text-red-800',
-    };
-    const statusColor = (status) => statusMap[status] || 'bg-gray-100 text-gray-800';
-    const token = localStorage.getItem('token');
-
+    // 2. Fetch Provider Profile
     const fetchProviderProfile = async () => {
       try {
-        const res = await API.get(`/providers/providerprofile`, { headers: { Authorization: `Bearer ${token}` } });
-        provider.value = res.data;
+        const userId = localStorage.getItem('userId');
+        if (!userId) return router.push('/login');
+
+        const doc = await databases.getDocument(
+          APPWRITE_CONFIG.dbId,
+          APPWRITE_CONFIG.providersCollection,
+          userId
+        );
+        provider.value = doc;
+
+        // Calculate Completion %
         let completed = 0;
-        if (provider.value.name) completed += 25;
-        if (provider.value.profilePic) completed += 25;
-        if (provider.value.services?.length > 0) completed += 25;
-        if (provider.value.bio) completed += 25;
+        if (doc.name) completed += 25;
+        if (doc.profilePic) completed += 25;
+        if (doc.services?.length > 0) completed += 25;
+        if (doc.address || doc.area) completed += 25;
         profileCompletion.value = completed;
       } catch (err) {
-        console.error(err);
+        console.error("Profile Fetch Error:", err);
       }
     };
-    const fetchNewOrdersCount = async () => {
-      try {
-        const res = await API.get(`/providerorders`, { headers: { Authorization: `Bearer ${token}` } });
 
-        newOrdersCount.value = res.data.filter(
-          order => order.status === 'Pending' || order.status === 'Accepted'
+
+    // 3. Fetch Bookings & Calculate Real-Time Stats
+    const fetchBookingsData = async () => {
+      try {
+        const userId = localStorage.getItem('userId');
+        if (!userId) return;
+
+        // Fetch bookings from the 'bookings' collection assigned to this provider
+        const response = await databases.listDocuments(
+          APPWRITE_CONFIG.dbId,
+          APPWRITE_CONFIG.bookingsCollection,
+          [
+            Query.equal('providerId', userId),
+            Query.orderDesc('$createdAt')
+          ]
+        );
+
+        const bookings = response.documents;
+
+        // 1. Update Recent Orders (Top 5)
+        recentOrders.value = bookings.slice(0, 5);
+
+        // 2. Calculate Dashboard Stats
+        stats.total = bookings.length;
+
+        const completedBookings = bookings.filter(b => b.status === 'Completed');
+        stats.completed = completedBookings.length;
+
+        // Calculate total earnings (Ensure price is treated as a number)
+        stats.earnings = completedBookings.reduce((sum, b) => {
+          const price = parseFloat(b.price) || 0;
+          return sum + price;
+        }, 0);
+
+        // Update Notification Badge
+        newOrdersCount.value = bookings.filter(
+          b => b.status === 'Pending' || b.status === 'Accepted'
         ).length;
-      } catch (err) {
-        console.error('Error fetching new orders count:', err);
-      }
-    };
 
-    const fetchStats = async () => {
-      try {
-        const res = await API.get(`/providerorders/stats`, { headers: { Authorization: `Bearer ${token}` } });
-        stats.total = res.data.total || 0;
-        stats.completed = res.data.completed || 0;
-        stats.earnings = res.data.earnings || 0;
-        stats.earningsData = Array.isArray(res.data.earningsData)
-          ? res.data.earningsData.map(n => Number(n) || 0)
-          : Array(12).fill(0);
-        await renderEarningsChart();
-      } catch (err) {
-        console.error(err);
-      }
-    };
+        // 3. Group Earnings by Month for the Chart
+        const monthlyEarnings = Array(12).fill(0);
 
-    const fetchRecentOrders = async () => {
-      try {
-        const res = await API.get(`/providerorders/recent`, { headers: { Authorization: `Bearer ${token}` } });
-        recentOrders.value = res.data;
-      } catch (err) {
-        console.error(err);
-      }
-    };
-
-    const renderEarningsChart = async () => {
-      await nextTick();
-      if (!earningsChart.value) return;
-
-      const monthlyData = [...stats.earningsData];
-      const ctx = earningsChart.value.getContext('2d');
-
-      if (chartInstance.value) {
-        chartInstance.value.data.datasets[0].data = monthlyData;
-        chartInstance.value.update();
-      } else {
-        chartInstance.value = new Chart(ctx, {
-          type: 'bar',
-          data: {
-            labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
-            datasets: [{ label: 'Earnings', data: monthlyData, backgroundColor: '#0073b1', borderRadius: 6 }]
-          },
-          options: {
-            responsive: true,
-            plugins: { legend: { display: false }, tooltip: { mode: 'index', intersect: false } },
-            scales: { y: { beginAtZero: true } }
+        completedBookings.forEach(b => {
+          // Appwrite $createdAt is a string, we must convert it to a Date object
+          const date = new Date(b.$createdAt);
+          if (!isNaN(date)) {
+            const month = date.getMonth(); // 0 = Jan, 11 = Dec
+            const price = parseFloat(b.price) || 0;
+            monthlyEarnings[month] += price;
           }
         });
+
+        // CRITICAL: Update the reactive state
+        stats.earningsData = [...monthlyEarnings];
+
+        // 4. Trigger the Chart Render AFTER data is ready
+        await renderEarningsChart();
+
+      } catch (err) {
+        console.error("Bookings Fetch Error:", err);
       }
     };
 
+   const renderEarningsChart = async () => {
+  // 1. Wait for Vue's DOM update
+  await nextTick();
+
+  // 2. Heavy-duty check: If ref is null, wait 100ms and try ONE more time
+  if (!earningsChart.value) {
+    await new Promise(resolve => setTimeout(resolve, 200));
+    if (!earningsChart.value) {
+      console.error("Chart canvas still not found after retry. Is the ref named correctly?");
+      return;
+    }
+  }
+
+  const ctx = earningsChart.value.getContext('2d');
+  
+  // 3. Destroy old instance
+  if (chartInstance.value) {
+    chartInstance.value.destroy();
+    chartInstance.value = null;
+  }
+
+  // 4. Create New Chart
+  chartInstance.value = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+      datasets: [{
+        label: 'Earnings (₹)',
+        data: stats.earningsData,
+        backgroundColor: '#0073b1',
+        borderRadius: 6,
+        barThickness: 25,
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false, // Essential for fixed height
+      plugins: { legend: { display: false } },
+      scales: {
+        y: { 
+          beginAtZero: true,
+          ticks: { callback: (val) => '₹' + val }
+        },
+        x: { grid: { display: false } }
+      }
+    }
+  });
+};
+
     onMounted(async () => {
-      await Promise.all([
-        fetchProviderProfile(),
-        fetchStats(),
-        fetchRecentOrders(),
-        fetchNewOrdersCount()
-      ]);
-      setInterval(fetchNewOrdersCount, 60000);
+      await fetchProviderProfile();
+      await fetchBookingsData();
+      // Polling for new bookings every 60 seconds
+      setInterval(fetchBookingsData, 60000);
     });
 
     return {
-      provider,
-      stats,
-      recentOrders,
-      profileCompletion,
-      profileImage,
-      greeting,
-      statsCards,
-      handleImageError,
-      statusColor,
-      earningsChart,
-      newOrdersCount
+      provider, stats, recentOrders, profileCompletion,
+      profileImage, greeting, earningsChart, newOrdersCount,
+      handleImageError: (e) => (e.target.src = defaultPic),
+      statusColor: (status) => {
+        const map = {
+          Pending: 'bg-yellow-100 text-yellow-800',
+          Accepted: 'bg-blue-100 text-blue-800',
+          Completed: 'bg-green-100 text-green-800',
+          Rejected: 'bg-red-100 text-red-800'
+        };
+        return map[status] || 'bg-gray-100 text-gray-800';
+      },
+      statsCards: computed(() => [
+        { title: 'Total Bookings', value: stats.total, color: 'text-[#007EA7]' },
+        { title: 'Completed', value: stats.completed, color: 'text-green-500' },
+        { title: 'Earnings', value: stats.earnings, color: 'text-yellow-600' },
+        { title: 'Profile Completion', value: profileCompletion.value + '%', color: 'text-[#0073b1]' },
+      ])
     };
   }
 };

@@ -1,173 +1,74 @@
 <template>
-  <div v-if="isAuthenticated" class="min-h-screen bg-gray-50 px-4 py-8 relative">
-    <!--  Loading spinner overlay -->
+  <div v-if="provider" class="min-h-screen bg-gray-50 px-4 py-8 relative">
     <div v-if="loading" class="fixed inset-0 bg-black bg-opacity-30 flex items-center justify-center z-50">
       <div class="loader"></div>
     </div>
 
     <div class="max-w-6xl mx-auto bg-white rounded-2xl shadow-lg p-6 space-y-8 ">
-      <!-- Header -->
       <h1 class="text-2xl sm:text-3xl font-bold mb-6 text-center 
           bg-gradient-to-r from-[#3B8D99] to-[#f46675]
            bg-clip-text text-transparent">
         Hello, {{ provider?.name || 'Provider' }} – Let’s Get to Work!
       </h1>
 
-      <!-- Profile Section -->
-      <div
-        class="bg-white rounded-2xl shadow-md p-5 sm:p-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border border-gray-100">
-        <!-- Profile Info -->
+      <div class="bg-white rounded-2xl shadow-md p-5 sm:p-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border border-gray-100">
         <div class="flex items-center space-x-4 sm:space-x-5">
-          <!-- Profile Picture Wrapper -->
           <div class="relative group">
             <img :src="profileImage" @error="useDefaultImage" alt="Provider DP"
               class="w-16 h-16 sm:w-20 sm:h-20 rounded-full object-cover border border-gray-200 shadow-sm group-hover:scale-105 transition-transform duration-200" />
           </div>
 
-          <!-- Name & Details -->
           <div>
-            <h2
-              class="text-lg sm:text-2xl font-bold bg-gradient-to-r from-[#007EA7] via-[#00B4DB] to-[#4dd0e1] bg-clip-text text-transparent">
+            <h2 class="text-lg sm:text-2xl font-bold bg-gradient-to-r from-[#007EA7] via-[#00B4DB] to-[#4dd0e1] bg-clip-text text-transparent">
               {{ provider?.name || 'Provider Name' }}
             </h2>
-            <p class="text-sm text-gray-500">
-              {{ provider?.email || 'No email available' }}
-            </p>
-            <p class="text-xs text-gray-400 mt-0.5">
-              Last Login: {{ lastLoginFormatted || 'N/A' }}
-            </p>
+            <p class="text-sm text-gray-500">{{ provider?.email || 'No email available' }}</p>
           </div>
         </div>
 
-        <!-- Edit Profile Button -->
-        <button
-          class="px-5 py-2 bg-gradient-to-r from-[#007EA7] to-[#00B4DB] text-white text-sm font-semibold rounded-full shadow hover:shadow-md hover:opacity-95 transition-all"
-          @click="showEditProfileForm = true">
+        <button @click="showEditProfileForm = true"
+          class="px-5 py-2 bg-gradient-to-r from-[#007EA7] to-[#00B4DB] text-white text-sm font-semibold rounded-full shadow hover:shadow-md transition-all">
           Edit Profile
         </button>
       </div>
 
-      <!-- Account Settings Section -->
       <div class="flex flex-col lg:flex-row gap-6">
-
-        <!-- Left Column: Settings -->
         <div class="flex-1 bg-white rounded-2xl shadow-lg p-6 space-y-6">
-
-          <!-- Header -->
           <h3 class="text-2xl font-bold text-[#007EA7] mb-4">Account Settings</h3>
-
+          
           <section class="space-y-4">
-
-            <!-- Security -->
-            <div class="bg-gray-50 rounded-xl p-4 hover:bg-gray-100 transition">
-              <button @click="showSecuritySection = !showSecuritySection"
-                class="flex justify-between items-center w-full font-semibold text-[#007EA7]">
-                <span class="flex items-center gap-2">Security</span>
+            <div class="bg-gray-50 rounded-xl p-4">
+              <p class="font-semibold text-[#007EA7] mb-2">Security</p>
+              <button @click="showChangePasswordModal = true" class="text-sm text-gray-600 hover:underline">
+                Update Password
               </button>
-              <transition name="fade">
-                <div v-if="showSecuritySection" class="mt-3 space-y-3 pl-4">
-                  <button @click="showChangePasswordModal = true"
-                    class="text-[#007EA7] hover:underline font-medium transition">Change Password</button>
-
-                </div>
-              </transition>
             </div>
 
-            <!-- Notification Preferences -->
-            <div class="bg-gray-50 rounded-xl p-4 hover:bg-gray-100 transition">
-              <button @click="showNotificationPrefs = !showNotificationPrefs"
-                class="flex justify-between items-center w-full font-semibold text-[#007EA7]">
-                <span class="flex items-center gap-2">Notification Preferences</span>
-              </button>
-              <transition name="fade">
-                <div v-if="showNotificationPrefs" class="mt-3 space-y-2 pl-4">
-                  <label class="flex items-center space-x-2">
-                    <input type="checkbox" v-model="notificationPrefs.email" @change="autoUpdateNotificationPrefs" />
-                    <span>Email Notifications</span>
-                  </label>
-                  <label class="flex items-center space-x-2">
-                    <input type="checkbox" v-model="notificationPrefs.sms" @change="autoUpdateNotificationPrefs" />
-                    <span>SMS Notifications</span>
-                  </label>
-                  <label class="flex items-center space-x-2">
-                    <input type="checkbox" v-model="notificationPrefs.push" @change="autoUpdateNotificationPrefs" />
-                    <span>Push Notifications</span>
-                  </label>
-                </div>
-              </transition>
-            </div>
-
-            <!-- Privacy Settings -->
-            <div class="bg-gray-50 rounded-xl p-4 hover:bg-gray-100 transition">
-              <button @click="showPrivacySettings = !showPrivacySettings"
-                class="flex justify-between items-center w-full font-semibold text-[#007EA7]">
-                <span class="flex items-center gap-2">Privacy Settings</span>
-              </button>
-
-              <transition enter-active-class="transition-all duration-300 ease-out" enter-from-class="max-h-0 opacity-0"
-                enter-to-class="max-h-96 opacity-100" leave-active-class="transition-all duration-300 ease-in"
-                leave-from-class="max-h-96 opacity-100" leave-to-class="max-h-0 opacity-0">
-                <div v-show="showPrivacySettings" class="mt-3 pl-4 space-y-2">
-                  <label class="flex items-center space-x-2">
-                    <input type="checkbox" v-model="privacySettings.showEmail" />
-                    <span>Show email on profile</span>
-                  </label>
-                  <label class="flex items-center space-x-2">
-                    <input type="checkbox" v-model="privacySettings.showPhone" />
-                    <span>Show phone number on profile</span>
-                  </label>
-
-                  <!-- Save button -->
-                  <button @click="updatePrivacySettings" :disabled="privacySubmitting"
-                    class="mt-2 px-4 py-2 bg-[#007EA7] text-white rounded-lg flex items-center">
-                    <span v-if="privacySubmitting"
-                      class="w-4 h-4 border-2 border-t-2 border-t-white border-white/40 rounded-full animate-spin mr-2"></span>
-                    Save Privacy Settings
-                  </button>
-                </div>
-              </transition>
+            <div class="bg-gray-50 rounded-xl p-4">
+              <p class="font-semibold text-[#007EA7] mb-2">Service Area</p>
+              <p class="text-sm text-gray-600">{{ provider?.area || 'Not specified' }}</p>
             </div>
           </section>
         </div>
-        <!-- Right Column: Location + Logout -->
-        <div class="flex-1 space-y-6">
-          <!-- Location Card -->
-          <div class="bg-white rounded-2xl shadow p-6 hover:shadow-xl transition">
-            <h3 class="text-xl font-bold mb-3 flex items-center text-[#007EA7]">
-              Current Location
-            </h3>
-            <p class="text-sm text-gray-700 mb-4">Area: {{ provider?.area || 'Not set' }}</p>
-          </div>
 
-          <!-- Logout + Deactivate -->
-          <section class="bg-white rounded-2xl shadow p-6 space-y-3 hover:shadow-xl transition">
+        <div class="flex-1 space-y-6">
+          <section class="bg-white rounded-2xl shadow p-6 space-y-3">
             <button @click="showLogoutModal = true"
-              class="w-full bg-red-600 hover:bg-red-700 text-white font-semibold px-4 py-2 rounded-lg transition">
+              class="w-full bg-red-500 hover:bg-red-600 text-white font-semibold px-4 py-2 rounded-lg transition">
               Logout
             </button>
-            <button @click="showDeactivateModal = true"
-              class="w-full bg-red-600 hover:bg-red-700 text-white font-semibold px-4 py-2 rounded-lg transition">
-              Deactivate Account
-            </button>
           </section>
-
         </div>
-
       </div>
-      <!-- Edit Profile Modal -->
+
       <transition name="modal-fade">
-        <div v-if="showEditProfileForm"
-          class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-          <div class="modal-content bg-white w-full max-w-md p-6 rounded-xl shadow-xl overflow-y-auto max-h-[90vh]">
-            <h2 class="text-xl font-semibold mb-4 text-gray-800">Edit Profile</h2>
+        <div v-if="showEditProfileForm" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+          <div class="bg-white w-full max-w-md p-6 rounded-xl shadow-xl">
+            <h2 class="text-xl font-semibold mb-4">Edit Profile</h2>
             <form @submit.prevent="updateProfile">
               <div class="mb-4">
                 <label class="block text-sm font-medium mb-1">Name</label>
-                <input v-model="editForm.name" type="text" class="w-full px-3 py-2 border rounded-lg" />
-              </div>
-              <div class="mb-4">
-                <label class="block text-sm font-medium mb-1">Email</label>
-                <input v-model="editForm.email" type="email" class="w-full px-3 py-2 border rounded-lg" />
+                <input v-model="editForm.name" type="text" class="w-full px-3 py-2 border rounded-lg" required />
               </div>
               <div class="mb-4">
                 <label class="block text-sm font-medium mb-1">Area</label>
@@ -175,455 +76,198 @@
               </div>
               <div class="mb-4">
                 <label class="block text-sm font-medium mb-1">Profile Picture</label>
-                <input type="file" @change="handleFileChange" class="w-full" />
-                <div v-if="previewImage" class="mt-2">
-                  <img :src="previewImage" class="w-16 h-16 rounded-full object-cover border mt-2" />
-                </div>
+                <input type="file" @change="handleFileChange" class="w-full text-sm" accept="image/*" />
               </div>
-              <div class="flex justify-end space-x-2">
-                <button type="button" @click="showEditProfileForm = false"
-                  class="px-4 py-2 bg-gray-300 text-gray-800 rounded-lg">
-                  Cancel
-                </button>
-                <button type="submit" :disabled="isSubmitting"
-                  class="px-4 py-2 bg-[#007EA7] text-white rounded-lg flex items-center">
-                  <span v-if="isSubmitting"
-                    class="w-4 h-4 border-2 border-t-2 border-t-white border-white/40 rounded-full animate-spin mr-2"></span>
-                  Save
+              <div class="flex justify-end space-x-2 mt-6">
+                <button type="button" @click="showEditProfileForm = false" class="px-4 py-2 bg-gray-200 rounded-lg">Cancel</button>
+                <button type="submit" :disabled="isSubmitting" class="px-4 py-2 bg-[#007EA7] text-white rounded-lg flex items-center">
+                  <span v-if="isSubmitting" class="loader mr-2 !w-4 !h-4"></span>
+                  Save Changes
                 </button>
               </div>
             </form>
           </div>
         </div>
       </transition>
-      <!-- Location Modal -->
-      <transition name="modal-fade">
-        <div v-if="showLocationModal"
-          class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div class="modal-content bg-white p-6 rounded-2xl shadow-lg w-full max-w-sm">
-            <h2 class="text-lg font-semibold mb-4">Edit Location</h2>
-            <div class="mb-4">
-              <label class="block text-sm font-medium mb-1">Area</label>
-              <input v-model="editForm.area" type="text" class="w-full px-3 py-2 border rounded-lg" />
-            </div>
-            <div class="flex justify-end space-x-3">
-              <button @click="showLocationModal = false" class="px-4 py-2 bg-gray-300 rounded-lg">Cancel</button>
-              <button @click="updateLocation" class="px-4 py-2 bg-[#007EA7] text-white rounded-lg">Save</button>
-            </div>
-          </div>
+
+     <transition name="modal-fade">
+  <div v-if="showLogoutModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+    <div class="bg-white p-8 rounded-2xl shadow-2xl text-center w-full max-w-sm border border-gray-100">
+      <div class="mb-4 flex justify-center">
+        <div class="p-3 bg-red-50 rounded-full">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+          </svg>
         </div>
-      </transition>
-      <!-- Logout Modal -->
-      <transition name="modal-fade">
-        <div v-if="showLogoutModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div class="bg-white p-6 rounded-2xl shadow-lg text-center w-full max-w-sm">
-            <h2 class="text-lg font-semibold mb-4">Are you sure you want to logout?</h2>
-            <div class="flex justify-center space-x-4">
-              <button @click="handleLogout"
-                class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg transition">
-                Logout
-              </button>
-              <button @click="showLogoutModal = false"
-                class="bg-gray-300 hover:bg-gray-400 text-gray-800 px-4 py-2 rounded-lg transition">
-                Cancel
-              </button>
-            </div>
-          </div>
-        </div>
-      </transition>
-      <!-- Change Password Modal -->
-      <transition name="modal-fade">
-        <div v-if="showChangePasswordModal"
-          class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div class="modal-content bg-white p-6 rounded-xl shadow-lg w-full max-w-md">
-            <h2 class="text-xl font-semibold mb-4">Change Password</h2>
-            <form @submit.prevent="changePassword">
-              <div class="mb-4">
-                <label class="block text-sm font-medium mb-1">Current Password</label>
-                <input v-model="passwordForm.currentPassword" type="password" class="w-full px-3 py-2 border rounded-lg"
-                  autocomplete="current-password" required />
-              </div>
-              <div class="mb-4">
-                <label class="block text-sm font-medium mb-1">New Password</label>
-                <input v-model="passwordForm.newPassword" type="password" class="w-full px-3 py-2 border rounded-lg"
-                  autocomplete="new-password" required />
-              </div>
-              <div class="mb-4">
-                <label class="block text-sm font-medium mb-1">Confirm New Password</label>
-                <input v-model="passwordForm.confirmPassword" type="password" class="w-full px-3 py-2 border rounded-lg"
-                  autocomplete="new-password" required />
-              </div>
-              <div class="flex justify-end space-x-2">
-                <button type="button" @click="showChangePasswordModal = false"
-                  class="px-4 py-2 bg-gray-300 text-gray-800 rounded-lg">
-                  Cancel
-                </button>
-                <button type="submit" :disabled="passwordSubmitting"
-                  class="px-4 py-2 bg-[#007EA7] text-white rounded-lg flex items-center">
-                  <span v-if="passwordSubmitting"
-                    class="w-4 h-4 border-2 border-t-2 border-t-white border-white/40 rounded-full animate-spin mr-2"></span>
-                  Change Password
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      </transition>
-      <!-- Account Deactivation Modal -->
-      <transition name="modal-fade">
-        <div v-if="showDeactivateModal"
-          class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div class="bg-white p-6 rounded-2xl shadow-lg text-center w-full max-w-sm">
-            <h2 class="text-lg font-semibold mb-4 text-red-600">Are you sure you want to deactivate your account?</h2>
-            <p class="mb-6 text-gray-700">This action is irreversible. You will lose access to your account and data.
-            </p>
-            <div class="flex justify-center space-x-4">
-              <button @click="deactivateAccount"
-                class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg transition">
-                Yes, Deactivate
-              </button>
-              <button @click="showDeactivateModal = false"
-                class="bg-gray-300 hover:bg-gray-400 text-gray-800 px-4 py-2 rounded-lg transition">
-                Cancel
-              </button>
-            </div>
-          </div>
-        </div>
-      </transition>
+      </div>
+      
+      <h2 class="text-xl font-bold text-gray-800 mb-2">Confirm Logout</h2>
+      <p class="text-gray-500 mb-6">Are you sure you want to end your session?</p>
+      
+      <div class="flex flex-col gap-3">
+        <button 
+          @click="handleLogout" 
+          :disabled="isLoggingOut"
+          class="w-full bg-red-500 hover:bg-red-600 text-white font-bold py-3 rounded-xl transition-all flex items-center justify-center gap-2 disabled:opacity-50"
+        >
+          <span v-if="isLoggingOut" class="loader !w-4 !h-4 !border-white !border-t-transparent"></span>
+          {{ isLoggingOut ? 'Logging out...' : 'Yes, Logout' }}
+        </button>
+        
+        <button 
+          @click="showLogoutModal = false" 
+          :disabled="isLoggingOut"
+          class="w-full bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold py-3 rounded-xl transition-all"
+        >
+          Cancel
+        </button>
+      </div>
     </div>
   </div>
-
-  <div v-else class="text-center mt-10 text-gray-500">Redirecting to login...</div>
+</transition>
+    </div>
+  </div>
 </template>
 
 <script setup>
-import { ref, reactive, computed, onMounted, watch } from 'vue'
-import { useRouter } from 'vue-router'
-import API from '@/api';
-import { toast } from 'vue3-toastify'
-import 'vue3-toastify/dist/index.css'
-import dayjs from 'dayjs'
-import { auth, logoutUser } from '@/stores/auth'
-// Router
- const router = useRouter()
+import { ref, reactive, computed, onMounted } from 'vue';
+import { useRouter } from 'vue-router';
+import { databases, storage, account, APPWRITE_CONFIG, ID } from '@/appwrite';
+import { toast } from 'vue3-toastify';
+import 'vue3-toastify/dist/index.css';
+import { logoutUser } from '@/stores/auth'
 
-// Auth & state
-const isAuthenticated = computed(() => auth.isLoggedIn)
-const provider = ref(null)
-const loading = ref(false)
+const router = useRouter();
+const provider = ref(null);
+const loading = ref(true);
+const isSubmitting = ref(false);
 
-// Modals & sections
-const showEditProfileForm = ref(false)
-const showSecuritySection = ref(false)
-const showLogoutModal = ref(false)
-const showLocationModal = ref(false)
-const showChangePasswordModal = ref(false)
-const showDeactivateModal = ref(false)
-const showNotificationPrefs = ref(false)
-const showPrivacySettings = ref(false)
+const showEditProfileForm = ref(false);
+const showLogoutModal = ref(false);
+const showChangePasswordModal = ref(false);
 
-// Form states
-const isSubmitting = ref(false)
-const passwordSubmitting = ref(false)
-const notifSubmitting = ref(false)
-const privacySubmitting = ref(false)
-const editForm = reactive({ name: '', email: '', area: '' })
-const selectedFile = ref(null)
-const previewImage = ref('')
+const editForm = reactive({ name: '', area: '' });
+const selectedFile = ref(null);
 const defaultPic = require('@/assets/user.png');
-const passwordForm = reactive({ currentPassword: '', newPassword: '', confirmPassword: '' })
-const notificationPrefs = reactive({ email: false, sms: false, push: false })
-const privacySettings = reactive({ showEmail: false, showPhone: false })
 
-// Computed
-const profileImage = computed(() =>
-  provider.value?.profilePic
-    ? API.getImageUrl(`providers/${provider.value.profilePic}`)
-    : defaultPic
-);
-
-const lastLoginFormatted = computed(() =>
-  provider.value?.lastLogin ? dayjs(provider.value.lastLogin).format('MMM D, YYYY h:mm A') : 'Not available'
-);
-
-// Methods
-const useDefaultImage = (e) => e.target.src = require('@/assets/user.png')
-
-watch(showEditProfileForm, (open) => {
-  if (open && provider.value) {
-    editForm.name = provider.value.name || ''
-    editForm.email = provider.value.email || ''
-    editForm.area = provider.value.area || ''
-    previewImage.value = profileImage.value
+// Computed Profile Image using Appwrite Storage
+const profileImage = computed(() => {
+  if (provider.value?.profilePic) {
+    return storage.getFilePreview(APPWRITE_CONFIG.storageBucket, provider.value.profilePic);
   }
-})
+  return defaultPic;
+});
 
-// Profile update
+const useDefaultImage = (e) => (e.target.src = defaultPic);
+
+// Initialization: Fetch Provider from DB
+const initDashboard = async () => {
+  try {
+    const userString = localStorage.getItem('user');
+    if (!userString) throw new Error("No user found");
+    
+    const localUser = JSON.parse(userString);
+    
+    // Fetch fresh data from Appwrite Database
+    const doc = await databases.getDocument(
+      APPWRITE_CONFIG.dbId,
+      APPWRITE_CONFIG.providersCollection,
+      localUser.$id
+    );
+    
+    provider.value = doc;
+    editForm.name = doc.name;
+    editForm.area = doc.area;
+  } catch (err) {
+    console.error(err);
+    router.push('/login');
+  } finally {
+    loading.value = false;
+  }
+};
+
 const handleFileChange = (e) => {
-  selectedFile.value = e.target.files[0]
-  if (selectedFile.value) {
-    previewImage.value = URL.createObjectURL(selectedFile.value)
-  }
-}
+  selectedFile.value = e.target.files[0];
+};
 
 const updateProfile = async () => {
-  const providerId = provider.value._id || provider.value.id
-  if (!providerId) return toast.error('Provider ID is missing')
-  isSubmitting.value = true
+  isSubmitting.value = true;
   try {
-    const formData = new FormData()
-    formData.append('name', editForm.name)
-    formData.append('email', editForm.email)
-    formData.append('area', editForm.area)
-    if (selectedFile.value) formData.append('profilePic', selectedFile.value)
+    let profilePicId = provider.value.profilePic;
 
-    const res = await API.put(`/providers/providerprofile/update/${provider.value._id}`, formData, {
-      headers: { 'Content-Type': 'multipart/form-data' }
-    });
+    // 1. If a new file is selected, upload to Appwrite Storage
+    if (selectedFile.value) {
+      const upload = await storage.createFile(
+        APPWRITE_CONFIG.storageBucket,
+        ID.unique(),
+        selectedFile.value
+      );
+      profilePicId = upload.$id;
+    }
 
-    const updated = res.data.provider || res.data
-    toast.success('Profile updated successfully')
-    localStorage.setItem('user', JSON.stringify(updated))
-    provider.value = updated
-    showEditProfileForm.value = false
+    // 2. Update Database Document
+    const updatedDoc = await databases.updateDocument(
+      APPWRITE_CONFIG.dbId,
+      APPWRITE_CONFIG.providersCollection,
+      provider.value.$id,
+      {
+        name: editForm.name,
+        area: editForm.area,
+        profilePic: profilePicId
+      }
+    );
+
+    provider.value = updatedDoc;
+    localStorage.setItem('user', JSON.stringify(updatedDoc));
+    toast.success('Profile updated successfully');
+    showEditProfileForm.value = false;
   } catch (err) {
-    toast.error(err.response?.data?.message || 'Failed to update profile')
+    toast.error('Failed to update profile');
+    console.error(err);
   } finally {
-    isSubmitting.value = false
+    isSubmitting.value = false;
   }
-}
-
-// Location update
-const updateLocation = async () => {
-  const providerId = provider.value._id || provider.value.id
-  if (!providerId) return toast.error('Provider ID missing')
-
-  try {
-    const token = localStorage.getItem('token')
-    const res = await API.put(
-      `/providersprofile/update/${providerId}`,
-      { area: editForm.area },
-      { headers: { Authorization: `Bearer ${token}` } }
-    )
-    provider.value = res.data.provider || res.data
-    localStorage.setItem('user', JSON.stringify(provider.value))
-    toast.success('Location updated successfully')
-    showLocationModal.value = false
-  } catch (err) {
-    toast.error('Failed to update location')
-  }
-}
-
-// Change password
-const changePassword = async () => {
-  if (passwordForm.newPassword !== passwordForm.confirmPassword) return toast.error('New passwords do not match')
-  passwordSubmitting.value = true
-  try {
-    await API.put('/providers/change-password', {
-      currentPassword: passwordForm.currentPassword,
-      newPassword: passwordForm.newPassword
-    });
-
-    toast.success('Password changed successfully')
-    showChangePasswordModal.value = false
-    passwordForm.currentPassword = ''
-    passwordForm.newPassword = ''
-    passwordForm.confirmPassword = ''
-  } catch (err) {
-    toast.error(err.response?.data?.message || 'Failed to change password')
-  } finally {
-    passwordSubmitting.value = false
-  }
-}
-
-// Logout
-const handleLogout = () => {
-  // Start fade-out by closing modal
-  showLogoutModal.value = false;
-
-  // Wait for modal transition to finish (CSS uses 0.3s)
-  setTimeout(() => {
-    logoutUser();
-    router.push('/homeboard');
-  }, 300);
 };
 
+const isLoggingOut = ref(false);
 
-// Notification prefs update
-const autoUpdateNotificationPrefs = async () => {
-  notifSubmitting.value = true
+const handleLogout = async () => {
+  isLoggingOut.value = true;
   try {
-    const token = localStorage.getItem('token')
-    await API.put(
-      '/providers/notification-preferences',
-      notificationPrefs,
-      { headers: { Authorization: `Bearer ${token}` } }
-    )
-    toast.success('Notification preferences updated')
-  } catch {
-    toast.error('Failed to update notification preferences')
+    // 1. Tell Appwrite to kill the session
+    await account.deleteSession('current');
+  } catch (err) {
+    console.warn("Session already cleared on server");
   } finally {
-    notifSubmitting.value = false
-  }
-}
+    // 2. USE THE STORE'S LOGOUT FUNCTION
+    // This is the "Magic" step. It updates the reactive state 
+    // that your Navbar is watching.
+    logoutUser(); 
 
-// Privacy settings
-const updatePrivacySettings = async () => {
-  privacySubmitting.value = true
-  try {
-    const token = localStorage.getItem('token')
-    await API.post(`/providers/privacy`, privacySettings, { headers: { Authorization: `Bearer ${token}` } })
-    toast.success('Privacy settings updated')
-  } catch {
-    toast.error('Failed to update privacy settings')
-  } finally {
-    privacySubmitting.value = false
-  }
-}
-
-// Deactivate account
-const deactivateAccount = async () => {
-  try {
-    await API.delete('/providers/deactivate');
-    toast.success('Account deactivated successfully');
+    // 3. Manual cleanup just in case
     localStorage.clear();
-    router.push('/login');
-  } catch {
-    toast.error('Failed to deactivate account');
-  } finally {
-    showDeactivateModal.value = false;
+    
+    // 4. Redirect
+    showLogoutModal.value = false;
+    isLoggingOut.value = false;
+    router.push('/homeboard');
   }
 };
 
-// On mount: fetch provider
-onMounted(async () => {
-  const storedUser = JSON.parse(localStorage.getItem('user'))
-  if (storedUser?.role !== 'provider') return router.push('/login')
-
-  isAuthenticated.value = true
-  loading.value = true
-  try {
-    const res = await API.get('/providers/providerprofile');
-    provider.value = res.data
-    localStorage.setItem('user', JSON.stringify(res.data))
-
-    // Initialize settings
-    notificationPrefs.email = res.data.notificationPrefs?.email ?? true
-    notificationPrefs.sms = res.data.notificationPrefs?.sms ?? false
-    notificationPrefs.push = res.data.notificationPrefs?.push ?? true
-    privacySettings.showEmail = res.data.privacySettings?.showEmail ?? true
-    privacySettings.showPhone = res.data.privacySettings?.showPhone ?? false
-  } catch {
-    toast.error('Failed to fetch profile')
-    router.push('/login')
-  } finally {
-    loading.value = false
-  }
-})
+onMounted(initDashboard);
 </script>
 
 <style scoped>
-/* Custom glow animation */
-@keyframes pulseGlow {
-  0% {
-    transform: scale(1);
-    opacity: 0.7;
-  }
-
-  50% {
-    transform: scale(1.8);
-    opacity: 0;
-  }
-
-  100% {
-    transform: scale(1);
-    opacity: 0;
-  }
-}
-
-.animate-ping-once {
-  animation: pulseGlow 1.5s infinite;
-}
-
 .loader {
-  border: 4px solid #f3f3f3;
-  border-top: 4px solid #007EA7;
+  border: 3px solid #f3f3f3;
+  border-top: 3px solid #007EA7;
   border-radius: 50%;
-  width: 24px;
-  height: 24px;
-  animation: spin 1s linear infinite;
-  display: inline-block;
+  width: 30px;
+  height: 30px;
+  animation: spin 0.8s linear infinite;
 }
+@keyframes spin { to { transform: rotate(360deg); } }
 
-@keyframes spin {
-  0% {
-    transform: rotate(0deg);
-  }
-
-  100% {
-    transform: rotate(360deg);
-  }
-}
-
-/* Modal fade transition */
-.modal-fade-enter-active,
-.modal-fade-leave-active {
-  transition: opacity 0.25s ease;
-}
-
-.modal-fade-enter-from,
-.modal-fade-leave-to {
-  opacity: 0;
-}
-
-/* Loader spinner */
-.loader {
-  border: 4px solid #f3f3f3;
-  border-top: 4px solid #007EA7;
-  border-radius: 50%;
-  width: 40px;
-  height: 40px;
-  animation: spin 0.7s linear infinite;
-}
-
-@keyframes spin {
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-/* Modal transition */
-.modal-fade-enter-active,
-.modal-fade-leave-active {
-  transition: opacity 0.3s ease, transform 0.3s ease;
-}
-
-.modal-fade-enter-from,
-.modal-fade-leave-to {
-  opacity: 0;
-  transform: scale(0.95);
-}
-
-.modal-fade-enter-to,
-.modal-fade-leave-from {
-  opacity: 1;
-  transform: scale(1);
-}
-
-/* Responsive modal width */
-@media (max-width: 640px) {
-  .modal-content {
-    width: 90% !important;
-  }
-}
-
-.fade-enter-active,
-.fade-leave-active {
-  transition: opacity 0.3s ease;
-}
-
-.fade-enter-from,
-.fade-leave-to {
-  opacity: 0;
-}
+.modal-fade-enter-active, .modal-fade-leave-active { transition: opacity 0.3s ease; }
+.modal-fade-enter-from, .modal-fade-leave-to { opacity: 0; }
 </style>

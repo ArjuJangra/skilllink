@@ -307,7 +307,9 @@ const servicePrices = {
   "AC Repair": 399,
   Carpenter: 299,
   Cleaner: 149,
-  Mechanic: 349
+  Mechanic: 349,
+  Welder: 499,
+  "House Cleaner": 449,
 }
 
 // --- COMPUTED ---
@@ -317,22 +319,27 @@ const selectedProvider = computed(() => {
 });
 
 const totalAmount = computed(() => {
-  if (!selectedServices.value) return 0;
-  return selectedServices.value.reduce((acc, curr) => acc + (servicePrices[curr] || 0), 0)
+  if (!selectedServices.value || selectedServices.value.length === 0) return 0;
+
+  return selectedServices.value.reduce((acc, curr) => {
+    // This will now find the price we injected in onMounted (e.g., 839)
+    const price = servicePrices[curr] || 0;
+    return acc + price;
+  }, 0);
 })
 
 const isStepValid = computed(() => {
   if (step.value === 1) {
     return name.value && contact.value && address.value &&
-    selectedProviderId.value &&
-      selectedServices.value.length > 0 
+      selectedProviderId.value &&
+      selectedServices.value.length > 0
   }
   return true
 })
 
 // --- METHODS ---
 
-// New Method: Fetch all providers for Step 2
+// Fetch all providers for Step 2
 const fetchAllProviders = async () => {
   try {
     loading.value = true;
@@ -440,22 +447,22 @@ const confirmBooking = async () => {
       userName: name.value,
       contact: contact.value,
       address: address.value,
-      service: selectedServices.value.join(', '),
+      service: selectedServices.value.join(', '), // Correctly joins "Painter, etc"
       providerId: selectedProviderId.value,
       providerName: selectedProvider.value.name,
-      price: totalAmount.value,
+      price: totalAmount.value, // This is now 839
       date: selectedDate.value,
       time: selectedTime.value,
       paymentMethod: paymentMethod.value,
       paymentStatus: paymentMethod.value === 'cash' ? 'pending' : 'awaiting_verification',
-      screenshotId: fileId
+      screenshotId: fileId,
+      // Optional: Add tier if your Appwrite collection has this field
+      status: 'Pending'
     }
 
     const response = await databases.createDocument(DB_ID, BOOKINGS_COLLECTION, ID.unique(), bookingData)
     toast.success("Booking Confirmed!")
 
-    // CRITICAL CHANGE: Use .replace() instead of .push()
-    // This removes the "Form" from the browser's back-button history.
     router.replace({
       name: 'BookingConfirm',
       query: { bookingId: response.$id }
@@ -470,7 +477,7 @@ const confirmBooking = async () => {
 
 // --- LIFECYCLE ---
 onMounted(async () => {
-  // Check Auth
+  // 1. Check Auth
   try {
     const user = await account.get()
     currentUser.value = user
@@ -480,12 +487,26 @@ onMounted(async () => {
     return
   }
 
-  // Handle Query Params
-  const { service, providerId } = route.query
-  if (service) selectedServices.value = [service]
+  // 2. Handle Query Params and Dynamic Pricing
+  const { service, total, providerId, date, time } = route.query
 
-  // Always fetch provider list so Step 2 isn't empty
-  await fetchAllProviders();
+  if (service) {
+    // Set the selected service from URL
+    selectedServices.value = [service]
+
+    // If a total was passed in the URL (e.g., 839), 
+    // we inject it into our servicePrices map so the computed total works.
+    if (total) {
+      servicePrices[service] = parseFloat(total)
+    }
+  }
+
+  // 3. Set Date and Time from URL if available
+  if (date) selectedDate.value = date
+  if (time) selectedTime.value = decodeURIComponent(time)
+
+  // 4. Fetch providers based on the service from URL
+  await fetchAllProviders()
 
   if (providerId) {
     await getProviderDetails(providerId)

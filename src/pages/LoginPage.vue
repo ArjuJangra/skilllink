@@ -148,64 +148,60 @@ const handleLogin = async () => {
   }
 
   try {
-    // 2. Appwrite Auth: Create the session
+    // 1. Create the Appwrite Session
     await account.createEmailPasswordSession(
       loginForm.contact.trim(),
       loginForm.password
     );
 
-    // 3. Get the authenticated Account ID
+    // 2. Get the authenticated Account ID
     const sessionUser = await account.get();
 
-    let userDoc = null;
+    // 3. DYNAMIC LOOKUP: Pick the collection based on the dropdown selection
+    const targetCollection = loginForm.role === 'provider'
+      ? APPWRITE_CONFIG.providersCollection
+      : APPWRITE_CONFIG.usersCollection;
 
-    // 4. Waterfall Lookup using APPWRITE_CONFIG
+    console.log(`Searching in ${loginForm.role} collection...`);
+
+    let userDoc = null;
     try {
-      // Try 'users' collection first
       userDoc = await databases.getDocument(
         APPWRITE_CONFIG.dbId,
-        APPWRITE_CONFIG.usersCollection,
+        targetCollection,
         sessionUser.$id
       );
-    } catch (userError) {
-      try {
-        // Fallback to 'providers' collection
-        userDoc = await databases.getDocument(
-          APPWRITE_CONFIG.dbId,
-          APPWRITE_CONFIG.providersCollection,
-          sessionUser.$id
-        );
-      } catch (providerError) {
-        // Log out of the session if no profile document exists
-        await account.deleteSession('current');
-        throw new Error("Account exists, but profile document was not found.");
-      }
+    } catch (docError) {
+      // If document is not found in the SELECTED collection, log them out
+      await account.deleteSession('current');
+      throw new Error(`No ${loginForm.role} profile found for this account. Did you select the correct role?`);
     }
 
-    // 5. Update local store and session state
-    // We pass null for token because Appwrite handles sessions via cookies
+    // 4. Update local store and session state
     loginUser(null, userDoc);
 
-    // Normalize user data for the UI
+    // Normalize user data for UI
     auth.isLoggedIn = true;
     auth.user = {
       ...userDoc,
-      avatar: (userDoc.profilePic === 'user.png' || !userDoc.profilePic)
+      avatar: (!userDoc.profilePic || userDoc.profilePic === 'user.png')
         ? require("@/assets/user.png")
         : userDoc.profilePic
     };
 
-    // 6. Persistence logic
+    // 5. Persistence
     localStorage.setItem("userId", userDoc.$id);
     localStorage.setItem("user", JSON.stringify(userDoc));
 
-    // 7. Success Splash & Redirect
+    // 6. Success Splash & Redirect
     showSplash.value = true;
     setTimeout(() => {
 
-      // Redirect based on the actual role found in the database document
-      if (userDoc.role === "provider") {
-        router.push("/ServiceProvider");
+      // Use the role directly from the retrieved document
+      const finalRole = userDoc.role.toLowerCase().trim();
+
+      if (finalRole === "provider") {
+        router.push("/serviceprovider");
       } else {
         router.push("/homelogged");
       }
@@ -213,13 +209,8 @@ const handleLogin = async () => {
 
   } catch (err) {
     console.error("Login Flow Error:", err);
-    // Friendly error messaging
     errorMessage.value = err.message || "Invalid email or password.";
-    toast.error(`❌ ${errorMessage.value}`, {
-      autoClose: 3000,
-      position: "bottom-right",
-      theme: "colored",
-    });
+    toast.error(`❌ ${errorMessage.value}`);
   } finally {
     loading.value = false;
   }
