@@ -5,200 +5,75 @@
       <AppNavbar />
     </header>
 
-    <section class="relative text-center overflow-hidden py-20 px-4">
-      <!-- Hero Content -->
-      <h1
-        class="text-3xl sm:text-4xl md:text-5xl font-extrabold bg-gradient-to-r from-[#3B8D99] to-[#f46675] bg-clip-text text-transparent mb-6">
-        Connecting You to Trusted Local Experts
-      </h1>
+    <section class="relative min-h-[85vh] flex items-center bg-white overflow-hidden">
+      <div class="max-w-7xl mx-auto w-full px-6 grid grid-cols-1 lg:grid-cols-12 gap-0 items-center relative z-10">
 
-      <p class="text-gray-600 max-w-2xl mx-auto text-base sm:text-lg mb-8">
-        Book skilled professionals like plumbers, electricians, makeup artists, and more — all in one platform.
-      </p>
+        <div class="lg:col-span-6 relative h-[500px] lg:h-[700px] flex items-center justify-center"
+          data-aos="fade-right">
+          <img src="@/assets/hero-girl.png" alt="SkillLink Professional"
+            class="z-10 w-full h-full object-contain object-left-bottom lg:object-center transition-transform duration-[2s] hover:scale-105" />
 
-      <!-- Call to Action -->
-      <div class="flex justify-center gap-4 flex-wrap">
-        <router-link to="/signup"
-          class="inline-block px-6 py-3 font-semibold text-white rounded-lg bg-gradient-to-r from-[#00A8E8] to-[#007EA7] shadow-lg hover:scale-105 transform transition">
-          Get Started
-        </router-link>
-        <router-link to="/home"
-          class="inline-block px-6 py-3 font-semibold text-[#0073b1] rounded-lg border-2 border-[#0073b1] hover:bg-[#0073b1] hover:text-white transition">
-          Explore Services
-        </router-link>
-      </div>
+          <div
+            class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[120%] h-[120%] bg-[#00A8E8]/5 rounded-full blur-[120px] -z-10">
+          </div>
+        </div>
 
-    </section>
+        <div class="lg:col-span-6 space-y-8 py-12 lg:pl-12" data-aos="fade-up">
+          <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#00A8E8]/10 border border-[#00A8E8]/20">
+            <span class="relative flex h-2 w-2">
+              <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#00A8E8] opacity-75"></span>
+              <span class="relative inline-flex rounded-full h-2 w-2 bg-[#00A8E8]"></span>
+            </span>
+            <span class="text-[11px] font-black text-[#007EA7] uppercase tracking-[0.2em]">Verified Professionals</span>
+          </div>
 
-    <!-- Services Section -->
-    <section class="py-12 px-6 ">
-      <div class="max-w-screen-xl mx-auto text-center">
-        <h3 class="text-3xl sm:text-4xl font-bold text-gray-800 mb-12">
-          Our Professional Services
-        </h3>
+          <div class="space-y-4">
+            <h1 class="text-5xl font-black text-gray-900 leading-tight">
+              Expert Help <br />
+              <span class="text-[#00A8E8]">at Your Doorstep.</span>
+            </h1>
+            <p class="text-gray-500 text-lg md:text-xl max-w-lg leading-relaxed font-medium">
+              Connecting you with top-rated experts in Your Area. Reliable, fast, and background-verified services
+              tailored for your home.
+            </p>
+          </div>
 
-        <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6">
-          <router-link v-for="service in services" :key="service.name" to="/login" class="group bg-white border border-gray-200 rounded-2xl p-6 
-               shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all 
-               duration-300 flex flex-col items-center justify-center text-center">
-            <!-- Icon -->
-            <div class="bg-blue-100 p-3 rounded-full mb-3 group-hover:bg-blue-500 transition">
-              <component :is="service.icon" class="w-7 h-7 text-blue-600 group-hover:text-white transition" />
+          <div class="flex flex-col sm:flex-row gap-5 pt-4">
+            <router-link to="/signup"
+              class="px-10 py-5 bg-[#00A8E8] text-white font-bold rounded-2xl shadow-[0_20px_40px_rgba(0,168,232,0.3)] hover:bg-[#007EA7] hover:-translate-y-1 transition-all duration-300 flex items-center justify-center gap-3">
+              Get Stared
+              <i class="fas fa-chevron-right text-xs"></i>
+            </router-link>
+
+            <router-link to="/home"
+              class="px-10 py-5 bg-white text-[#00A8E8] font-bold rounded-2xl border-2 border-[#00A8E8]/10 shadow-sm hover:bg-blue-50 transition-all duration-300 text-center">
+              Explore Services
+            </router-link>
+          </div>
+
+          <div class="flex items-center gap-10 pt-8 border-t border-gray-100">
+            <div class="flex flex-col">
+              <span class="text-2xl font-black text-gray-900">4.9/5</span>
+              <span class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">User Rating</span>
             </div>
-
-            <!-- Service Name -->
-            <h4 class="font-semibold text-gray-800 group-hover:text-blue-600 transition text-sm sm:text-base">
-              {{ service.name }}
-            </h4>
-          </router-link>
+            <div class="flex flex-col">
+              <span class="text-2xl font-black text-gray-900">100%</span>
+              <span class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Safety Record</span>
+            </div>
+          </div>
         </div>
       </div>
-    </section>
 
-    <!-- Solved Cases Section -->
-    <section class="py-12 px-4">
-      <div class="max-w-screen-xl mx-auto">
-        <h3 class="text-2xl sm:text-3xl font-bold text-center text-gray-800 mb-6">Real Stories, Real Impact</h3>
-        <p class="text-gray-600 max-w-3xl mx-auto mb-12 text-base sm:text-lg">
-          See how SkillLink helped users solve everyday challenges — fast, reliable, and stress-free.
-        </p>
-        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-          <div class="bg-white rounded-xl shadow-md overflow-hidden cursor-pointer">
-            <img src="@/assets/plumber2.jpg"
-              alt="Plumber repairing a leaking pipe under a kitchen sink in a modern home setting, focused and determined expression, bright and clean environment"
-              class="w-full h-auto max:h-60 object-cover" />
-            <div class="p-4">
-              <h4 class="text-lg font-bold text-[#0073b1] mb-2">Leaking Pipe Fixed</h4>
-              <p class="text-gray-700 text-sm">"Plumbing emergency solved instantly. Life-saver!" – Rajesh, Delhi</p>
-            </div>
-          </div>
-
-          <div class="bg-white rounded-xl shadow-md overflow-hidden cursor-pointer">
-            <img src="@/assets/electician.jpg" alt="Electrician" class="w-full h-auto max:h-60 object-cover" />
-            <div class="p-4">
-              <h4 class="text-lg font-bold text-[#0073b1] mb-2">Home Wiring Resolved</h4>
-              <p class="text-gray-700 text-sm">"Electrician arrived quickly and fixed it all. Great experience!" –
-                Priya, Mumbai</p>
-            </div>
-          </div>
-
-          <div class="bg-white rounded-xl shadow-md overflow-hidden cursor-pointer">
-            <img src="@/assets/makeup2.jpg" alt="Makeup Artist" class="w-full h-auto max:h-60 object-cover" />
-            <div class="p-4">
-              <h4 class="text-lg font-bold text-[#0073b1] mb-2">Wedding Makeup</h4>
-              <p class="text-gray-700 text-sm">"Booked a makeup artist for a wedding — skilled and professional!" –
-                Sneha, Jaipur</p>
-            </div>
-          </div>
-
-        </div>
-        <!-- Counters Section (Add above Contact Section) -->
-        <section class="py-12  text-center">
-          <div class="max-w-5xl mx-auto grid grid-cols-1 sm:grid-cols-3 gap-8">
-            <div class="bg-white rounded-xl shadow-lg p-6 hover:shadow-xl transition transform hover:-translate-y-1">
-              <h4 class="text-4xl font-bold text-[#0073b1] mb-2">50+</h4>
-              <p class="text-gray-700 font-medium">Services</p>
-            </div>
-            <div class="bg-white rounded-xl shadow-lg p-6 hover:shadow-xl transition transform hover:-translate-y-1">
-              <h4 class="text-4xl font-bold text-[#0073b1] mb-2">1k+</h4>
-              <p class="text-gray-700 font-medium">Happy Users</p>
-            </div>
-            <div class="bg-white rounded-xl shadow-lg p-6 hover:shadow-xl transition transform hover:-translate-y-1">
-              <h4 class="text-4xl font-bold text-[#0073b1] mb-2">100+</h4>
-              <p class="text-gray-700 font-medium">Verified Providers</p>
-            </div>
-          </div>
-        </section>
+      <div class="absolute bottom-[-5%] left-[-5%] text-[15vw] font-black text-gray-50 select-none -z-20 uppercase">
+        SkillLink
       </div>
     </section>
 
-    <!-- About Section-->
-    <section class="relative py-12 px-4  overflow-hidden">
-      <div class="absolute inset-0 z-0 pointer-events-none">
-        <svg class="absolute top-0 left-0 opacity-10 w-[600px]" viewBox="0 0 600 600" fill="none">
-          <circle cx="300" cy="300" r="300" fill="#0073b1" />
-        </svg>
-        <svg class="absolute bottom-0 right-0 opacity-10 w-[400px]" viewBox="0 0 400 400" fill="none">
-          <rect width="400" height="400" fill="#00BFFF" rx="80" />
-        </svg>
-      </div>
+    <PromoBanner />
+    <ServiceSection />
 
-      <!-- Main Content -->
-      <div class="relative z-10 max-w-screen-xl mx-auto text-center space-y-14" data-aos="fade-up">
-
-        <!-- Heading -->
-        <div>
-          <h3 class="text-3xl sm:text-4xl font-bold text-gray-800 mb-4">About SkillLink</h3>
-          <p class="max-w-3xl mx-auto text-gray-600 leading-relaxed text-lg">
-            SkillLink connects you with verified professionals for everything from home repairs to personal services —
-            reliable, quick, and affordable.
-          </p>
-        </div>
-
-        <!-- Services Grid -->
-        <div class="bg-white shadow-xl rounded-2xl p-10" data-aos="fade-up">
-          <h4 class="text-2xl font-semibold text-gray-800 mb-8">Our Available Services</h4>
-          <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8 text-left text-gray-700 text-base">
-            <ul class="space-y-3">
-              <li><i class="fas fa-tools text-blue-600 mr-2"></i>Plumber</li>
-              <li><i class="fas fa-bolt text-blue-600 mr-2"></i>Electrician</li>
-              <li><i class="fas fa-car text-blue-600 mr-2"></i>Mechanic</li>
-              <li><i class="fas fa-hammer text-blue-600 mr-2"></i>Carpenter</li>
-              <li><i class="fas fa-wind text-blue-600 mr-2"></i>AC Repair</li>
-              <li><i class="fas fa-paint-roller text-blue-600 mr-2"></i>Painter</li>
-            </ul>
-            <ul class="space-y-3">
-              <li><i class="fas fa-wrench text-blue-600 mr-2"></i>Welder</li>
-              <li><i class="fas fa-magic text-blue-600 mr-2"></i>Makeup Artist</li>
-              <li><i class="fas fa-soap text-blue-600 mr-2"></i>Cleaner</li>
-              <li><i class="fas fa-seedling text-blue-600 mr-2"></i>Gardener</li>
-              <li><i class="fas fa-mobile-alt text-blue-600 mr-2"></i>Mobile Technician</li>
-              <li><i class="fas fa-desktop text-blue-600 mr-2"></i>Computer Technician</li>
-            </ul>
-            <ul class="space-y-3">
-              <li><i class="fas fa-cogs text-blue-600 mr-2"></i>Home Appliance Repair</li>
-              <li><i class="fas fa-bug text-blue-600 mr-2"></i>Pest Control</li>
-              <li><i class="fas fa-tshirt text-blue-600 mr-2"></i>Laundry Services</li>
-              <li><i class="fas fa-water text-blue-600 mr-2"></i>Water Purifier Technician</li>
-              <li><i class="fas fa-pencil-ruler text-blue-600 mr-2"></i>Interior Designer</li>
-              <li><i class="fas fa-gem text-blue-600 mr-2"></i>Event Decorators</li>
-            </ul>
-          </div>
-        </div>
-
-        <!-- Why Choose -->
-        <div class="mt-16" data-aos="fade-up">
-          <h4 class="text-2xl font-semibold text-gray-800 mb-8">Why Choose SkillLink?</h4>
-          <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
-            <div class="bg-white shadow-lg rounded-xl p-8 hover:shadow-2xl transition">
-              <h5 class="text-lg font-semibold text-gray-800 mb-3">
-                <i class="fas fa-check-circle text-blue-600 mr-2"></i>Verified Professionals
-              </h5>
-              <p class="text-gray-600 text-sm leading-relaxed">Background-checked experts you can trust for every
-                service.</p>
-            </div>
-            <div class="bg-white shadow-lg rounded-xl p-8 hover:shadow-2xl transition">
-              <h5 class="text-lg font-semibold text-gray-800 mb-3">
-                <i class="fas fa-bolt text-blue-600 mr-2"></i>Fast & Reliable
-              </h5>
-              <p class="text-gray-600 text-sm leading-relaxed">Quick response, efficient service, and on-time
-                completion.</p>
-            </div>
-            <div class="bg-white shadow-lg rounded-xl p-8 hover:shadow-2xl transition">
-              <h5 class="text-lg font-semibold text-gray-800 mb-3">
-                <i class="fas fa-wallet text-blue-600 mr-2"></i>Transparent Pricing
-              </h5>
-              <p class="text-gray-600 text-sm leading-relaxed">Upfront pricing with no hidden costs — ever.</p>
-            </div>
-          </div>
-        </div>
-
-        <!-- Closing Note -->
-        <p class="max-w-3xl mx-auto text-gray-700 leading-relaxed text-lg mt-14 italic" data-aos="fade-up">
-          “Expert help, a tap away — with SkillLink, convenience meets trust.”
-        </p>
-      </div>
-    </section>
+    <TestimonialsSection />
+    <AboutSection />
 
     <!--Contact-->
     <section class=" py-12 px-6">
@@ -362,19 +237,74 @@ bg-clip-text text-transparent">
 </template>
 
 <script setup>
-import { ref } from 'vue'
-import AppNavbar from "@/components/AppNavbar.vue"
-import { Briefcase, Wrench, Home, Zap, Hammer, Wind, Paintbrush, Sparkles } from 'lucide-vue-next'
 
-const services = ref([
-  { name: 'Plumber', icon: Briefcase },
-  { name: 'Mechanic', icon: Wrench },
-  { name: 'Painter', icon: Home },
-  { name: 'Electrician', icon: Zap },
-  { name: 'Carpenter', icon: Hammer },
-  { name: 'AC Repair', icon: Wind },
-  { name: 'Painter', icon: Paintbrush },
-  { name: 'Makeup Artist', icon: Sparkles },
-])
+import AppNavbar from "@/components/AppNavbar.vue"
+import TestimonialsSection from '@/components/home/TestimonialsSection';
+import AboutSection from '@/components/home/AboutSection.vue';
+import PromoBanner from '@/components/home/PromoBanners.vue';
+import ServiceSection from '@/components/home/ServiceSection.vue';
+
 </script>
 
+<style>
+@keyframes bounce-slow {
+
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-12px);
+  }
+}
+
+.animate-bounce-slow {
+  animation: bounce-slow 5s ease-in-out infinite;
+}
+</style>
+
+<style>
+.clip-path-slant {
+  clip-path: polygon(25% 0%, 100% 0%, 100% 100%, 0% 100%);
+}
+
+h1,
+p,
+span,
+a {
+  font-family: 'Inter', system-ui, sans-serif;
+  /* Recommended clean, Swiss-style typography */
+}
+
+/* Smooth Floating Animation */
+@keyframes float {
+
+  0%,
+  100% {
+    transform: translateY(0) rotate(0);
+  }
+
+  50% {
+    transform: translateY(-20px) rotate(1deg);
+  }
+}
+
+.animate-float {
+  animation: float 6s ease-in-out infinite;
+}
+
+/* Custom Scrollbar for the page if needed */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #007EA7;
+  border-radius: 10px;
+}
+</style>

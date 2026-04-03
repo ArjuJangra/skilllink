@@ -10,9 +10,9 @@ export const APPWRITE_CONFIG = {
     usersCollection: 'users',
     providersCollection: 'providers', 
     servicesCollection: 'services',
-    bookingsCollection: 'bookings', // Added Bookings Collection
+    bookingsCollection: 'bookings', 
     storageBucket: '69bc270e0029df27ceed',
-    bucketId: '69bc270e0029df27ceed' // Added for consistency with Storage logic
+    bucketId: '69bc270e0029df27ceed' 
 };
 
 export const account = new Account(client);

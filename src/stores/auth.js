@@ -22,10 +22,10 @@ export async function logoutUser() {
     // CRITICAL: Wipe reactive state immediately so Navbar reacts
     auth.isLoggedIn = false;
     auth.user = null;
-    
+
     // Clear ALL storage to ensure no leftover tokens/IDs
-    localStorage.clear(); 
-    
+    localStorage.clear();
+
     console.log("Auth state cleared globally.");
   }
 }
@@ -41,12 +41,12 @@ export async function initAuth() {
     // Try finding in Users collection first
     try {
       profile = await databases.getDocument(DATABASE_ID, 'users', sessionUser.$id);
-      if (profile) profile.role = 'user'; 
+      if (profile) profile.role = 'user';
     } catch (e) {
       // If not in users, try Providers
       try {
         profile = await databases.getDocument(DATABASE_ID, 'providers', sessionUser.$id);
-        if (profile) profile.role = 'provider'; 
+        if (profile) profile.role = 'provider';
       } catch (err) {
         console.error("No profile found in either collection.");
       }
@@ -82,7 +82,7 @@ export function loginUser(userData) {
 
   // Update LocalStorage safely
   localStorage.setItem('user', JSON.stringify(userData));
-  
+
   // Use optional chaining (?.) or check existence
   const userId = userData.$id || userData.id;
   if (userId) {
