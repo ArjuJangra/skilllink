@@ -33,12 +33,11 @@
         </div>
       </div>
     </section>
-    
-    <PromoBanner />
+
     <ServicesSection />
+    <PromoBanner />
     <BestDeals @book="goToBooking" />
     <TestimonialsSection />
-
     <AboutSection />
 
     <section class="py-16 px-6 bg-white overflow-hidden">

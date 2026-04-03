@@ -165,9 +165,8 @@
 </template>
 
 <script setup>
-import { ref, computed } from "vue"
+import { ref, computed,watch } from "vue"
 import { useRoute, useRouter } from "vue-router"
-// 1. Import your central auth store and the global logout function
 import { auth, logoutUser } from "@/stores/auth" 
 import {
   SearchIcon, BellIcon, MenuIcon, XIcon, ShoppingBagIcon, MailIcon, HelpCircleIcon,
@@ -178,9 +177,8 @@ import defaultAvatarFile from "@/assets/user.png"
 
 const router = useRouter()
 const route = useRoute()
+const searchQuery = ref(route.query.q || "")
 
-// 2. Map local variables to the Global Store
-// This ensures that when auth.js updates, the Navbar updates instantly
 const user = computed(() => auth.user)
 const isLoggedIn = computed(() => auth.isLoggedIn)
 
@@ -188,7 +186,6 @@ const unreadCount = ref(3)
 const showDropdown = ref(false)
 const mobileMenu = ref(false)
 const showLogoutModal = ref(false)
-const searchQuery = ref("")
 const defaultAvatar = defaultAvatarFile
 
 // 3. Simplified Logout using your central logic
@@ -201,13 +198,22 @@ const logout = async () => {
     console.error("Logout failed:", error) 
   }
 }
-
+watch(searchQuery, (newVal) => {
+  // We only want to trigger search on pages that show services (like /home or /homeboard)
+  const searchPages = ['/home', '/homeboard', '/homelogged'];
+  
+  if (searchPages.includes(route.path)) {
+    router.replace({
+      query: { ...route.query, q: newVal || undefined }
+    });
+  } else if (newVal.length > 0) {
+    // If user is on 'About' but starts typing, take them to the services page
+    router.push({ path: '/home', query: { q: newVal } });
+  }
+});
 const toggleDropdown = () => (showDropdown.value = !showDropdown.value)
 const shouldShowSearch = computed(() => !["/login", "/signup"].includes(route.path))
 
-// 4. REMOVED: onMounted(checkUserStatus) 
-// We don't check here anymore. initAuth() should be called in App.vue 
-// so the check happens only ONCE per session, not every time you change pages.
 </script>
 
 <style scoped>

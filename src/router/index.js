@@ -45,7 +45,7 @@ const routes = [
   {
     path: '/notifications',
     name: 'Notifications',
-    component: () => import('@/components/NotificationHistory.vue'),
+    component: () => import('@/pages/NotificationHistory.vue'),
     meta: { requiresAuth: true }
   },
   {
@@ -56,11 +56,16 @@ const routes = [
   },
   // router/index.js
   {
-    path: '/booking',
+    path: '/checkout',
     name: 'BookingPage',
     // Make sure this path is 100% correct
-    component: () => import('@/components/BookingPage.vue')
+    component: () => import('@/pages/BookingPage.vue')
   },
+  {
+  path: '/reviews',
+  name: 'Reviews',
+  component: () => import('@/pages/ReviewsPage.vue')
+},
   // router/index.js
   {
     path: '/booking-confirm',

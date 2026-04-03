@@ -1,10 +1,10 @@
 <template>
 
-  <div class="min-h-screen bg-gradient-to-b from-[#EAF6FF] to-white">
+  <div class="min-h-screen bg-gray-50">
     <div class="sticky top-0 z-30 h-1 w-full bg-gradient-to-r from-[#00B4D8] via-[#48CAE4] to-[#0096C7]"></div>
     <AppNavbar />
 
-    <div class="max-w-6xl mx-auto px-4 sm:px-6 py-6 lg:py-10">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 py-6 ">
       <!-- Header / Breadcrumb -->
       <div class="text-sm text-gray-500 mb-4 flex items-center gap-2 flex-wrap">
         <router-link to="/home"
@@ -242,76 +242,42 @@
             <p class="text-xs text-gray-500 mt-2">* Real-time slots can be fetched from your API later.</p>
           </div>
 
-          <!-- Reviews & Ratings -->
-          <div class="bg-white rounded-2xl shadow p-6">
-            <h2 class="text-xl font-bold text-gray-900 mb-4">Customer Reviews</h2>
-
-            <section class="reviews mt-8">
-              <div class="flex items-center gap-2 mb-4">
-                <div class="text-2xl font-extrabold text-amber-500">{{ rating.toFixed(1) }} ★</div>
-                <div class="text-xs text-gray-500">Based on {{ reviews.length }} reviews</div>
-              </div>
-
-              <div class="mb-6 p-4 bg-gray-50 rounded-xl space-y-3">
-                <div class="flex items-center gap-2">
-                  <input v-model="newReview.user" placeholder="Your Name" class="input w-full" />
-                  <input type="file" @change="onFileChange" />
+          <div class="service-details-container">
+            <div class="mt-12 bg-white rounded-3xl border border-gray-100 p-8">
+              <div class="flex items-center justify-between mb-8">
+                <div>
+                  <h2 class="text-2xl font-bold text-gray-900">Customer Feedback</h2>
+                  <div class="flex items-center gap-2 mt-1">
+                    <span class="text-amber-500 font-bold">{{ avgRating }} ★</span>
+                    <span class="text-gray-400 text-sm">({{ totalReviewsCount }} reviews)</span>
+                  </div>
                 </div>
-                <div class="flex items-center gap-1">
-                  <span v-for="n in 5" :key="n" @click="setStarRating(n)" class="cursor-pointer text-amber-400 text-xl">
-                    {{ n <= newReview.stars ? '★' : '☆' }} </span>
-                </div>
-                <textarea v-model="newReview.text" placeholder="Write your review..." class="input w-full"></textarea>
-                <button @click="submitReview" :disabled="!newReview.user || !newReview.stars || !newReview.text"
-                  class="btn-primary w-80 disabled:opacity-50">
-                  Submit Review
+
+                <button @click="viewFullReviews"
+                  class="text-[#0073b1] font-bold text-sm hover:underline flex items-center gap-1">
+                  View all reviews <i class="fas fa-chevron-right text-xs"></i>
                 </button>
               </div>
 
-              <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-                <div class="space-y-2">
-                  <div v-for="star in [5, 4, 3, 2, 1]" :key="star" class="flex items-center gap-3">
-                    <div class="w-12 text-sm text-gray-600">{{ star }}★</div>
-                    <div class="flex-1 h-2 bg-gray-100 rounded-full overflow-hidden">
-                      <div class="h-2 bg-amber-400 duration-500" :style="{ width: ratingBarWidth(star) + '%' }"></div>
+              <div v-if="latestReviews.length" class="space-y-6">
+                <div v-for="r in latestReviews" :key="r.$id" class="pb-6 border-b border-gray-50 last:border-0">
+                  <div class="flex items-center justify-between mb-2">
+                    <span class="font-bold text-gray-800">{{ r.user }}</span>
+                    <div class="flex text-amber-400 text-[10px]">
+                      <i v-for="n in 5" :key="n" :class="n <= r.stars ? 'fas fa-star' : 'far fa-star'"></i>
                     </div>
-                    <div class="w-10 text-right text-xs text-gray-500">{{ ratingCounts[star] || 0 }}</div>
                   </div>
-                </div>
-                <div class="p-4 rounded-xl bg-gray-50">
-                  <div class="font-semibold text-gray-800 mb-2">What people like</div>
-                  <ul class="text-sm text-gray-700 space-y-1">
-                    <li v-for="pro in reviewPros" :key="pro">• {{ pro }}</li>
-                  </ul>
+                  <p class="text-gray-600 text-sm line-clamp-2 italic">"{{ r.text }}"</p>
                 </div>
               </div>
 
-              <div v-if="reviews.length">
-                <div v-for="r in filteredReviews" :key="r.id"
-                  class="flex items-start gap-4 p-4 border-b border-gray-200">
-                  <img :src="r.userAvatar || defaultAvatar" alt="User Avatar"
-                    class="w-12 h-12 rounded-full object-cover" @error="handleImageError" />
-                  <div class="flex-1">
-                    <div class="flex items-center justify-between">
-                      <h3 class="font-medium">{{ r.user }}</h3>
-                      <span class="text-sm text-gray-500">{{ r.date }}</span>
-                    </div>
-                    <div class="flex items-center mt-1 text-yellow-500">
-                      <span v-for="s in 5" :key="s">
-                        <i :class="s <= r.stars ? 'fas fa-star' : 'far fa-star'"></i>
-                      </span>
-                    </div>
-                    <p class="mt-2 text-gray-700">{{ r.text }}</p>
-                  </div>
-                </div>
-                <div v-if="showAllReviewsBtn" class="text-center mt-2">
-                  <button @click="showAllReviews = true" class="text-blue-500 hover:underline">
-                    Show all reviews
-                  </button>
-                </div>
+              <div v-else class="text-center py-6 text-gray-400">
+                <p>No reviews yet for this service.</p>
+                <button @click="viewFullReviews" class="mt-2 text-sm font-bold text-[#0073b1]">
+                  Be the first to write one
+                </button>
               </div>
-              <div v-else class="text-gray-500 italic">No reviews yet. Be the first to add one!</div>
-            </section>
+            </div>
           </div>
 
           <RelatedServices v-if="category" :category="category" :currentServiceId="$route.query.id" />
@@ -396,17 +362,22 @@
       </div>
     </div>
   </div>
+  <AppFooter />
+
 </template>
 
 <script>
+
 import AppNavbar from '@/components/AppNavbar.vue';
 import RelatedServices from '@/components/RelatedServices.vue';
 import { databases, storage, APPWRITE_CONFIG } from '@/appwrite';
-//import { Query } from 'appwrite';
+import { Query } from 'appwrite';
+import AppFooter from '@/components/AppFooter.vue';
 
 export default {
   components: {
     AppNavbar,
+    AppFooter,
     RelatedServices
   },
   name: "ServiceDetail",
@@ -470,6 +441,7 @@ export default {
       ],
 
       selectedTier: { name: "", price: 0, points: [] },
+
       pricingCatalog: {
         "Carpenter": {
           tiers: [
@@ -561,6 +533,7 @@ export default {
         { key: "eco", label: "Eco-friendly materials", price: 49, selected: false },
         { key: "extra", label: "Extra task (+30 mins)", price: 149, selected: false },
       ],
+
       qty: 1,
       couponCode: "",
       couponValid: false,
@@ -575,24 +548,9 @@ export default {
         "2025-08-25": ["12:00 PM"],
       },
 
-      // Reviews / ratings
-      reviews: [
-        { id: 1, user: "Ankita Sharma", userAvatar: "/images/u1.jpg", stars: 5, text: "Professional and quick. Fixed my issue in one visit.", date: "Jun 2025" },
-        { id: 2, user: "Sneha Kulkarni", userAvatar: "/images/u2.jpg", stars: 4, text: "On time and polite. Good value.", date: "May 2025" },
-        { id: 3, user: "Rakshita Gupta", userAvatar: "/images/u3.jpg", stars: 5, text: "Great experience! Highly recommend.", date: "Apr 2025" },
-      ],
-      ratingCounts: { 5: 18, 4: 7, 3: 2, 2: 1, 1: 0 },
-
-      // Reviews UI state
-      selectedStar: "",
-      newReview: {
-        user: "", userAvatar: this.defaultAvatar, stars: 0,
-        text: "", date: "",
-      },
-      reviewMessage: "",
-      reviewSuccess: false,
-      showAllReviews: false,
-      related: [],
+      latestReviews: [],
+      totalReviewsCount: 0,
+      avgRating: 0,
 
       // === NEW / ADDED FIELDS & enhancements ===
 
@@ -694,6 +652,48 @@ export default {
 
   methods: {
 
+
+    async fetchReviewSummary() {
+      try {
+        const id = this.$route.query.id;
+        if (!id) return;
+
+        const res = await databases.listDocuments(
+          APPWRITE_CONFIG.dbId,
+          'reviews', // Ensure this matches your collection name
+          [
+            Query.equal('serviceId', id),
+            Query.limit(3),
+            Query.orderDesc('$createdAt')
+          ]
+        );
+
+        this.latestReviews = res.documents;
+        this.totalReviewsCount = res.total;
+
+        // Calculate average rating from the fetched total (optional logic)
+        if (res.documents.length > 0) {
+          const sum = res.documents.reduce((acc, r) => acc + r.stars, 0);
+          this.avgRating = (sum / res.documents.length).toFixed(1);
+        } else {
+          this.avgRating = 0;
+        }
+      } catch (err) {
+        console.error("Review summary fetch failed:", err);
+      }
+    },
+
+    // 2. Navigate to the new full reviews page
+    goToFullReviews() {
+      this.$router.push({
+        path: '/reviews',
+        query: {
+          id: this.$route.query.id,
+          title: this.title
+        }
+      });
+    },
+
     async fetchServiceData() {
       const id = this.$route.query.id;
       if (!id) {
@@ -714,8 +714,9 @@ export default {
         // Mapping fields from your 'services' collection
         // Adjust these keys (title, description, price) to match your Appwrite attributes
         this.title = response.title || this.title;
-        this.desc = response.description || this.desc;
+        this.desc = response.desc || this.desc;
         this.category = response.category || this.category;
+        this.price = response.price;
 
         // If you store tiers as a JSON string in a 'tiers' attribute
         if (response.tiers) {
@@ -728,7 +729,7 @@ export default {
         }
 
         // Handle Images from Appwrite Storage
-        if (response.imageIds && response.imageIds.length > 0) {
+        if (response.images && response.imageIds.length > 0) {
           this.media = response.imageIds.map(fileId => ({
             type: "image",
             src: storage.getFilePreview(APPWRITE_CONFIG.storageBucket, fileId)
@@ -758,7 +759,6 @@ export default {
       // This usually involves checking the 'users' collection
       this.isMember = false;
     },
-
 
     handleImageError(e) {
       e.target.src = this.defaultAvatar;
@@ -812,7 +812,7 @@ export default {
         addons: this.selectedAddons.map(a => a.key).join(","),
         coupon: this.couponValid ? this.couponCode : "",
       });
-      this.$router.push(`/booking?${q}`);
+      this.$router.push(`/checkout?${q}`);
     },
     buildRelated() {
       this.related = [
@@ -855,29 +855,6 @@ export default {
       this.media = media;
     },
 
-    submitReview() {
-      if (!this.newReview.user || !this.newReview.stars || !this.newReview.text) {
-        alert("Please fill all fields and give a star rating.");
-        return;
-      }
-      const today = new Date();
-      const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-      const month = monthNames[today.getMonth()];
-      const year = today.getFullYear();
-
-      this.newReview.date = `${month} ${year}`;
-
-      this.reviews.unshift({
-        ...this.newReview,
-        id: Date.now(),
-        userAvatar: this.newReview.userAvatar,
-      });
-
-      this.ratingCounts[this.newReview.stars] = (this.ratingCounts[this.newReview.stars] || 0) + 1;
-
-      this.newReview = { user: "", userAvatar: this.defaultAvatar, stars: 0, text: "", date: "" };
-    },
-
     updatePricingForService() {
       const key = this.category || this.title;
       const pricing = this.pricingCatalog[key];
@@ -887,10 +864,6 @@ export default {
         this.addons = pricing.addons.map(a => ({ ...a, selected: false }));
         this.selectedTier = this.tiers[0];
       }
-    },
-
-    setStarRating(value) {
-      this.newReview.stars = value;
     },
 
     formatDate(d) {
@@ -918,20 +891,19 @@ export default {
       this.selectedTime = slot;
       this.calculateSurge();
     },
-
-
   },
 
   async mounted() {
     // 1. Initial local state from query params for fast perceived performance
-    const { title, desc, category } = this.$route.query;
+    const { id, title, desc, category } = this.$route.query;
+    this.serviceId = id;
     this.title = title || "Service Detail";
     this.desc = desc || "";
     this.category = category || "General";
 
     // 2. Fetch real-time data from Appwrite
     await this.fetchServiceData();
-
+    await this.fetchReviewSummary();
     // 3. Initialize UI helpers
     this.buildRelated();
     this.loadMembershipStatus();

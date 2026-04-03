@@ -11,35 +11,28 @@
           </h1>
           <p class="text-slate-500 mt-1">Stay updated with your latest service requests.</p>
         </div>
-        
-        <button
-          v-if="hasUnread"
-          @click="markAllRead"
-          class="flex items-center gap-2 px-4 py-2 bg-white text-[#0073b1] border border-blue-100 rounded-xl font-bold hover:bg-blue-50 transition shadow-sm"
-        >
+
+        <button v-if="hasUnread" @click="markAllRead"
+          class="flex items-center gap-2 px-4 py-2 bg-white text-[#0073b1] border border-blue-100 rounded-xl font-bold hover:bg-blue-50 transition shadow-sm">
           <i class="fas fa-check-double text-xs"></i>
           Mark all as read
         </button>
       </div>
 
       <div class="flex gap-2 mb-8 bg-white p-1.5 rounded-2xl shadow-sm border border-slate-100 w-fit">
-        <button
-          v-for="filter in ['all', 'unread', 'read']"
-          :key="filter"
-          @click="currentFilter = filter"
-          :class="[
-            'px-6 py-2 rounded-xl text-sm font-bold transition-all duration-200',
-            currentFilter === filter
-              ? 'bg-[#0073b1] text-white shadow-md'
-              : 'text-slate-500 hover:bg-slate-50'
-          ]"
-        >
+        <button v-for="filter in ['all', 'unread', 'read']" :key="filter" @click="currentFilter = filter" :class="[
+          'px-6 py-2 rounded-xl text-sm font-bold transition-all duration-200',
+          currentFilter === filter
+            ? 'bg-[#0073b1] text-white shadow-md'
+            : 'text-slate-500 hover:bg-slate-50'
+        ]">
           {{ filter.charAt(0).toUpperCase() + filter.slice(1) }}
         </button>
       </div>
 
       <div v-if="loading" class="space-y-4">
-        <div v-for="n in 3" :key="n" class="bg-white p-6 rounded-[2rem] border border-slate-100 animate-pulse flex gap-4">
+        <div v-for="n in 3" :key="n"
+          class="bg-white p-6 rounded-[2rem] border border-slate-100 animate-pulse flex gap-4">
           <div class="w-12 h-12 bg-slate-100 rounded-2xl"></div>
           <div class="flex-1 space-y-3">
             <div class="h-4 bg-slate-100 rounded w-3/4"></div>
@@ -51,32 +44,29 @@
       <div v-else>
         <div v-for="(notes, groupName) in filteredGroups" :key="groupName" class="mb-10">
           <h3 class="text-xs font-black text-slate-400 uppercase tracking-widest mb-4 ml-2">{{ groupName }}</h3>
-          
+
           <div class="space-y-4">
-            <div
-              v-for="notification in notes"
-              :key="notification.$id"
-              @click="markAsRead(notification)"
-              :class="[
-                'group relative flex gap-5 p-5 rounded-[2rem] border-2 transition-all duration-300 cursor-pointer',
-                notification.read 
-                  ? 'bg-white border-transparent grayscale-[0.5] opacity-80' 
-                  : 'bg-white border-blue-100 shadow-xl shadow-blue-50/50 scale-[1.02]'
-              ]"
-            >
+            <div v-for="notification in notes" :key="notification.$id" @click="markAsRead(notification)" :class="[
+              'group relative flex gap-5 p-5 rounded-[2rem] border-2 transition-all duration-300 cursor-pointer',
+              notification.read
+                ? 'bg-white border-transparent grayscale-[0.5] opacity-80'
+                : 'bg-white border-blue-100 shadow-xl shadow-blue-50/50 scale-[1.02]'
+            ]">
               <div class="flex-shrink-0">
-                <div 
+                <div
                   class="w-14 h-14 rounded-2xl flex items-center justify-center transition-transform group-hover:scale-110"
-                  :class="getIconBg(notification.type, notification.read)"
-                >
-                  <i :class="[getIconClass(notification.type), notification.read ? 'text-slate-400' : '']" class="text-xl"></i>
+                  :class="getIconBg(notification.type, notification.read)">
+                  <i :class="[getIconClass(notification.type), notification.read ? 'text-slate-400' : '']"
+                    class="text-xl"></i>
                 </div>
               </div>
 
               <div class="flex-1 pr-8">
                 <div class="flex items-center gap-2 mb-1">
-                  <span class="text-[10px] font-black uppercase tracking-tighter text-blue-500" v-if="!notification.read">New Update</span>
-                  <span class="text-[10px] font-bold text-slate-400 uppercase tracking-tighter">{{ notification.type || 'System' }}</span>
+                  <span class="text-[10px] font-black uppercase tracking-tighter text-blue-500"
+                    v-if="!notification.read">New Update</span>
+                  <span class="text-[10px] font-bold text-slate-400 uppercase tracking-tighter">{{ notification.type ||
+                    'System' }}</span>
                 </div>
                 <p class="text-slate-800 font-bold leading-snug group-hover:text-[#0073b1] transition-colors">
                   {{ notification.message }}
@@ -88,22 +78,22 @@
 
               <div v-if="!notification.read" class="absolute top-6 right-6">
                 <span class="flex h-3 w-3">
-                  <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
+                  <span
+                    class="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
                   <span class="relative inline-flex rounded-full h-3 w-3 bg-blue-600"></span>
                 </span>
               </div>
 
-              <button 
-                @click.stop="deleteNotification(notification.$id)"
-                class="absolute bottom-6 right-6 opacity-0 group-hover:opacity-100 p-2 text-slate-300 hover:text-red-500 hover:bg-red-50 rounded-xl transition-all"
-              >
+              <button @click.stop="deleteNotification(notification.$id)"
+                class="absolute bottom-6 right-6 opacity-0 group-hover:opacity-100 p-2 text-slate-300 hover:text-red-500 hover:bg-red-50 rounded-xl transition-all">
                 <i class="fas fa-trash-alt text-sm"></i>
               </button>
             </div>
           </div>
         </div>
 
-        <div v-if="notifications.length === 0" class="text-center py-20 bg-white rounded-[3rem] border-2 border-dashed border-slate-100">
+        <div v-if="notifications.length === 0"
+          class="text-center py-20 bg-white rounded-[3rem] border-2 border-dashed border-slate-100">
           <div class="w-20 h-20 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-4">
             <i class="fas fa-ghost text-slate-200 text-3xl"></i>
           </div>
@@ -121,7 +111,7 @@ import { databases, client, account } from "@/appwrite";
 import { Query } from "appwrite";
 import { formatDistanceToNow, isToday, isYesterday, isThisWeek, parseISO } from "date-fns";
 
-const DATABASE_ID = "69bc1ae900174fd0a3c6"; 
+const DATABASE_ID = "69bc1ae900174fd0a3c6";
 const COLLECTION_ID = "notifications";
 
 const notifications = ref([]);
@@ -160,7 +150,7 @@ const markAsRead = async (notification) => {
   if (notification.read) return;
   const originalState = notification.read;
   notification.read = true; // Optimistic UI update
-  
+
   try {
     await databases.updateDocument(DATABASE_ID, COLLECTION_ID, notification.$id, { read: true });
   } catch (error) {
@@ -173,10 +163,10 @@ const markAllRead = async () => {
   const unreadOnes = notifications.value.filter(n => !n.read);
   // Update UI immediately
   unreadOnes.forEach(n => n.read = true);
-  
+
   // Update Appwrite in background
   try {
-    await Promise.all(unreadOnes.map(n => 
+    await Promise.all(unreadOnes.map(n =>
       databases.updateDocument(DATABASE_ID, COLLECTION_ID, n.$id, { read: true })
     ));
   } catch (error) {
@@ -186,19 +176,19 @@ const markAllRead = async () => {
 
 const getIconBg = (type, isRead) => {
   if (isRead) return 'bg-slate-50 text-slate-400';
-  const bgs = { 
-    booking: "bg-green-50 text-green-600", 
-    message: "bg-blue-50 text-blue-600", 
-    payment: "bg-purple-50 text-purple-600" 
+  const bgs = {
+    booking: "bg-green-50 text-green-600",
+    message: "bg-blue-50 text-blue-600",
+    payment: "bg-purple-50 text-purple-600"
   };
   return bgs[type] || "bg-amber-50 text-amber-600";
 };
 
 const getIconClass = (type) => {
-  const icons = { 
-    booking: "fas fa-calendar-check", 
-    message: "fas fa-comment-dots", 
-    payment: "fas fa-receipt" 
+  const icons = {
+    booking: "fas fa-calendar-check",
+    message: "fas fa-comment-dots",
+    payment: "fas fa-receipt"
   };
   return icons[type] || "fas fa-bell";
 };
@@ -209,10 +199,10 @@ watch(currentFilter, fetchNotifications);
 
 onMounted(() => {
   fetchNotifications();
-  
+
   // Better Realtime Subscription
   unsubscribe = client.subscribe(
-    `databases.${DATABASE_ID}.collections.${COLLECTION_ID}.documents`, 
+    `databases.${DATABASE_ID}.collections.${COLLECTION_ID}.documents`,
     (res) => {
       const isForMe = res.payload.userId === user.value?.$id;
       if (!isForMe) return;
@@ -220,9 +210,9 @@ onMounted(() => {
       if (res.events.some(e => e.includes('.create'))) {
         notifications.value.unshift(res.payload);
         // Play notification sound
-        new Audio('https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3').play().catch(() => {});
+        new Audio('https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3').play().catch(() => { });
       }
-      
+
       if (res.events.some(e => e.includes('.delete'))) {
         notifications.value = notifications.value.filter(n => n.$id !== res.payload.$id);
       }

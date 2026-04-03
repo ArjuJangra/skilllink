@@ -11,11 +11,7 @@
     </div>
 
     <div v-else class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-      <ServiceCard 
-        v-for="item in related" 
-        :key="item.$id" 
-        :service="item" 
-      />
+      <ServiceCard v-for="item in related" :key="item.$id" :service="item" />
     </div>
   </div>
 </template>
@@ -36,7 +32,7 @@ const loading = ref(true);
 
 const fetchRelated = async () => {
   if (!props.category) return;
-  
+
   try {
     loading.value = true;
     const response = await databases.listDocuments(
@@ -55,14 +51,14 @@ const fetchRelated = async () => {
     related.value = response.documents.map(doc => ({
       ...doc,
       // Ensure these match exactly what your ServiceCard expects
-      title: doc.title || doc.name, 
+      title: doc.title || doc.name,
       desc: doc.description || doc.desc,
       price: doc.price || 399,
-      image: doc.imageIds?.length > 0 
-        ? storage.getFilePreview(APPWRITE_CONFIG.storageBucket, doc.imageIds[0]) 
-        : (doc.imageUrl || "/images/default-service.jpg")
+      image: doc.images?.length > 0
+        ? storage.getFilePreview(APPWRITE_CONFIG.storageBucket, doc.images[0])
+        : (doc.image || "/images/default-service.jpg")
     }));
-    
+
   } catch (error) {
     console.error("Related Services Error:", error);
   } finally {
@@ -71,5 +67,14 @@ const fetchRelated = async () => {
 };
 
 // Re-run the fetch if the user clicks a related service (ID change)
-watch(() => props.currentServiceId, fetchRelated, { immediate: true });
+// Change your watch to this:
+watch(
+  () => [props.currentServiceId, props.category],
+  ([newId, newCat]) => {
+    if (newId && newCat) {
+      fetchRelated();
+    }
+  },
+  { immediate: true }
+);
 </script>

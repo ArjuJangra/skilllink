@@ -26,7 +26,7 @@
     <div class="max-w-6xl mx-auto py-12 px-6">
       <div class="mb-12">
         <div class="flex items-center justify-between max-w-2xl mx-auto relative">
-          <div v-for="n in 3" :key="n" class="z-10 flex flex-col items-center">
+          <div v-for="n in 2" :key="n" class="z-10 flex flex-col items-center">
             <div :class="[
               'w-12 h-12 rounded-2xl flex items-center justify-center font-bold transition-all duration-500 border-2',
               step >= n ? 'bg-[#0289b7] text-white border-[#0289b7] shadow-xl shadow-blue-100' : 'bg-white text-slate-300 border-slate-100'
@@ -61,48 +61,31 @@
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">
               <div class="space-y-2">
                 <label class="text-[11px] font-bold text-slate-400 uppercase ml-1">Your Name</label>
-                <input type="text" v-model="name" class="premium-input" placeholder="Full Name" />
+                <input type="text" v-model="name" class="premium-input w-full p-4 border border-slate-100 rounded-2xl focus:ring-2 focus:ring-blue-100 outline-none" placeholder="Full Name" />
               </div>
               <div class="space-y-2">
                 <label class="text-[11px] font-bold text-slate-400 uppercase ml-1">Contact Number</label>
-                <input type="tel" v-model="contact" class="premium-input" placeholder="Phone Number" />
+                <input type="tel" v-model="contact" class="premium-input w-full p-4 border border-slate-100 rounded-2xl focus:ring-2 focus:ring-blue-100 outline-none" placeholder="Phone Number" />
               </div>
               <div class="md:col-span-2 space-y-2">
                 <label class="text-[11px] font-bold text-slate-400 uppercase ml-1">Service Address</label>
-                <textarea v-model="address" rows="2" class="premium-input" placeholder="Detailed Address"></textarea>
+                <textarea v-model="address" rows="2" class="premium-input w-full p-4 border border-slate-100 rounded-2xl focus:ring-2 focus:ring-blue-100 outline-none" placeholder="Detailed Address"></textarea>
               </div>
             </div>
 
-            <!-- PROVIDERS FIRST -->
             <div class="pt-8 border-t border-slate-50">
-              <label class="text-xs font-bold text-slate-500 uppercase mb-6 block">
-                Select Expert
-              </label>
-
+              <label class="text-xs font-bold text-slate-500 uppercase mb-6 block">Select Expert</label>
               <div v-if="loading" class="space-y-4">
                 <div v-for="i in 3" :key="i" class="h-24 bg-slate-50 rounded-3xl animate-pulse"></div>
               </div>
-
               <div v-else class="space-y-4">
                 <div v-for="provider in providers" :key="provider.$id" @click="getProviderDetails(provider.$id)"
-                  class="p-5 rounded-3xl border-2 cursor-pointer transition-all" :class="selectedProviderId === provider.$id
-                    ? 'border-[#0289b7] bg-blue-50/40'
-                    : 'border-slate-100 hover:border-slate-200'">
-
+                  class="p-5 rounded-3xl border-2 cursor-pointer transition-all" :class="selectedProviderId === provider.$id ? 'border-[#0289b7] bg-blue-50/40' : 'border-slate-100 hover:border-slate-200'">
                   <div class="flex justify-between items-center">
                     <div>
                       <p class="font-bold text-slate-900">{{ provider.name }}</p>
                       <p class="text-xs text-slate-400">{{ provider.area }}</p>
-
-                      <!-- SERVICES TAG -->
-                      <div class="flex flex-wrap gap-2 mt-2">
-                        <span v-for="s in provider.services" :key="s"
-                          class="text-[10px] px-2 py-1 bg-slate-100 rounded-lg">
-                          {{ s }}
-                        </span>
-                      </div>
                     </div>
-
                     <div class="w-6 h-6 rounded-full border-2 flex items-center justify-center"
                       :class="selectedProviderId === provider.$id ? 'bg-[#0289b7] border-[#0289b7]' : 'border-slate-200'">
                       <i v-if="selectedProviderId === provider.$id" class="fas fa-check text-white text-[10px]"></i>
@@ -111,31 +94,7 @@
                 </div>
               </div>
             </div>
-
-            <!-- SERVICES AFTER PROVIDER -->
-            <div v-if="selectedProviderId" class="pt-8 border-t border-slate-50">
-              <label class="text-xs font-bold text-slate-500 uppercase mb-6 block">
-                Add More Services
-              </label>
-
-              <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div v-for="serviceName in providerOfferedServices" :key="serviceName"
-                  @click="toggleService(serviceName)"
-                  class="border-2 p-5 rounded-2xl cursor-pointer transition-all flex justify-between" :class="selectedServices.includes(serviceName)
-                    ? 'border-[#0289b7] bg-blue-50/40'
-                    : 'border-slate-100'">
-
-                  <span class="font-semibold text-sm">{{ serviceName }}</span>
-                  <span class="text-xs font-bold text-[#0289b7]">
-                    ₹{{ servicePrices[serviceName] }}
-                  </span>
-                </div>
-              </div>
-            </div>
-
           </div>
-
-
 
           <div v-if="step === 2"
             class="bg-white rounded-[2.5rem] border border-slate-100 p-10 shadow-sm animate-fade-in">
@@ -143,51 +102,45 @@
               <div class="w-10 h-10 bg-blue-50 text-[#0289b7] rounded-xl flex items-center justify-center">
                 <i class="fas fa-wallet"></i>
               </div>
-              <h3 class="text-xl font-black text-slate-900">Payment Method</h3>
+              <h3 class="text-xl font-black text-slate-900">Choose Payment Method</h3>
             </div>
 
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-5 mb-8">
-              <div @click="paymentMethod = 'cash'"
-                :class="paymentMethod === 'cash' ? 'border-[#0289b7] bg-blue-50/50' : 'border-slate-50 bg-slate-50/20'"
-                class="border-2 p-6 rounded-3xl cursor-pointer transition-all flex items-center gap-5">
-                <div class="text-2xl">💵</div>
+              <div @click="paymentMethod = 'razorpay'"
+                :class="paymentMethod === 'razorpay' ? 'border-[#0289b7] bg-blue-50/50 shadow-lg shadow-blue-50' : 'border-slate-50 bg-slate-50/20'"
+                class="border-2 p-6 rounded-3xl cursor-pointer transition-all flex items-center gap-5 relative overflow-hidden group">
+                <div class="text-3xl transition-transform group-hover:scale-110">💳</div>
                 <div>
-                  <p class="font-bold text-slate-900">Cash After Service</p>
-                  <p class="text-[10px] text-slate-400 uppercase font-black">Pay at home</p>
+                  <p class="font-bold text-slate-900">Pay Online</p>
+                  <p class="text-[10px] text-[#0289b7] uppercase font-black tracking-widest">Cards / UPI / Netbanking</p>
+                </div>
+                <div v-if="paymentMethod === 'razorpay'" class="absolute -right-2 -top-2 bg-[#0289b7] text-white p-2 rounded-bl-xl">
+                  <i class="fas fa-check text-[10px]"></i>
                 </div>
               </div>
-              <div @click="paymentMethod = 'upi'"
-                :class="paymentMethod === 'upi' ? 'border-[#0289b7] bg-blue-50/50' : 'border-slate-50 bg-slate-50/20'"
-                class="border-2 p-6 rounded-3xl cursor-pointer transition-all flex items-center gap-5">
-                <div class="text-2xl">🏦</div>
+
+              <div @click="paymentMethod = 'cash'"
+                :class="paymentMethod === 'cash' ? 'border-slate-900 bg-slate-50' : 'border-slate-50 bg-slate-50/20'"
+                class="border-2 p-6 rounded-3xl cursor-pointer transition-all flex items-center gap-5 relative overflow-hidden group">
+                <div class="text-3xl transition-transform group-hover:scale-110">💵</div>
                 <div>
-                  <p class="font-bold text-slate-900">UPI / QR Scan</p>
-                  <p class="text-[10px] text-slate-400 uppercase font-black">Fast Confirmation</p>
+                  <p class="font-bold text-slate-900">Cash After Service</p>
+                  
+                </div>
+                <div v-if="paymentMethod === 'cash'" class="absolute -right-2 -top-2 bg-slate-900 text-white p-2 rounded-bl-xl">
+                  <i class="fas fa-check text-[10px]"></i>
                 </div>
               </div>
             </div>
 
-            <div v-if="paymentMethod === 'upi'"
-              class="p-8 bg-slate-50/50 rounded-[2rem] border border-slate-100 space-y-6">
-              <div class="flex flex-col md:flex-row gap-8 items-center">
-                <div class="p-4 bg-white rounded-3xl shadow-sm border border-slate-100">
-                  <img :src="upiQr" class="w-32 h-32" alt="QR Code" />
-                </div>
-                <div class="text-sm space-y-3 text-slate-600 font-medium">
-                  <p>1. Scan QR to pay <span class="text-slate-900 font-bold">₹{{ totalAmount }}</span></p>
-                  <p>2. Remark: <span class="text-slate-900 font-bold">{{ contact || 'SkillLink' }}</span></p>
-                  <p>3. Upload the confirmation screenshot below</p>
-                </div>
+            <div class="p-6 bg-slate-50 rounded-[2rem] border border-slate-100 flex items-center gap-4">
+              <div class="w-12 h-12 bg-white rounded-full flex items-center justify-center text-green-500 shadow-sm">
+                <i class="fas fa-lock"></i>
               </div>
-
-              <label
-                class="flex flex-col items-center justify-center gap-3 w-full p-8 bg-white border-2 border-dashed border-slate-200 rounded-3xl cursor-pointer hover:border-[#0289b7] transition-all group">
-                <i class="fas fa-cloud-upload-alt text-2xl text-slate-300 group-hover:text-[#0289b7]"></i>
-                <span class="text-xs font-bold text-slate-400 group-hover:text-[#0289b7]">
-                  {{ upiScreenshot ? '✅ Screenshot Attached' : 'Click to Upload Payment Proof' }}
-                </span>
-                <input type="file" @change="onUPIScreenshotChange" class="hidden" accept="image/*" />
-              </label>
+              <div>
+                <p class="text-xs font-bold text-slate-800">Secure Checkout</p>
+                <p class="text-[10px] text-slate-500">Your transaction is encrypted and secured by Razorpay & SkillLink Guarantee.</p>
+              </div>
             </div>
           </div>
 
@@ -198,27 +151,28 @@
             </button>
             <div v-else></div>
 
-            <button v-if="step < 3" @click="nextStep" :disabled="!isStepValid"
+            <button v-if="step === 1" @click="nextStep" :disabled="!isStepValid"
               class="bg-[#0289b7] text-white px-10 py-4 rounded-2xl font-bold shadow-xl shadow-blue-100 hover:shadow-blue-200 hover:-translate-y-0.5 transition-all disabled:opacity-30">
-              Next Step <i class="fas fa-chevron-right ml-2 text-[10px]"></i>
+              Select Payment Method <i class="fas fa-chevron-right ml-2 text-[10px]"></i>
             </button>
+
             <button v-else @click="confirmBooking" :disabled="loading || !isFormValid()"
-              class="bg-slate-900 text-white px-10 py-4 rounded-2xl font-bold uppercase tracking-widest shadow-2xl hover:bg-black transition-all disabled:opacity-30 flex items-center gap-3">
+              :class="paymentMethod === 'razorpay' ? 'bg-[#0289b7]' : 'bg-slate-900'"
+              class="text-white px-10 py-4 rounded-2xl font-bold uppercase tracking-widest shadow-2xl transition-all disabled:opacity-30 flex items-center gap-3">
               <i v-if="loading" class="fas fa-spinner fa-spin"></i>
-              {{ loading ? 'Securing...' : 'Complete Booking' }}
+              <i v-else :class="paymentMethod === 'razorpay' ? 'fas fa-credit-card' : 'fas fa-check-circle'"></i>
+              {{ loading ? 'Securing...' : (paymentMethod === 'razorpay' ? 'Pay & Book' : 'Confirm COD') }}
             </button>
           </div>
         </div>
 
         <div class="lg:col-span-4">
           <div class="bg-white rounded-[2.5rem] border border-slate-100 p-8 sticky top-24 shadow-sm">
-            <h4 class="text-xs font-black text-slate-900 uppercase tracking-[0.2em] mb-8 pb-4 border-b border-slate-50">
-              Summary</h4>
+            <h4 class="text-xs font-black text-slate-900 uppercase tracking-[0.2em] mb-8 pb-4 border-b border-slate-50">Summary</h4>
 
             <div class="space-y-6">
               <div>
-                <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-3">Selected Services</p>
-                <div v-if="selectedServices.length === 0" class="text-sm text-slate-300 italic">No services added</div>
+                <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-3">Service</p>
                 <div v-for="s in selectedServices" :key="s" class="flex justify-between items-center mb-3">
                   <span class="text-sm font-bold text-slate-700">{{ s }}</span>
                   <span class="text-sm font-medium text-slate-400">₹{{ servicePrices[s] || 0 }}</span>
@@ -247,7 +201,7 @@
             <div class="mt-10 p-5 bg-blue-50/30 rounded-3xl border border-blue-50 flex gap-3">
               <i class="fas fa-shield-check text-[#0289b7] mt-1"></i>
               <p class="text-[10px] text-slate-500 leading-relaxed font-medium">
-                Protected by SkillLink Guarantee. Your expert is verified and insured.
+                Verified professionals only. No hidden charges.
               </p>
             </div>
           </div>
@@ -258,12 +212,12 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, watch } from 'vue'
+import { ref, computed, onMounted, } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
-import { databases, storage, account, APPWRITE_CONFIG, ID } from '@/appwrite'
-import { Query } from 'appwrite' // Import Query for fetching lists
+import { databases, account, APPWRITE_CONFIG, ID } from '@/appwrite'
+import { Query } from 'appwrite'
 import { toast } from 'vue3-toastify'
-import QRCode from 'qrcode'
+// Removed QRCode import as we are moving to Razorpay
 import AppNavbar from '@/components/AppNavbar.vue'
 
 // --- CONFIG & ROUTING ---
@@ -272,7 +226,6 @@ const route = useRoute()
 const DB_ID = APPWRITE_CONFIG.dbId
 const BOOKINGS_COLLECTION = "bookings"
 const PROVIDERS_COLLECTION = APPWRITE_CONFIG.providersCollection
-const BUCKET_ID = APPWRITE_CONFIG.storageBucket
 
 // --- STATE ---
 const step = ref(1)
@@ -281,9 +234,9 @@ const loadingProvider = ref(false)
 const currentUser = ref(null)
 
 // Service Selection
-const selectedServices = ref([]) // Initialized as empty array to prevent .length error
+const selectedServices = ref([]) 
 const providerOfferedServices = ref([])
-const providers = ref([]) // ADDED: This was missing and caused the loop error
+const providers = ref([]) 
 const selectedProviderId = ref('')
 const selectedProviderDoc = ref(null)
 
@@ -294,13 +247,10 @@ const address = ref('')
 const selectedDate = ref(route.query.date || '')
 const selectedTime = ref(route.query.time ? decodeURIComponent(route.query.time) : '')
 
-// Payment
-const paymentMethod = ref('cash')
-const upiId = ref('parveendhillo08-1@okaxis')
-const upiScreenshot = ref(null)
-const upiQr = ref('')
+// Payment - UPDATED for Razorpay/Cash
+const paymentMethod = ref('cash') 
 
-// DATA MAP
+// DATA MAP (Pricing from 2026 Noida market rates)
 const servicePrices = {
   Plumber: 199,
   Electrician: 249,
@@ -320,9 +270,7 @@ const selectedProvider = computed(() => {
 
 const totalAmount = computed(() => {
   if (!selectedServices.value || selectedServices.value.length === 0) return 0;
-
   return selectedServices.value.reduce((acc, curr) => {
-    // This will now find the price we injected in onMounted (e.g., 839)
     const price = servicePrices[curr] || 0;
     return acc + price;
   }, 0);
@@ -330,47 +278,39 @@ const totalAmount = computed(() => {
 
 const isStepValid = computed(() => {
   if (step.value === 1) {
-    return name.value && contact.value && address.value &&
-      selectedProviderId.value &&
-      selectedServices.value.length > 0
+    return name.value && 
+           contact.value && 
+           address.value &&
+           selectedProviderId.value && // Did you click on an expert's name?
+           selectedServices.value.length > 0 // Is at least one service selected?
   }
   return true
 })
 
+const nextStep = () => {
+  if (!isStepValid.value) {
+    toast.warn("Please select an expert and fill all details.");
+    return;
+  }
+  step.value = 2; // This is what actually changes the screen
+}
+
 // --- METHODS ---
 
-// Fetch all providers for Step 2
 const fetchAllProviders = async () => {
   try {
     loading.value = true;
-
-    // Example: Only fetch providers who offer the FIRST selected service
     const currentService = selectedServices.value[0];
-
     const res = await databases.listDocuments(
       DB_ID,
       PROVIDERS_COLLECTION,
       currentService ? [Query.contains('services', currentService)] : []
     );
-
     providers.value = res.documents;
   } catch (err) {
     console.error("Fetch Providers Error:", err);
   } finally {
     loading.value = false;
-  }
-}
-
-const toggleService = (service) => {
-  const index = selectedServices.value.indexOf(service)
-  if (index > -1) {
-    if (selectedServices.value.length > 1) {
-      selectedServices.value.splice(index, 1)
-    } else {
-      toast.info("At least one service must be selected.")
-    }
-  } else {
-    selectedServices.value.push(service)
   }
 }
 
@@ -389,44 +329,77 @@ const getProviderDetails = async (id) => {
   }
 }
 
-const generateUPIQR = async () => {
-  if (paymentMethod.value !== 'upi') return
-  const remark = `SkillLink-${contact.value || 'Booking'}`
-  const upiURL = `upi://pay?pa=${upiId.value}&pn=SkillLink&am=${totalAmount.value}&cu=INR&tn=${remark}`
-  try {
-    upiQr.value = await QRCode.toDataURL(upiURL)
-  } catch (err) {
-    console.error("QR Error:", err)
-  }
-}
+// --- RAZORPAY INTEGRATION ---
+const initRazorpayPayment = () => {
+  return new Promise((resolve, reject) => {
+    // 1. Check if Razorpay script is loaded
+    if (!window.Razorpay) {
+      toast.error("Razorpay SDK failed to load. Check your internet connection.");
+      reject(new Error("Razorpay SDK not found"));
+      return;
+    }
 
-watch([totalAmount, paymentMethod], generateUPIQR)
+    const options = {
+      key: "rzp_test_SZ7GYtrvpS6XK1", // Replace with your ACTUAL Test Key ID
+      amount: totalAmount.value * 100, // Razorpay expects paise (₹1 = 100 paise)
+      currency: "INR",
+      name: "SkillLink Noida",
+      description: `Booking for ${selectedServices.value.join(', ')}`,
+      image: "https://your-logo-url.com/logo.png", // Optional: link to your logo
+      
+      // The handler function runs after a successful payment
+      handler: (response) => {
+        console.log("Payment Successful:", response.razorpay_payment_id);
+        resolve(response.razorpay_payment_id);
+      },
+      
+      // Prefill user data so they don't have to type it again in the popup
+      prefill: {
+        name: name.value,
+        contact: contact.value,
+        email: currentUser.value?.email || "test@example.com"
+      },
+      
+      notes: {
+        address: address.value,
+        provider_id: selectedProviderId.value
+      },
+      
+      theme: {
+        color: "#0289b7" // Your SkillLink Brand Blue
+      },
+      
+      modal: {
+        ondismiss: () => {
+          loading.value = false;
+          toast.info("Payment cancelled. You can try again or choose Cash.");
+          reject(new Error("User cancelled payment"));
+        }
+      }
+    };
 
-// Watch for provider change to update details
-watch(selectedProviderId, (newId) => {
-  if (newId) getProviderDetails(newId);
-})
+    try {
+      const rzp = new window.Razorpay(options);
+      
+      // Handle payment failures (e.g., wrong OTP, insufficient funds)
+      rzp.on('payment.failed', (response) => {
+        toast.error(`Payment Failed: ${response.error.description}`);
+        reject(new Error(response.error.description));
+      });
 
-const nextStep = async () => {
-  if (!isStepValid.value) return
-
-  step.value++
-}
-
-const onUPIScreenshotChange = (e) => {
-  const file = e.target.files[0]
-  if (file) {
-    upiScreenshot.value = file
-    toast.success("Screenshot attached!")
-  }
-}
+      rzp.open();
+    } catch (err) {
+      console.error("Razorpay initialization error:", err);
+      reject(err);
+    }
+  });
+};
 
 const isFormValid = () => {
   return name.value && contact.value && address.value &&
     selectedServices.value?.length > 0 &&
     selectedDate.value && selectedTime.value &&
-    selectedProviderId.value &&
-    (paymentMethod.value === 'cash' || upiScreenshot.value);
+    selectedProviderId.value;
 }
 
 const confirmBooking = async () => {
@@ -434,29 +407,32 @@ const confirmBooking = async () => {
 
   loading.value = true
   try {
-    const user = await account.get()
-    let fileId = null
+    let paymentId = null;
+    let paymentStatus = 'pending';
 
-    if (paymentMethod.value === 'upi' && upiScreenshot.value) {
-      const upload = await storage.createFile(BUCKET_ID, ID.unique(), upiScreenshot.value)
-      fileId = upload.$id
+    // Logic Switch: Razorpay vs Cash
+    if (paymentMethod.value === 'razorpay') {
+      paymentId = await initRazorpayPayment();
+      paymentStatus = 'paid';
+    } else {
+      // Cash on Delivery
+      paymentStatus = 'cod_pending';
     }
 
     const bookingData = {
-      userId: user.$id,
+      userId: currentUser.value.$id,
       userName: name.value,
       contact: contact.value,
       address: address.value,
-      service: selectedServices.value.join(', '), // Correctly joins "Painter, etc"
+      service: selectedServices.value.join(', '),
       providerId: selectedProviderId.value,
       providerName: selectedProvider.value.name,
-      price: totalAmount.value, // This is now 839
+      price: totalAmount.value,
       date: selectedDate.value,
       time: selectedTime.value,
       paymentMethod: paymentMethod.value,
-      paymentStatus: paymentMethod.value === 'cash' ? 'pending' : 'awaiting_verification',
-      screenshotId: fileId,
-      // Optional: Add tier if your Appwrite collection has this field
+      paymentStatus: paymentStatus,
+      razorpayPaymentId: paymentId, // Store the reference
       status: 'Pending'
     }
 
@@ -469,6 +445,7 @@ const confirmBooking = async () => {
     })
 
   } catch (err) {
+    console.error(err);
     toast.error("Booking failed: " + err.message)
   } finally {
     loading.value = false
@@ -477,7 +454,6 @@ const confirmBooking = async () => {
 
 // --- LIFECYCLE ---
 onMounted(async () => {
-  // 1. Check Auth
   try {
     const user = await account.get()
     currentUser.value = user
@@ -487,25 +463,18 @@ onMounted(async () => {
     return
   }
 
-  // 2. Handle Query Params and Dynamic Pricing
   const { service, total, providerId, date, time } = route.query
 
   if (service) {
-    // Set the selected service from URL
     selectedServices.value = [service]
-
-    // If a total was passed in the URL (e.g., 839), 
-    // we inject it into our servicePrices map so the computed total works.
     if (total) {
       servicePrices[service] = parseFloat(total)
     }
   }
 
-  // 3. Set Date and Time from URL if available
   if (date) selectedDate.value = date
   if (time) selectedTime.value = decodeURIComponent(time)
 
-  // 4. Fetch providers based on the service from URL
   await fetchAllProviders()
 
   if (providerId) {
@@ -513,6 +482,7 @@ onMounted(async () => {
   }
 })
 </script>
+
 <style scoped>
 .premium-input {
   @apply w-full bg-slate-50/50 border border-slate-100 rounded-2xl px-6 py-4 text-sm font-medium transition-all focus:bg-white focus:border-[#0289b7] focus:ring-4 focus:ring-blue-50/50 outline-none placeholder:text-slate-300;
